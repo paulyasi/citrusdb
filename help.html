@@ -1,0 +1,568 @@
+<html>
+<body>
+<h2>CitrusDB How-To</h2>
+
+<a href="#doc_requirements">Requirements</a><br>
+<a href="#doc_upgrading">Upgrading</a><br>
+<a href="#doc_installation">Installation</a><br>
+<a href="#doc_customerservice">Customer Service</a><br>
+<a href="#doc_managingservices">Managing Services</a><br>
+<a href="#doc_billing">Billing</a><br>
+<a href="#doc_reports">Reports</a><br>
+<a href="#doc_administration">Administration</a><br>
+
+<a name="doc_requirements">
+
+<h3>Requirements</h3>
+
+	<blockquote>
+	PHP 5.0.4 or greater and MySQL 4 or greater<br>
+        register_globals must be turned OFF in your php.ini
+	</blockquote>
+<a name="doc_upgrading">
+<h3>Upgrading to a new version</h3>
+
+	<blockquote>
+	<b>This only works for version 0.92 or newer</b><br>
+	To update your database from an older version to a newer one:<br>
+	<ol>
+	<li>Backup the php files and database
+	<li>Replace the old citrusdb files with the new ones from the .tar.gz archive
+	<li>Edit the config.inc.php in /citrusdb/include with the database and path information from your old one
+	<li>Open the update.php file in your web browser (www.yoursite.com/citrusdb/update.php)
+	<li>Click the Update button
+	</ol>
+	If you are upgrading from a version prior to 1.3 then you must
+	also add a cron job for the statusupdate script that updates the
+	account status.
+	
+	</blockquote>
+<a name="doc_installation">
+<h3>Installing a new version</h3>
+
+	<blockquote>
+	<h4>Installing the Private Internal System for Customer Service and Billing</h4>
+		<blockquote>
+		CitrusDB should be installed on a private LAN or on a well protected 
+		web server with limited access by using firewalls, .htaccess, IP Allow 
+		and Deny lists, and SSL, or other comparable security measures to 
+		protect your customer data and limit access to only you and your staff.
+ 		<ol>
+		<li> ungzip/untar the citrus file wherever you want the citrusdb database 
+		to be in your web folder
+ 	
+		<li> create a MySQL database called "citrus" using the citrus.sql file
+			<blockquote><code>
+    			mysqladmin create citrus<br>
+    			mysql citrus < /path/to/citrusdb/citrus.sql
+			</code></blockquote>
+
+		<li>edit the /citrusdb/include/config.inc.php file
+			<blockquote>
+			change the database host, username, password<br> 
+			<code>
+			$sys_dbhost='localhost';<br>
+			$sys_dbuser='username';<br>
+			$sys_dbpasswd='password';<br>
+			</code>
+			<p>
+			change path to citrus to the filesystem path of your installation:<br>
+			<code>
+			$path_to_citrus='/home/<username>/citrusdb';<br>
+			</code>
+			<p>
+			change the hidden hash var to your own secret passphrase<br>
+			<code>
+			$hidden_hash_var='youmustchangethis';<br>
+			</code>
+			</blockquote>
+
+		<li> add a cron job to run the statusupdate script
+		(available in the citrusdb folder) every
+		night or after billing is done for the day.  This
+		script will update the customer's account status and
+		create a file that can be used to activate and
+		deactivate customer services automatically.
+	
+		<li> go to your web site address /citrusdb/index.php,
+		you can log in with username "admin",  password "test"
+		to start
+		  
+	
+		<li> go to the tools section and start configuring things.  Go to the general configuration button and enter the corresponding information.
+		</ol>		
+		</blockquote>
+	
+	<h4>Installing the Public Online System for Customer Self-Service</h4>
+		<blockquote>
+		The online customer account manager component is stored in the 
+		citrusdb/online folder.  This holds a separate system that is meant to 
+		be copied to a public server to be used on the internet by customers to lookup account information and 
+		interact with their account and service information.  
+		<p>
+		This should be configured similarly to the above by editing the 
+		config.inc.php file inside the citrusdb/online/include folder, however 
+		you should use a different database login name and password that 
+		restricts the access to SELECT only and restricts INSERT to only the 
+		customer_history and SELESCT, INSERT, UPDATE, and DELETE in
+the session2 table.  
+		<p>
+		The $payment_url variable that should be set to whatever online form 
+		or payment system you have such as authorize.net, paypal, your own 
+		custom form etc.
+		<p>
+		The $notify_user variable holds a username from the internal system 
+		that will be notified of new requests that customers make online.
+		</blockquote>
+	</blockquote>
+
+<h3>Login to Citrus</h3>
+
+	<blockquote>
+	Go to the URL where you installed CitrusDB, probably something like http://www.yourname.com/citrusdb/index.php
+	the first time you log in, the default username is "admin" with a password of "test".  You should change this password 
+	immediately by editing it using the Users Tool.  You can also
+	add new users with this tool that can login with their own
+	unique username and password.
+	<p>
+	  If a login fails 5 times from the same IP, that IP
+	  will be blocked from login attempts until they contact the
+	  admistrator to clear their IP from the login_failures table.
+	</blockquote>
+
+<h3>Logout of Citrus</h3>
+
+	<blockquote>
+	To log out of CitrusDB click the Logout icon in the top right corner.  You should log out of CitrusDB after use to prevent others from using your account.  CitrusDB will automatically log out your session after about 10 hours.  If you are using CitrusDB longer than 10 hours you'll need to log back in to continue.
+	</blockquote>
+<a name="doc_customerservice">
+<h3>Customer Service:</h3>
+	<blockquote>
+	<h4>Find an exisiting customer account record</h4><a name="search">
+		<blockquote>
+		Click the search icon at the top of the screen.  Here you can search for a customer by the account number or other specific account fields that have been specified by the citrus administrator.
+		<h4>Adding new searches</h4>
+			<blockquote>
+			You can add new searches by adding a new row to the searches table.  For example in the query field:
+				<blockquote>
+				<code>SELECT * FROM customer WHERE phone LIKE '%%s1%%'</code>
+				</blockquote>
+		This will allow you to search the customer table for a phone number.  The %%s1%% will be replaced with the information filled out in the search form.  Then link to the search row id  using a small input form in the corresponding module search.php page.  In this case you would edit the /modules/customer/search.php file and add new html for a form:
+				<blockquote>
+				<code>
+				&lt;form ACTION="index.php?load=dosearch&type=fs" METHOD="POST"&gt;<br>
+				Find Phone Number: &lt;input type=text name=s1&gt;<br>
+				&lt;input type=hidden name=id value=4&gt; &lt;-- "4" is the id of the row in the searches table --&gt;<br>
+				&lt;input type=submit name=submit value="search" class=smallbutton&gt;<br>
+				&lt;form&gt;
+				</code>
+				</blockquote>
+			You can search with multiple field inputs by naming each field s1, s2, s3, s4, or s5.
+			</blockquote>
+		</blockquote>
+
+	<h4>Adding a new customer</h4><a name="customer">
+		<blockquote>
+		Click the New icon at the top of the screen.  Fill in the initial customer account information and click Add.  You will then be taken to the customer's new account record.  On the left side you'll see the account number that was assigned to the new customer and the customer's name and company name.  Now you can edit the customer's information, add services, billing, and support information.
+		</blockquote>
+	<h4>Add services to a customer</h4><a name="services">
+		<blockquote>
+		Click on the Services tab to view the services that are assigned to this customer.  If any services 
+		have taxes or fees associated with them, they will show up under the 
+		Taxes and Fees heading.  To add a new service click on the Add Service link.  This will show all the available services that can be added. You can click on the service name or the add button to add the service.  If the service you are adding has attributes it will prompt you to fill in any service attributes.  You'll see a field here called Usage Multiple.  This field is used to multiply the cost of a service by that amount.  This can be used for billing services that cost by the minute, hour, megabyte, etc.
+		<h4>Adding Prorate Services</h4>
+			<blockquote>
+			Most installations of citrusdb include a premade Prorate service.  If you do not have a permade Prorate service you will need to add one.  A Prorate service is simply a service with a frequency of zero, a Pricerate of 1, and a Usage Label of whatever currency you are using.
+<p>
+			First add the service they are getting to their account and then add a
+onetime prorate service to the customer's account.  When adding the
+prorate service set the Usage Multiple to the amount you want to prorate
+the account for to get it into the right billing cycle. You need to do a
+little math here on your own.  So say you add a 19.95 service, in a 30
+day month each day is 0.665 cents.  If you want to bill them on July
+1st, and today is June 8th, then there are 22 days of prorated service,
+which is 14.63.  So put 14.63 in the Multiple field.  Their first bill
+will then equal 34.58 with the service item plus the prorate item.
+<p>
+In the billing section for that customer you would set their next
+billing date to be July 1st, set the from date to July 1st also, and
+then it will fill in the to date equal to whatever number of months the
+billing type covers starting July 1st, so if you had a monthly invoice
+service the to date would be August 1st.  This will make the billing dates at the top of the invoice not exactly match the prorate time period since there is a prorate item in there and they really started service on the 8th.  In the prorate description one could put the date of the prorate period.
+			</blockquote>
+		</blockquote>
+	<h4>Edit service information</h4>
+		<blockquote>
+		To edit a service click on the Services tab.  Here you'll see all the services that the customer has.  You can edit the service by clicking on it's name in the list or by 
+	clicking the Edit button.  In the edit screen you can modify any 
+	service attributes that are stored in the options_table for that 
+	service type.  You can change the Usage Multiple for this service.  A 
+	usage multiple is used to multiply the price of the service by the 
+	usage.  You can use this to multiply by item, hourly, 
+	daily, megabyte, gigabyte, or other amounts etc.  The Billing ID field 
+	is used to assign this service to a different billing id than the 
+	default billing id for this customer.  This can be used to allow 
+	multiple billing types on different billing cycles for one customer.
+		<h4>Adding new options url links</h4>
+			<blockquote>
+The URL options are links that can be put next to service attributes in the edit screen to allow them to query a URL with that service attribute.  This can be used for things like checking the finger results on a unix server or checking other account status through a website.  The URL Options Links are stored in a table called options_urls.  You can add new links or edit existing ones using sql queries or a utility like phpMyAdmin.  The URL link is matched by the name of the options_table field, so any options_table with a matching name will get a link next to it.  For example if you have a username field and you want people to be able to run a finger.cgi on any options_table with a name of username you would make a new entry into the options_url table with the fieldname of username and a url such as http://www.example.com/finger.cgi?%s1% - the %s1% is a place holder where the value of the attribute will be put into the URL.
+			</blockquote>
+		</blockquote>
+
+	<h4>View a customer's service history</h4>
+		<blockquote>
+		Click the Service Tab and then click the History link.  This will show the customer's service history, including any canceled services and one time services that have already been billed for.
+		</blockquote>
+
+	<h4>Edit a customer's information</h4>
+		<blockquote>
+		To edit a customer's information click on the Customer tab and click the Edit Customer link.  After making any updates make sure you click the Save Changes button to save them.
+		</blockquote>
+
+	<h4>Add a billing information to a customer</h4><a name="billing">
+		<blockquote>
+		To add billing information to a customer click on the Billing tab.  When you have a new customer the billing information will be empty.  Click on the Reset Address to Customer link to copy the customer's name and address information to the billing information if they are the same.  To edit the information click on the Edit Default Billing link.  Here you can make any changes you need to.  Make sure you choose a Billing Type for the account when editing their billing information for the first time.
+		</blockquote>
+
+	<h4>Add an alternate billing type to a customer's service</h4>
+		<blockquote>
+		Click the billing tab in the customer record.  Click the Add Alternate Billing link on this screen.  This will prompt you for new billing information.  Click Add when you are done.  You can now assign this alternate billing type to a service by going to the Service tab, Editing a service, and changing the billing id on the edit screen.  This allows you to have different billing types for different services, such as when some services will be billed monthly and another service is to be billed on a yearly basis.
+		</blockquote>
+
+	<h4>Rerun a declined or invalid credit card</h4>
+		<blockquote>
+		Click the billing tab and then click the Rerun link on this screen.  This is to be used to rerun the credit card billing if a previous credit card transaction was declined.  This will run past transactions but will not add new ones to the bill.
+		</blockquote>
+	
+
+	<h4>Put a note on a customer's account record</h4><a name="support">
+		<blockquote>
+		After you provide help to a customer or make a change things on their account it can be helpful to make a note of what was done.  To leave a note, click the Support tab on the customer record.  Here you can begin entering the note you want to leave.  You may choose to notify a specific group or user of the database or not notify anybody of your note.  When you are done writing your note click the Add button.  Notes will show up in the customer history under the Notes tab on their account record.
+		</blockquote>
+	
+	<h4>Check notes sent to you</h4>
+		<blockquote>
+		The number of notes that are sent to you will show up on the message notification tab, it will say how many messages you have waiting.  You can click this tab to view the notes or click the Support tab and the Check Notes link.  You can set the note to pending while you are waiting for more information or performing the operation.  When you are done with the note, click Finished and it will be hidden from your new message listing.
+		</blockquote>
+
+	<h4>Account history tabs</h4>
+		<blockquote>
+		<h4>Notes</h4>
+			<blockquote>
+			Shows notes and customer history
+			</blockquote>
+		<h4>Billing</h4>
+			<blockquote>
+			Shows invoices and credit card transactions sent
+			</blockquote>
+		<h4>Payments</h4>
+			<blockquote>
+			Shows payments that have been made
+			</blockquote>
+		<h4>Billing Details</h4>
+			<blockquote>
+			Shows what service the payments were applied to
+			</blockquote>
+		</blockquote>
+
+	<h4>Changing your citrusdb access password</h4><a name="tools_changepass">
+		<blockquote>
+Click on the Tools icon at the top of the screen, then click on the Change Your Password icon.  Any user may change their password using the Change Your Password tool.  To do so they must enter their Old Password 
+and the New Password that they desire to have and then again to confirm it.  After it has been changed, the next time the user logs 
+into CitrusDB it will require the new password.  Passwords are stored in an MD5 encrypted format inside the user table of the database.
+		</blockquote>
+	</blockquote>
+<a name="doc_managingservices">
+<h3>Managing Services</h3><a name="tools_services">
+	<blockquote>
+	<h4>Activating Accounts</h4>
+		<blockquote>
+Click on the Tools icon at the top of the screen and then click on the Activate Account icon.  This will create a file in the path_to_ccfile you specified (the same path as credit card data) with a list of accounts to ADD, DELETE, ENABLE and DISABLE today.  This file can be used in conjunction with cron jobs or scripts that check for new account files and process them automatically. The interface also gives you the option to download the file to process it on your local PC.  It will print an ADD line for new services added today.  A DELETE line for services that have a removal date of today.  An ENABLE entry for services that should be turned back on today that were previously disabled due to billing issues.  A DISABLE line for services that should be shut off today such as accounts with declined credit cards or past due.  It prints them in a standard text format that could be processed by an activation script at a later time.  Example:		<blockquote>
+			<code> "ADD","service_category","customer_name","service_description","activation_item1","activation_item2"...</code>
+			</blockquote>
+			Each line item is in quote comma delimited format (with no spaces).
+		</blockquote>
+	<h4>Printing Welcome Letters</h4>
+		<blockquote>
+		Click on the Tools icon and select the Welcome Letters icon.  This will print a simple welcome letter for new customers that can be mailed.  It has a summary of the services they signed up for included.
+		</blockquote>
+	</blockquote>
+<a name="doc_billing">
+<h3>Billing</h3><a name="tools_billing">
+	<blockquote>
+	<h4>Import new accounts from a file</h4>
+		<blockquote>
+Online order forms can save the order data and you can use Import New Accounts tool to import the orders into citrusdb.  Here is an example of what the order data file should look like:<br>
+<pre>
+Online, Test User, Test Company, 523 Test Ave., Testcity, CA, USA, 95113, 408-555-5555, 408-555-6666, 408-555-7777, user@example.com, , What is your favorite color, red, testpassword
+Test User, Test Company, 1 Test Street, Testcity, MA, USA, 01234, 555-555-1234, 555-555-1235, test@example.com, 1, 4111111111111111, 0406
+3, usernm, passwd, Linux, 1 Test Street, Cisco Thing
+3, nameuser, wordpass, Windows, 123 Test Street, USB Thing
+-
+</pre>
+<p>
+The first line of the import record is the customer data, the second line is the billing data, and the third and optional fourth, fifth sixth, and more lines are for services to add to the account upon import.
+The "-" character denotes the the record end and the beginning of the next customer recod after it.
+<p>
+Field definitions:<br>
+<pre>
+source, name, company, street, city, state, country, zip, phone, alt_phone, fax, contact_email, tax_exempt_id, secret_question, secret_answer, account_manager_password
+Name, Company, Street, City, State, Country, Zip, Phone, Fax, Email, Billing Type ID, Creditcard Number, Creditcard Expiration
+Service ID, (any fields that make up the services options_table) in this case, Username, Password, OS, Street, Device
+-
+		</blockquote>
+	<h4>Export credit card batch</h4><a name="tools_exportcc">
+		<blockquote>
+		Click on the Tools icon and select the Export Credit Cards icon.  This tool is used to export the credit cards to bill in a batch format.  
+This will prompt you for what date you want bill.  It will then show you a summary of 
+the services it found to bill.  You can then export the cards to a file.  This file will be stored in the folder you specified using the Path To Credit Card File in the general configuration.  This can be used in conjunction with cron jobs or scripts that check for new billing files and process them automatically. The interface also gives you the option to download the file to process it on your local PC.  This file can then be formatted and transmitted to your credit card billing provider via a batch upload.  The format for these line items is controlled by the Credit Card Export Variable Order in the general configuration.
+<p>
+Thehe file will be exported in a format that looks like: 
+<blockquote>
+<code>"CHARGE","1","19","4111111111111111","0909","1036.4","12345","1 Example St"
+</code></blockquote>
+<p>
+		</blockquote>
+	<h4>Import credit card batch</h4><a name="tools_importcc">
+		<blockquote>
+		This will prompt you to browse your hard drive for the batch results file from your credit card processing system.  The format for this file is: 
+			<blockquote>
+			<code>"CHARGE or CREDIT","card number","card expire","amount","billing id","approved (Yes) or declined (No)", "avs response"</code>
+			<p>
+			it will look something like:
+			</p>
+			<code>"CHARGE","4111111111111111","0909","1036.40","1","Yes","A"</code>
+			</blockquote>
+	Upon importing this file accounts will have their billing status updated accordingly.  If a CREDIT is imported it should also have a response of declined (No).  It will show as a credit in their payment history, but will not change their live account status.
+		</blockquote>
+	<h4>Import credit card change file</h4>
+		<blockquote>
+		Click the Tools icon and select the Credit Card Changes icon.  This tool is used to import credit card changes that have been sent in via external methods such as online forms or email messages, usually done after a card has declined and a notice has been sent to the customer.  The format for this file is:
+			<blockquote>
+			<code>
+			account_number, name, street, city, state, zip, card_number, card_expiration_date
+			</code>
+			</blockquote>
+This will updated the credit card number on all billing id's assigned to that customer.
+		</blockquote>
+	<h4>Print invoices</h4><a name="tools_invoice">
+		<blockquote>
+		Click on Tools and select the Print Invoices icon.  This tool can print batches of invoices based on their Next Billing Date, or individual invoices based on their Billing ID number, or Account Number.  After you enter this information it will then 
+provide you with a summary of what it found and prompt you to print the invoices.  Then it will render the invoice page as a PDF file that can be opened with an PDF reader.
+		</blockquote>
+	<h4>Email Invoices</h4>
+		<blockquote>
+		Click on Tools and select the Print Invoices icon.  This tool can print batches of invoices based on their Next Billing Date, or individual invoices based on their Billing ID number, or Account Number.  After you enter this information it will then 
+provide you with a summary of what it found and prompt you to print the invoices.  Then it send an HTML formatted email invoice to the billing_email specified in their billing record.
+		</blockquote>
+	<h4>Enter Payments</h4><a name="tools_payment">
+		<blockquote>
+		Click the Tools and select the Enter Payments icon.  To enter payments you must enter at least three pieces of information, the billing ID, the payment amount, and the payment type.
+<ul>
+<li>Billing ID: This is the billing id number of the customer who is being paid
+<li>Invoice Number: This is an optional value for the number of the invoice that is being paid.  This causes the billing system to pay only those services that were on this invoice, instead of any services that owe money.
+<li>Payment Amount: This is the amount that was paid
+<li>Payment Type: This is the type, Check, Cash, or EFT of the payment.
+</ul>
+		If an over-payment is made, it will show you the amount left over as the over-payment.  You may then make a new credit on the account for that over-payment or apply it to a different account, for example, if the customer has multiple records.
+		</blockquote>
+
+	<h4>Invoice Maintenance</h4><a name="tools_invmaint">
+		<blockquote>
+You can reach this tool two different ways.  Either by going to the Tools icon and selecing the Invoice mantenance icon, then enter the billing ID that you want to view.  You can also reach the invoice maintenance for a specific customer from the Billing tab on that customer's record by clicking the Invoice Maintenance link.  This tool will list out the invoices for that billing ID.  You can click on the pdf or html link to see a snapshot of that invoice in pdf or html format, click the email link to email a copy of the invoice to the customer, or click on remove to remove that invoice and related charges from their account.  You may only remove an invoice that has not been paid for or had any credits applied to it.
+		</blockquote>
+
+	<h4>Refund a customer</h4>
+		<blockquote>
+		The Refund Report link on the customer's billing record can be used to indicate what service and amount of a refund to apply to a service.  After a refund is indicated here, you can run a credit card batch of refunds all at once using the Refund Tool link in the Tools section.  This will create a new credit card batch file, in the same format as your regular credit card batches, full of all the outstanding CREDITs that have yet to be processed.  After these are processed you can import them using the credit card import tool, to indicate the credits in the customer's payment history.
+		</blockquote>
+
+	</blockquote>	
+<a name="doc_reports">
+<h3>Reports</h3>
+	<blockquote>
+	<h4>Customer Summary</h4><a name="tools_summary">
+		<blockquote>
+		Click on the Tools icon and select the Customer Summary icon.  This will produce a summary that shows the total number of customers and a break down of the number of customers per each service type.
+		</blockquote>
+	<h4>Revenue Report</h4><a name="tools_revenue">
+		<blockquote>
+		This report shows the total amount of revenue for each service in the time period entered.  It will also show you the total number of 
+		service records that were charged to create that revenue in parentheses.
+		</blockquote>
+	<h4>Past Due Report</h4><a name="tools_pastdue">
+		<blockquote>
+		This report shows the past due accounts according to the days indicated in the general configuration.
+		</blockquote>
+	<h4>Recent Declines</h4>
+		<blockquote>
+		Click on the Tools icon and then select the Recent Declines icon.  You will be prompted for what day from the previous week you want to find declined cards for.  It will then produce a report of the credit card declines from that day.  You can use this report to contact customers to get new billing information.
+		</blockquote>
+	</blockquote>
+<a name="doc_administration">
+<h3>Adminstrator</h3>
+	<blockquote>
+	<h4>General Configuration</h4><a name="tools_general">
+		<blockquote>
+In the General Configuration tool you will enter information about the organization that is using the database, address, contact info, 
+and other preferences.  This address and contact information will appear on invoices printed by the database.  Most of the fields 
+should be self explanatory.  Some of them have special purposes specified below:
+<ul>
+
+<li>Billing Date Rollover Time: The billing date rollover time is a time variable in 24 hour format that is used when adding new customers. 
+If the billing date rollover time is set new customer activation dates will rollover to the next day at the time specified.  Eg: If a customer 
+is created at 3pm and your rollover time is 4pm, then the customer will have been created that day, however if the customer is created at 
+5pm, the rollover time will cause the customer's signup date to become the next day.  This is usually used for billing purposes 
+since one may bill at a certain time for customers that are new that day, and anyone after that will have to be billed on the 
+next day.  There is also a holiday table in the database that will cause the new customer date to skip those holidays and be set to the next 
+non-holiday day.
+
+<li>Default Group: The default group is users, this is the group that all new users are put into when created.  You may change this 
+if you create a new group for your uses.
+
+<li>Credit Card Export Variable Order: This is the order that variables are printed for each line of the credit card exports.  It can be used to 
+customize the export order and variables to suit your credit card processing software.
+
+<li>Path To Credit Card: This should be set to the path to the folder you wish to store imported and exported credit card data inside.  The path 
+should be outside of your web server's file path.
+
+<li>Weekends: There is a list of days of the week that can be modified to indicate weekends when billing is not performed.  This will cause new billing dates to skip those days and move ahead to the next day.  For example, if a customer signs up on a Saturday weekend day, then their next billing date will move ahead to that Monday so they are billed with the normal monday billing cycle.  This does not affect current customers when their billing dates are moved ahead, so you must still bill those customers on their prior to or on their billing date.  For example, billing all the weekend customers on Friday.
+		</blockquote>
+	<h4>Adding new citrusdb users</h4><a name="tools_users">
+		<blockquote>
+		Click on the Tools icon and select the Users tool.  You will see a list of usernames that have access to citrusdb.  To add a new user click the Add New Database User link.  Enter in the user details and choose their Tool Priveleges.  An admin user has access to everything in the Tools.  A manager user has access to everthing execpt the Admin tools that administer users, billing types, and services.  Do not select either Admin or Manager for users that don't need those special privileges.
+		</blockquote>
+	<h4>Editing existing citrusdb users</h4>
+		<blockquote>
+		Click the Tools icon and select the Users tool.  Click Edit next to the user's name.  Here you can edit their name, privileges, and change their password.
+		</blockquote>
+	<h4>Adding new groups</h4><a name="tools_groups">
+		<blockquote>
+		
+Click the Tools icon and select the Groups tools.  Here you will see a list of the groups.  Groups are used to make groups of users that you may send notices to every user in a group using the 
+Support module, such as notifying operators or administrators of account changes to be made, or to give different module privileges to.  You can delete a group by clicking the Delete link in the list.  To add a group click Add New Group.  When you add a new group 
+you must choose the user to add to the group and type in the group name exactly as it is specified, same case etc.
+		</blockquote>
+	<h4>Modules</h4><a name="tools_modules">
+		<blockquote>
+		To see the modules click the Tools icon and select the Edit Modules tool. 
+There are four default modules.  The Add Module function will add the module name to the database.  
+The Edit Permissions function is not functioning will allow you to edit who can view, edit, and create records in certain modules.  There are more instructions on creating modules in the MODULES text file that came with citrusdb.
+
+		</blockquote>
+	<h4>Adding billing types</h4><a name="tools_billing">
+		<blockquote>
+		Click the Tools icon and select the Edit Billing types icon.  Here you can view the current billing types, edit, remove, or add new ones.  At the bottom of the list of billing types you can enter information to add new billing types.
+<p>
+New Billing Types require:<br>
+<ul>
+<li>Name: This is the name of the billing type, such as "Invoice Monthly" that the users sees when they select a billing type for the customer.
+<li>Sortorder: This is the order for this item in the list of billing types
+<li>Frequency: This is the frequency in months that this billing type is billed.  For example a billing type of Yearly Invoice would have a frequency of 12, where a billing type of Monthly Invoice would have a frequency of 1.  One time billing types for free accounts or single purchase types would have a frequency of 0
+<li>Method: This is the method category for the billing type, creditcard, invoice, prepay, or free.  This method determins what billing tool will create the bill for this billing type.
+</ul>
+<p>
+Before you remove a billing type, make sure you have no customer billing records using that billing type to make sure that your customers will continue to get billed properly.
+		</blockquote>
+	<h4>Adding and Editing services</h4><a name="tools_services">
+		<blockquote>
+		Click on the Tools icon and select the Edit Services tool.  
+		This will list out all the services that are available with some of their details.  You can click the Edit link next to the service name 
+to modify that service using the same format as the Add New Service fields listed below.  The add new service allows you to enter new services to appear on the available listing.
+<ul>
+<li>Service Description: 
+	Here you'll enter the text description for the service that will appear in the database and on invoices.
+<li>Price Rate: 
+	This is the price of the service per frequency.
+<li>Frequency: 
+	Services and Billing Types both have frequencies.  Frequencies are numbers of months that the service or account is billed for at one time.  Each service has a billing frequency.  Lets say you want to offer a service for 4.95 per month, then you make a new service with a price of 4.95 and a frequency of 1. If the customer has a billing type with a frequency of 3, it would multiply that monthly cost times 3 and get the resulting cost for that quarterly invoice, 14.85. If the customer billing type is monthly then it will just have 1x1 and give you 4.95 as the cost for that billing type.  You can use this to create services 
+	that are billed at more than monthly frequencies by making the frequency for example 6.  Then that service and price will be billed every 6 months.
+	<p>
+	You will get an error if you add a service with a frequency greater than their billing type. Say you have a service that is called something like Yearly Photo Hosting with a frequency of 12. You can't add that service to an account with a billing type that is billed monthly (a frequency of 1). You would have to create either an alternate billing type to connect to that account for this one service or change the account's billing type to one that works with that frequency, say Invoice Yearly.
+	<p>
+	There is also one special type of billing frequency of 0 which is for one time charges. 
+<li>Options Table: 
+	Options tables are the name of the table in the database that holds the fields for the options of that service.  Not every service 
+	needs and options table.  Options tables are used to hold values unique to that service, such as the username for an access account, 
+	the mailing address for a subscription service, the make and model of a product that was serviced, etc.  Anything that is to be kept 
+	with that service information.  
+	To edit an options table you must use SQL queries to add fields to them or a utility like phpMyAdmin. 
+	When new options tables are created they must have an ID and user_services field to connect them to the user's services. 
+	You may then add any fields you wish after those first two.  Options tables for a service should be named ending in "_options" so they are easy to 
+	find in the database, eg: website_options, lawncare_options, etc.
+<li>Category: 
+	The category field is will be used to organize the different services into categories.  Category names are case sensitive, so if you have already made a category, and want to enter a new service in the same category, make sure you enter the name exactly as in the previous service.
+<li>Selling Active: 
+	This will show or hide the service on the Add Service page.  Please make sure you choose Yes when adding a new service since it 
+	defaults to No.
+<li>Hide Online: This is used to specify whether the service should be hidden from the online account manager for customers.  This is often used to hide linked setup fees or special services that a customer cannot get directly, such as free promotions.
+<li>Post Billed: This field is not used and will be removed in a future version.
+<li>Activate Notify: 
+	This will hold the username or groupname of who you want to be notified when this service is activated via a support message.  This is useful when you have 
+	other people using the database that must be made aware of when new services are turned on to perform their duties to provide that service 
+	to the customer.  You may leave this blank if you do not with to notify anybody.
+<li>Shutoff Notify: 
+	This will hold the username or groupname of who you want to be notified when this service is shutoff via a support message. 
+	This is useful when you have other people using the database that must be made aware of when services are turned off to perform 
+	their duties to shut down service to the customer. You may leave this blank if you do not with to notify anybody.
+<li>Activation String:  The activation string is used by the activate service tool.  This is a string that holds fields from the options_table that are passed to the activation script when a service is added, deleted, enabled, or disabled.  You can leave this field blank if you do not need to pass any options_table information.
+<li>Usage Label: This is a label used next to the usage multiple field when editing services.  It can help clarify what the usage multiple is for with a particular service, such as when you charging a service by the hour, day, megabyte, etc.
+</ul>
+
+		</blockquote>
+		<blockquote>
+		<h4>Linking services, for setup fees or installation fees</h4>
+			<blockquote>
+			In the Edit Services tool click the Link Services link.  This shows your current service links.  Links are used when you have two services that when one is added the other should go along with it, such as setup fees 
+	or installation fees.  When you add say a service for one you want the other to be added as well.  You can click the Unlink button 
+	next to the service to remove the link.
+<p>
+To add a new link select the link from service and link to service from the drop down list and click Add.  This will link the services together.  Any time the Link From service is added to an account from now on, the Link To service will be automatically added also.
+			</blockquote>
+		<h4>Options tables, for service attributes</h4>
+			<blockquote>
+Service attributes, such as usernames, passwords, service address, unique identification numbers, anything that is directly associated with that one service, should be stored in an options_table.  The Options Tables link in the Edit Services tool will show you a list of the currently active Options Tables from services that you have.  It will show you tables that are 
+Ready to be used and tables that you have named in the Services editor but have not yet created.  You may click the Create link next to the listing 
+to create the empty options table.  After you have created an options table you'll need to add fields to it that hold the attributes that are associated with that service. To edit an options table you must use SQL queries to add fields to them or a utility like phpMyAdmin. When new options tables are created they are all created with an ID and user_services field to connect them to the user's services. You may then add any fields you wish after those first two.
+			</blockquote>
+		<h4>Taxes and Fees</h4>
+			<blockquote>
+			
+Here you will see a list of the taxes from the tax_rates table.  CitrusDB does not know precisely the current taxes for your
+region.  Check with your tax officials for proper information.  You may remove a tax rate by clicking on the Delete link next to that listing.  At the 
+bottom of the list there are fields to add new tax rates.
+<p>
+<b>New Tax Rates</b>
+	<p>
+	<ul>
+	<li>Description
+		<p>
+		This it the description text that will show up in the services listing and on invoices.
+		</p>
+	<li>Rate
+		<p>
+		This is the rate that the price is multiplied by to come up with the tax amount.  For a 5% tax put 0.05 etc.
+		</p>
+	<li>If-Field
+		<p>
+		This is the field in the customer table that is used to check against the value to see if one should apply this tax 
+		to that customer.  Say for a state sales tax one would put the field name "state" in the field.  You may leave this blank 
+		if that tax is applied no matter what is in the customer values.
+		</p>
+	<li>If-Value
+		<p>
+		This is the value that the If-Field is compared to.  For example if you put a field name of "state" in the If-Field and put "AK" in this 
+		field then that tax will only be applied if the customer's state is Alaska.
+		</p>
+	</ul>
+
+<b>Taxed Services</b>
+<p>
+Taxed services will show the services that have tax applied to them.  You may also add new taxes to services by Linking the service to a 
+tax rate that you created using the New Tax Rates form in the previous Tax Rates page.
+
+			</blockquote>
+		</blockquote>
+	</blockquote>	
+</body>
+</html>

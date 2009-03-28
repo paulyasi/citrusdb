@@ -1,0 +1,25 @@
+// list of available variables that can be included in the export from billing //
+// make an interface to choose these //
+
+WILL ALWAYS START WITH CREDIT, or CHARGE, to mark type of charge
+
+$user (the database user)
+$batchid
+$mybilling_id (the billing id being run)
+$invoice_number
+$billing_name
+$billing_company
+$billing_street
+$billing_city
+$billing_state
+$billing_zip
+$billing_acctnum
+$billing_ccnum
+$billing_ccexp
+$billing_fromdate
+$billing_todate
+$billing_payment_due_date
+$mydate (Y-m-d date format)
+$precisetotal (total to 2 decimal places, if negative it will use absolute value of it with CREDIT marked)
+
+These will become part of the newline variable in the exportccsave.php file

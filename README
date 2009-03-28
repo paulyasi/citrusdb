@@ -1,0 +1,51 @@
+
+    CitrusDB - The open source customer database and billing software
+    http://www.citrusdb.org
+
+    Read the help.html file for installation instructions.
+
+    Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+  Requirements: 
+
+	PHP 5.0.4 or greater, and MySQL 4 or greater
+	register_globals turned off in your php.ini
+
+
+  Project Contributors:
+
+	Lead Developer: 
+		Paul Yasi
+
+	Code Contributors:
+		Matthew Veno
+		David Olivier
+		Maurice Castro
+		Rich Cloutier
+
+	Translations:
+		NL-Dutch: Atilla Yildirim
+		EU-French: Jean-Baptiste Dupont
+		DE-German: Florian Latzel und  Martin Schon
+		NO-Norwegian: Terje Nauf
+		ES-Spanish: Rodolfo Pilas
+		TR-Turkish: Mehmet Bedii Kaya
+
+  Download:
+	
+	You can get the newest version at http://www.citrusdb.org/
