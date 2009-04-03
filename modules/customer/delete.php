@@ -72,7 +72,7 @@ if ($whycancel) {
      list($myyear, $mymonth, $myday) = split('-', $signup_date);
      $removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
      $today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
-     if ($removal_date <= $today) {
+     if ($removal_date < $today) {
        $removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
      }
    }

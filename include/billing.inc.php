@@ -749,6 +749,8 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 			$pricerate = $myresult['pricerate'];
 			if ($pricerate > 0) {
 			  $monthmultiple = $billed_amount/$pricerate;
+			} else {
+			  $monthmultiple = 0;
 			}
 
 			if ($printtype == "pdf")
@@ -783,7 +785,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 			$myline++;
 
 			// add a new page if there are many line items
-			if ($myline > 28) {
+			if (($myline > 28) AND ($printtype == "pdf")) {
 				$pdf->AddPage();
 				$pdf->SetXY(10,20);
 				$myline = 1;
