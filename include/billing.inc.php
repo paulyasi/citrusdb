@@ -714,7 +714,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		LEFT JOIN master_services m ON u.master_service_id = m.id
 		LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id 
 		LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
-		WHERE d.invoice_number = '$invoiceid' ORDER BY tr.id ASC";
+		WHERE d.invoice_number = '$invoiceid' ORDER BY tr.id ASC, d.billed_amount DESC, u.master_service_id ASC";
 		
 		$result = $DB->Execute($query) or die ("$l_queryfailed");
 		
