@@ -78,7 +78,7 @@ if ($edit) {
      "FROM user_services AS user, master_services AS master ".
      "WHERE user.master_service_id = master.id ".
      "AND user.account_number = '$account_number' AND removed <> 'y' ".
-     "ORDER BY master.service_description, user.id";
+     "ORDER BY master.service_description ASC";
    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
    $result = $DB->Execute($query) or die ("$l_queryfailed");
 
@@ -147,119 +147,138 @@ if ($edit) {
      print "<input type=hidden name=optionstable value=\"$options_table\">";
      print "<input name=editbutton type=submit value=\"$l_edit\" ".
        "class=smallbutton></form></td></tr>";
-}
+
+     // check for taxes for this service
+     $mytaxoutput = checktaxes($DB, $id);
+     echo $mytaxoutput;
+   }
    
-print "</table></td></table></form>";
+   print "</table></td></table></form>";
+
+ } else permission_error();
+
+
 
 // query the taxes and fees that this customer has
 
-$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
-  "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
-  "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
-  "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
-  "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
-  "tr.percentage_or_fixed tr_percentage_or_fixed, ".
-  "us.master_service_id us_msid, us.billing_id us_bid, us.removed us_removed, ".
-  "us.account_number us_account_number, te.account_number te_account_number, ".
-  "te.tax_rate_id te_tax_rate_id, te.customer_tax_id te_customer_tax_id, ".
-  "te.expdate te_expdate ".
-  "FROM taxed_services ts ".
-  "LEFT JOIN user_services us ON us.master_service_id = ts.master_services_id ".
-  "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
-  "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ". 
-  "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
-  "AND te.tax_rate_id = tr.id ".
-  "WHERE us.removed = 'n' AND us.account_number = '$account_number'";
-
- $DB->SetFetchMode(ADODB_FETCH_ASSOC);
- $result = $DB->Execute($query) or die ("$l_queryfailed");
-
-// Print the taxes and fees that this customer's services have
-
-echo "<p><b>$l_taxesandfees</b><br>".
-  "<table cellpadding=0 border=0 cellspacing=0 width=720><td valign=top>".
-  "<table cellpadding=2 cellspacing=1 border=0 width=720>".
-  "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
-  "<td bgcolor=\"#ccccdd\"><b>$l_taxdescription</b></td>".
-  "<td bgcolor=\"#ccccdd\"><b>$l_taxamount</b></td>".
-  "<td></td>";
- 
-while ($taxresult = $result->FetchRow()) {
-  $service_description = $taxresult['ms_description'];
-  $tax_description = $taxresult['tr_description'];
-  $freqmultiplier = $taxresult['ms_freq'];	
-  $if_field = $taxresult['tr_if_field'];
-  $if_value = $taxresult['tr_if_value'];
-  $tax_rate_id = $taxresult['tr_id'];
-  $percentage_or_fixed = $taxresult['tr_percentage_or_fixed'];
-  $tax_exempt_rate_id = $taxresult['te_tax_rate_id'];
-  $customer_tax_id = $taxresult['te_customer_tax_id'];
-  $customer_tax_id_expdate = $taxresult['te_expdate'];
+function checktaxes($DB, $user_services_id) {
+  global $lang;
+  include ("$lang");  
   
-  // check the if_field before printing to see if the tax applies to this customer
-  if ($if_field <> '') 
-    {
-      $ifquery = "SELECT $if_field FROM customer ".
-	"WHERE account_number = '$account_number'";
-      $DB->SetFetchMode(ADODB_FETCH_NUM);
-      $ifresult = $DB->Execute($ifquery) or die ("$l_queryfailed");	
-      $myifresult = $ifresult->fields;
-      $checkvalue = $myifresult[0];
-    } else {
-    $checkvalue = TRUE;
-    $if_value = TRUE;	
-  }
+  $query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+    "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+    "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+    "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+    "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+    "tr.percentage_or_fixed tr_percentage_or_fixed, ".
+    "us.master_service_id us_msid, us.billing_id us_bid, us.removed us_removed, ".
+    "us.account_number us_account_number, te.account_number te_account_number, ".
+    "te.tax_rate_id te_tax_rate_id, te.customer_tax_id te_customer_tax_id, ".
+    "te.expdate te_expdate ".
+    "FROM taxed_services ts ".
+    "LEFT JOIN user_services us ON us.master_service_id = ts.master_services_id ".
+    "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+    "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ". 
+    "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+    "AND te.tax_rate_id = tr.id ".
+    "WHERE us.removed = 'n' AND us.id = '$user_services_id'";
   
-  if ($checkvalue == $if_value)
-    {
-      // check that they are not exempt
-      if ($tax_exempt_rate_id <> $tax_rate_id)
-	{
-	  // check if it is a percentage or fixed amount
-
-	  if ($percentage_or_fixed == "percentage") {
-	    if ($freqmultiplier > 0) {
-	      $tax_amount = $taxresult['tr_rate'] * $taxresult['ms_pricerate'] * $freqmultiplier;
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  
+  // Print the taxes and fees that this customer's services have
+  
+  //echo "<p><b>$l_taxesandfees</b><br>".
+  //  "<table cellpadding=0 border=0 cellspacing=0 width=720><td valign=top>".
+  //  "<table cellpadding=2 cellspacing=1 border=0 width=720>".
+  //  "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
+  //  "<td bgcolor=\"#ccccdd\"><b>$l_taxdescription</b></td>".
+  //  "<td bgcolor=\"#ccccdd\"><b>$l_taxamount</b></td>".
+  //  "<td></td>";
+  
+  while ($taxresult = $result->FetchRow()) {
+    $account_number = $taxresult['us_account_number'];
+    $service_description = $taxresult['ms_description'];
+    $tax_description = $taxresult['tr_description'];
+    $freqmultiplier = $taxresult['ms_freq'];	
+    $if_field = $taxresult['tr_if_field'];
+    $if_value = $taxresult['tr_if_value'];
+    $tax_rate_id = $taxresult['tr_id'];
+    $percentage_or_fixed = $taxresult['tr_percentage_or_fixed'];
+    $tax_exempt_rate_id = $taxresult['te_tax_rate_id'];
+    $customer_tax_id = $taxresult['te_customer_tax_id'];
+    $customer_tax_id_expdate = $taxresult['te_expdate'];
+    
+    // check the if_field before printing to see if the tax applies
+    // to this customer
+    if ($if_field <> '') 
+      {
+	$ifquery = "SELECT $if_field FROM customer ".
+	  "WHERE account_number = '$account_number'";
+	$DB->SetFetchMode(ADODB_FETCH_NUM);
+	$ifresult = $DB->Execute($ifquery) or die ("$l_queryfailed");	
+	$myifresult = $ifresult->fields;
+	$checkvalue = $myifresult[0];
+      } else {
+      $checkvalue = TRUE;
+      $if_value = TRUE;	
+    }
+    
+    if ($checkvalue == $if_value)
+      {
+	// check that they are not exempt
+	if ($tax_exempt_rate_id <> $tax_rate_id)
+	  {
+	    // check if it is a percentage or fixed amount
+	    
+	    if ($percentage_or_fixed == "percentage") {
+	      if ($freqmultiplier > 0) {
+		$tax_amount = $taxresult['tr_rate']
+		  * $taxresult['ms_pricerate'] * $freqmultiplier;
+	      } else {
+		$tax_amount = $taxresult['tr_rate']
+		  * $taxresult['ms_pricerate'];
+	      }
 	    } else {
-	      $tax_amount = $taxresult['tr_rate'] * $taxresult['ms_pricerate'];
+	      // then it is a fixed amount not multiplied by the price
+	      $tax_amount = $taxresult['tr_rate'];
 	    }
+	    
+	    // round the tax to two decimal places
+	    $tax_amount = sprintf("%.2f", $tax_amount);
+	    
+	    print "<tr><td></td>".
+	      "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+	      "colspan=3>$tax_description</td>".
+	      "<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
+	      "colspan=4>$tax_amount</td>".
+	      "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
+	      "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+	      "<input type=hidden name=load value=services>".
+	      "<input type=hidden name=type value=module>".
+	      "<input type=hidden name=edit value=on>".
+	      "<input type=hidden name=taxrate value=\"$tax_rate_id\">".
+	      "<input name=exempt type=submit value=\"$l_exempt\" ".
+	      "class=smallbutton></form></td></tr>";
+	  
 	  } else {
-	    // then it is a fixed amount not multiplied by the price
-	    $tax_amount = $taxresult['tr_rate'];
-	  }
-	  
-	  // round the tax to two decimal places
-	  $tax_amount = sprintf("%.2f", $tax_amount);
-	  
-	  print "<tr>
-			<td bgcolor=\"#ccccdd\">$service_description</td>
-	        	<td bgcolor=\"#ccccdd\">$tax_description</td>
-	        	<td bgcolor=\"#ccccdd\">$tax_amount</td>
-			<td bgcolor=\"#ccccdd\">
-			<form style=\"margin-bottom:0;\" action=\"index.php\">
-			<input type=hidden name=load value=services>
-			<input type=hidden name=type value=module><input type=hidden name=edit value=on>
-			<input type=hidden name=taxrate value=\"$tax_rate_id\">
-			<input name=exempt type=submit value=\"$l_exempt\" class=smallbutton></form></td></tr>";
-	  
-	  
-	} else {
-	// print the exempt tax
-	print "<tr>
-			<td bgcolor=\"#ccccdd\">$service_description</td>
-	        	<td bgcolor=\"#ccccdd\">$tax_description</td>
-	        	<td bgcolor=\"#ccccdd\">$l_exempt: $customer_tax_id $customer_tax_id_expdate</td>
-			<td bgcolor=\"#ccccdd\">
-			<form style=\"margin-bottom:0;\" action=\"index.php\">
-			<input type=hidden name=load value=services>
-			<input type=hidden name=type value=module><input type=hidden name=edit value=on>
-			<input type=hidden name=taxrate value=\"$tax_rate_id\">
-			<input name=notexempt type=submit value=\"$l_notexempt\" class=smallbutton></form></td></tr>";
-      } // end if exempt tax
-    } // end if_field
- }
- 
- print "</table>";
- 
- } else permission_error();
+	  // print the exempt tax
+	  print "<tr style=\"font-size: 9pt;\"><td></td>".
+	    "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+	    "colspan=3>$tax_description</td>".
+	    "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+	    "colspan=4>$l_exempt: $customer_tax_id ".
+	    "$customer_tax_id_expdate</td>".
+	    "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
+	    "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+	    "<input type=hidden name=load value=services>".
+	    "<input type=hidden name=type value=module>".
+	    "<input type=hidden name=edit value=on>".
+	    "<input type=hidden name=taxrate value=\"$tax_rate_id\">".
+	    "<input name=notexempt type=submit value=\"$l_notexempt\" ".
+	    "class=smallbutton></form></td></tr>";
+	} // end if exempt tax
+      } // end if_field
+  } // end while
+} // end checktaxes function
 ?>
