@@ -53,12 +53,12 @@
 	{
 		$id = $myresult['d_id'];
 		$date = $myresult['d_creation_date'];
-		if ($myresult['d_user_services_id']) { 
-			// it's a service
-			$description = $myresult['m_description'];
-		} else {
+		if ($myresult['d_taxed_services_id']) { 
 			// it's a tax
 			$description = $myresult['r_description'];
+		} else {
+			// it's a service
+			$description = $myresult['m_description'];
 		}
 		$invoice = $myresult['d_invoice_number'];
 		$billedamount = sprintf("%.2f",$myresult['d_billed_amount']);

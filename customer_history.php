@@ -38,7 +38,7 @@ echo "<table cellspacing=0 cellpadding=0 border=0>".
 "<b>$l_description</b></td>";
 
 $query = "SELECT * FROM customer_history ".
-  "WHERE account_number = '$account_number' ORDER BY creation_date DESC";
+  "WHERE account_number = '$account_number' ORDER BY id DESC LIMIT 500";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 $linecount = 0;

@@ -41,142 +41,140 @@ function get_nextbatchnumber($DB) {
 	return $batchid;
 }
 
-function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod, $batchid, $organization_id) {
-	/*--------------------------------------------------------------------*/
-	// Add taxes to the bill
-	// database connector, billing date, billing method (invoice, prepay , 
-	// creditcard etc.), batch id
-	// do this before services to make sure one time services get taxed
-	// before they are removed
-	/*--------------------------------------------------------------------*/
+function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
+			$batchid, $organization_id) {
+  /*--------------------------------------------------------------------*/
+  // Add taxes to the bill
+  // database connector, billing date, billing method (invoice, prepay , 
+  // creditcard etc.), batch id
+  // do this before services to make sure one time services get taxed
+  // before they are removed
+  /*--------------------------------------------------------------------*/
 
-	//
-	// query for taxed services that are billed on the specified date
-	// or a specific billing id
-	//
-	if ($bybillingid == NULL) {
-		$query = "SELECT ts.id ts_id, 
-		ts.master_services_id ts_serviceid, 
-		ts.tax_rate_id ts_rateid, 
-		ms.id ms_id, ms.service_description ms_description, 
-		ms.pricerate ms_pricerate, ms.frequency ms_freq, 
-		tr.id tr_id, tr.description tr_description, tr.rate tr_rate, 
-		tr.if_field tr_if_field, tr.if_value tr_if_value,
-tr.percentage_or_fixed tr_percentage_or_fixed, 
-		us.master_service_id us_msid, us.billing_id us_bid, 
-		us.removed us_removed, us.account_number us_account_number, 
-        	us.usage_multiple us_usage_multiple,  te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, 
-		b.id b_id, b.billing_type b_billing_type, 
-		t.id t_id, t.frequency t_freq, t.method t_method  
-		FROM taxed_services ts
-		LEFT JOIN user_services us ON us.master_service_id = ts.master_services_id 
-		LEFT JOIN master_services ms ON ms.id = ts.master_services_id 
-		LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id 
-		LEFT JOIN tax_exempt te ON te.account_number = us.account_number 
-			AND te.tax_rate_id = tr.id 
-		LEFT JOIN billing b ON us.billing_id = b.id 
-		LEFT JOIN billing_types t ON b.billing_type = t.id
-        	WHERE b.next_billing_date = '$billingdate' 
-		AND b.organization_id = '$organization_id' 
-		AND t.method = '$billingmethod' AND us.removed <> 'y'";
-	} else {
-		$query = "SELECT ts.id ts_id, 
-		ts.master_services_id ts_serviceid, 
-		ts.tax_rate_id ts_rateid, 
-		ms.id ms_id, ms.service_description ms_description, 
-		ms.pricerate ms_pricerate, ms.frequency ms_freq, 
-		tr.id tr_id, tr.description tr_description, tr.rate tr_rate, 
-		tr.if_field tr_if_field, tr.if_value tr_if_value,
-tr.percentage_or_fixed tr_percentage_or_fixed, 
-		us.master_service_id us_msid, us.billing_id us_bid, 
-		us.removed us_removed, us.account_number us_account_number, 
-        	us.usage_multiple us_usage_multiple, te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, 
-		b.id b_id, b.billing_type b_billing_type,  
-		t.id t_id, t.frequency t_freq, t.method t_method  
-		FROM taxed_services ts
-		LEFT JOIN user_services us ON us.master_service_id = ts.master_services_id
-		LEFT JOIN master_services ms ON ms.id = ts.master_services_id
-		LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id 
-		LEFT JOIN tax_exempt te ON te.account_number = us.account_number 
-			AND te.tax_rate_id = tr.id 
-		LEFT JOIN billing b ON us.billing_id = b.id 
-		LEFT JOIN billing_types t ON b.billing_type = t.id
-        	WHERE b.id = '$bybillingid' AND us.removed <> 'y'";
-	}	
-	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$taxresult = $DB->Execute($query) or die ("Taxes Query Failed");
+  //
+  // query for taxed services that are billed on the specified date
+  // or a specific billing id
+  //
+  if ($bybillingid == NULL) {
+    $query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+      "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+      "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+      "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+      "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+      "tr.percentage_or_fixed tr_percentage_or_fixed, ".
+      "us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
+      "us.removed us_removed, us.account_number us_account_number, ". 
+      "us.usage_multiple us_usage_multiple,  ".
+      "te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
+      "b.id b_id, b.billing_type b_billing_type, ".
+      "t.id t_id, t.frequency t_freq, t.method t_method ".
+      "FROM taxed_services ts ".
+      "LEFT JOIN user_services us ON ".
+      "us.master_service_id = ts.master_services_id ".
+      "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+      "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+      "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+      "AND te.tax_rate_id = tr.id ".
+      "LEFT JOIN billing b ON us.billing_id = b.id ".
+      "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+      "WHERE b.next_billing_date = '$billingdate' ".
+      "AND b.organization_id = '$organization_id' ".
+      "AND t.method = '$billingmethod' AND us.removed <> 'y'";
+  } else {
+    $query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+      "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+      "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+      "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+      "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+      "tr.percentage_or_fixed tr_percentage_or_fixed, ". 
+      "us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
+      "us.removed us_removed, us.account_number us_account_number, ".
+      "us.usage_multiple us_usage_multiple, ".
+      "te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
+      "b.id b_id, b.billing_type b_billing_type, ". 
+      "t.id t_id, t.frequency t_freq, t.method t_method ".
+      "FROM taxed_services ts ".
+      "LEFT JOIN user_services us ".
+      "ON us.master_service_id = ts.master_services_id ".
+      "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+      "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+      "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+      "AND te.tax_rate_id = tr.id ".
+      "LEFT JOIN billing b ON us.billing_id = b.id ".
+      "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+      "WHERE b.id = '$bybillingid' AND us.removed <> 'y'";
+  }	
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $taxresult = $DB->Execute($query) or die ("Taxes Query Failed");
 	
-	// count the number of taxes
-	$i = 0;
+  // count the number of taxes
+  $i = 0;
 
-	while ($mytaxresult = $taxresult->FetchRow())
-	{
-		$billing_id = $mytaxresult['b_id'];
-		$taxed_services_id = $mytaxresult['ts_id'];
-		$service_freq = $mytaxresult['ms_freq'];
-		$billing_freq = $mytaxresult['t_freq'];	
-		$if_field = $mytaxresult['tr_if_field'];
-		$if_value = $mytaxresult['tr_if_value'];
-		$percentage_or_fixed = $mytaxresult['tr_percentage_or_fixed'];
-		$my_account_number = $mytaxresult['us_account_number'];
-		$usage_multiple = $mytaxresult['us_usage_multiple'];
-		$pricerate = $mytaxresult['ms_pricerate'];
-		$taxrate = $mytaxresult['tr_rate'];
-		$tax_rate_id = $mytaxresult['tr_id'];
-		$tax_exempt_rate_id = $mytaxresult['te_tax_rate_id'];
+  while ($mytaxresult = $taxresult->FetchRow()) {
+    $billing_id = $mytaxresult['b_id'];
+    $taxed_services_id = $mytaxresult['ts_id'];
+    $user_services_id = $mytaxresult['us_id'];
+    $service_freq = $mytaxresult['ms_freq'];
+    $billing_freq = $mytaxresult['t_freq'];	
+    $if_field = $mytaxresult['tr_if_field'];
+    $if_value = $mytaxresult['tr_if_value'];
+    $percentage_or_fixed = $mytaxresult['tr_percentage_or_fixed'];
+    $my_account_number = $mytaxresult['us_account_number'];
+    $usage_multiple = $mytaxresult['us_usage_multiple'];
+    $pricerate = $mytaxresult['ms_pricerate'];
+    $taxrate = $mytaxresult['tr_rate'];
+    $tax_rate_id = $mytaxresult['tr_id'];
+    $tax_exempt_rate_id = $mytaxresult['te_tax_rate_id'];
+    
+    // check that they are not exempt
+    if ($tax_exempt_rate_id <> $tax_rate_id) {
+      // check the if_field before adding to see if 
+      // the tax applies to this customer
+      if ($if_field <> '') {
+	$ifquery = "SELECT $if_field FROM customer ".
+	  "WHERE account_number = '$my_account_number'";
+	$DB->SetFetchMode(ADODB_FETCH_NUM);
+	$ifresult = $DB->Execute($ifquery) or die ("Query Failed");	
+	$myifresult = $ifresult->fields;
+	$checkvalue = $myifresult[0];
+      } else {
+	$checkvalue = TRUE;
+	$if_value = TRUE;
+      }
 
-		// check that they are not exempt
-		if ($tax_exempt_rate_id <> $tax_rate_id)
-		{
-			// check the if_field before adding to see if 
-			// the tax applies to this customer
-			if ($if_field <> '') {
-			$ifquery = "SELECT $if_field FROM customer 
-			WHERE account_number = '$my_account_number'";
-			$DB->SetFetchMode(ADODB_FETCH_NUM);
-			$ifresult = $DB->Execute($ifquery) or die ("Query Failed");	
-			$myifresult = $ifresult->fields;
-        		$checkvalue = $myifresult[0];
-			} else {
-				$checkvalue = TRUE;
-				$if_value = TRUE;
-			}
-
-			if ($checkvalue == $if_value) {
-			  if ($percentage_or_fixed == 'percentage') {
-			    if ($service_freq > 0) {
-			      $servicecost = ($billing_freq * $service_freq)
-				* ($pricerate * $usage_multiple);
-			      $tax_amount = $taxrate * $servicecost; 
-			    } else {
-			      $servicecost = $pricerate * $usage_multiple;
-			      $tax_amount = $taxrate * $servicecost;
-			    }
-			  } else {
-			    // fixed fee amount
-			    $tax_amount = $taxrate;
-			  }
-		
-				// round the tax to two decimal places
-				$tax_amount = sprintf("%.2f", $tax_amount);
-
-				//
-				// Insert tax result into billing_details
-				//
-				$query = "INSERT INTO billing_details 
-				(billing_id, creation_date, taxed_services_id, 
-				billed_amount, batch)
-        	                VALUES ('$billing_id',CURRENT_DATE,
-			'$taxed_services_id','$tax_amount','$batchid')";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		                $invoiceresult = $DB->Execute($query) 
-					or die ("Query Failed");	
-				$i++;
-			} //endif if_field
-		} // endif exempt
+      if ($checkvalue == $if_value) {
+	if ($percentage_or_fixed == 'percentage') {
+	  if ($service_freq > 0) {
+	    $servicecost = ($billing_freq * $service_freq)
+	      * ($pricerate * $usage_multiple);
+	    $tax_amount = $taxrate * $servicecost; 
+	  } else {
+	    $servicecost = $pricerate * $usage_multiple;
+	    $tax_amount = $taxrate * $servicecost;
+	  }
+	} else {
+	  // fixed fee amount
+	  $tax_amount = $taxrate;
 	}
-
-	return $i; // send back number of taxes found
+		
+	// round the tax to two decimal places
+	$tax_amount = sprintf("%.2f", $tax_amount);
+	
+	//
+	// Insert tax result into billing_details
+	//
+	$query = "INSERT INTO billing_details (billing_id, creation_date, ".
+	  "user_services_id, taxed_services_id, billed_amount, batch) ".
+	  "VALUES ('$billing_id',CURRENT_DATE, '$user_services_id',".
+	  "'$taxed_services_id','$tax_amount','$batchid')";
+	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+	$invoiceresult = $DB->Execute($query) or die ("Query Failed");	
+	$i++;
+      } //endif if_field
+    } // endif exempt
+  }
+  
+  return $i; // send back number of taxes found
 }
 	
 
@@ -714,7 +712,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		LEFT JOIN master_services m ON u.master_service_id = m.id
 		LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id 
 		LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
-		WHERE d.invoice_number = '$invoiceid' ORDER BY tr.id ASC, d.billed_amount DESC, u.master_service_id ASC";
+		WHERE d.invoice_number = '$invoiceid' ORDER BY u.id DESC, d.billed_amount DESC, u.master_service_id ASC";
 		
 		$result = $DB->Execute($query) or die ("$l_queryfailed");
 		
@@ -723,107 +721,112 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		/*------------------------------------------------------------*/
 		$myline = 1;
 		$lineYoffset = 105;
-		while ($myresult = $result->FetchRow())
-		{
-			// select the options_table to get data for the details column
-			$options_table = $myresult['m_options_table'];
-			$id = $myresult['u_id'];
-			if ($options_table <> '') {
-				// get the data from the options table 
-				// and put into variables
-				$query = "SELECT * FROM $options_table 
-					WHERE user_services = '$id'";
-				$DB->SetFetchMode(ADODB_FETCH_NUM);
-				$optionsresult = $DB->Execute($query) 
-					or die ("$l_queryfailed");
-				$myoptions = $optionsresult->fields;
-				$optiondetails = $myoptions[2];
-			} else {
-				$optiondetails = '';	
-			}
+		while ($myresult = $result->FetchRow()) {
 
-			$service_description = $myresult['m_service_description'];
-			$tax_description = $myresult['tr_description'];
-			$billed_amount = sprintf("%.2f",$myresult['d_billed_amount']);
-			// the month mulptile
-			$pricerate = $myresult['pricerate'];
-			if ($pricerate > 0) {
-			  $monthmultiple = $billed_amount/$pricerate;
-			} else {
-			  $monthmultiple = 0;
-			}
+		  // check if it's a tax with a tax id or service with
+		  // no tax idfirst to set detail items
+		  $taxid = $myresult['tr_id'];
+		  if ($taxid == NULL) {
+		    // it's a service
+		    // select the options_table to get data for the details
+		    $options_table = $myresult['m_options_table'];
+		    $id = $myresult['u_id'];
+		    if ($options_table <> '') {
+		      // get the data from the options table 
+		      // and put into variables
+		      $query = "SELECT * FROM $options_table ". 
+			"WHERE user_services = '$id'";
+		      $DB->SetFetchMode(ADODB_FETCH_NUM);
+		      $optionsresult = $DB->Execute($query)
+			or die ("$l_queryfailed");
+		      $myoptions = $optionsresult->fields;
+		      $optiondetails = $myoptions[2];
+		    } else {
+		      $optiondetails = '';	
+		    }
+		    $service_description = $myresult['m_service_description'];
+		    $tax_description = '';
+		  } else {
+		    // it's a tax
+		    $tax_description = "     ".$myresult['tr_description'];
+		    $service_description = '';
+		    $optiondetails = '';
+		  }
 
-			if ($printtype == "pdf")
-			{
-				// fix html characters
-				$service_description = html_to_ascii($service_description);
-				$tax_description = html_to_ascii($tax_description);
-				$optiondetails = html_to_ascii($optiondetails);			
-	
-				$lineY = $lineYoffset + ($myline*5);
-				$pdf->SetXY(10,$lineY);
+		  $billed_amount = sprintf("%.2f",$myresult['d_billed_amount']);
+		  
+		  // calculate the month mulptile
+		  $pricerate = $myresult['pricerate'];
+		  if ($pricerate > 0) {
+		    $monthmultiple = $billed_amount/$pricerate;
+		  } else {
+		    $monthmultiple = 0;
+		  }
+		  
+		  if ($printtype == "pdf") {
+		    // printing pdf invoice
+		    $service_description = html_to_ascii($service_description);
+		    $tax_description = html_to_ascii($tax_description);
+		    $optiondetails = html_to_ascii($optiondetails);
+		    $lineY = $lineYoffset + ($myline*5);
+		    $pdf->SetXY(10,$lineY);
 
-				if ($monthmultiple > 1) {
-				  $pdf->Cell(0,5,"$service_description $tax_description ($pricerate x $monthmultiple) $optiondetails");
-				} else {
-				  $pdf->Cell(0,5,"$service_description $tax_description $optiondetails");
-				}
+		    if ($monthmultiple > 1) {
+		      $pdf->Cell(0,5,"$service_description $tax_description ($pricerate x $monthmultiple) $optiondetails");
+		    } else {
+		      $pdf->Cell(0,5,"$service_description $tax_description $optiondetails");
+		    }
 
-				//$pdf->SetXY(110,$lineY);
-				//$pdf->Cell(110,5,"$optiondetails");
-				$pdf->SetXY(160,$lineY);
-				$pdf->Cell(160,5,"$billed_amount");
-			}
-			else
-			{
-			  if ($monthmultiple > 1) {
-				$output .= "$service_description $tax_description ($pricerate x $monthmultiple) $optiondetails \t $billed_amount\n";
-			  } else {
-			    $output .= "$service_description $tax_description $optiondetails \t $billed_amount\n";
-			  }
-			}
-			$myline++;
+		    //$pdf->SetXY(110,$lineY);
+		    //$pdf->Cell(110,5,"$optiondetails");
+		    $pdf->SetXY(160,$lineY);
+		    $pdf->Cell(160,5,"$billed_amount");
+		  } else {
+		    // printing text invoice
+		    if ($monthmultiple > 1) {
+		      $output .= "$service_description $tax_description ($pricerate x $monthmultiple) $optiondetails \t $billed_amount\n";
+		    } else {
+		      $output .= "$service_description $tax_description $optiondetails \t $billed_amount\n";
+		    }
+		  }
+		  $myline++;
 
-			// add a new page if there are many line items
-			if (($myline > 28) AND ($printtype == "pdf")) {
-				$pdf->AddPage();
-				$pdf->SetXY(10,20);
-				$myline = 1;
-				$lineYoffset = 20;
-			}
+		  // add a new page if there are many line items
+		  if (($myline > 28) AND ($printtype == "pdf")) {
+		    $pdf->AddPage();
+		    $pdf->SetXY(10,20);
+		    $myline = 1;
+		    $lineYoffset = 20;
+		  }
 		}
 	
-		if ($printtype == "pdf")
-		{
+		if ($printtype == "pdf") {
 		  $lineY = $lineYoffset + ($myline*5);
 		  $pdf->Line(5,$lineY,200,$lineY);
-		}
-		else
-		{	
+		} else {	
 		  $output .= "----------------------------------------";
 		  $output .= "----------------------------------------\n";
 		}
-
+		
 		/*------------------------------------------------------------*/
 		// print the notes and totals at the bottom of the invoice
 		/*------------------------------------------------------------*/
-		if ($printtype == "pdf")
-		{
-			// fix html characters
-			$billing_notes = html_to_ascii($billing_notes);
-
-			$lineY = $lineY + 10;
-			$pdf->SetXY(10,$lineY);
-			$pdf->MultiCell(100,5,"$billing_notes");
-			$pdf->SetXY(135,$lineY);
-			$pdf->MultiCell(100,5,"$l_newcharges: $billing_new_charges\n$l_pastdue: $billing_past_due\n$l_tax: $billing_tax_due\n");
-			$pdf->SetXY(135,$lineY+15);
-			$pdf->SetFont('Arial','BU',10);
-			$pdf->Cell(100,5,"$l_total: $billing_total_due");
-			$lineY = $lineY + 10;
-			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY(10,$lineY);
-			$pdf->MultiCell(0,2,"$invoice_footer");
+		if ($printtype == "pdf") {
+		  // fix html characters
+		  $billing_notes = html_to_ascii($billing_notes);
+		  
+		  $lineY = $lineY + 10;
+		  $pdf->SetXY(10,$lineY);
+		  $pdf->MultiCell(100,5,"$billing_notes");
+		  $pdf->SetXY(135,$lineY);
+		  $pdf->MultiCell(100,5,"$l_newcharges: $billing_new_charges\n$l_pastdue: $billing_past_due\n$l_tax: $billing_tax_due\n");
+		  $pdf->SetXY(135,$lineY+15);
+		  $pdf->SetFont('Arial','BU',10);
+		  $pdf->Cell(100,5,"$l_total: $billing_total_due");
+		  $lineY = $lineY + 10;
+		  $pdf->SetFont('Arial','',9);
+		  $pdf->SetXY(10,$lineY);
+		  $pdf->MultiCell(0,2,"$invoice_footer");
 		}
 		else
 		{		
