@@ -712,7 +712,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		LEFT JOIN master_services m ON u.master_service_id = m.id
 		LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id 
 		LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
-		WHERE d.invoice_number = '$invoiceid' ORDER BY u.id DESC, d.billed_amount DESC, u.master_service_id ASC";
+		WHERE d.invoice_number = '$invoiceid' ORDER BY u.id DESC, tr.id ASC";
 		
 		$result = $DB->Execute($query) or die ("$l_queryfailed");
 		
@@ -721,10 +721,13 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		/*------------------------------------------------------------*/
 		$myline = 1;
 		$lineYoffset = 105;
+		$fillcolor = 200;
+		$lastserviceid = 0;
 		while ($myresult = $result->FetchRow()) {
 
 		  // check if it's a tax with a tax id or service with
 		  // no tax idfirst to set detail items
+		  $serviceid = $myresult['u_id'];
 		  $taxid = $myresult['tr_id'];
 		  if ($taxid == NULL) {
 		    // it's a service
@@ -765,6 +768,19 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		  
 		  if ($printtype == "pdf") {
 		    // printing pdf invoice
+
+		    // alternate fill color
+		    if ($serviceid <> $lastserviceid) {
+		      $lastserviceid = $serviceid;
+		      if ($fillcolor == 200) {
+			$fillcolor = 255;
+			$pdf->SetFillColor($fillcolor);
+		      } else {
+			$fillcolor = 200;
+			$pdf->SetFillColor($fillcolor);
+		      }
+		    }
+		    
 		    $service_description = html_to_ascii($service_description);
 		    $tax_description = html_to_ascii($tax_description);
 		    $optiondetails = html_to_ascii($optiondetails);
@@ -772,9 +788,9 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		    $pdf->SetXY(10,$lineY);
 
 		    if ($monthmultiple > 1) {
-		      $pdf->Cell(0,5,"$service_description $tax_description ($pricerate x $monthmultiple) $optiondetails");
+		      $pdf->Cell(0,5,"$serviceid $service_description $tax_description ($pricerate x $monthmultiple) $optiondetails", 0, 0, "L", TRUE);
 		    } else {
-		      $pdf->Cell(0,5,"$service_description $tax_description $optiondetails");
+		      $pdf->Cell(0,5,"$serviceid $service_description $tax_description $optiondetails", 0, 0, "L", TRUE);
 		    }
 
 		    //$pdf->SetXY(110,$lineY);
@@ -791,7 +807,10 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		  }
 		  $myline++;
 
+		  
 		  // add a new page if there are many line items
+		  // TODO: check for page number here
+		  // if page number greater than 1, then myline would be larger
 		  if (($myline > 28) AND ($printtype == "pdf")) {
 		    $pdf->AddPage();
 		    $pdf->SetXY(10,20);
