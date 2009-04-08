@@ -1,6 +1,6 @@
 <?php
 
-// Copyright (C) 2002-2008  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 
@@ -154,7 +154,11 @@ function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
 	  }
 	} else {
 	  // fixed fee amount
-	  $tax_amount = $taxrate;
+	  if ($billing_freq > 1) {
+	    $tax_amount = $taxrate * $billing_freq * $usage_multiple;
+	  } else {
+	    $tax_amount = $taxrate * $usage_multiple;
+	  }
 	}
 		
 	// round the tax to two decimal places
@@ -168,7 +172,7 @@ function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
 	  "VALUES ('$billing_id',CURRENT_DATE, '$user_services_id',".
 	  "'$taxed_services_id','$tax_amount','$batchid')";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$invoiceresult = $DB->Execute($query) or die ("Query Failed");	
+	$invoiceresult = $DB->Execute($query) or die ("Query Failed");
 	$i++;
       } //endif if_field
     } // endif exempt
@@ -792,9 +796,9 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     } else {
       // printing text invoice
       if ($monthmultiple > 1) {
-	$output .= "$service_description $tax_description ($pricerate x $monthmultiple) $optiondetails \t $billed_amount\n";
+	$output .= "$serviceid $service_description $tax_description ($pricerate x $monthmultiple) $optiondetails \t $billed_amount\n";
       } else {
-	$output .= "$service_description $tax_description $optiondetails \t $billed_amount\n";
+	$output .= "$serviceid $service_description $tax_description $optiondetails \t $billed_amount\n";
       }
     }
     

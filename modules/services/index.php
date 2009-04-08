@@ -224,61 +224,58 @@ function checktaxes($DB, $user_services_id) {
       $if_value = TRUE;	
     }
     
-    if ($checkvalue == $if_value)
-      {
-	// check that they are not exempt
-	if ($tax_exempt_rate_id <> $tax_rate_id)
-	  {
-	    // check if it is a percentage or fixed amount
-	    
-	    if ($percentage_or_fixed == "percentage") {
-	      if ($freqmultiplier > 0) {
-		$tax_amount = $taxresult['tr_rate']
-		  * $taxresult['ms_pricerate'] * $freqmultiplier;
-	      } else {
-		$tax_amount = $taxresult['tr_rate']
-		  * $taxresult['ms_pricerate'];
-	      }
-	    } else {
-	      // then it is a fixed amount not multiplied by the price
-	      $tax_amount = $taxresult['tr_rate'];
-	    }
-	    
-	    // round the tax to two decimal places
-	    $tax_amount = sprintf("%.2f", $tax_amount);
-	    
-	    print "<tr><td></td>".
-	      "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
-	      "colspan=3>$tax_description</td>".
-	      "<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
-	      "colspan=4>$tax_amount</td>".
-	      "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
-	      "<form style=\"margin-bottom:0;\" action=\"index.php\">".
-	      "<input type=hidden name=load value=services>".
-	      "<input type=hidden name=type value=module>".
-	      "<input type=hidden name=edit value=on>".
-	      "<input type=hidden name=taxrate value=\"$tax_rate_id\">".
-	      "<input name=exempt type=submit value=\"$l_exempt\" ".
-	      "class=smallbutton></form></td></tr>";
-	  
+    if ($checkvalue == $if_value) {
+      // check that they are not exempt
+      if ($tax_exempt_rate_id <> $tax_rate_id) {
+	// check if it is a percentage or fixed amount
+	if ($percentage_or_fixed == "percentage") {
+	  if ($freqmultiplier > 0) {
+	    $tax_amount = $taxresult['tr_rate']
+	      * $taxresult['ms_pricerate'] * $freqmultiplier;
 	  } else {
-	  // print the exempt tax
-	  print "<tr style=\"font-size: 9pt;\"><td></td>".
-	    "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
-	    "colspan=3>$tax_description</td>".
-	    "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
-	    "colspan=4>$l_exempt: $customer_tax_id ".
-	    "$customer_tax_id_expdate</td>".
-	    "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
-	    "<form style=\"margin-bottom:0;\" action=\"index.php\">".
-	    "<input type=hidden name=load value=services>".
-	    "<input type=hidden name=type value=module>".
-	    "<input type=hidden name=edit value=on>".
-	    "<input type=hidden name=taxrate value=\"$tax_rate_id\">".
-	    "<input name=notexempt type=submit value=\"$l_notexempt\" ".
-	    "class=smallbutton></form></td></tr>";
-	} // end if exempt tax
-      } // end if_field
+	    $tax_amount = $taxresult['tr_rate']
+	      * $taxresult['ms_pricerate'];
+	  }
+	} else {
+	  // then it is a fixed amount not multiplied by the price
+	  $tax_amount = $taxresult['tr_rate'];
+	}
+	
+	// round the tax to two decimal places
+	$tax_amount = sprintf("%.2f", $tax_amount);
+	
+	print "<tr><td></td>".
+	  "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+	  "colspan=3>$tax_description</td>".
+	  "<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
+	  "colspan=4>$tax_amount</td>".
+	  "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
+	  "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+	  "<input type=hidden name=load value=services>".
+	  "<input type=hidden name=type value=module>".
+	  "<input type=hidden name=edit value=on>".
+	  "<input type=hidden name=taxrate value=\"$tax_rate_id\">".
+	  "<input name=exempt type=submit value=\"$l_exempt\" ".
+	  "class=smallbutton></form></td></tr>";
+	
+      } else {
+	// print the exempt tax
+	print "<tr style=\"font-size: 9pt;\"><td></td>".
+	  "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+	  "colspan=3>$tax_description</td>".
+	  "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+	  "colspan=4>$l_exempt: $customer_tax_id ".
+	  "$customer_tax_id_expdate</td>".
+	  "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
+	  "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+	  "<input type=hidden name=load value=services>".
+	  "<input type=hidden name=type value=module>".
+	  "<input type=hidden name=edit value=on>".
+	  "<input type=hidden name=taxrate value=\"$tax_rate_id\">".
+	  "<input name=notexempt type=submit value=\"$l_notexempt\" ".
+	  "class=smallbutton></form></td></tr>";
+      } // end if exempt tax
+    } // end if_field
   } // end while
 } // end checktaxes function
 ?>
