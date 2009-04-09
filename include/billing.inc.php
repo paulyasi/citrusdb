@@ -153,11 +153,11 @@ function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
 	    $tax_amount = $taxrate * $servicecost;
 	  }
 	} else {
-	  // fixed fee amount
+	  // fixed fee amount not depend on price or usage
 	  if ($billing_freq > 1) {
-	    $tax_amount = $taxrate * $billing_freq * $usage_multiple;
+	    $tax_amount = $taxrate * $billing_freq;
 	  } else {
-	    $tax_amount = $taxrate * $usage_multiple;
+	    $tax_amount = $taxrate;
 	  }
 	}
 		

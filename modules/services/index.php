@@ -275,7 +275,10 @@ function checktaxes($DB, $user_services_id) {
 	  "<input name=notexempt type=submit value=\"$l_notexempt\" ".
 	  "class=smallbutton></form></td></tr>";
       } // end if exempt tax
+
     } // end if_field
+
   } // end while
+
 } // end checktaxes function
 ?>
