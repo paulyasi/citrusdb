@@ -1,58 +1,58 @@
 <SCRIPT LANGUAGE="JavaScript" SRC="include/CalendarPopup.js"></SCRIPT>
-	<SCRIPT LANGUAGE="JavaScript">
-	var cal = new CalendarPopup();
+   <SCRIPT LANGUAGE="JavaScript">
+   var cal = new CalendarPopup();
 
-	function cardval(s) 
+function cardval(s) 
+{
+  // remove non-numerics
+  var v = "0123456789";
+  var w = "";
+  for (i=0; i < s.length; i++) 
+    {
+      x = s.charAt(i);
+      if (v.indexOf(x,0) != -1)
 	{
-		// remove non-numerics
-		var v = "0123456789";
-		var w = "";
-		for (i=0; i < s.length; i++) 
-		{
-			x = s.charAt(i);
-			if (v.indexOf(x,0) != -1)
-			{
-				w += x;
-			}
-		}
-		
-		// validate number
-		j = w.length / 2;
-		if (j < 6.5 || j > 8 || j == 7) 
-		{
-			return false;
-		}
-		
-		k = Math.floor(j);
-		m = Math.ceil(j) - k;
-		c = 0;
-		for (i=0; i<k; i++) 
-		{
-			a = w.charAt(i*2+m) * 2;
-			c += a > 9 ? Math.floor(a/10 + a%10) : a;
-		}
-		
-		for (i=0; i<k+m; i++) c += w.charAt(i*2+1-m) * 1;
-		{
-			return (c%10 == 0);
-		}
+	  w += x;
 	}
-	</SCRIPT>
+    }
+  
+  // validate number
+  j = w.length / 2;
+  if (j < 6.5 || j > 8 || j == 7) 
+    {
+      return false;
+    }
+  
+  k = Math.floor(j);
+  m = Math.ceil(j) - k;
+  c = 0;
+  for (i=0; i<k; i++) 
+    {
+      a = w.charAt(i*2+m) * 2;
+      c += a > 9 ? Math.floor(a/10 + a%10) : a;
+    }
+  
+  for (i=0; i<k+m; i++) c += w.charAt(i*2+1-m) * 1;
+  {
+    return (c%10 == 0);
+  }
+}
+</SCRIPT>
 <?php   
-// Copyright (C) 2002-2007  Paul Yasi <paul@citrusdb.org>
+// Copyright (C) 2002-2007  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
 /*----------------------------------------------------------------------------*/
 if(constant("INDEX_CITRUS") <> 1){
-	echo "You must be logged in to run this.  Goodbye.";
-	exit;	
+  echo "You must be logged in to run this.  Goodbye.";
+  exit;	
 }
 
 if (!defined("INDEX_CITRUS")) {
-	echo "You must be logged in to run this.  Goodbye.";
-        exit;
+  echo "You must be logged in to run this.  Goodbye.";
+  exit;
 }
 
 //Includes
@@ -66,6 +66,7 @@ if (!isset($base->input['status'])) { $base->input['status'] = ""; }
 if (!isset($base->input['description'])) { $base->input['description'] = ""; }
 if (!isset($base->input['dtext'])) { $base->input['dtext'] = ""; }
 if (!isset($base->input['reminderdate'])) { $base->input['reminderdate'] = ""; }
+if (!isset($base->input['serviceid'])) { $base->input['serviceid'] = ""; }
 
 $editticket = $base->input['editticket'];
 $notify = $base->input['notify'];
@@ -73,6 +74,7 @@ $status = $base->input['status'];
 $description = $base->input['description'];
 $dtext = $base->input['dtext'];
 $reminderdate = $base->input['reminderdate'];
+$user_services_id = $base->input['serviceid'];
 
 if ($edit)
 {
@@ -93,7 +95,8 @@ else if ($create) // add the message to customer history
 	if ($pallow_create)
     	{
 	  create_ticket($DB, $user, $notify, $account_number,
-			$status, $description, NULL, NULL, $reminderdate);
+			$status, $description, NULL, NULL, $reminderdate,
+			$user_services_id);
 
 	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=customer&type=module\";</script>";
 	} else permission_error();
@@ -109,11 +112,24 @@ else if ($delete)
 
 else if ($pallow_view)
 {
-echo "
+
+  // if it is regarding a service, get the service description
+  $query = "SELECT us.id, us.master_service_id, ms.id, ms.service_description ".
+    "FROM user_services us ".
+    "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+    "WHERE us.id = '$user_services_id' LIMIT 1";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("this $l_queryfailed");
+  $myresult = $result->fields;	
+  $service_description = $myresult['service_description'];
+
+  // print the form
+  echo "
 <a href=\"index.php?load=customer&type=module\">[ $l_undochanges ]</a> &nbsp; 
 <a href=\"index.php?load=support&type=module&edit=on\">[ $l_checknotes ]</a>
 <table cellpadding=5 border=0 cellspacing=1 width=720>
 <td bgcolor=\"#ccccdd\"><b>$l_createdby</b></td><td bgcolor=\"#ddddee\">$user</td><tr>
+<td bgcolor=\"#ccccdd\"><b>$l_service</b></td><td bgcolor=\"#ddddee\">$user_services_id $service_description</td><tr>
 <td bgcolor=\"#ccccdd\"><b>$l_notify</b></td><td bgcolor=\"#ddddee\">
 <form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">
 "; //end
@@ -171,6 +187,7 @@ echo "
 
 <tr>
 <td colspan=2 align=center>
+<input type=hidden name=serviceid value=$user_services_id>
 <input type=hidden name=load value=support>
 <input type=hidden name=type value=module>
 <input type=hidden name=create value=on>

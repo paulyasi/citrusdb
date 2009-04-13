@@ -3,25 +3,27 @@
 // read the README file for more information
 
 // generic ticket creation function
-function create_ticket($DB, $user, $notify, $account_number, $status, $description, $linkname = NULL, $linkurl = NULL, $reminderdate = NULL)
+function create_ticket($DB, $user, $notify, $account_number, $status,
+		       $description, $linkname = NULL, $linkurl = NULL,
+		       $reminderdate = NULL, $user_services_id = NULL)
 {
   if ($reminderdate) {
     // add ticket to customer_history table
     $query = "INSERT into customer_history ".
       "(creation_date, created_by, notify, account_number,".
-      "status, description, linkurl, linkname) ".
+      "status, description, linkurl, linkname, user_services_id) ".
       "VALUES ('$reminderdate', '$user', '$notify', '$account_number',".
-      "'$status', '$description', '$linkurl', '$linkname')";
+      "'$status', '$description', '$linkurl', '$linkname', '$user_services_id')";
   } else {
     // add ticket to customer_history table
     $query = "INSERT into customer_history ".
       "(creation_date, created_by, notify, account_number,".
-      "status, description, linkurl, linkname) ".
+      "status, description, linkurl, linkname, user_services_id) ".
       "VALUES (CURRENT_TIMESTAMP, '$user', '$notify', '$account_number',".
-      "'$status', '$description', '$linkurl', '$linkname')";
+      "'$status', '$description', '$linkurl', '$linkname', '$user_services_id')";
   }
 
-  $result = $DB->Execute($query) or die ("create_ticket $l_queryfailed");
+  $result = $DB->Execute($query) or die ("create_ticket query failed");
 }
 
 

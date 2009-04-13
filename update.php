@@ -564,7 +564,13 @@ if ($base->input['submit'] == "Update")
 	  $query = "ALTER TABLE `tax_rates` ADD `percentage_or_fixed` ".
 	    "ENUM( 'percentage', 'fixed' ) NOT NULL DEFAULT 'percentage';";
 	  $result = $DB->Execute($query) or die ("query failed");
-	  echo "$query<br>\n";	  
+	  echo "$query<br>\n";
+
+	  // add user_services_id to the customer_history table
+	  $query = "ALTER TABLE `customer_history` ADD `user_services_id` ".
+	    "INT NULL ;";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
 	  
 	  // set the version, using the new settings field
 	  $query = "UPDATE `settings` SET `version` = '1.3.1' ".

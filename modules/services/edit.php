@@ -324,12 +324,21 @@ if ($save) {
     print "<input type=hidden name=type value=module>";
     print "<input type=hidden name=delete value=on>";
     print "<input name=undeletenow type=submit value=\" $l_undelete \" ".
-      "class=smallbutton></form></td></table><p></blockquote>";
+      "class=smallbutton></form>";
   } else {
     // print the delete button
     print "<p><input name=delete type=submit value=\"$l_deleteservice\" ".
-      "class=smallbutton></td></table></form></blockquote>";
+      "class=smallbutton></form>";
   }
+
+  // print the open ticket button
+  print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+  print "<input type=hidden name=load value=support>";
+  print "<input type=hidden name=type value=module>";
+  print "<input type=hidden name=serviceid value=\"$userserviceid\">";
+  print "<input name=openticket type=submit value=\"$l_openticket\" ".
+    "class=smallbutton></form></td></table><p></blockquote>";     
+  
   print "<form action=\"index.php\"><table width=720 cellpadding=5 cellspacing=1 border=0>";
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
@@ -348,7 +357,7 @@ if ($save) {
   $myresult = $result->fields;
   $usage_multiple = $myresult['usage_multiple'];
   $usage_label = $myresult['usage_label'];
-  $account_number = $myresult['account_number'];	
+  $account_number = $myresult['account_number'];
 
   // print the usage_multiple entry field
   // if there is a usage label, use that instead of the generic name

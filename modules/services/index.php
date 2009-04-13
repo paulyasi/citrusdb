@@ -146,7 +146,14 @@ if ($edit) {
      print "<input type=hidden name=servicedescription value=\"$service_description\">";
      print "<input type=hidden name=optionstable value=\"$options_table\">";
      print "<input name=editbutton type=submit value=\"$l_edit\" ".
-       "class=smallbutton></form></td></tr>";
+       "class=smallbutton></form>";
+
+     print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+     print "<input type=hidden name=load value=support>";
+     print "<input type=hidden name=type value=module>";
+     print "<input type=hidden name=serviceid value=\"$id\">";
+     print "<input name=openticket type=submit value=\"$l_openticket\" ".
+       "class=smallbutton></form></td></tr>";     
 
      // check for taxes for this service
      $mytaxoutput = checktaxes($DB, $id);

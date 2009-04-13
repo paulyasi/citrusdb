@@ -271,6 +271,7 @@ $l_oldpassword = "Old Password";
 $l_onlineservicerequest = "Online Service Request";
 $l_onlinesupportrequest = "Online Support Request";
 $l_onetimebilled = "One Time Billed";
+$l_openticket = "Open Ticket";
 $l_optionstable = "Options/Attributes Table";
 $l_optionstables = "Options/Attributes Tables";
 $l_or = "Or";

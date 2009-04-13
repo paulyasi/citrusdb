@@ -1,18 +1,18 @@
 <?php   
-// Copyright (C) 2002-2007  Paul Yasi <paul@citrusdb.org>
+// Copyright (C) 2002-2007  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
 /*----------------------------------------------------------------------------*/
 if(constant("INDEX_CITRUS") <> 1){
-	echo "You must be logged in to run this.  Goodbye.";
-	exit;	
+  echo "You must be logged in to run this.  Goodbye.";
+  exit;	
 }
 
 if (!defined("INDEX_CITRUS")) {
-	echo "You must be logged in to run this.  Goodbye.";
-        exit;
+  echo "You must be logged in to run this.  Goodbye.";
+  exit;
 }
 
 //Includes
@@ -33,92 +33,103 @@ $savechanges = $base->input['savechanges'];
 
 if ($savechanges)
 {
-	// save the changes
+  // save the changes
 
-	$query = "UPDATE customer_history 
-		SET notify = '$notify',
-		status = '$status',
-		description = '$description' 
-		WHERE id = $id";
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
+  $query = "UPDATE customer_history SET notify = '$notify', ".
+    "status = '$status', description = '$description' ".
+    "WHERE id = $id";
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
 	
-	// redirect back to the account record
-	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=support&type=module&edit=on\";</script>";			
+  // redirect back to the account record
+  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=support&type=module&edit=on\";</script>";			
 	
-}
-else // show the ticket info to edit
-{
-	$query = "SELECT ch.id ch_id, ch.creation_date ch_creation_date, 
-		ch.created_by ch_created_by, ch.notify ch_notify, 
-		ch.account_number ch_account_number, ch.status ch_status, 
-		ch.description ch_description, ch.linkname, ch.linkurl, c.name c_name 
-		FROM customer_history ch 
-		LEFT JOIN customer c 
-		ON c.account_number = ch.account_number 
-		WHERE ch.id = $id";
-        $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
-	$myresult = $result->fields;
+ } else {
+  // show the ticket info to edit
+  $query = "SELECT ch.id ch_id, ch.creation_date ch_creation_date, ".
+    "ch.created_by ch_created_by, ch.notify ch_notify, ".
+    "ch.account_number ch_account_number, ch.status ch_status, ".
+    "ch.description ch_description, ch.linkname, ch.linkurl, c.name c_name, ".
+    "ch.user_services_id ch_user_services_id, ".
+    "ms.service_description service_description ".
+    "FROM customer_history ch ".
+    "LEFT JOIN customer c ON c.account_number = ch.account_number ".
+    "LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+    "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+    "WHERE ch.id = $id";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $myresult = $result->fields;
 	
-	$id = $myresult['ch_id'];
-    	$creation_date = $myresult['ch_creation_date'];
-    	$created_by = $myresult['ch_created_by'];
-    	$notify = $myresult['ch_notify'];
-    	$accountnum = $myresult['ch_account_number'];
-    	$status = $myresult['ch_status'];
-    	$description = $myresult['ch_description'];
-	$name = $myresult['c_name'];
-	$linkname = $myresult['linkname'];
-	$linkurl = $myresult['linkurl'];
+  $id = $myresult['ch_id'];
+  $creation_date = $myresult['ch_creation_date'];
+  $created_by = $myresult['ch_created_by'];
+  $notify = $myresult['ch_notify'];
+  $accountnum = $myresult['ch_account_number'];
+  $status = $myresult['ch_status'];
+  $description = $myresult['ch_description'];
+  $name = $myresult['c_name'];
+  $linkname = $myresult['linkname'];
+  $linkurl = $myresult['linkurl'];
+  $serviceid = $myresult['ch_user_services_id'];
+  $service_description = $myresult['service_description'];
 	
 	
-	echo "
-	<a href=\"index.php?load=customer&type=module\">[ $l_undochanges ]</a> &nbsp; 
-	<a href=\"index.php?load=support&type=module&edit=on\">[ $l_checknotes ]</a>
-	<h3>$l_ticketnumber $id</h3>
-	<table cellpadding=5 border=0 cellspacing=1 width=720>
-	<td bgcolor=\"#ccccdd\"><b>$l_createdby</b></td><td bgcolor=\"#ddddee\">$created_by</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_creation</b></td><td bgcolor=\"#ddddee\">$creation_date</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_customer</b></td><td bgcolor=\"#ddddee\">
-	<a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_notify</b></td><td bgcolor=\"#ddddee\">
-	<form style=\"margin-bottom:0;\" action=\"index.php\">
-	"; //end
+  echo "<a href=\"index.php?load=customer&type=module\">[ $l_undochanges ]</a>".
+    "&nbsp; <a href=\"index.php?load=support&type=module&edit=on\">".
+    "[ $l_checknotes ]</a>".
+    "<h3>$l_ticketnumber $id</h3>".
+    "<table cellpadding=5 border=0 cellspacing=1 width=720>".
+    "<td bgcolor=\"#ccccdd\"><b>$l_createdby</b></td>".
+    "<td bgcolor=\"#ddddee\">$created_by</td><tr>".
+    "<td bgcolor=\"#ccccdd\"><b>$l_creation</b></td>".
+    "<td bgcolor=\"#ddddee\">$creation_date</td><tr>".
+    "<td bgcolor=\"#ccccdd\"><b>$l_customer</b></td>".
+    "<td bgcolor=\"#ddddee\">".
+    "<a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">".
+    "$name</a></td><tr>";
 
-    print "<select name=\"notify\">\n";
-	print "<option selected value=\"$notify\">$notify</option>\n";
-	print "<option value=\"nobody\">$l_nobody</option>\n";
-	print "<optgroup label=\"$l_groups\">\n";
-	// print the list of groups
-    $query = "SELECT DISTINCT groupname FROM groups ";
-    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
+  if ($serviceid > 0) {
+    echo "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
+      "<td bgcolor=\"#ddddee\">$serviceid $service_description</td>".
+      "<tr>";
+  }
+      
+  echo "<td bgcolor=\"#ccccdd\"><b>$l_notify</b></td>".
+    "<td bgcolor=\"#ddddee\">".
+    "<form style=\"margin-bottom:0;\" action=\"index.php\">"; //end
 
-	while ($myresult = $result->FetchRow())
-        {
-                $groupname = $myresult['groupname'];          
-                print "<option>$groupname</option>\n";
-        }
+  print "<select name=\"notify\">\n";
+  print "<option selected value=\"$notify\">$notify</option>\n";
+  print "<option value=\"nobody\">$l_nobody</option>\n";
+  print "<optgroup label=\"$l_groups\">\n";
+  // print the list of groups
+  $query = "SELECT DISTINCT groupname FROM groups ";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
 
-	// print a seperator
-	print "</optgroup><optgroup label=\"$l_users\">\n"; 
+  while ($myresult = $result->FetchRow()) {
+    $groupname = $myresult['groupname'];          
+    print "<option>$groupname</option>\n";
+  }
+  
+  // print a seperator
+  print "</optgroup><optgroup label=\"$l_users\">\n"; 
+  
 
-
-	// print the list of users
-        $query = "SELECT username FROM user ORDER BY username";
-        $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
+  // print the list of users
+  $query = "SELECT username FROM user ORDER BY username";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
 	
-	while ($myresult = $result->FetchRow())
-        {
-                $username = $myresult['username'];
-                print "<option>$username</option>\n";
-        }
+  while ($myresult = $result->FetchRow()) {
+    $username = $myresult['username'];
+    print "<option>$username</option>\n";
+  }
 
-        print "</optgroup></select>\n";
+  print "</optgroup></select>\n";
 
 
-	echo "
+  echo "
 	</td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_status</b></td><td bgcolor=\"#ddddee\">
 	<select name=\"status\">
