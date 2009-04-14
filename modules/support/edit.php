@@ -42,17 +42,16 @@ if ($pending) {
   
   // find notes for groups that this user belongs to
   
-  print "<tr><td bgcolor=\"#ffffff\" width=100% colspan=9>
+  print "<tr><td bgcolor=\"#ffffff\" width=100% colspan=8>
 		<b>$l_notesforgroups $user $l_belongsto</b></td>";
-  echo "<tr><td bgcolor=\"#ccccdd\" width=10%><b>$l_ticketnumber</b></td>
-		<td bgcolor=\"#ccccdd\" width=10%><b>$l_datetime</b></td>
-        <td bgcolor=\"#ccccdd\" width=10%><b>$l_from</b></td>
-		<td bgcolor=\"#ccccdd\" width=10%><b>$l_to</b></td>
-        <td bgcolor=\"#ccccdd\" width=10%><b>$l_account</b></td>
-        <td bgcolor=\"#ccccdd\" width=10%><b>$l_status</b></td>
-        <td bgcolor=\"#ccccdd\" width=30%><b>$l_description</b></td>
-		<td bgcolor=\"#ccccdd\" width=5%>$l_pending</td>
-		<td bgcolor=\"#ccccdd\" width=5%>$l_finished</td>";
+  //echo "<tr><td bgcolor=\"#ccccdd\"><b>$l_ticketnumber</b></td>".
+  //  "<td bgcolor=\"#ccccdd\"><b>$l_datetime</b></td>".
+  //  "<td bgcolor=\"#ccccdd\"><b>$l_to</b></td>".
+  //  "<td bgcolor=\"#ccccdd\"><b>$l_account</b></td>".
+  //  "<td bgcolor=\"#ccccdd\"><b>$l_status</b></td>".
+  //  "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
+  //  "<td bgcolor=\"#ccccdd\">$l_pending</td>".
+  //  "<td bgcolor=\"#ccccdd\">$l_finished</td>";
   
   $query = "SELECT * FROM groups WHERE groupmember = '$user' ";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -61,14 +60,26 @@ if ($pending) {
   while ($myresult = $result->FetchRow()) {
     $groupname = $myresult['groupname'];
     if ($showall) {
-      $query = "SELECT ch.id, ch.creation_date, ch.notify, ch.created_by, ch.account_number, ch.status, ch.description, ch.linkname, ch.linkurl, c.name FROM customer_history ch
-			INNER JOIN customer c ON ch.account_number = c.account_number 
-			WHERE notify = '$groupname' ORDER BY creation_date DESC LIMIT 50";
+      $query = "SELECT ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+	"ch.account_number, ch.status, ch.description, ch.linkname, ".
+	"ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
+	"FROM customer_history ch ".
+	"INNER JOIN customer c ON ch.account_number = c.account_number ".
+	"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+	"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".	
+	"WHERE notify = '$groupname' ORDER BY creation_date DESC LIMIT 50";
     } else {
-      $query = "SELECT ch.id, ch.creation_date, ch.notify, ch.created_by, ch.account_number, 
-			ch.status, ch.description, ch.linkname, ch.linkurl, c.name FROM customer_history ch
-			INNER JOIN customer c ON ch.account_number = c.account_number 
-			WHERE notify = '$groupname' AND status IN ('not done','pending') AND to_days(now()) >= to_days(creation_date) ORDER BY creation_date DESC";
+      //add "LEFT JOIN user_services us ON us.id = ch.".      
+      $query = "SELECT ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+	"ch.account_number, ch.status, ch.description, ch.linkname, ".
+	"ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
+	"FROM customer_history ch ".
+	"INNER JOIN customer c ON ch.account_number = c.account_number ".
+	"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+	"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+	"WHERE notify = '$groupname' AND status IN ('not done','pending') ".
+	"AND to_days(now()) >= to_days(creation_date) ".
+	"ORDER BY creation_date DESC";
     }
     $gpresult = $DB->Execute($query) or die ("$l_queryfailed");
     
@@ -83,46 +94,78 @@ if ($pending) {
       $name = $groupresult['name'];
       $linkname = $groupresult['linkname'];
       $linkurl = $groupresult['linkurl'];
+      $serviceid = $groupresult['user_services_id'];
+      $service_description = $groupresult['service_description'];
+
+      if ($serviceid == 0) {
+	$serviceid = '';
+	$servicedescription = '';
+      }
+
+    print "<tr>";
+
+    if ($status == "not done"){
+      print "<table onmouseover='h(this);'".
+	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"100%\" ".
+	"cellpadding=5 style=\"border: 1px dotted #888\">";
+    } else {
+      print "<table onmouseover='h(this);' onmouseout='deh(this);' ".
+	"bgcolor=\"#ddddee\" width=\"100%\" cellpadding=5 ".
+	"style=\"border: 1px solid #888\">";
+    }
+    
+    print "<td width=10%><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$id</a></td>";
+    print "<td width=20%>$creation_date</td>";
+    print "<td width=10%>$l_to: $notify</td>";
+    print "<td width=20%><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
+    print "<td width=10%>$status</td>";
+    print "<td width=50% colspan=3>$serviceid $service_description</td>";
+
+    print "<tr><td width=100% colspan=8 ".
+      "style=\"border: 1px dotted #999; font-size: 11pt; background: #eff\">".
+      "$description  <a href=\"$linkurl\">$linkname</a></td>";
+      print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$l_edit</a>";  
+    print " | <a href=\"index.php?load=support&type=module&edit=on&pending=on&id=$id\">$l_pending</a>"; 
+    print " | <a href=\"index.php?load=support&type=module&edit=on&completed=on&id=$id\">$l_finished</a></td></table><br>";
       
-      if ($status == "not done"){ print "<tr onmouseover='h(this);' onmouseout='dehnew(this);' bgcolor=\"#ddeeff\">"; }
-      else { print "<tr  onmouseover='h(this);' onmouseout='deh(this);' bgcolor=\"#ddddee\">"; }
       
-      print "<td><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$id</a></td>";
-      print "<td>$creation_date</td>";
-      print "<td>$created_by</td>";
-      print "<td>$notify</td>";
-      print "<td><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
-      print "<td>$status</td>";
-      print "<td>$description <a href=\"$linkurl\">$linkname</a></td>";
-      print "<td><a href=\"index.php?load=support&type=module&edit=on&pending=on&id=$id\">$l_pending</a></td>"; 
-      print "<td><a href=\"index.php?load=support&type=module&edit=on&completed=on&id=$id\">$l_finished</a></td>";
     }
   }
   
   
   // find notes for that user
   
-  print "<tr><td bgcolor=\"#ffffff\" width=100% colspan=9><br><b>$l_notesforuser $user</td>";
-  echo "<tr><td bgcolor=\"#ccccdd\" width=10%><b>$l_ticketnumber</b></td>
-		<td bgcolor=\"#ccccdd\" width=10%><b>$l_datetime</b></td>
-        <td bgcolor=\"#ccccdd\" width=10%><b>$l_from</b></td>
-		<td bgcolor=\"#ccccdd\" width=10%><b>$l_to</b></td>
-        <td bgcolor=\"#ccccdd\" width=10%><b>$l_account</b></td>
-        <td bgcolor=\"#ccccdd\" width=10%><b>$l_status</b></td>
-        <td bgcolor=\"#ccccdd\" width=30%><b>$l_description</b></td>
-		<td bgcolor=\"#ccccdd\" width=5%>$l_pending</td>
-		<td bgcolor=\"#ccccdd\" width=5%>$l_finished</td>";
+  print "<tr><td bgcolor=\"#ffffff\" width=100% colspan=8><br>".
+    "<b>$l_notesforuser $user</td>";
+    //echo "<tr><td bgcolor=\"#ccccdd\" width=10%><b>$l_ticketnumber</b></td>".
+    //"<td bgcolor=\"#ccccdd\" width=20%><b>$l_datetime</b></td>".
+    //"<td bgcolor=\"#ccccdd\" width=10%><b>$l_from</b></td>".
+    //"<td bgcolor=\"#ccccdd\" width=20%><b>$l_account</b></td>".
+    //"<td bgcolor=\"#ccccdd\" width=10%><b>$l_status</b></td>".
+    //"<td bgcolor=\"#ccccdd\" width=30%><b>$l_service</b></td>".
+    //"<td bgcolor=\"#ccccdd\" width=10%></td>".
+    //"<td bgcolor=\"#ccccdd\" width=10%></td>";
 
   if ($showall) {
-    $query = "SELECT  ch.id, ch.creation_date, ch.notify, ch.created_by, ch.account_number, 
-			ch.status, ch.description, ch.linkname, ch.linkurl, c.name FROM customer_history ch
-			INNER JOIN customer c ON ch.account_number = c.account_number 
-			WHERE notify = '$user' ORDER BY creation_date DESC LIMIT 50";
+    $query = "SELECT  ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+      "ch.account_number, ch.status, ch.description, ch.linkname, ".
+      "ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
+      "FROM customer_history ch ".
+      "INNER JOIN customer c ON ch.account_number = c.account_number ".
+      "LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+      "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".      
+      "WHERE notify = '$user' ORDER BY creation_date DESC LIMIT 50";
   } else {
-    $query = "SELECT  ch.id, ch.creation_date, ch.notify, ch.created_by, ch.account_number, 
-			ch.status, ch.description, ch.linkname, ch.linkurl, c.name FROM customer_history ch
-			INNER JOIN customer c ON ch.account_number = c.account_number 
-			WHERE notify = '$user' AND status IN ('not done','pending') AND to_days(now()) >= to_days(creation_date) ORDER BY creation_date DESC";
+    $query = "SELECT  ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+      "ch.account_number, ch.status, ch.description, ch.linkname, ".
+      "ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
+      "FROM customer_history ch ".
+      "INNER JOIN customer c ON ch.account_number = c.account_number ".
+      "LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+      "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".      
+      "WHERE notify = '$user' AND status IN ('not done','pending') ".
+      "AND to_days(now()) >= to_days(creation_date) ".
+      "ORDER BY creation_date DESC";
   }
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
@@ -140,20 +183,39 @@ if ($pending) {
     $name = $myresult['name'];
     $linkname = $myresult['linkname'];
     $linkurl = $myresult['linkurl'];
-    
-    if ($status == "not done"){ print "<tr onmouseover='h(this);' onmouseout='dehnew(this);' bgcolor=\"#ddeeff\">"; }
-    else { print "<tr onmouseover='h(this);' onmouseout='deh(this);' bgcolor=\"#ddddee\">"; }
-    
-    print "<td><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$id</a></td>";
-    print "<td>$creation_date</td>";
-    print "<td>$created_by</td>";
-    print "<td>$notify</td>";
-    print "<td><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
-    print "<td>$status</td>";
-    print "<td>$description  <a href=\"$linkurl\">$linkname</a></td>";
-    print "<td><a href=\"index.php?load=support&type=module&edit=on&pending=on&id=$id\">$l_pending</a></td>"; 
-    print "<td><a href=\"index.php?load=support&type=module&edit=on&completed=on&id=$id\">$l_finished</a></td>";
+    $serviceid = $myresult['user_services_id'];
+    $service_description = $myresult['service_description'];
 
+    if ($serviceid == 0) {
+      $serviceid = '';
+      $service_description = '';
+    }
+
+    print "<tr>";
+
+    if ($status == "not done"){
+      print "<table onmouseover='h(this);'".
+	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"100%\" ".
+	"cellpadding=5 style=\"border: 1px dotted #888\">";
+    } else {
+      print "<table onmouseover='h(this);' onmouseout='deh(this);' ".
+	"bgcolor=\"#ddddee\" width=\"100%\" cellpadding=5 ".
+	"style=\"border: 1px solid #888\">";
+    }
+    
+    print "<td width=10%><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$id</a></td>";
+    print "<td width=20%>$creation_date</td>";
+    print "<td width=10%>$l_from: $created_by</td>";
+    print "<td width=20%><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
+    print "<td width=10%>$status</td>";
+    print "<td width=50% colspan=3>$serviceid $service_description</td>";
+
+    print "<tr><td width=100% colspan=8 ".
+      "style=\"border: 1px dotted #999; font-size: 11pt; background: #eff\">".
+      "$description  <a href=\"$linkurl\">$linkname</a></td><tr>";
+    print "<td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$l_edit</a>";
+    print " | <a href=\"index.php?load=support&type=module&edit=on&pending=on&id=$id\">$l_pending</a>"; 
+    print " | <a href=\"index.php?load=support&type=module&edit=on&completed=on&id=$id\">$l_finished</a></td></table><br>";
   }
 
   echo '</table><br>';	
