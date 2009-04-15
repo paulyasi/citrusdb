@@ -1,5 +1,5 @@
 <?php   
-// Copyright (C) 2002-2009  Paul Yasi <paul@citrusdb.org>
+// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -111,11 +111,12 @@ if ($pending) {
     if ($status == "not done"){
       print "<table onmouseover='h(this);'".
 	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"720\" ".
-	"cellpadding=5 style=\"border: 1px dotted #888\">";
+	"cellpadding=5 style=\"border-top: 1px solid #888; ".
+	"border-bottom: 1px solid #888;\">";
     } else {
       print "<table onmouseover='h(this);' onmouseout='deh(this);' ".
 	"bgcolor=\"#ddddee\" width=\"720\" cellpadding=5 ".
-	"style=\"border: 1px solid #888\">";
+	"style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
     }
     
     print "<td width=10%><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$id</a></td>";
@@ -123,14 +124,13 @@ if ($pending) {
     print "<td width=10%>$created_by</td>";
     print "<td width=20%><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
     print "<td width=10%>$status</td>";
-    print "<td width=50% colspan=3>$serviceid $service_description</td>";
+    print "<td width=50% colspan=3><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">$serviceid $service_description</a></td>";
 
-    print "<tr><td width=100% colspan=8 ".
-      "style=\"border: 1px dotted #999; font-size: 11pt; background: #fff;\">".
-      "$description  <a href=\"$linkurl\">$linkname</a></td>";
+    print "<tr><td width=100% colspan=8 style=\"font-size: 11pt;\">".
+      "&nbsp; $description  <a href=\"$linkurl\">$linkname</a></td>";
       print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$l_edit</a>";  
     print " | <a href=\"index.php?load=support&type=module&edit=on&pending=on&id=$id\">$l_pending</a>"; 
-    print " | <a href=\"index.php?load=support&type=module&edit=on&completed=on&id=$id\">$l_finished</a></td></table><br>";
+    print " | <a href=\"index.php?load=support&type=module&edit=on&completed=on&id=$id\">$l_finished</a></td></table>";
       
       
     }
@@ -200,26 +200,26 @@ if ($pending) {
     if ($status == "not done"){
       print "<table onmouseover='h(this);'".
 	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"720\" ".
-	"cellpadding=5 style=\"border: 1px dotted #888\">";
+	"cellpadding=5 style=\"border-top: 1px solid #888; ".
+	"border-bottom: 1px solid #888;\">";
     } else {
       print "<table onmouseover='h(this);' onmouseout='deh(this);' ".
 	"bgcolor=\"#ddddee\" width=\"720\" cellpadding=5 ".
-	"style=\"border: 1px solid #888\">";
+	"style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
     }
     
     print "<td width=10%><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$id</a></td>";
     print "<td width=20%>$creation_date</td>";
-    print "<td width=10%>$l_from: $created_by</td>";
+    print "<td width=10%>$created_by</td>";
     print "<td width=20%><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
     print "<td width=10%>$status</td>";
-    print "<td width=50% colspan=3>$serviceid $service_description</td>";
-
-    print "<tr><td width=100% colspan=8 ".
-      "style=\"border: 1px dotted #999; font-size: 11pt; background: #eff\">".
-      "$description  <a href=\"$linkurl\">$linkname</a></td><tr>";
+    print "<td width=50% colspan=3><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">$serviceid $service_description</a></td>";
+    
+    print "<tr><td width=100% colspan=8 style=\"font-size: 11pt;\">".
+      "&nbsp; $description  <a href=\"$linkurl\">$linkname</a></td><tr>";
     print "<td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$l_edit</a>";
     print " | <a href=\"index.php?load=support&type=module&edit=on&pending=on&id=$id\">$l_pending</a>"; 
-    print " | <a href=\"index.php?load=support&type=module&edit=on&completed=on&id=$id\">$l_finished</a></td></table><br>";
+    print " | <a href=\"index.php?load=support&type=module&edit=on&completed=on&id=$id\">$l_finished</a></td></table>";
   }
 
   echo '</table><br>';	

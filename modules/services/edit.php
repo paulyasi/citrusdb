@@ -201,12 +201,16 @@ if ($save) {
   print "</blockquote>";
 
 } else if ($editbutton) {
-  // list the service options after they clicked on the add button.
+  /*--------------------------------------------------------------------------*/
+  // the normal service edit screen that
+  // lists the service attributes after they clicked on the edit or add button.
+  /*--------------------------------------------------------------------------*/
   print "<a href=\"index.php?load=services&type=module\">".
     "[ $l_undochanges ]</a>";
   
-  // get the organization_id and name for this service
-  $query = "SELECT ms.organization_id, g.org_name ".
+  // get the organization_id and options_table and name for this service
+  $query = "SELECT ms.organization_id, ms.options_table, ".
+    "ms.service_description, g.org_name ".
     "FROM user_services us ".
     "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
     "LEFT JOIN general g ON g.id = ms.organization_id ".
@@ -215,8 +219,21 @@ if ($save) {
   $orgresult = $DB->Execute($query) or die ("$l_queryfailed");
   $myorgresult = $orgresult->fields;
   $service_org_id = $myorgresult['organization_id'];
-  $service_org_name = $myorgresult['org_name']; 
-  
+  $service_org_name = $myorgresult['org_name'];
+  $optionstable = $myorgresult['options_table'];
+  $servicedescription = $myorgresult['service_description'];
+
+  /*
+   http://localhost/~pyasi/citrus_project/citrusdb/index.php?
+   load=services&
+   type=module&
+   edit=on&
+   userserviceid=147&
+   servicedescription=Bass-o-Matic%209000& <-- not necessary
+   optionstable=example_options& <-- not necessary
+   editbutton=Edit   
+   */
+
   // check for optionstable, skip this step if there isn't one
   if ($optionstable <> '') {
     $query = "SELECT * FROM $optionstable ".

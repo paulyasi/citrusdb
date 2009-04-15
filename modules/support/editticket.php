@@ -90,7 +90,8 @@ if ($savechanges)
 
   if ($serviceid > 0) {
     echo "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
-      "<td bgcolor=\"#ddddee\">$serviceid $service_description</td>".
+      "<td bgcolor=\"#ddddee\"><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">".
+      "$serviceid $service_description</a></td>".
       "<tr>";
   }
       

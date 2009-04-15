@@ -24,21 +24,26 @@ if (!defined("INDEX_CITRUS")) {
 $account_number = $base->input['account_number'];
 	
 echo "<table cellspacing=0 cellpadding=0 border=0>".
-"<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=50>".
+"<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=60>".
 "<b>$l_ticketnumber</b></td>".
-"<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=120>".
+"<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=150>".
 "<b>$l_datetime</b></td>".
 "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=70>".
 "<b>$l_createdby</b></td>".
-"<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=50>".
+"<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=70>".
 "<b>$l_notify</b></td>".
 "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=60>".
 "<b>$l_status</b></td>".
-"<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=321>".
-"<b>$l_description</b></td>";
+"<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=261>".
+"<b>$l_service</b></td>";
 
-$query = "SELECT * FROM customer_history ".
-  "WHERE account_number = '$account_number' ORDER BY id DESC LIMIT 500";
+$query = "SELECT  ch.id, ch.creation_date, ".
+  "ch.created_by, ch.notify, ch.status, ch.description, ch.linkname, ".
+  "ch.linkname, ch.linkurl, ch.user_services_id, us.master_service_id, ".
+  "ms.service_description FROM customer_history ch ".
+  "LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+  "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+  "WHERE ch.account_number = '$account_number' ORDER BY id DESC LIMIT 500";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 $linecount = 0;
@@ -51,7 +56,9 @@ while ($myresult = $result->FetchRow()) {
   $description = $myresult['description'];
   $linkname = $myresult['linkname'];
   $linkurl = $myresult['linkurl'];
-  
+  $serviceid = $myresult['user_services_id'];
+  $service_description = $myresult['service_description'];
+
   // translate the status
   switch($status) {
   case 'automatic':
@@ -85,31 +92,41 @@ while ($myresult = $result->FetchRow()) {
   $showall_permission = false;
   if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')
       OR ($user == $created_by)) {
-    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px;\"><a target=\"_parent\" ". 
+    print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt;\"><a target=\"_parent\" ". 
       "href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
       "$id</a> &nbsp;</td>";
   } else {
-    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px;\">$id &nbsp;</td>";
+    print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt;\">$id &nbsp;</td>";
   }
   
-  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px;\">$creation_date &nbsp;</td>";
-  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px;\">$created_by &nbsp;</td>";
-  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px;\">$notify &nbsp;</td>";
-  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px;\">$status &nbsp;</td>";
-  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px;\">$description &nbsp; ";
+  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+    "padding-bottom: 2px; font-size: 9pt;\">$creation_date &nbsp;</td>";
+  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+    "padding-bottom: 2px; font-size: 9pt;\">$created_by &nbsp;</td>";
+  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+    "padding-bottom: 2px; font-size: 9pt;\">$notify &nbsp;</td>";
+  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+    "padding-bottom: 2px; font-size: 9pt;\">$status &nbsp;</td>";
+  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+    "padding-bottom: 2px; font-size: 9pt;\">".
+    "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
 
   if ($linkurl) {
     print "<a href=\"$linkurl\">$linkname</a>";
   }
   
   print "</td>";
+
+  // alternate line colors
+  if ($linecount & 1) {
+    print "<tr bgcolor=\"#ffffee\">";
+  } else {
+    print "<tr bgcolor=\"#ffffdd\">";
+  }
+
+  print "<td colspan=6 style=\"font-size: 10pt; border-top: 0px dotted grey; padding-bottom: 5px;\">&nbsp;$description</td>";
   
   // increment line count to make even/odd coloring
   $linecount++;
