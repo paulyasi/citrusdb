@@ -27,31 +27,27 @@ $completed = $base->input['completed'];
 $showall = $base->input['showall'];
 
 if ($pending) {
+  /*--------------------------------------------------------------------------*/
   // mark the customer_history id as pending
+  /*--------------------------------------------------------------------------*/
   $query = "UPDATE customer_history SET status = \"pending\" WHERE id = $id";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   print "<script language=\"JavaScript\">window.location.href = \"index.php?load=support&type=module&edit=on\";</script>";			
  } else if ($completed) {
+  /*--------------------------------------------------------------------------*/
   // make the customer_history id as completed
+  /*--------------------------------------------------------------------------*/
   $query = "UPDATE customer_history SET status = \"completed\" WHERE id = $id";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   print "<script language=\"JavaScript\">window.location.href = \"index.php?load=support&type=module&edit=on\";</script>";	
  } else {
-  echo "<a href=\"index.php?load=support&type=module&edit=on&showall=on\">$l_showlast50</a>";
-  echo '<table cellspacing=1 cellpadding=5 border=0 width=720>';
+  /*--------------------------------------------------------------------------*/
+  // print the listing of tickets for this database user
+  /*--------------------------------------------------------------------------*/
+  echo "<a href=\"index.php?load=support&type=module&edit=on&showall=on\">$l_showlast50</a><br>";
+  echo "<table cellpadding=0 border=0 width=720>";
   
   // find notes for groups that this user belongs to
-  
-  print "<tr><td bgcolor=\"#ffffff\" width=100% colspan=8>
-		<b>$l_notesforgroups $user $l_belongsto</b></td>";
-  //echo "<tr><td bgcolor=\"#ccccdd\"><b>$l_ticketnumber</b></td>".
-  //  "<td bgcolor=\"#ccccdd\"><b>$l_datetime</b></td>".
-  //  "<td bgcolor=\"#ccccdd\"><b>$l_to</b></td>".
-  //  "<td bgcolor=\"#ccccdd\"><b>$l_account</b></td>".
-  //  "<td bgcolor=\"#ccccdd\"><b>$l_status</b></td>".
-  //  "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
-  //  "<td bgcolor=\"#ccccdd\">$l_pending</td>".
-  //  "<td bgcolor=\"#ccccdd\">$l_finished</td>";
   
   $query = "SELECT * FROM groups WHERE groupmember = '$user' ";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -67,7 +63,8 @@ if ($pending) {
 	"INNER JOIN customer c ON ch.account_number = c.account_number ".
 	"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
 	"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".	
-	"WHERE notify = '$groupname' ORDER BY creation_date DESC LIMIT 50";
+	"WHERE notify = '$groupname' ORDER BY notify,creation_date DESC ".
+	"LIMIT 50";
     } else {
       //add "LEFT JOIN user_services us ON us.id = ch.".      
       $query = "SELECT ch.id, ch.creation_date, ch.notify, ch.created_by, ".
@@ -79,7 +76,7 @@ if ($pending) {
 	"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
 	"WHERE notify = '$groupname' AND status IN ('not done','pending') ".
 	"AND to_days(now()) >= to_days(creation_date) ".
-	"ORDER BY creation_date DESC";
+	"ORDER BY notify,creation_date DESC";
     }
     $gpresult = $DB->Execute($query) or die ("$l_queryfailed");
     
@@ -102,27 +99,34 @@ if ($pending) {
 	$servicedescription = '';
       }
 
-    print "<tr>";
+      // print the heading for each group listing
+      if ($previousnotify <> $notify) {
+	print "<p><td bgcolor=\"#ffffff\" width=100% colspan=8> ".
+	  "<b style=\"font-size: 14pt;\">$l_notesforgroups: $notify</b></td>";
+	$previousnotify = $notify;
+      }
+      
+      print "<tr>";
 
     if ($status == "not done"){
       print "<table onmouseover='h(this);'".
-	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"100%\" ".
+	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"720\" ".
 	"cellpadding=5 style=\"border: 1px dotted #888\">";
     } else {
       print "<table onmouseover='h(this);' onmouseout='deh(this);' ".
-	"bgcolor=\"#ddddee\" width=\"100%\" cellpadding=5 ".
+	"bgcolor=\"#ddddee\" width=\"720\" cellpadding=5 ".
 	"style=\"border: 1px solid #888\">";
     }
     
     print "<td width=10%><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$id</a></td>";
     print "<td width=20%>$creation_date</td>";
-    print "<td width=10%>$l_to: $notify</td>";
+    print "<td width=10%>$created_by</td>";
     print "<td width=20%><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
     print "<td width=10%>$status</td>";
     print "<td width=50% colspan=3>$serviceid $service_description</td>";
 
     print "<tr><td width=100% colspan=8 ".
-      "style=\"border: 1px dotted #999; font-size: 11pt; background: #eff\">".
+      "style=\"border: 1px dotted #999; font-size: 11pt; background: #fff;\">".
       "$description  <a href=\"$linkurl\">$linkname</a></td>";
       print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$l_edit</a>";  
     print " | <a href=\"index.php?load=support&type=module&edit=on&pending=on&id=$id\">$l_pending</a>"; 
@@ -136,7 +140,7 @@ if ($pending) {
   // find notes for that user
   
   print "<tr><td bgcolor=\"#ffffff\" width=100% colspan=8><br>".
-    "<b>$l_notesforuser $user</td>";
+    "<b style=\"font-size: 14pt;\">$l_notesforuser $user</td>";
     //echo "<tr><td bgcolor=\"#ccccdd\" width=10%><b>$l_ticketnumber</b></td>".
     //"<td bgcolor=\"#ccccdd\" width=20%><b>$l_datetime</b></td>".
     //"<td bgcolor=\"#ccccdd\" width=10%><b>$l_from</b></td>".
@@ -195,11 +199,11 @@ if ($pending) {
 
     if ($status == "not done"){
       print "<table onmouseover='h(this);'".
-	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"100%\" ".
+	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"720\" ".
 	"cellpadding=5 style=\"border: 1px dotted #888\">";
     } else {
       print "<table onmouseover='h(this);' onmouseout='deh(this);' ".
-	"bgcolor=\"#ddddee\" width=\"100%\" cellpadding=5 ".
+	"bgcolor=\"#ddddee\" width=\"720\" cellpadding=5 ".
 	"style=\"border: 1px solid #888\">";
     }
     
