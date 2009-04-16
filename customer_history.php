@@ -92,24 +92,24 @@ while ($myresult = $result->FetchRow()) {
   $showall_permission = false;
   if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')
       OR ($user == $created_by)) {
-    print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
       "padding-bottom: 2px; font-size: 9pt;\"><a target=\"_parent\" ". 
       "href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
       "$id</a> &nbsp;</td>";
   } else {
-    print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
       "padding-bottom: 2px; font-size: 9pt;\">$id &nbsp;</td>";
   }
   
-  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
     "padding-bottom: 2px; font-size: 9pt;\">$creation_date &nbsp;</td>";
-  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
     "padding-bottom: 2px; font-size: 9pt;\">$created_by &nbsp;</td>";
-  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
     "padding-bottom: 2px; font-size: 9pt;\">$notify &nbsp;</td>";
-  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
     "padding-bottom: 2px; font-size: 9pt;\">$status &nbsp;</td>";
-  print "<td style=\"border-top: 2px solid grey; padding-top: 2px; ".
+  print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
     "padding-bottom: 2px; font-size: 9pt;\">".
     "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
 
@@ -126,7 +126,7 @@ while ($myresult = $result->FetchRow()) {
     print "<tr bgcolor=\"#ffffdd\">";
   }
 
-  print "<td colspan=6 style=\"font-size: 10pt; border-top: 0px dotted grey; padding-bottom: 5px;\">&nbsp;$description</td>";
+  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description</td>";
   
   // increment line count to make even/odd coloring
   $linecount++;

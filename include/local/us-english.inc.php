@@ -297,6 +297,7 @@ $l_paidsubscriptions = "Paid Subscriptions";
 $l_password = "Password";
 $l_passwordchanged = "Password Changed";
 $l_passwordsdonotmatch = "Passwords do not match";
+$l_pastcharges = "Past Charges";
 $l_pastdue = "Past Due";
 $l_pastdue_notice = "Past Due Notice";
 $l_pastdue_subject = "Your Account is Past Due";

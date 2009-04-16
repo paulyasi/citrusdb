@@ -199,10 +199,11 @@ echo
  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
  $result = $DB->Execute($query) or die ("$l_queryfailed");
  
- echo "<b>$l_organizationname</b>&nbsp;".
-   //   "<a href=\"index.php?load=billing&type=module&create=on\">".
-   //"$l_addaltbilling</a> ".
-   "<br><table width=720 cellpadding=3>";
+ echo "<br><table width=720 cellpadding=3><tr bgcolor=\"#dddddd\">".
+   "<td><b>$l_organizationname</b></td><td><b>$l_type</b></td>".
+   "<td><b>$l_status</b></td><td><b>$l_newcharges</b></td>".
+   "<td><b>$l_tax</b></td><td><b>$l_pastcharges</b></td>".
+   "<td><b>$l_total</b></td><tr>";
 
  while ($myresult = $result->FetchRow()) {
   $billing_id = $myresult['b_id'];
@@ -252,19 +253,15 @@ echo
 
   print "</td><td>$billing_type</td><td>$mystatus</td>";
 
+  $newtaxes = sprintf("%.2f",total_taxitems($DB, $billing_id));
+  $newcharges = sprintf("%.2f",total_serviceitems($DB, $billing_id)+$newtaxes);
+  $pastcharges = sprintf("%.2f",total_pastdueitems($DB, $billing_id));
+  
+  print "<td>$newcharges</td><td>$newtaxes</td><td>$pastcharges</td>";
 
-  // print rerun link
-  /*
-   echo "<td><a href=\"index.php?load=billing&type=module&rerun=on&".
-    "billing_id=$billing_id\">[ $l_rerun ]</a> &nbsp;&nbsp;&nbsp;";
-    
-  if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
-    echo "<a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&".
-      "submit=Submit\">[$l_invoicemaintenance ]</a> &nbsp;&nbsp;&nbsp;". 
-      "<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&".
-      "submit=Submit\">[ $l_refundreport ]</a></td>";
-    }
-  */
+  $newtotal = sprintf("%.2f",$newcharges + $pastcharges);
+  print "<td>$newtotal</td>";
+  
  }
  
  echo "</table>";

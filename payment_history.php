@@ -23,7 +23,8 @@ if (!defined("INDEX_CITRUS")) {
 $account_number = $base->input['account_number'];
 
 echo "<table cellspacing=0 cellpadding=2 border=0>".
-"<td bgcolor=\"#eedddd\" width=60><b>$l_id</b></td>".
+"<td bgcolor=\"#eedddd\" width=40><b>$l_id</b></td>".
+"<td bgcolor=\"#eedddd\" width=40><b>$l_invoice</b></td>".
 "<td bgcolor=\"#eedddd\" width=100><b>$l_date</b></td>".
 "<td bgcolor=\"#eedddd\" width=75><b>$l_type</b></td>".
 "<td bgcolor=\"#eedddd\" width=100><b>$l_status</b></td>".
@@ -108,6 +109,7 @@ while ($myresult = $result->FetchRow()) {
   
   print "<tr bgcolor=\"#ffeeee\">";
   print "<td style=\"border-top: 1px solid grey;\">$bid &nbsp;</td>";
+  print "<td style=\"border-top: 1px solid grey;\">$invoice_number &nbsp;</td>";  
   print "<td style=\"border-top: 1px solid grey;\">$date &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$type &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$status &nbsp;</td>";
