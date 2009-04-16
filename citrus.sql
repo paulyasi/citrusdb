@@ -153,8 +153,6 @@ INSERT INTO `billing_types` VALUES (6, 'CreditCard 1 Year', 12, 'creditcard');
 INSERT INTO `billing_types` VALUES (8, 'Invoice Quarterly', 3, 'invoice');
 INSERT INTO `billing_types` VALUES (9, 'Invoice 6 Months', 6, 'invoice');
 INSERT INTO `billing_types` VALUES (10, 'Invoice Yearly', 12, 'invoice');
-INSERT INTO `billing_types` VALUES (11, 'Final Bill', 0, 'invoice');
-INSERT INTO `billing_types` VALUES (12, 'Single Purchase', 0, 'prepay');
 INSERT INTO `billing_types` VALUES (13, 'Prepay 6 Months', 6, 'prepay');
 INSERT INTO `billing_types` VALUES (15, 'Prepay 1 Year', 12, 'prepay');
 INSERT INTO `billing_types` VALUES (16, 'Free', 0, 'free');

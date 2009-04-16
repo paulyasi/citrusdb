@@ -112,7 +112,7 @@ function total_taxitems($DB, $bybillingid)
 	$if_value = TRUE;
       }
 
-      if ($checkvalue == $if_value) {
+      if (($checkvalue == $if_value) AND ($billing_freq > 0)) {
 	if ($percentage_or_fixed == 'percentage') {
 	  if ($service_freq > 0) {
 	    $servicecost = ($billing_freq * $service_freq)
@@ -123,22 +123,21 @@ function total_taxitems($DB, $bybillingid)
 	    $tax_amount = $taxrate * $servicecost;
 	  }
 	} else {
-	  // fixed fee amount does not depend on price or usage
-	  if ($billing_freq > 1) {
-	    $tax_amount = $taxrate * $billing_freq;
-	  } else {
-	    $tax_amount = $taxrate;
-	  }
+	  // fixed fee amount, does not depend on price or usage
+	  $tax_amount = $taxrate * $billing_freq;
 	}
-		
+
+	
 	// round the tax to two decimal places
 	$tax_amount = sprintf("%.2f", $tax_amount);
 
 	// add to total taxes
 	$total_taxes = $total_taxes + $tax_amount;
 	
-      } //endif if_field
+      } //endif if_field/billing_freq
+
     } // endif exempt
+
   }
   
   // send back total new taxes for that customer billingid 
@@ -180,20 +179,24 @@ function total_serviceitems($DB, $bybillingid)
     $usage_multiple = $myresult['u_usage'];
     $service_freq = $myresult['m_freq'];
     $billing_freq = $myresult['t_freq'];
-    
-    if ($service_freq > 0) {
-      $billed_amount = ($billing_freq/$service_freq)
-	*($pricerate*$usage_multiple);
-    } else {
-      // one time services
-      $billed_amount = ($pricerate*$usage_multiple);
-    } // end if
-    
-    // round the tax to two decimal places
-    $billed_amount = sprintf("%.2f", $billed_amount);
 
-    // add to the total service cost    
-    $total_service = $total_service + $billed_amount;
+    if ($billing_freq > 0) {
+      if ($service_freq > 0) {
+	$billed_amount = ($billing_freq/$service_freq)
+	  *($pricerate*$usage_multiple);
+      } else {
+	// one time services
+	$billed_amount = ($pricerate*$usage_multiple);
+      } // end if
+    
+      // round the tax to two decimal places
+      $billed_amount = sprintf("%.2f", $billed_amount);
+      
+      // add to the total service cost    
+      $total_service = $total_service + $billed_amount;
+
+    } // end if billing_freq
+    
   } // end while
   
   // return the total amount of service charges for the billingid
@@ -304,7 +307,8 @@ function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
       "AND te.tax_rate_id = tr.id ".
       "LEFT JOIN billing b ON us.billing_id = b.id ".
       "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-      "WHERE b.id = '$bybillingid' AND us.removed <> 'y'";
+      "WHERE b.id = '$bybillingid' AND t.method = '$billingmethod' ".
+      "AND us.removed <> 'y'";
   }	
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $taxresult = $DB->Execute($query) or die ("Taxes Query Failed");
@@ -344,7 +348,7 @@ function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
 	$if_value = TRUE;
       }
 
-      if ($checkvalue == $if_value) {
+      if (($checkvalue == $if_value) AND ($billing_freq > 0)) {
 	if ($percentage_or_fixed == 'percentage') {
 	  if ($service_freq > 0) {
 	    $servicecost = ($billing_freq * $service_freq)
@@ -356,11 +360,7 @@ function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
 	  }
 	} else {
 	  // fixed fee amount does not depend on price or usage
-	  if ($billing_freq > 1) {
-	    $tax_amount = $taxrate * $billing_freq;
-	  } else {
-	    $tax_amount = $taxrate;
-	  }
+	  $tax_amount = $taxrate * $billing_freq;
 	}
 		
 	// round the tax to two decimal places
@@ -376,7 +376,7 @@ function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$invoiceresult = $DB->Execute($query) or die ("Query Failed");
 	$i++;
-      } //endif if_field
+      } //endif if_field/billing_freq
     } // endif exempt
   }
   
@@ -433,20 +433,20 @@ function add_servicedetails($DB, $billingdate, $bybillingid, $billingmethod, $ba
 		$service_freq = $myresult['m_freq'];
 		$billing_freq = $myresult['t_freq'];
 
-		if ($service_freq > 0)
-		{
-			$billed_amount = ($billing_freq/$service_freq)
-				*($pricerate*$usage_multiple);
+		if ($billing_freq > 0) {
+		  if ($service_freq > 0)
+		    {
+		      $billed_amount = ($billing_freq/$service_freq)
+			*($pricerate*$usage_multiple);
+		    }
+		  else
+		    {
+		      // Remove one time services
+		      $billed_amount = ($pricerate*$usage_multiple);
+		      $today = date("Y-m-d");
+		      delete_service($user_services_id, 'onetime', $today);
+		    } // end if
 		}
-		else
-		{
-			// Remove one time services
-			$billed_amount = ($pricerate*$usage_multiple);
-			$today = date("Y-m-d");
-			delete_service($user_services_id, 'onetime', $today);
-		} // end if
-
-		//print "$billing_id $user_services_id $pricerate<br>";
 		
 		// insert this into the billing_details
 		$query = "INSERT INTO billing_details (billing_id, 
