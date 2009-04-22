@@ -126,7 +126,7 @@ if ($pending) {
     print "<td width=10%>$status</td>";
     print "<td width=50% colspan=3><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">$serviceid $service_description</a></td>";
 
-    print "<tr><td width=100% colspan=8 style=\"font-size: 11pt;\">".
+    print "<tr><td width=100% colspan=8>".
       "&nbsp; $description  <a href=\"$linkurl\">$linkname</a></td>";
       print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$l_edit</a>";  
     print " | <a href=\"index.php?load=support&type=module&edit=on&pending=on&id=$id\">$l_pending</a>"; 
@@ -215,7 +215,7 @@ if ($pending) {
     print "<td width=10%>$status</td>";
     print "<td width=50% colspan=3><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">$serviceid $service_description</a></td>";
     
-    print "<tr><td width=100% colspan=8 style=\"font-size: 11pt;\">".
+    print "<tr><td width=100% colspan=8>".
       "&nbsp; $description  <a href=\"$linkurl\">$linkname</a></td><tr>";
     print "<td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$l_edit</a>";
     print " | <a href=\"index.php?load=support&type=module&edit=on&pending=on&id=$id\">$l_pending</a>"; 

@@ -165,5 +165,5 @@ function service_message($service_notify_type, $account_number,
   }
   
   // create the ticket with the service message
-  create_ticket($DB, $user, $notify, $account_number, $status, $description);
+  create_ticket($DB, $user, $notify, $account_number, $status, $description, NULL, NULL, NULL, $user_service_id);
 }
