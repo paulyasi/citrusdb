@@ -1,6 +1,6 @@
 <?php
-// Copyright (C) 2002-2008  Paul Yasi (paul at citrusdb.org)
-// read the README file for more information   
+// Copyright (C) 2002-2009 Paul Yasi (paul at citrusdb.org)
+// read the README file for more information
 
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
@@ -97,22 +97,6 @@ if ($save) {
     "\"index.php?load=services&type=module\";</script>";
 
 } else if ($servicetype) {
-  // change service, update the database if they changed the master_service_id
-  // TODO: MAKE A COPY OF THE USER SERVICE UNDER THE NEW MASTER SERVICE ID
-  // AND REMOVE THE OLD USER SERVICE WITH NO REMOVAL DATE SO THAT THERE IS
-  // A RECORD OF THE OLD SERVICE INFORMATION INDEPENDENT OF THE
-  // NEW SERVICE THEY CHANGED TO
-
-  /************* CUT OUT OLD CODE ****************************
-
-  
-  $query = "UPDATE user_services SET master_service_id = ".
-    "$master_service_id WHERE id = $userserviceid";
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
-  ************* CUT OUT OLD CODE ****************************/
-  
-  // TODO: call $new_master_service_id = create_service() to make new one with
-  // new type but attributes from old service
 
   // get the old master service id
   $query = "SELECT master_service_id FROM user_services ".
@@ -210,7 +194,8 @@ if ($save) {
   
   // get the organization_id and options_table and name for this service
   $query = "SELECT ms.organization_id, ms.options_table, ".
-    "ms.service_description, g.org_name ".
+    "ms.service_description, g.org_name, ".
+    "date(us.start_datetime) AS start_datetime ".
     "FROM user_services us ".
     "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
     "LEFT JOIN general g ON g.id = ms.organization_id ".
@@ -222,6 +207,7 @@ if ($save) {
   $service_org_name = $myorgresult['org_name'];
   $optionstable = $myorgresult['options_table'];
   $servicedescription = $myorgresult['service_description'];
+  $creationdate = humandate($myorgresult['start_datetime'], $lang);
 
   /*
    http://localhost/~pyasi/citrus_project/citrusdb/index.php?
@@ -244,7 +230,8 @@ if ($save) {
   }
 	
   // edit the things in the options table
-  print "<h4>$l_edit: $servicedescription ($service_org_name)</h4>".
+  print "<h4>$l_edit: $servicedescription ($service_org_name)".
+    "&nbsp;&nbsp;&nbsp; $l_createdon: $creationdate</h4>".
     "<form action=\"index.php\"><table width=720 cellpadding=5 cellspacing=1 ".
     "border=0>";
   print "<input type=hidden name=load value=services>";

@@ -1,5 +1,5 @@
 <?php   
-// Copyright (C) 2002-2007  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -62,8 +62,8 @@ if ($edit) {
      "<table cellpadding=3 cellspacing=1 border=0 width=720>".
      "<td bgcolor=\"#ccccdd\"><b>$l_id</b></td>".
      "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
-     "<td bgcolor=\"#ccccdd\"><b>$l_details</b></td>".
-     "<td bgcolor=\"#ccccdd\"><b>$l_creation</b></td>".
+     "<td bgcolor=\"#ccccdd\"><b>$l_detail1</b></td>".
+     "<td bgcolor=\"#ccccdd\"><b>$l_detail2</b></td>".
      "<td bgcolor=\"#ccccdd\"><b>$l_price</b></td>".
      "<td bgcolor=\"#ccccdd\"><b>$l_freq</b></td>".
      "<td bgcolor=\"#ccccdd\"><b>$l_billingid</b></td>".
@@ -95,8 +95,10 @@ if ($edit) {
        $optionsresult = $DB->Execute($query) or die ("$l_queryfailed");
        $myoptions = $optionsresult->fields;
        $optiondetails = $myoptions[2];
+       $optiondetails2 = $myoptions[3];
      } else {
-       $optiondetails = '';	
+       $optiondetails = '';
+       $optiondetails2 = '';
      }
      $master_service_id = $myresult['master_service_id'];
      $service_organization_id = $myresult['master_organization_id'];
@@ -127,7 +129,7 @@ if ($edit) {
        "<td>$id</td>".
        "<td>$service_description</td>".
        "<td>$optiondetails</td>".
-       "<td>$start_datetime</td>".
+       "<td>$optiondetails2</td>".
        "<td>$totalprice</td>".
        "<td>$frequency</td>".
        "<td>$billing_id ($org_name)</td>".
