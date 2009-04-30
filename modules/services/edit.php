@@ -454,16 +454,19 @@ if ($save) {
     // print a list of services that share the same attributes
         
     print "<select name=master_service_id><option selected ".
-      "value=$master_service_id>$service_description</option>\n";
+      "value=$master_service_id>$service_description ($l_current)</option>\n";
 	
     $query = "SELECT * FROM master_services ".
       "WHERE options_table = '$optionstable'";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $result = $DB->Execute($query) or die ("$l_queryfailed");
     while ($myresult = $result->FetchRow()) {
-      $master_service_id = $myresult['id'];
+      $new_master_service_id = $myresult['id'];
       $service_description = $myresult['service_description'];
-      print "<option value=$master_service_id>$service_description</option>\n";
+      // print listing without showing the current service
+      if ($new_master_service_id <> $master_service_id) {
+	print "<option value=$new_master_service_id>$service_description</option>\n";
+      }
     }
 
     echo "</select></td><tr>\n";

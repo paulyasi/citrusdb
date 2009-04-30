@@ -134,6 +134,7 @@ $l_creditcard = "Credit Card";
 $l_creditcardexportvars = "Credit Card Export Variable Order";
 $l_foroverpayment = "for overpayment";
 $l_currency = "&#36;";
+$l_current = "current";
 $l_customer = "Customer";
 $l_customeraccountmanager = "Customer Account Manager";
 $l_customername = "Customer Name";
