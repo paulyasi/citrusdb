@@ -43,17 +43,25 @@ $showstatus = $base->input['showstatus'];
 if ($day1) {
 
   // get the organization info
-  $query = "SELECT org_name FROM general WHERE id = $organization_id LIMIT 1";
-  $orgresult = $DB->Execute($query) or die ("$l_queryfailed");
-  $myorgresult = $orgresult->fields;
-  $organization_name = $myorgresult['org_name']; 
+  // special id = all queries all organizations combined
+  if ($organization_id == "all") {
+    $organization_name = "All";
+    $query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
+      "LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
+      "BETWEEN '$day1' AND '$day2' AND p.payment_type = '$showpaymenttype'";
+  } else {
+    $query = "SELECT org_name FROM general WHERE id = $organization_id LIMIT 1";
+    $orgresult = $DB->Execute($query) or die ("$l_queryfailed");
+    $myorgresult = $orgresult->fields;
+    $organization_name = $myorgresult['org_name'];
+    $query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
+      "LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
+      "BETWEEN '$day1' AND '$day2' AND b.organization_id = $organization_id ".
+      "AND p.payment_type = '$showpaymenttype'";
+  }
+  echo "<b>$organization_name, $day1 $l_to $day2 $showpaymenttype ".
+    "$showstatus</b>";
   
-  echo "<b>$organization_name, $day1 $l_to $day2 $showpaymenttype $showstatus</b>";
-  
-  $query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
-    "LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
-    "BETWEEN '$day1' AND '$day2' AND b.organization_id = $organization_id ".
-    "AND p.payment_type = '$showpaymenttype'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
 
@@ -97,12 +105,20 @@ if ($day1) {
   /*--------------------------------------------------------------------*/
   // get the number of DISTINCT cards, run vs. declined
   /*--------------------------------------------------------------------*/
-  $query = "SELECT DISTINCT(p.creditcard_number), p.status, b.name, b.phone ".
-    "FROM payment_history p ".
-    "LEFT JOIN billing b ON p.billing_id = b.id ".
-    "WHERE p.creation_date BETWEEN '$day1' AND '$day2' ".
-    "AND b.organization_id = $organization_id ".
-    "AND p.payment_type = 'creditcard' AND p.status = 'declined'";
+  if ($organization_id == "all") {
+    $query = "SELECT DISTINCT(p.creditcard_number), p.status, b.name, b.phone ".
+      "FROM payment_history p ".
+      "LEFT JOIN billing b ON p.billing_id = b.id ".
+      "WHERE p.creation_date BETWEEN '$day1' AND '$day2' ".
+      "AND p.payment_type = 'creditcard' AND p.status = 'declined'";
+  } else {
+    $query = "SELECT DISTINCT(p.creditcard_number), p.status, b.name, b.phone ".
+      "FROM payment_history p ".
+      "LEFT JOIN billing b ON p.billing_id = b.id ".
+      "WHERE p.creation_date BETWEEN '$day1' AND '$day2' ".
+      "AND b.organization_id = $organization_id ".
+      "AND p.payment_type = 'creditcard' AND p.status = 'declined'";
+  }
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   
@@ -118,11 +134,17 @@ if ($day1) {
   
   
   // print the number of non-creditcard payments
-  
-  $query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
-    "LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
-    "BETWEEN '$day1' AND '$day2' AND b.organization_id = $organization_id ".
-    "AND p.payment_type <> 'creditcard'";
+
+  if ($organization_id == "all") {
+    $query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
+      "LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
+      "BETWEEN '$day1' AND '$day2' AND p.payment_type <> 'creditcard'";
+  } else {
+    $query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
+      "LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
+      "BETWEEN '$day1' AND '$day2' AND b.organization_id = $organization_id ".
+      "AND p.payment_type <> 'creditcard'";    
+  }
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
 
@@ -177,7 +199,8 @@ if ($day1) {
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   echo "<tr><td>$l_organizationname: ".
     "<select name=\"organization_id\">".
-    "<option value=\"\">$l_choose</option>";
+    "<option value=\"\">$l_choose</option>".
+    "<option value=\"all\">All</option>";
   while ($myresult = $result->FetchRow()) {
     $myid = $myresult['id'];
     $myorg = $myresult['org_name'];
