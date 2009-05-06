@@ -86,10 +86,7 @@ if (!isset($base->input['payment_due_date']) OR
     $base->input['payment_due_date'] == "") { 
   $base->input['payment_due_date'] = "0000-00-00"; 
 }
-if (!isset($base->input['rerun_date']) OR 
-    $base->input['rerun_date'] == "") { 
-  $base->input['rerun_date'] = "0000-00-00"; 
-}
+
 if (!isset($base->input['contact_email'])) { $base->input['contact_email'] = ""; }
 if (!isset($base->input['notes'])) { $base->input['notes'] = ""; }
 if (!isset($base->input['pastdue_exempt'])) { $base->input['pastdue_exempt'] = ""; }
@@ -111,7 +108,6 @@ $creditcard_expire = $base->input['creditcard_expire'];
 $next_billing_date = $base->input['next_billing_date'];
 $from_date = $base->input['from_date'];
 $payment_due_date = $base->input['payment_due_date'];
-$rerun_date = $base->input['rerun_date'];
 $contact_email = $base->input['contact_email'];
 $notes = $base->input['notes'];
 $pastdue_exempt = $base->input['pastdue_exempt'];
@@ -136,7 +132,6 @@ if ($save) {
 	next_billing_date = '$next_billing_date',
 	from_date = '$from_date',
 	payment_due_date = '$payment_due_date',
-	rerun_date = '$rerun_date',
 	notes = '$notes',
 	pastdue_exempt = '$pastdue_exempt',
 	po_number = '$po_number',
@@ -175,8 +170,7 @@ else
         $from_date = $myresult['from_date'];
         $to_date = $myresult['to_date'];
 	$payment_due_date = $myresult['payment_due_date'];
-        $rerun_date = $myresult['rerun_date'];
-	$contact_email = $myresult['contact_email'];
+       	$contact_email = $myresult['contact_email'];
         $notes = $myresult['notes'];
 	$pastdue_exempt = $myresult['pastdue_exempt'];
 	$po_number = $myresult['po_number'];
@@ -299,9 +293,6 @@ echo "
 	return false;\"
 	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</A>
 	</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_rerun $l_date</b></td>
-	<td bgcolor=\"#ddddee\">
-	<input name=\"rerun_date\" type=text value=\"$rerun_date\"></td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_po_number</b></td>
 	<td bgcolor=\"#ddddee\">
 	<input name=\"po_number\" type=text value=\"$po_number\"></td><tr>

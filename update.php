@@ -571,6 +571,12 @@ if ($base->input['submit'] == "Update")
 	    "INT NULL ;";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
+
+	  // add rerun flag to billing details
+	  $query = "ALTER TABLE `billing_details` ".
+	    "ADD `rerun` ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
 	  
 	  // set the version, using the new settings field
 	  $query = "UPDATE `settings` SET `version` = '1.3.1' ".

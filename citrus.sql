@@ -87,7 +87,8 @@ CREATE TABLE `billing_details` (
   `batch` int(11) NOT NULL default '0',
   `refund_amount` float NOT NULL default '0',
   `refunded` enum('y','n') NOT NULL default 'n',
-  `refund_date` date NULL, 
+  `refund_date` date NULL,
+  `rerun` enum('y','n') default 'n',
   PRIMARY KEY  (`id`),
   KEY `creation_date` (`creation_date`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;
