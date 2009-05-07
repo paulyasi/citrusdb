@@ -593,17 +593,18 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
     $invoicetotal = 0;
     
     // if this is a rerun, then set the payment_due_date to today for history
-    // set the rerun date to NULL now that we are done with it
     if ($billing_rerun_date == $billingdate) {
       $billing_payment_due_date = $billing_rerun_date;
       $billing_fromdate = $billing_rerun_date;
       $billing_todate = $billing_rerun_date;
-
+    }
+    
+    // set the rerun date to NULL now that we are done with it
+    if ($billing_rerun_date)
       $query = "UPDATE billing SET rerun_date = NULL ".
 	"WHERE id = '$mybilling_id'";
       $billing_rerun_null_result = $DB->Execute($query)
 	or die ("Rerun NULL Update Failed");      
-
     }
     
     //
