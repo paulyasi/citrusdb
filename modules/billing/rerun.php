@@ -54,11 +54,13 @@ if ($save) {
 	//print "$mykey<br>";
 	if ($myfield == $mykey) {
 	  $fieldvalues .= ',\'' . $myvalue . '\'';
-	  // TODO: set the rerun flag for this billing_detail id value to 'y'
+	  // set the rerun flag for this billing_detail id value to 'y'
 	  $query = "UPDATE billing_details SET rerun = 'y' ".
 	    "WHERE id = '$myvalue'";
 	  $result = $DB->Execute($query) or die ("$l_queryfailed");
 
+	  // TODO: unset all the other things
+	  
 	}
       }
     }
@@ -82,7 +84,7 @@ if ($save) {
   // and allow one to check or uncheck which ones they want
   // to be rerun
 
-  // select the billing id's that have matching rerun dates
+  // select the billing detail items that are unpaid
   $query = "SELECT bd.id bd_id, bd.user_services_id, bd.billed_amount, ".
     "bd.paid_amount, us.id us_id, ms.service_description ".
     "FROM billing_details bd ".
@@ -104,6 +106,18 @@ if ($save) {
     $user_services_id = $myresult['user_services_id'];
     $detail_total = sprintf("%.2f",$myresult['billed_amount'] - $myresult['paid_amount']);
     $description = $myresult['service_description'];
+
+    // clear the rerun flag on all the items shown before you allow setting
+    // of new rerun flags, also clear the rerun date in the billing record here
+    $query = "UPDATE billing_details SET ".
+      "rerun = 'n' WHERE id = '$detail_id'";
+    $updatedetail = $DB->Execute($query) or die ("Detail Update Failed");
+
+    $query = "UPDATE billing SET ".
+      "rerun_date = NULL WHERE id = '$billing_id'";
+    $updatedetail = $DB->Execute($query) or die ("Detail Update Failed");
+    
+    // print the detail items that are unpaid and can be rerun
 
     echo "<td><input checked type=checkbox name=rerun_service_$detail_id value=\"$detail_id\"></td>\n";    
     echo "<td>$service_id</td>\n";

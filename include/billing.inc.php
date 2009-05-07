@@ -470,7 +470,7 @@ function update_rerundetails($DB, $billingdate, $batchid, $organization_id) {
   // Update Reruns to the bill
   /*----------------------------------------------------------------*/
   
-  $DB->debug = true;
+  //$DB->debug = true;
   
   // select the billing id's that have matching rerun dates
   $query = "SELECT id, rerun_date FROM billing ".
@@ -562,11 +562,9 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
       "LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
       "WHERE d.billing_id = $mybilling_id ".
       "AND ".
-      "((d.paid_amount != d.billed_amount AND b.rerun_date <> d.creation_date) ".
+      "((d.paid_amount != d.billed_amount AND b.rerun_date IS NULL) ".
       "OR (d.rerun = 'y' AND b.rerun_date = d.creation_date)) ".
       "ORDER BY d.taxed_services_id";
-
-    // BUG: this query above does not add in the old past due amounts on normal billing id's!
         
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $invoiceresult = $DB->Execute($query) or die ("Query Failed"); 
@@ -594,11 +592,18 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
     $billing_notes = $myresult['notes'];	
     $invoicetotal = 0;
     
-    // if this is a rerun, then set the payment_due_date to today
+    // if this is a rerun, then set the payment_due_date to today for history
+    // set the rerun date to NULL now that we are done with it
     if ($billing_rerun_date == $billingdate) {
       $billing_payment_due_date = $billing_rerun_date;
       $billing_fromdate = $billing_rerun_date;
       $billing_todate = $billing_rerun_date;
+
+      $query = "UPDATE billing SET rerun_date = NULL ".
+	"WHERE id = '$mybilling_id'";
+      $billing_rerun_null_result = $DB->Execute($query)
+	or die ("Rerun NULL Update Failed");      
+
     }
     
     //

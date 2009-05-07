@@ -577,6 +577,8 @@ if ($base->input['submit'] == "Update")
 	    "ADD `rerun` ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
+
+	  // TODO: NULL OUT OLD RERUN DATES!
 	  
 	  // set the version, using the new settings field
 	  $query = "UPDATE `settings` SET `version` = '1.3.1' ".
