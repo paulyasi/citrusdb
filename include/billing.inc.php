@@ -466,299 +466,294 @@ function add_servicedetails($DB, $billingdate, $bybillingid, $billingmethod, $ba
 
 
 function update_rerundetails($DB, $billingdate, $batchid, $organization_id) {
-	/*----------------------------------------------------------------*/
-	// Update Reruns to the bill
-	/*----------------------------------------------------------------*/
-	
-	//$DB->debug = true;
-	
-	// select the billing id's that have matching rerun dates
-	$query = "SELECT id, rerun_date FROM billing 
-	WHERE rerun_date = '$billingdate' AND organization_id = '$organization_id'";
-        $DB->SetFetchMode(ADODB_FETCH_ASSOC);        
-	$result = $DB->Execute($query) or die ("Rerun Query Failed"); 
-	$i = 0;
-	while ($myresult = $result->FetchRow()) {
-		$billing_id = $myresult['id'];
-		
-		$query = "UPDATE billing_details SET         
-		batch = '$batchid',        
-		invoice_number = NULL, 
-		creation_date = CURRENT_DATE         
-		WHERE billing_id = $billing_id AND billed_amount > paid_amount";
-		
-		$updateresult = $DB->Execute($query) or die ("Update Details Query Failed");
-		
-		$i++;	
-	}		
-	
-	//echo "$i accounts rerun<p>";
-	return $i; // return the number of reruns updated
+  /*----------------------------------------------------------------*/
+  // Update Reruns to the bill
+  /*----------------------------------------------------------------*/
+  
+  $DB->debug = true;
+  
+  // select the billing id's that have matching rerun dates
+  $query = "SELECT id, rerun_date FROM billing ".
+    "WHERE rerun_date = '$billingdate' ".
+    "AND organization_id = '$organization_id'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);        
+  $result = $DB->Execute($query) or die ("Rerun Query Failed"); 
+  $i = 0;
+  while ($myresult = $result->FetchRow()) {
+    $billing_id = $myresult['id'];
+    $rerun_date = $myresult['rerun_date'];
+
+    // set the item to be rerun that is unpaid and has the rerun flag set
+    $query = "UPDATE billing_details SET ".         
+      "batch = '$batchid', ".        
+      "invoice_number = NULL, ".
+      "creation_date = '$rerun_date' ".
+      "WHERE billing_id = $billing_id ".
+      "AND billed_amount > paid_amount ".
+      "AND rerun = 'y'";
+    
+    $updateresult = $DB->Execute($query) or die ("Update Details Query Failed");
+    
+    $i++;	
+  }		
+  
+  //echo "$i accounts rerun<p>";
+  return $i; // return the number of reruns updated
 }
 
-function create_billinghistory($DB, $batchid, $billingmethod, $user) {
+
+function create_billinghistory($DB, $batchid, $billingmethod, $user)
+{
   global $lang;
   include ("$lang");  
   
-	// go through a list of billing_id's that are to be billed today
-	$query = "SELECT DISTINCT billing_id FROM billing_details 
-	WHERE creation_date = CURRENT_DATE AND batch = '$batchid'";
-        $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$distinctresult = $DB->Execute($query) or die ("Query Failed");
+  // go through a list of billing_id's that are to be billed in today's batch
+  $query = "SELECT DISTINCT billing_id FROM billing_details ".
+    "WHERE batch = '$batchid'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $distinctresult = $DB->Execute($query) or die ("Query Failed");
 
-	// set billingdate as today for checking rerun dates and stuff
-	$billingdate = date("Y-m-d");
+  // set billingdate as today for checking rerun dates and stuff
+  $billingdate = date("Y-m-d");
 
-	// make a new billing_history record for each billing id group 
-	// - use the billing_history_id as the invoice number
-	while ($myresult = $distinctresult->FetchRow()) {
-        	$mybilling_id = $myresult['billing_id'];
-		$query = "INSERT INTO billing_history 
-		(billing_date, created_by, record_type, billing_type, 
-		billing_id) 
-		VALUES (CURRENT_DATE,'$user','bill','$billingmethod',
-		'$mybilling_id')";
-		$historyresult = $DB->Execute($query) 
-			or die ("Query Failed");
+  // make a new billing_history record for each billing id group 
+  // use the billing_history_id as the invoice number
+  while ($myresult = $distinctresult->FetchRow()) {
+    $mybilling_id = $myresult['billing_id'];
+    $query = "INSERT INTO billing_history ".
+      "(billing_date, created_by, record_type, billing_type, ".
+      "billing_id) ".
+      "VALUES (CURRENT_DATE,'$user','bill','$billingmethod', ".
+      "'$mybilling_id')";
+    $historyresult = $DB->Execute($query) or die ("Query Failed");	
 	
-	
-		// set the invoice number for billing_details that have 
-		// the corresponding billing_id 
-		// and haven't been assigned an invoice number yet
-		$myinsertid = $DB->Insert_ID();
-		$invoice_number=$myinsertid;
-		$query = "UPDATE billing_details 
-			SET invoice_number = '$invoice_number' 
-			WHERE billing_id = '$mybilling_id' 
-			AND invoice_number IS NULL";
-		$invnumresult = $DB->Execute($query) or die ("Query Failed");
-			
-		// get the data for the service charges still pending 
-		// and what services they have
-		
-		$query = "SELECT d.billing_id d_billing_id, 
-		d.creation_date d_creation_date, 
-		d.user_services_id d_user_services_id,
-	        d.invoice_number d_invoice_number, 
-		d.paid_amount d_paid_amount, d.billed_amount d_billed_amount,
-		d.taxed_services_id d_taxed_services_id, 
-		u.id u_id, u.account_number u_account_number, 
-		m.id m_id, m.service_description m_description, 
-		m.options_table m_options_table, 
-		ts.id ts_id, ts.master_services_id 
-		ts_master_services_id, ts.tax_rate_id ts_tax_rate_id, 
-		tr.id tr_id, tr.description tr_description  
-	        FROM billing_details d
-	        LEFT JOIN user_services u ON d.user_services_id = u.id
-	        LEFT JOIN master_services m ON u.master_service_id = m.id 
-		LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id 
-		LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
-	        WHERE d.billing_id = $mybilling_id 
-		AND d.paid_amount != d.billed_amount 
-		ORDER BY d.taxed_services_id"; 	
+    // set the invoice number for billing_details that have 
+    // the corresponding billing_id 
+    // and haven't been assigned an invoice number yet
+    $myinsertid = $DB->Insert_ID();
+    $invoice_number=$myinsertid;
+    $query = "UPDATE billing_details ".
+      "SET invoice_number = '$invoice_number' ".
+      "WHERE billing_id = '$mybilling_id' ".
+      "AND invoice_number IS NULL";
+    $invnumresult = $DB->Execute($query) or die ("Query Failed");
+    
+    // get the data for the service charges still pending 
+    // and what services they have
+    
+    $query = "SELECT d.billing_id d_billing_id, ".
+      "d.creation_date d_creation_date, ".
+      "d.user_services_id d_user_services_id, ".
+      "d.invoice_number d_invoice_number, ".
+      "d.paid_amount d_paid_amount, d.billed_amount d_billed_amount, ".
+      "d.taxed_services_id d_taxed_services_id, ".
+      "b.rerun_date b_rerun_date, ".
+      "u.id u_id, u.account_number u_account_number, ".
+      "m.id m_id, m.service_description m_description, ".
+      "m.options_table m_options_table, ".
+      "ts.id ts_id, ts.master_services_id ".
+      "ts_master_services_id, ts.tax_rate_id ts_tax_rate_id, ".
+      "tr.id tr_id, tr.description tr_description ".
+      "FROM billing_details d ".
+      "LEFT JOIN billing b ON d.billing_id = b.id ".
+      "LEFT JOIN user_services u ON d.user_services_id = u.id ".
+      "LEFT JOIN master_services m ON u.master_service_id = m.id ".
+      "LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
+      "LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
+      "WHERE d.billing_id = $mybilling_id ".
+      "AND ".
+      "((d.paid_amount != d.billed_amount AND b.rerun_date <> d.creation_date) ".
+      "OR (d.rerun = 'y' AND b.rerun_date = d.creation_date)) ".
+      "ORDER BY d.taxed_services_id";
+
+    // BUG: this query above does not add in the old past due amounts on normal billing id's!
         
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	        $invoiceresult = $DB->Execute($query) or die ("Query Failed"); 
-		// used to show the invoice
-		$totalresult = $DB->Execute($query) or die ("Query Failed"); 
-		// used to add up the total charges
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $invoiceresult = $DB->Execute($query) or die ("Query Failed"); 
+    // used to show the invoice
+    $totalresult = $DB->Execute($query) or die ("Query Failed"); 
+    // used to add up the total charges
+    
+    // get the data for the billing dates from the billing table
+    $query = "SELECT * FROM billing WHERE id = $mybilling_id";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $billingresult = $DB->Execute($query) or die ("Query Failed");
+    
+    $myresult = $billingresult->fields;
+    $billing_name = $myresult['name'];
+    $billing_company = $myresult['company'];
+    $billing_street = $myresult['street'];
+    $billing_zip = $myresult['zip'];
+    $billing_acctnum = $myresult['account_number'];
+    $billing_ccnum = $myresult['creditcard_number'];
+    $billing_ccexp = $myresult['creditcard_expire'];
+    $billing_fromdate = $myresult['from_date'];
+    $billing_todate = $myresult['to_date'];
+    $billing_payment_due_date = $myresult['payment_due_date'];
+    $billing_rerun_date = $myresult['rerun_date'];
+    $billing_notes = $myresult['notes'];	
+    $invoicetotal = 0;
+    
+    // if this is a rerun, then set the payment_due_date to today
+    if ($billing_rerun_date == $billingdate) {
+      $billing_payment_due_date = $billing_rerun_date;
+      $billing_fromdate = $billing_rerun_date;
+      $billing_todate = $billing_rerun_date;
+    }
+    
+    //
+    // calculate amounts for history
+    //
+    
+    // initialize past amounts
+    $pastdue = 0;
+    $new_charges = 0;
+    $tax_due = 0;
+    
+    while($myinvresult = $invoiceresult->FetchRow()) {
+      $user_services_id = $myinvresult['d_user_services_id'];	
+      $currinvoicenumber = $myinvresult['d_invoice_number'];
+      $billing_id = $myinvresult['d_billing_id'];
+      $creation_date = $myinvresult['d_creation_date'];
+      $service = $myinvresult['m_description'];
+      $taxdescription = $myinvresult['tr_description'];
+      $billed_amount = $myinvresult['d_billed_amount'];
+      $paid_amount = $myinvresult['d_paid_amount'];
+      
+      // get the difference between billed and paid amount
+      $billed_amount = $billed_amount - $paid_amount;
+      
+      if ($currinvoicenumber == $invoice_number) {
+	// new charges
+	$billed_amount = sprintf("%.2f",$billed_amount);
+	$new_charges = $new_charges + $billed_amount;
+	// new taxes
+	if ($taxdescription <> NULL) {
+	  $tax_due = $tax_due + $billed_amount;
+	}
+      } else {
+	// past due charges
+	$pastdue = $pastdue + $billed_amount;
+      } // end if
+    } // end while
+    
+    //
+    // Apply Credits
+    // check if they have any credits and apply as payments
+    //
+    apply_credits($DB, $mybilling_id);
+    
+    // calculate the invoicetotal
+    while ($myresult = $totalresult->FetchRow()) {
+      $billed_amount = $myresult['d_billed_amount'] - $myresult['d_paid_amount'];
+      $invoicetotal = $billed_amount + $invoicetotal;
+    }
+    
+    $precisetotal = sprintf("%.2f", $invoicetotal);
+    
+    // get the absolute value of the total
+    $abstotal = abs($precisetotal);
+    
+    $total_due = $precisetotal;
+    $new_charges = sprintf("%.2f",$new_charges);
+    $pastdue = sprintf("%.2f",$pastdue);
+    $tax_due = sprintf("%.2f",$tax_due);
+    $total_due = sprintf("%.2f",$total_due);
+    
+    // check the pastdue status to see what note to include
+    $status = billingstatus($mybilling_id);
+    
+    // get the invoice notes from general
+    $query = "SELECT g.default_invoicenote, g.pastdue_invoicenote, ".
+      "g.turnedoff_invoicenote, g.collections_invoicenote ".
+      "FROM billing b ".
+      "LEFT JOIN general g ON g.id = b.organization_id ".
+      "WHERE b.id = $mybilling_id";
+    $generalresult = $DB->Execute($query) or die ("$l_queryfailed");
 
-		// get the data for the billing dates from the billing table
-		$query = "SELECT * FROM billing WHERE id = $mybilling_id";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$billingresult = $DB->Execute($query) or die ("Query Failed");
-
-		$myresult = $billingresult->fields;
-		$billing_name = $myresult['name'];
-		$billing_company = $myresult['company'];
-		$billing_street = $myresult['street'];
-		$billing_zip = $myresult['zip'];
-		$billing_acctnum = $myresult['account_number'];
-		$billing_ccnum = $myresult['creditcard_number'];
-		$billing_ccexp = $myresult['creditcard_expire'];
-		$billing_fromdate = $myresult['from_date'];
-		$billing_todate = $myresult['to_date'];
-		$billing_payment_due_date = $myresult['payment_due_date'];
-		$billing_rerun_date = $myresult['rerun_date'];
-		$billing_notes = $myresult['notes'];	
-		$invoicetotal = 0;
-	
-		// if this is a rerun, then set the payment_due_date to today
-		if ($billing_rerun_date == $billingdate) {
-			$billing_payment_due_date = $billing_rerun_date;
-			$billing_fromdate = $billing_rerun_date;
-			$billing_todate = $billing_rerun_date;
-		}
-	
-		//
-		// calculate amounts for history
-		//
-
-		// initialize past amounts
-		$pastdue = 0;
-		$new_charges = 0;
-		$tax_due = 0;
-	
-		while($myinvresult = $invoiceresult->FetchRow())
-		{
-			$user_services_id = $myinvresult['d_user_services_id'];	
-			$currinvoicenumber = $myinvresult['d_invoice_number'];
-			$billing_id = $myinvresult['d_billing_id'];
-			$creation_date = $myinvresult['d_creation_date'];
-			$service = $myinvresult['m_description'];
-			$taxdescription = $myinvresult['tr_description'];
-			$billed_amount = $myinvresult['d_billed_amount'];
-			$paid_amount = $myinvresult['d_paid_amount'];
-
-			// get the difference between billed and paid amount
-			$billed_amount = $billed_amount - $paid_amount;
-
-			if ($currinvoicenumber == $invoice_number) {
-				// new charges
-				$billed_amount = sprintf("%.2f",$billed_amount);
-				$new_charges = $new_charges + $billed_amount;
-				// new taxes
-				if ($taxdescription <> NULL) {
-					$tax_due = $tax_due + $billed_amount;
-				}
-			} else {
-				// past due charges
-				$pastdue = $pastdue + $billed_amount;
-			} // end if
-		} // end while
-	
-		//
-		// Apply Credits
-		// check if they have any credits and apply as payments
-		//
-		apply_credits($DB, $mybilling_id);
-
-		// calculate the invoicetotal
-		while ($myresult = $totalresult->FetchRow())
-                {
-                        $billed_amount = $myresult['d_billed_amount'] - $myresult['d_paid_amount'];
-                        $invoicetotal = $billed_amount + $invoicetotal;
-                }
-	
-		$precisetotal = sprintf("%.2f", $invoicetotal);
-
-		// get the absolute value of the total
-		$abstotal = abs($precisetotal);
-	
-		$total_due = $precisetotal;
-		$new_charges = sprintf("%.2f",$new_charges);
-		$pastdue = sprintf("%.2f",$pastdue);
-		$tax_due = sprintf("%.2f",$tax_due);
-		$total_due = sprintf("%.2f",$total_due);
-	
-		// check the pastdue status to see what note to include
-		$status = billingstatus($mybilling_id);
-	
-		// get the invoice notes from general
-		$query = "SELECT g.default_invoicenote, g.pastdue_invoicenote, 
-			g.turnedoff_invoicenote, g.collections_invoicenote
-			FROM billing b
-			LEFT JOIN general g ON g.id = b.organization_id 
-			WHERE b.id = $mybilling_id";
-		$generalresult = $DB->Execute($query) 
-			or die ("$l_queryfailed");
-		$mygenresult = $generalresult->fields;
-		$default_invoicenote = $mygenresult['default_invoicenote'];
-		$pastdue_invoicenote = $mygenresult['pastdue_invoicenote'];
-		$turnedoff_invoicenote = $mygenresult['turnedoff_invoicenote'];
-		$collections_invoicenote = $mygenresult['collections_invoicenote'];
-
-	
-		// if the individual customer's billing notes are blank
-		// then use the automatic invoice notes from general config
-		if ($billing_notes == '')
-		{
-		  if ($status == $l_pastdue) {
-		    $billing_notes = $pastdue_invoicenote;
-		  } elseif ($status == $l_turnedoff) {
-		    $billing_notes = $turnedoff_invoicenote;
-		  } elseif ($status == $l_collections) {
-		     $billing_notes = $collections_invoicenote;
-		  } else {
-		    $billing_notes = $default_invoicenote;
-		  }  
-		}
-
-		// update the billing history record	
-		$query = "UPDATE billing_history SET
-		  from_date = '$billing_fromdate',
-		  to_date = '$billing_todate',
-		  payment_due_date = '$billing_payment_due_date',
-		  new_charges = '$new_charges',
-		  past_due = '$pastdue',
-		  late_fee = '0',
-		  tax_due = '$tax_due',
-		  total_due = '$total_due',
-		  notes = '$billing_notes' 
-		WHERE id = '$invoice_number'";
-		$historyresult = $DB->Execute($query) 
-			or die("history update failed");
+    $mygenresult = $generalresult->fields;
+    $default_invoicenote = $mygenresult['default_invoicenote'];
+    $pastdue_invoicenote = $mygenresult['pastdue_invoicenote'];
+    $turnedoff_invoicenote = $mygenresult['turnedoff_invoicenote'];
+    $collections_invoicenote = $mygenresult['collections_invoicenote'];
+    
+    
+    // if the individual customer's billing notes are blank
+    // then use the automatic invoice notes from general config
+    if ($billing_notes == '') {
+      if ($status == $l_pastdue) {
+	$billing_notes = $pastdue_invoicenote;
+      } elseif ($status == $l_turnedoff) {
+	$billing_notes = $turnedoff_invoicenote;
+      } elseif ($status == $l_collections) {
+	$billing_notes = $collections_invoicenote;
+      } else {
+	$billing_notes = $default_invoicenote;
+      }  
+    }
+    
+    // update the billing history record	
+    $query = "UPDATE billing_history SET ".
+      "from_date = '$billing_fromdate', ".
+      "to_date = '$billing_todate', ".
+      "payment_due_date = '$billing_payment_due_date', ".
+      "new_charges = '$new_charges', ".
+      "past_due = '$pastdue', ".
+      "late_fee = '0', ".
+      "tax_due = '$tax_due', ".
+      "total_due = '$total_due', ".
+      "notes = '$billing_notes' ".
+      "WHERE id = '$invoice_number'";
+    $historyresult = $DB->Execute($query) or die("history update failed");
 		
-		if ($billing_rerun_date <> $billingdate) {
-			
-			//// update the Next Billing Date to whatever 
-			// the billing type dictates +1 +2 +6 etc.			
-			// get the current billing type
-			$query = "SELECT b.billing_type b_billing_type, 
-			b.next_billing_date b_next_billing_date, 
-			b.from_date b_from_date, b.to_date b_to_date, 
-			t.id t_id, t.frequency t_frequency, 
-			t.method t_method  
-			FROM billing b
-			LEFT JOIN billing_types t 
-			ON b.billing_type = t.id
-			WHERE b.id = '$mybilling_id'";		
-			$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-			$billingqueryresult = $DB->Execute($query) 
-				or die ("Query Failed");
-			$billingresult = $billingqueryresult->fields;
-			$method = $billingresult['t_method'];
-			
-			// update the next billing dates for anything not a prepay
-			if ($method <> 'prepaycc' & $method <> 'prepay') {
-				$mybillingdate = $billingresult['b_next_billing_date'];
-				$myfromdate = $billingresult['b_from_date'];
-				$mytodate = $billingresult['b_to_date'];
-				$mybillingfreq = $billingresult['t_frequency'];
-				
-				// double frequency to add to the to_date
-				$doublefreq = $mybillingfreq * 2;
+    if ($billing_rerun_date <> $billingdate) {      
+      //// update the Next Billing Date to whatever 
+      // the billing type dictates +1 +2 +6 etc.			
+      // get the current billing type
+      $query = "SELECT b.billing_type b_billing_type, ".
+	"b.next_billing_date b_next_billing_date, ".
+	"b.from_date b_from_date, b.to_date b_to_date, ".
+	"t.id t_id, t.frequency t_frequency, ".
+	"t.method t_method ".
+	"FROM billing b ".
+	"LEFT JOIN billing_types t ".
+	"ON b.billing_type = t.id ".
+	"WHERE b.id = '$mybilling_id'";		
+      $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+      $billingqueryresult = $DB->Execute($query) or die ("Query Failed");
+      
+      $billingresult = $billingqueryresult->fields;
+      $method = $billingresult['t_method'];
+      
+      // update the next billing dates for anything not a prepay
+      if ($method <> 'prepaycc' & $method <> 'prepay') {
+	$mybillingdate = $billingresult['b_next_billing_date'];
+	$myfromdate = $billingresult['b_from_date'];
+	$mytodate = $billingresult['b_to_date'];
+	$mybillingfreq = $billingresult['t_frequency'];
 	
-				// insert the new next_billing_date, from_date, 
-				// to_date, and payment_due_date to next from_date
-				$query = "UPDATE billing
-				SET next_billing_date = 
-				DATE_ADD('$mybillingdate', 
-				INTERVAL '$mybillingfreq' MONTH),
-				from_date = 
-				DATE_ADD('$myfromdate', 
-				INTERVAL '$mybillingfreq' MONTH),
-	                        to_date = 
-				DATE_ADD('$myfromdate', 
-				INTERVAL '$doublefreq' MONTH),
-				payment_due_date = 
-				DATE_ADD('$myfromdate', 	
-				INTERVAL '$mybillingfreq' MONTH)
-				WHERE id = '$mybilling_id'";		
-				$updateresult = $DB->Execute($query) 
-					or die ("Query Failed");
+	// double frequency to add to the to_date
+	$doublefreq = $mybillingfreq * 2;
+	
+	// insert the new next_billing_date, from_date, 
+	// to_date, and payment_due_date to next from_date
+	$query = "UPDATE billing ".
+	  "SET next_billing_date =  DATE_ADD('$mybillingdate', ".
+	  "INTERVAL '$mybillingfreq' MONTH), ".
+	  "from_date = DATE_ADD('$myfromdate', ". 
+	  "INTERVAL '$mybillingfreq' MONTH), ".
+	  "to_date = DATE_ADD('$myfromdate', ". 
+	  "INTERVAL '$doublefreq' MONTH), ".
+	  "payment_due_date = DATE_ADD('$myfromdate', ".	
+	  "INTERVAL '$mybillingfreq' MONTH) ".
+	  "WHERE id = '$mybilling_id'";		
+	$updateresult = $DB->Execute($query) or die ("Query Failed");
 
-			} // endif prepaycc
-
-		} // endif billing rerun				
-        
-		//
-		// Apply Credits
-		// check if they have any credits and apply as payments
-		//
-		//apply_credits($DB, $mybilling_id);
-			
-	} // endwhile
+      } // endif prepaycc
+      
+    } // endif billing rerun				
+    
+  } // endwhile
 
 } // end create_billinghistory
 
@@ -1314,75 +1309,72 @@ function humandate($date, $lang) {
 /*----------------------------------------------------------------------------*/
 // Apply Credits
 /*----------------------------------------------------------------------------*/
-function apply_credits($DB, $billing_id) {
-	// find the credits
-	$query = "SELECT * from billing_details  
-	WHERE paid_amount > billed_amount
-	AND billing_id = '$billing_id'";
-	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$creditresult = $DB->Execute($query) or die ("$l_queryfailed");
-	
-	while ($mycreditresult = $creditresult->FetchRow())
-	{
-		$credit_id = $mycreditresult['id'];
-		$credit_billed_amount = $mycreditresult['billed_amount'];
-		$credit_paid_amount = $mycreditresult['paid_amount']; 
-	
-		//
-		// apply those credits towards amounts owed
-		//
+function apply_credits($DB, $billing_id)
+{
+  // find the credits
+  $query = "SELECT * from billing_details ". 
+    "WHERE paid_amount > billed_amount ".
+    "AND billing_id = '$billing_id'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $creditresult = $DB->Execute($query) or die ("$l_queryfailed");
+  
+  while ($mycreditresult = $creditresult->FetchRow()) {
+    $credit_id = $mycreditresult['id'];
+    $credit_billed_amount = $mycreditresult['billed_amount'];
+    $credit_paid_amount = $mycreditresult['paid_amount']; 
+    
+    //
+    // apply those credits towards amounts owed
+    //
+    
+    // calculate credit amount
+    $credit_amount = abs($credit_billed_amount - $credit_paid_amount);
+    $amount = $credit_amount;	
+    // find the amounts owed
+    
+    $query = "SELECT * FROM billing_details ".
+      "WHERE paid_amount < billed_amount AND billing_id = $billing_id";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $findresult = $DB->Execute($query) or die ("$l_queryfailed");
 
-		// BELOW IS FROM THE PAYMENT UTILITY, MODIFY IT TO WORK
-		// calculate credit amount
-		$credit_amount = abs($credit_billed_amount - $credit_paid_amount);
-		$amount = $credit_amount;	
-		// find the amounts owed
-	
-		$query = "SELECT * FROM billing_details 
-		WHERE paid_amount < billed_amount AND billing_id = $billing_id";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$findresult = $DB->Execute($query) or die ("$l_queryfailed");
-
-		while (($myfindresult = $findresult->FetchRow()) and ($amount > 0))
-		{	
-			$id = $myfindresult['id'];
-			$paid_amount = $myfindresult['paid_amount'];
-			$billed_amount = $myfindresult['billed_amount'];
-	
-			$owed = $billed_amount - $paid_amount;		
-		
-			if ($amount >= $owed) {
-				$amount = $amount - $owed;
-				$fillamount = $owed + $paid_amount;
-				$query = "UPDATE billing_details 
-					SET paid_amount = '$fillamount' 
-					WHERE id = $id";
-				$greaterthanresult = $DB->Execute($query) or die ("$l_queryfailed");
-			} else { 
-			// amount is  less than owed
-				$available = $amount;
-				$amount = 0;
-				$fillamount = $available + $paid_amount;
-				$query = "UPDATE billing_details 
-					SET paid_amount = '$fillamount' 
-					WHERE id = $id";
-				$lessthenresult = $DB->Execute($query) 
-					or die ("$l_queryfailed");
-			}
-		}
-
-		//
-		// reduce the amount of the credit left by the amount applied
-		
-		$credit_applied = $credit_amount - $amount;
-		$credit_paid_total = $credit_paid_amount - $credit_applied;
-		$query = "UPDATE billing_details 
-			SET paid_amount = '$credit_paid_total' 
-			WHERE id = '$credit_id'";	
-		$totalcreditresult = $DB->Execute($query) 
-				or die ("$l_queryfailed");
-	}
+    while (($myfindresult = $findresult->FetchRow()) and ($amount > 0)) {	
+      $id = $myfindresult['id'];
+      $paid_amount = $myfindresult['paid_amount'];
+      $billed_amount = $myfindresult['billed_amount'];
+      
+      $owed = $billed_amount - $paid_amount;		
+      
+      if ($amount >= $owed) {
+	$amount = $amount - $owed;
+	$fillamount = $owed + $paid_amount;
+	$query = "UPDATE billing_details ".
+	  "SET paid_amount = '$fillamount' ".
+	  "WHERE id = $id";
+	$greaterthanresult = $DB->Execute($query) or die ("$l_queryfailed");
+      } else { 
+	// amount is  less than owed
+	$available = $amount;
+	$amount = 0;
+	$fillamount = $available + $paid_amount;
+	$query = "UPDATE billing_details ".
+	  "SET paid_amount = '$fillamount' ".
+	  "WHERE id = $id";
+	$lessthenresult = $DB->Execute($query) or die ("$l_queryfailed");
+      }
+    }
+    
+    //
+    // reduce the amount of the credit left by the amount applied
+    
+    $credit_applied = $credit_amount - $amount;
+    $credit_paid_total = $credit_paid_amount - $credit_applied;
+    $query = "UPDATE billing_details ".
+      "SET paid_amount = '$credit_paid_total' ".
+      "WHERE id = '$credit_id'";	
+    $totalcreditresult = $DB->Execute($query) or die ("$l_queryfailed");
+  }
 }
+
 
 /*---------------------------------------------------------------------------*/
 // Create Billing Record
