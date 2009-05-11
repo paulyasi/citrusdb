@@ -598,15 +598,7 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
       $billing_fromdate = $billing_rerun_date;
       $billing_todate = $billing_rerun_date;
     }
-    
-    // set the rerun date to NULL now that we are done with it
-    if ($billing_rerun_date)
-      $query = "UPDATE billing SET rerun_date = NULL ".
-	"WHERE id = '$mybilling_id'";
-      $billing_rerun_null_result = $DB->Execute($query)
-	or die ("Rerun NULL Update Failed");      
-    }
-    
+        
     //
     // calculate amounts for history
     //
@@ -757,11 +749,19 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
 
       } // endif prepaycc
       
-    } // endif billing rerun				
-    
-  } // endwhile
+    } // endif billing rerun
 
-} // end create_billinghistory
+    // set the rerun date to NULL now that we are done with it
+    if ($billing_rerun_date) {
+      $query = "UPDATE billing SET rerun_date = NULL ".
+	"WHERE id = '$mybilling_id'";
+      $billing_rerun_null_result = $DB->Execute($query)
+	or die ("Rerun NULL Update Failed");      
+    }
+    
+  } // end while
+
+} // end create_billinghistory function
 
 
 // output invoices in text or pdf format
