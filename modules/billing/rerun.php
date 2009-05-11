@@ -40,9 +40,7 @@ if ($save) {
       "WHERE id = '$billing_id'";
     $result = $DB->Execute($query) or die ("$l_queryfailed");
 
-    // TODO: set the rerun flag for the items chosen
-    // parse the fieldlist    
-  
+    // parse the fieldlist to set the rerun flag for the items chosen     
     // add the services to the user_services table and the options table
     $fieldlist = substr($fieldlist, 1); 
     
@@ -59,7 +57,8 @@ if ($save) {
 	    "WHERE id = '$myvalue'";
 	  $result = $DB->Execute($query) or die ("$l_queryfailed");
 
-	  // TODO: unset all the other things
+	  // TODO: do I need to unset all the other things rerun items too?
+	  
 	  
 	}
       }

@@ -93,17 +93,20 @@ if ($submit) {
     if (round($amount,2) >= round($owed,2)) {
       $amount = round($amount - $owed, 2);
       $fillamount = round($owed + $paid_amount,2);
-      $query = "UPDATE billing_details 
-				SET paid_amount = '$fillamount' 
-				WHERE id = $id";
-      $greaterthanresult = $DB->Execute($query) or die ("detail update $l_queryfailed");
+      $query = "UPDATE billing_details ".
+	"SET paid_amount = '$fillamount', ".
+	"payment_applied = CURRENT_DATE ".
+	"WHERE id = $id";
+      $greaterthanresult = $DB->Execute($query)
+	or die ("detail update $l_queryfailed");
     } else { 
       // amount is  less than owed
       $available = $amount;
       $amount = 0;
       $fillamount = round($available + $paid_amount,2);
       $query = "UPDATE billing_details ".
-	"SET paid_amount = '$fillamount' ".
+	"SET paid_amount = '$fillamount', ".
+	"payment_applied = CURRENT_DATE ".
 	"WHERE id = $id";
       $lessthenresult = $DB->Execute($query) or die ("detail update $l_queryfailed");
     }

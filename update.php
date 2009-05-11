@@ -578,6 +578,12 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
 
+	  // add payment_applied date to billing details
+	  $query = "ALTER TABLE `billing_details` ".
+	    "ADD `payment_applied` DATE NULL ;";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";	  
+
 	  // TODO: NULL OUT OLD RERUN DATES!
 	  
 	  // set the version, using the new settings field

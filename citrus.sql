@@ -89,6 +89,7 @@ CREATE TABLE `billing_details` (
   `refunded` enum('y','n') NOT NULL default 'n',
   `refund_date` date NULL,
   `rerun` enum('y','n') default 'n',
+  `payment_applied` date NULL,
   PRIMARY KEY  (`id`),
   KEY `creation_date` (`creation_date`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;

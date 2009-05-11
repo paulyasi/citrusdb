@@ -565,7 +565,8 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
       "((d.paid_amount != d.billed_amount AND b.rerun_date IS NULL) ".
       "OR (d.rerun = 'y' AND b.rerun_date = d.creation_date)) ".
       "ORDER BY d.taxed_services_id";
-        
+
+       
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $invoiceresult = $DB->Execute($query) or die ("Query Failed"); 
     // used to show the invoice
