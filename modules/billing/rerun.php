@@ -57,8 +57,7 @@ if ($save) {
 	    "WHERE id = '$myvalue'";
 	  $result = $DB->Execute($query) or die ("$l_queryfailed");
 
-	  // TODO: do I need to unset all the other things rerun items too?
-	  
+	  // TODO: do I need to unset all the other things rerun items too?  
 	  
 	}
       }
@@ -85,7 +84,7 @@ if ($save) {
 
   // select the billing detail items that are unpaid
   $query = "SELECT bd.id bd_id, bd.user_services_id, bd.billed_amount, ".
-    "bd.paid_amount, us.id us_id, ms.service_description ".
+    "bd.creation_date, bd.paid_amount, us.id us_id, ms.service_description ".
     "FROM billing_details bd ".
     "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
     "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
@@ -102,6 +101,7 @@ if ($save) {
   while ($myresult = $result->FetchRow()) {
     $detail_id = $myresult['bd_id'];
     $service_id = $myresult['us_id'];
+    $creation_date = humandate($myresult['creation_date'], $lang);
     $user_services_id = $myresult['user_services_id'];
     $detail_total = sprintf("%.2f",$myresult['billed_amount'] - $myresult['paid_amount']);
     $description = $myresult['service_description'];
@@ -120,6 +120,7 @@ if ($save) {
 
     echo "<td><input checked type=checkbox name=rerun_service_$detail_id value=\"$detail_id\"></td>\n";    
     echo "<td>$service_id</td>\n";
+    echo "<td>$creation_date</td>\n";
     echo "<td>$description</td>\n";
     echo "<td>$detail_total</td>\n";
     

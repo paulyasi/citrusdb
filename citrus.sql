@@ -89,6 +89,7 @@ CREATE TABLE `billing_details` (
   `refunded` enum('y','n') NOT NULL default 'n',
   `refund_date` date NULL,
   `rerun` enum('y','n') default 'n',
+  `rerun_date` date NULL, 
   `payment_applied` date NULL,
   PRIMARY KEY  (`id`),
   KEY `creation_date` (`creation_date`)

@@ -465,7 +465,8 @@ function add_servicedetails($DB, $billingdate, $bybillingid, $billingmethod, $ba
 }
 
 
-function update_rerundetails($DB, $billingdate, $batchid, $organization_id) {
+function update_rerundetails($DB, $billingdate, $batchid, $organization_id)
+{
   /*----------------------------------------------------------------*/
   // Update Reruns to the bill
   /*----------------------------------------------------------------*/
@@ -487,7 +488,7 @@ function update_rerundetails($DB, $billingdate, $batchid, $organization_id) {
     $query = "UPDATE billing_details SET ".         
       "batch = '$batchid', ".        
       "invoice_number = NULL, ".
-      "creation_date = '$rerun_date' ".
+      "rerun_date = '$rerun_date' ".
       "WHERE billing_id = $billing_id ".
       "AND billed_amount > paid_amount ".
       "AND rerun = 'y'";
@@ -563,7 +564,7 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
       "WHERE d.billing_id = $mybilling_id ".
       "AND ".
       "((d.paid_amount != d.billed_amount AND b.rerun_date IS NULL) ".
-      "OR (d.rerun = 'y' AND b.rerun_date = d.creation_date)) ".
+      "OR (d.rerun = 'y' AND d.rerun_date = b.rerun_date)) ".
       "ORDER BY d.taxed_services_id";
 
        
@@ -752,7 +753,7 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
       
     } // endif billing rerun
 
-    // set the rerun date to NULL now that we are done with it
+    // set the rerun date back to NULL now that we are done with it
     if ($billing_rerun_date) {
       $query = "UPDATE billing SET rerun_date = NULL ".
 	"WHERE id = '$mybilling_id'";
