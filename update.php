@@ -589,9 +589,8 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";	  
 
-	  // TODO: NULL OUT OLD RERUN DATES!
-	  // ALSO NEED TO FIX ANY ABOUT TO RUN RERUN DATES
-	  // TO MARK THOSE BILLING DETAILS TO RUN
+	  // TODO: NEED TO FIX ANY ABOUT TO RUN RERUN DATES
+	  // TO MARK THOSE BILLING DETAILS TO RUN IN THE NEW SYSTEM
 	  
 	  // set the version, using the new settings field
 	  $query = "UPDATE `settings` SET `version` = '1.3.1' ".
