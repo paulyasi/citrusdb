@@ -103,6 +103,7 @@ if ($u->user_isloggedin()) {
 		<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
 		<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
+                <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -131,6 +132,7 @@ if ($u->user_isloggedin()) {
 		<head>
 		<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
+        <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -216,6 +218,7 @@ if ($u->user_isloggedin()) {
 		<head>
 		<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
+        <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -301,6 +304,7 @@ if ($u->user_isloggedin()) {
 		<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
 		<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
+        <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -341,6 +345,7 @@ echo "<html>
 <title>$l_title</title>
 <LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
 <LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
+<link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
 <script language=\"JavaScript\">
 function h(oR) {
 	oR.style.backgroundColor='ffdd77';
