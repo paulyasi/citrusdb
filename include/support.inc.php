@@ -8,19 +8,35 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
 		       $reminderdate = NULL, $user_services_id = NULL)
 {
   if ($reminderdate) {
+    if ($user_services_id) {
     // add ticket to customer_history table
     $query = "INSERT into customer_history ".
       "(creation_date, created_by, notify, account_number,".
       "status, description, linkurl, linkname, user_services_id) ".
       "VALUES ('$reminderdate', '$user', '$notify', '$account_number',".
       "'$status', '$description', '$linkurl', '$linkname', '$user_services_id')";
+    } else {
+      $query = "INSERT into customer_history ".
+      "(creation_date, created_by, notify, account_number,".
+      "status, description, linkurl, linkname) ".
+      "VALUES ('$reminderdate', '$user', '$notify', '$account_number',".
+      "'$status', '$description', '$linkurl', '$linkname')";
+    }
   } else {
+    if ($user_services_id) {
     // add ticket to customer_history table
     $query = "INSERT into customer_history ".
       "(creation_date, created_by, notify, account_number,".
       "status, description, linkurl, linkname, user_services_id) ".
       "VALUES (CURRENT_TIMESTAMP, '$user', '$notify', '$account_number',".
       "'$status', '$description', '$linkurl', '$linkname', '$user_services_id')";
+    } else {
+$query = "INSERT into customer_history ".
+      "(creation_date, created_by, notify, account_number,".
+      "status, description, linkurl, linkname) ".
+      "VALUES (CURRENT_TIMESTAMP, '$user', '$notify', '$account_number',".
+      "'$status', '$description', '$linkurl', '$linkname')";      
+    }
   }
 
   $result = $DB->Execute($query) or die ("create_ticket query failed");
