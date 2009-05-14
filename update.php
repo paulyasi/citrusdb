@@ -589,8 +589,11 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";	  
 
-	  // TODO: NEED TO FIX ANY ABOUT TO RUN RERUN DATES
-	  // TO MARK THOSE BILLING DETAILS TO RUN IN THE NEW SYSTEM
+	  // set current rerun dates to null, NULL is now important
+	  // if you have upcoming reruns, must reset them after
+	  $query = "UPDATE billing SET rerun_date = NULL";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
 	  
 	  // set the version, using the new settings field
 	  $query = "UPDATE `settings` SET `version` = '1.3.1' ".
