@@ -628,6 +628,11 @@ else
 	<p>
 	Your database version: <b>$databaseversion</b><p>
 	This script will update it to version: <b>1.3.1</b></h3>";
+	echo "<p style=\"font-weight: bold;\">Upgrading version 1.3.0 or ".
+	  "older will reset the rerun dates ".
+	  "to NULL when running this upgrade script.  Please make sure you ".
+	  "check for pending reruns before running this script on an active ".
+	  "system.</p>";
 	if ($databaseversion == "1.3.1") {
 		echo "<p><b>Nothing to update</b>";
 	} else {
