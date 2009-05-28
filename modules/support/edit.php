@@ -119,12 +119,12 @@ if ($pending) {
 	"style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
     }
     
-    print "<td width=10%><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$id</a></td>";
+    print "<td width=10%><a href=\"index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
     print "<td width=20%>$creation_date</td>";
     print "<td width=10%>$created_by</td>";
     print "<td width=20%><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
     print "<td width=10%>$status</td>";
-    print "<td width=50% colspan=3><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">$serviceid $service_description</a></td>";
+    print "<td width=50% colspan=3><a href=\"index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
 
     print "<tr><td width=100% colspan=8>".
       "&nbsp; $description  <a href=\"$linkurl\">$linkname</a></td>";
@@ -208,12 +208,12 @@ if ($pending) {
 	"style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
     }
     
-    print "<td width=10%><a href=\"index.php?load=support&type=module&editticket=on&id=$id\">$id</a></td>";
+    print "<td width=10%><a href=\"index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
     print "<td width=20%>$creation_date</td>";
     print "<td width=10%>$created_by</td>";
     print "<td width=20%><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
     print "<td width=10%>$status</td>";
-    print "<td width=50% colspan=3><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">$serviceid $service_description</a></td>";
+    print "<td width=50% colspan=3><a href=\"index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
     
     print "<tr><td width=100% colspan=8>".
       "&nbsp; $description  <a href=\"$linkurl\">$linkname</a></td><tr>";

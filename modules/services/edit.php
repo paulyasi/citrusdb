@@ -189,6 +189,13 @@ if ($save) {
   // the normal service edit screen that
   // lists the service attributes after they clicked on the edit or add button.
   /*--------------------------------------------------------------------------*/
+
+  // get the account number of the service being edited
+  // and set the viewing session account number to this one
+  // since one may have linked from a different account session
+  // to this one, the session has to be set first
+  
+  
   print "<a href=\"index.php?load=services&type=module\">".
     "[ $l_undochanges ]</a>";
   
