@@ -594,6 +594,13 @@ if ($base->input['submit'] == "Update")
 	  $query = "UPDATE billing SET rerun_date = NULL";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
+
+	  // add an original_invoice_number field to keep that number around
+	  // even when making reruns on new invoices
+	  $query =" ALTER TABLE `billing_details` ".
+	    "ADD `original_invoice_number` INT NULL";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";	  
 	  
 	  // set the version, using the new settings field
 	  $query = "UPDATE `settings` SET `version` = '1.3.1' ".

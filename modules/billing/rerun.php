@@ -84,6 +84,7 @@ if ($save) {
 
   // select the billing detail items that are unpaid
   $query = "SELECT bd.id bd_id, bd.user_services_id, bd.billed_amount, ".
+    "bd.original_invoice_number, ".
     "bd.creation_date, bd.paid_amount, us.id us_id, ms.service_description ".
     "FROM billing_details bd ".
     "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
@@ -100,6 +101,7 @@ if ($save) {
   
   while ($myresult = $result->FetchRow()) {
     $detail_id = $myresult['bd_id'];
+    $original_invoice_number = $myresult['original_invoice_number'];
     $service_id = $myresult['us_id'];
     $creation_date = humandate($myresult['creation_date'], $lang);
     $user_services_id = $myresult['user_services_id'];
@@ -118,7 +120,8 @@ if ($save) {
     
     // print the detail items that are unpaid and can be rerun
 
-    echo "<td><input checked type=checkbox name=rerun_service_$detail_id value=\"$detail_id\"></td>\n";    
+    echo "<td><input checked type=checkbox name=rerun_service_$detail_id value=\"$detail_id\"></td>\n";
+    echo "<td>$original_invoice_number</td>\n";
     echo "<td>$service_id</td>\n";
     echo "<td>$creation_date</td>\n";
     echo "<td>$description</td>\n";

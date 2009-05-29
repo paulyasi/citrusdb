@@ -538,6 +538,14 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
       "WHERE billing_id = '$mybilling_id' ".
       "AND invoice_number IS NULL";
     $invnumresult = $DB->Execute($query) or die ("Query Failed");
+
+    // set the original_invoice_number here for billing_details with a
+    // null original_invoice_number (eg: a brand new one)
+    $query = "UPDATE billing_details SET ".
+      "original_invoice_number = '$invoice_number' ".
+      "WHERE invoice_number = '$invoice_number' ".
+      "AND original_invoice_number IS NULL";
+    $originalinvoice = $DB->Execute($query) or die ("Query Failed");
     
     // get the data for the service charges still pending 
     // and what services they have
