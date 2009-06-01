@@ -138,9 +138,14 @@ if ($submit) {
   // get the current billing type
   //
 
+  // Also select the customer's billing name, company, and address
+  // here to show up at the end to show what account paid.
+
   $query = "SELECT b.billing_type b_billing_type, ".
     "b.next_billing_date b_next_billing_date, ".
     "b.from_date b_from_date, b.to_date b_to_date, ".
+    "b.name, b.company, b.street, b.city, b.state, ".
+    "b.account_number b_account_number, ".
     "t.id t_id, t.frequency t_frequency, t.method t_method ".
     "FROM billing b ".
     "LEFT JOIN billing_types t ON b.billing_type = t.id ".
@@ -149,6 +154,12 @@ if ($submit) {
   $result = $DB->Execute($query) or die ("select next billing $l_queryfailed");
   $billingresult = $result->fields;
   $method = $billingresult['t_method'];
+  $billing_name = $billingresult['name'];
+  $billing_company = $billingresult['company'];
+  $billing_street = $billingresult['street'];
+  $billing_city = $billingresult['city'];
+  $billing_state = $billingresult['state'];
+  $billing_account_number = $billingresult['b_account_number'];
   
   // if they are prepay accounts the update their billing dates
   if ($method == 'prepay' OR $method == 'prepaycc') {
@@ -178,14 +189,23 @@ if ($submit) {
       "WHERE id = '$billing_id'"; 
     $updateresult = $DB->Execute($query) or die ("update $l_queryfailed");
   }
+
   if ($amount > 0) {
     // if there is an over payment show the amount in red
     //and prompt to add as a credit		
     print "<h3 style=\"color: red;\">$l_paymentsaved, $l_currency$amount ".
       "$l_leftover, <a href=\"index.php?load=addcredit&type=tools&amount=$amount&billing_id=$billing_id\">$l_addcreditfor $amount</a></h3>";
   } else {
-    print "<h3>$l_paymentsaved</h3>";
+    print "<h3>$l_paymentsaved: </h3>";
   }
+
+  // print the customer billing information to confirm who the payment
+  // was entered for.
+
+  echo "<blockquote>$billing_account_number<br>$billing_name<br>".
+    "$billing_company<br>$billing_street<br>$billing_state</blockquote><p>";
+  
+  
  } // end payment submit
 
 
