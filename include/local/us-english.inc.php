@@ -281,6 +281,7 @@ $l_optionstable = "Options/Attributes Table";
 $l_optionstables = "Options/Attributes Tables";
 $l_or = "Or";
 $l_oremail = "or email";
+$l_original = "Original";
 $l_organizationname = "Billed By";
 $l_orgmismatch = "Organization Mismatch";
 $l_over = "Over";

@@ -26,7 +26,7 @@ echo "<table cellspacing=0 cellpadding=4 border=0>".
 "<td bgcolor=\"#dddddd\" width=100><b>$l_id</b></td>".
 "<td bgcolor=\"#dddddd\" width=130><b>$l_date</b></td>".
 "<td bgcolor=\"#dddddd\" width=200><b>$l_description</b></td>".
-"<td bgcolor=\"#dddddd\" width=100><b>$l_invoice</b></td>".
+"<td bgcolor=\"#dddddd\" width=100><b>$l_invoice($l_original)</b></td>".
 "<td bgcolor=\"#dddddd\" width=100><b>$l_billedamount</b></td>".
 "<td bgcolor=\"#dddddd\" width=150><b>$l_paidamount</b></td>";
 
@@ -38,7 +38,7 @@ $query = "SELECT d.id d_id, d.billing_id d_billing_id, ".
   "d.taxed_services_id d_taxed_services_id, d.invoice_number d_invoice_number, ".
   "d.billed_amount d_billed_amount, d.paid_amount d_paid_amount, ".
   "d.refund_amount d_refund_amount, d.refunded d_refunded, ".
-  "d.rerun d_rerun, ".
+  "d.rerun d_rerun, d.original_invoice_number d_original_invoice, ".
   "m.service_description m_description, r.description r_description ".
   "FROM billing_details d ".
   "LEFT JOIN billing b ON b.id = d.billing_id ".
@@ -67,12 +67,13 @@ while ($myresult = $result->FetchRow()) {
   $refunded = $myresult['d_refunded'];
   $refundamount = sprintf("%.2f",$myresult['d_refund_amount']);
   $rerun = $myresult['d_rerun'];
+  $original_invoice = $myresult['d_original_invoice'];
 
   print "<tr bgcolor=\"#eeeeee\">";
   print "<td style=\"border-top: 1px solid grey;\">$id &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$date &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$description &nbsp;</td>";
-  print "<td style=\"border-top: 1px solid grey;\">[ <a href=\"index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$account_number&invoiceid=$invoice&details=on&type=fs&submit=on\" target=\"_blank\">$invoice</a> ]</td>";	
+  print "<td style=\"border-top: 1px solid grey;\">[ <a href=\"index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$account_number&invoiceid=$invoice&details=on&type=fs&submit=on\" target=\"_blank\">$invoice</a> ]($original_invoice)</td>";	
 
   //print "<td style=\"border-top: 1px solid grey;\">$invoice &nbsp;</td>";
 
