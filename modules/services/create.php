@@ -253,7 +253,17 @@ if ($addnow) {
   }
 	
   echo "</select></form></center>";
-				
+
+  // TODO: select service listing based upon the customer's
+  // default billing organization
+
+  $query = "SELECT organization_id FROM billing ".
+    "WHERE account_number = '$account_number' LIMIT 1";
+  $DB->SetFetchMode(ADODB_FETCH_NUM);
+  $orgresult = $DB->Execute($query) or die ("$l_queryfailed");
+  $myorgresult = $orgresult->fields;
+  $my_organization_id = $myorgresult[0];
+  
   if ($showall == 'y' & $showall_permission == true) {
     $query = "SELECT * FROM master_services m ".
       "LEFT JOIN general g ON g.id = m.organization_id ".
@@ -263,6 +273,7 @@ if ($addnow) {
     $query = "SELECT * FROM master_services m ".
       "LEFT JOIN general g ON g.id = m.organization_id ".
       "WHERE selling_active = 'y' AND hide_online <> 'y' ".
+      "AND organization_id = '$my_organization_id' ".
       "ORDER BY category, pricerate, service_description";
   }
   $DB->SetFetchMode(ADODB_FETCH_NUM);
