@@ -67,7 +67,7 @@ CREATE TABLE `billing` (
 -- Dumping data for table `billing`
 -- 
 
-INSERT INTO `billing` VALUES (1, 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'ABC', 'USA', '12345', '555-555-5555', '555-555-5556', '', 1, 7, 5000000000000001, 0909, 0, NULL, '2007-10-07', NULL, '2007-10-07', '2007-11-07', '2007-10-07', '0000-00-00', '', 'n', NULL, 1);
+INSERT INTO `billing` VALUES (1, 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'ABC', 'USA', '12345', '555-555-5555', '555-555-5556', '', 1, 7, 5000000000000001, 0909, 0, NULL, '2007-10-07', NULL, '2007-10-07', '2007-11-07', '2007-10-07', NULL, '', 'n', NULL, 1);
 
 -- --------------------------------------------------------
 
