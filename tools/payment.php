@@ -203,7 +203,7 @@ if ($submit) {
   // was entered for.
 
   echo "<blockquote>$billing_account_number<br>$billing_name<br>".
-    "$billing_company<br>$billing_street<br>$billing_state</blockquote><p>";
+    "$billing_company<br>$billing_street<br>$billing_city $billing_state</blockquote><p>";
   
   
  } // end payment submit
