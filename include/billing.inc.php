@@ -115,9 +115,8 @@ function total_taxitems($DB, $bybillingid)
       if (($checkvalue == $if_value) AND ($billing_freq > 0)) {
 	if ($percentage_or_fixed == 'percentage') {
 	  if ($service_freq > 0) {
-	    $servicecost = ($billing_freq * $service_freq)
-	      * ($pricerate * $usage_multiple);
-	    $tax_amount = $taxrate * $servicecost; 
+            $servicecost = sprintf("%.2f",$taxrate * $pricerate);
+            $tax_amount = sprintf("%.2f",$servicecost * $billing_freq * $service_freq * $usage_multiple); 
 	  } else {
 	    $servicecost = $pricerate * $usage_multiple;
 	    $tax_amount = $taxrate * $servicecost;
@@ -351,9 +350,8 @@ function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
       if (($checkvalue == $if_value) AND ($billing_freq > 0)) {
 	if ($percentage_or_fixed == 'percentage') {
 	  if ($service_freq > 0) {
-	    $servicecost = ($billing_freq * $service_freq)
-	      * ($pricerate * $usage_multiple);
-	    $tax_amount = $taxrate * $servicecost; 
+            $servicecost = sprintf("%.2f",$taxrate * $pricerate);
+            $tax_amount = sprintf("%.2f",$servicecost * $billing_freq * $service_freq * $usage_multiple); 
 	  } else {
 	    $servicecost = $pricerate * $usage_multiple;
 	    $tax_amount = $taxrate * $servicecost;

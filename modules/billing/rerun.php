@@ -97,7 +97,11 @@ if ($save) {
 
   print "<form style=\"margin-bottom:0;\" action=\"index.php\">\n";
 
-  echo "<blockquote><table>\n";
+  echo "<blockquote><table border=1 cellpadding=1>\n";
+
+  // TODO: print a table column heading
+  echo "<td></td><td>$l_invoice</td><td>$l_id</td><td>$l_date</td>".
+    "<td>$l_service</td><td>$l_price</td><tr>";
   
   while ($myresult = $result->FetchRow()) {
     $detail_id = $myresult['bd_id'];
