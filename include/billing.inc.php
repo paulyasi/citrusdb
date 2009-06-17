@@ -112,6 +112,10 @@ function total_taxitems($DB, $bybillingid)
 	$if_value = TRUE;
       }
 
+      // check for any case, so lower them here
+      $checkvalue = strtolower($checkvalue);
+      $if_value = strtolower($if_value);
+
       if (($checkvalue == $if_value) AND ($billing_freq > 0)) {
 	if ($percentage_or_fixed == 'percentage') {
 	  if ($service_freq > 0) {
@@ -346,6 +350,10 @@ function add_taxdetails($DB, $billingdate, $bybillingid, $billingmethod,
 	$checkvalue = TRUE;
 	$if_value = TRUE;
       }
+
+      // check for any case, so lower them here
+      $checkvalue = strtolower($checkvalue);
+      $if_value = strtolower($if_value);
 
       if (($checkvalue == $if_value) AND ($billing_freq > 0)) {
 	if ($percentage_or_fixed == 'percentage') {

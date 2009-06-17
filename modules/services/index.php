@@ -232,6 +232,10 @@ function checktaxes($DB, $user_services_id) {
       $checkvalue = TRUE;
       $if_value = TRUE;	
     }
+
+    // check for any case, so lower them here
+    $checkvalue = strtolower($checkvalue);
+    $if_value = strtolower($if_value);
     
     if ($checkvalue == $if_value) {
       // check that they are not exempt
