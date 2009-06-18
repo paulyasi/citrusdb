@@ -73,7 +73,8 @@ if ($whycancel) {
      $removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
      $today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
      if ($removal_date < $today) {
-       $removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
+       //$removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
+       $removal_date = get_nextbillingdate();
      }
    }
    
