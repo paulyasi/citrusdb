@@ -62,18 +62,26 @@ if ($whycancel) {
      //so use the next billing date as the removal date
      $removal_date = get_nextbillingdate();
    } else {
-     // figure out the signup anniversary removal date
-     $query = "SELECT signup_date FROM customer " . 
-       "WHERE account_number = '$account_number'";
+     // figure out the customer's current next billing anniversary date
+     $query = "SELECT b.next_billing_date FROM customer c " .
+       "LEFT JOIN billing b ON c.default_billing_id = b.id ".
+       "WHERE c.account_number = '$account_number'";
      $DB->SetFetchMode(ADODB_FETCH_ASSOC);
      $result = $DB->Execute($query) or die ("$query $l_queryfailed");
      $myresult = $result->fields;
-     $signup_date = $myresult['signup_date'];
-     list($myyear, $mymonth, $myday) = split('-', $signup_date);
-     $removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
+     $next_billing_date = $myresult['next_billing_date'];
+
+     // split date into pieces
+     list($myyear, $mymonth, $myday) = split('-', $next_billing_date);
+      
+     // removal date is normally the anniversary billing date
+     $removal_date  = $next_billing_date;
+
+     // today's date
      $today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
+     // if the next billing date is less than today, remove them next available day
      if ($removal_date < $today) {
-       $removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
+       $removal_date = get_nextbillingdate();
      }
    }
    
