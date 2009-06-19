@@ -1,57 +1,52 @@
 <SCRIPT LANGUAGE="JavaScript" SRC="include/CalendarPopup.js"></SCRIPT>
-	<SCRIPT LANGUAGE="JavaScript">
-	var cal = new CalendarPopup();
+   <SCRIPT LANGUAGE="JavaScript">
+   var cal = new CalendarPopup();
 
-	function cardval(s) 
-	{
-		// remove non-numerics
-		var v = "0123456789";
-		var w = "";
-		for (i=0; i < s.length; i++) 
-		{
-			x = s.charAt(i);
-			if (v.indexOf(x,0) != -1)
-			{
-				w += x;
-			}
-		}
-		
-		// validate number
-		j = w.length / 2;
-		if (j < 6.5 || j > 8 || j == 7) 
-		{
-			return false;
-		}
-		
-		k = Math.floor(j);
-		m = Math.ceil(j) - k;
-		c = 0;
-		for (i=0; i<k; i++) 
-		{
-			a = w.charAt(i*2+m) * 2;
-			c += a > 9 ? Math.floor(a/10 + a%10) : a;
-		}
-		
-		for (i=0; i<k+m; i++) c += w.charAt(i*2+1-m) * 1;
-		{
-			return (c%10 == 0);
-		}
-	}
-	</SCRIPT>
+function cardval(s) 
+{
+  // remove non-numerics
+  var v = "0123456789";
+  var w = "";
+  for (i=0; i < s.length; i++) {
+    x = s.charAt(i);
+    if (v.indexOf(x,0) != -1) {
+      w += x;
+    }
+  }
+  
+  // validate number
+  j = w.length / 2;
+  if (j < 6.5 || j > 8 || j == 7) {
+    return false;
+  }
+  
+  k = Math.floor(j);
+  m = Math.ceil(j) - k;
+  c = 0;
+  for (i=0; i<k; i++) {
+    a = w.charAt(i*2+m) * 2;
+    c += a > 9 ? Math.floor(a/10 + a%10) : a;
+  }
+  
+  for (i=0; i<k+m; i++) c += w.charAt(i*2+1-m) * 1; {
+    return (c%10 == 0);
+  }
+}
+</SCRIPT>
 <?php   
-// Copyright (C) 2002-2004  Paul Yasi <paul@citrusdb.org>
-// Read the README file for more information
-/*----------------------------------------------------------------------------*/
-// Check for authorized accesss
-/*----------------------------------------------------------------------------*/
+  // Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
+  // Read the README file for more information
+  /*--------------------------------------------------------------------------*/
+  // Check for authorized accesss
+  /*--------------------------------------------------------------------------*/
 if(constant("INDEX_CITRUS") <> 1){
-	echo "You must be logged in to run this.  Goodbye.";
-	exit;	
+  echo "You must be logged in to run this.  Goodbye.";
+  exit;	
 }
 
 if (!defined("INDEX_CITRUS")) {
-	echo "You must be logged in to run this.  Goodbye.";
-        exit;
+  echo "You must be logged in to run this.  Goodbye.";
+  exit;
 }
 
 // GET Variables
@@ -66,26 +61,28 @@ if (!isset($base->input['country'])) { $base->input['country'] = ""; }
 if (!isset($base->input['phone'])) { $base->input['phone'] = ""; }
 if (!isset($base->input['fax'])) { $base->input['fax'] = ""; }
 if (!isset($base->input['billing_type'])) { $base->input['billing_type'] = ""; }
-if (!isset($base->input['creditcard_number']) OR 
-    $base->input['creditcard_number'] == "") { 
+
+if (!isset($base->input['creditcard_number'])
+    OR $base->input['creditcard_number'] == "") { 
   $base->input['creditcard_number'] = "0"; 
-}
-if (!isset($base->input['creditcard_expire']) OR
-    $base->input['creditcard_expire'] == "") { 
+ }
+
+if (!isset($base->input['creditcard_expire'])
+    OR $base->input['creditcard_expire'] == "") { 
   $base->input['creditcard_expire'] = "0"; 
 }
-if (!isset($base->input['next_billing_date']) OR
-    $base->input['next_billing_date'] == "") { 
+if (!isset($base->input['next_billing_date'])
+    OR $base->input['next_billing_date'] == "") { 
   $base->input['next_billing_date'] = "0000-00-00"; 
-}
-if (!isset($base->input['from_date']) OR 
-    $base->input['from_date'] == "") { 
+ }
+if (!isset($base->input['from_date'])
+    OR $base->input['from_date'] == "") { 
   $base->input['from_date'] = "0000-00-00"; 
-}
-if (!isset($base->input['payment_due_date']) OR
-    $base->input['payment_due_date'] == "") { 
+ }
+if (!isset($base->input['payment_due_date'])
+    OR $base->input['payment_due_date'] == "") { 
   $base->input['payment_due_date'] = "0000-00-00"; 
-}
+ }
 
 if (!isset($base->input['contact_email'])) { $base->input['contact_email'] = ""; }
 if (!isset($base->input['notes'])) { $base->input['notes'] = ""; }
@@ -115,77 +112,144 @@ $po_number = $base->input['po_number'];
 
 if ($save) {
   //$DB->debug = true;
-	// save billing information
-      $query = "UPDATE billing 
-	SET name = '$name',
-	company = '$company',
-	street = '$street',
-	city = '$city',
-	state = '$state',
-	zip = '$zip',
-	country = '$country',
-	phone = '$phone',
-	fax = '$fax',
-	billing_type = '$billing_type',
-	creditcard_number = '$creditcard_number',
-	creditcard_expire = '$creditcard_expire',
-	next_billing_date = '$next_billing_date',
-	from_date = '$from_date',
-	payment_due_date = '$payment_due_date',
-	notes = '$notes',
-	pastdue_exempt = '$pastdue_exempt',
-	po_number = '$po_number',
-	contact_email = '$contact_email' WHERE id = $billing_id";
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
-	
-	// set the to_date automatically
-	automatic_to_date($DB, $from_date, $billing_type, $billing_id);
+  // save billing information
+  
+  // TODO fix this to it truncates a card to *** before it inserts it
+  // and takes the card number and encryptes it if it's new
+  // check for a truncated card, and if not truncated then it's a new card to
+  // insert into the encrypted card field and truncated it to insert it into
+  // the viewable card field
 
-	print "<h3>$l_changessaved<h3>";
-        print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
-}
-else
-{	
-	$query = "SELECT * FROM billing WHERE id = $billing_id";
-	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result = $DB->Execute($query) or die ("Billing Query Failed");
-	$myresult = $result->fields;	
+  // check if there is a non-truncated credit card number in the input
+  // if the second cararcter is a * then it's already truncated
+  
+  $newcc = FALSE; // set to false so we don't replace it unnecessarily
 
-        // Put values into variablies and Print HTML results
+  // check if the credit card entered already truncated, eg: a replacement was not entered
+  if ($creditcard_number[1] <> '*') {
 
-	$id = $myresult['id'];
-	$name = $myresult['name'];
-	$company = $myresult['company'];        
-	$street = $myresult['street'];
-	$city = $myresult['city'];
-	$state = $myresult['state'];
-	$zip = $myresult['zip'];
-	$country = $myresult['country'];
-        $phone = $myresult['phone'];
-        $fax = $myresult['fax'];
-	$billing_type = $myresult['billing_type'];
-	$creditcard_number = $myresult['creditcard_number'];
-	$creditcard_expire = $myresult['creditcard_expire'];
-        $next_billing_date = $myresult['next_billing_date'];
-        $from_date = $myresult['from_date'];
-        $to_date = $myresult['to_date'];
-	$payment_due_date = $myresult['payment_due_date'];
-       	$contact_email = $myresult['contact_email'];
-        $notes = $myresult['notes'];
-	$pastdue_exempt = $myresult['pastdue_exempt'];
-	$po_number = $myresult['po_number'];
-	$organization_id = $myresult['organization_id'];
+    $gpgcommand = 'echo "'.$creditcard_number.'" | '.$gpg_path.' --armor --always-trust --batch --no-secmem-warning -e -u "'.$gpg_sender.'" -r "'.$gpg_recipient.'"';
+    
+    $oldhome = getEnv("HOME");
+    
+    putenv("HOME=$path_to_home");
+    $gpgresult = exec($gpgcommand, $encrypted, $errorcode);
+    putenv("HOME=$oldhome");
 
-echo "<a href=\"index.php?load=billing&type=module\">[ $l_undochanges ]</a>";
+    $encrypted_creditcard_number = implode("\n",$encrypted);
+    
+    // wipe out the middle of the creditcard_number before it gets inserted
+    $length = strlen($creditcard_number);
+    $firstdigit = substr($creditcard_number, 0,1);
+    $lastfour = substr($creditcard_number, -4);
+    $creditcard_number = "$firstdigit" . "***********" . "$lastfour";
 
-// get the organization info
-$query = "SELECT org_name FROM general WHERE id = $organization_id LIMIT 1";
-$orgresult = $DB->Execute($query) or die ("$l_queryfailed");
-$myorgresult = $orgresult->fields;
-$organization_name = $myorgresult['org_name']; 
-echo "<h3>$l_organizationname: $organization_name</h3>";
+    
 
-echo "<table cellpadding=0 border=0 cellspacing=0 width=720>
+    echo "<pre>$encrypted_creditcard_number</pre>\n";
+    
+    $newcc = TRUE;
+  }
+
+  if ($newcc == TRUE) {
+    $query = "UPDATE billing ".
+      "SET name = '$name',".
+      "company = '$company',".
+      "street = '$street',".
+      "city = '$city',".
+      "state = '$state',".
+      "zip = '$zip',".
+      "country = '$country',".
+      "phone = '$phone',".
+      "fax = '$fax',".
+      "billing_type = '$billing_type',".
+      "creditcard_number = '$creditcard_number',".
+      "creditcard_expire = '$creditcard_expire',".
+      "next_billing_date = '$next_billing_date',".
+      "from_date = '$from_date',".
+      "payment_due_date = '$payment_due_date',".
+      "notes = '$notes',".
+      "pastdue_exempt = '$pastdue_exempt',".
+      "po_number = '$po_number',".
+      "contact_email = '$contact_email', ".
+      "encrypted_creditcard_number = '$encrypted_creditcard_number'".
+      "WHERE id = $billing_id";
+  } else {
+        $query = "UPDATE billing ".
+      "SET name = '$name',".
+      "company = '$company',".
+      "street = '$street',".
+      "city = '$city',".
+      "state = '$state',".
+      "zip = '$zip',".
+      "country = '$country',".
+      "phone = '$phone',".
+      "fax = '$fax',".
+      "billing_type = '$billing_type',".
+      "creditcard_expire = '$creditcard_expire',".
+      "next_billing_date = '$next_billing_date',".
+      "from_date = '$from_date',".
+      "payment_due_date = '$payment_due_date',".
+      "notes = '$notes',".
+      "pastdue_exempt = '$pastdue_exempt',".
+      "po_number = '$po_number',".
+      "contact_email = '$contact_email' ".
+      "WHERE id = $billing_id";
+  }
+
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  
+  // set the to_date automatically
+  automatic_to_date($DB, $from_date, $billing_type, $billing_id);
+  
+  print "<h3>$l_changessaved<h3>";
+  //  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
+
+ } else {  
+
+  /*-----------------------------------------------------------------------*/
+  // show the data to edit
+  /*-----------------------------------------------------------------------*/
+  $query = "SELECT * FROM billing WHERE id = $billing_id";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("Billing Query Failed");
+  $myresult = $result->fields;	
+  
+  // Put values into variablies and Print HTML results
+  
+  $id = $myresult['id'];
+  $name = $myresult['name'];
+  $company = $myresult['company'];        
+  $street = $myresult['street'];
+  $city = $myresult['city'];
+  $state = $myresult['state'];
+  $zip = $myresult['zip'];
+  $country = $myresult['country'];
+  $phone = $myresult['phone'];
+  $fax = $myresult['fax'];
+  $billing_type = $myresult['billing_type'];
+  $creditcard_number = $myresult['creditcard_number'];
+  $creditcard_expire = $myresult['creditcard_expire'];
+  $next_billing_date = $myresult['next_billing_date'];
+  $from_date = $myresult['from_date'];
+  $to_date = $myresult['to_date'];
+  $payment_due_date = $myresult['payment_due_date'];
+  $contact_email = $myresult['contact_email'];
+  $notes = $myresult['notes'];
+  $pastdue_exempt = $myresult['pastdue_exempt'];
+  $po_number = $myresult['po_number'];
+  $organization_id = $myresult['organization_id'];
+  
+  echo "<a href=\"index.php?load=billing&type=module\">[ $l_undochanges ]</a>";
+  
+  // get the organization info
+  $query = "SELECT org_name FROM general WHERE id = $organization_id LIMIT 1";
+  $orgresult = $DB->Execute($query) or die ("$l_queryfailed");
+  $myorgresult = $orgresult->fields;
+  $organization_name = $myorgresult['org_name']; 
+  echo "<h3>$l_organizationname: $organization_name</h3>";
+  
+  echo "<table cellpadding=0 border=0 cellspacing=0 width=720>
 <td valign=top width=360>
 <form action=\"index.php?load=billing&type=module&edit=on&save=on\" name=\"form1\" AUTOCOMPLETE=\"off\">
 	<table cellpadding=5 cellspacing=1 border=0 width=360>

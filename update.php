@@ -608,6 +608,38 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
 	}
+
+	if ($databaseversion == "1.3.1-GPG-TEST") {
+
+	  // change the normal card number to varchar so it can hold ***
+	  // for the truncated card numbers we show to regular users
+	  $query = " ALTER TABLE `billing` CHANGE `creditcard_number` ".
+	    "`creditcard_number` VARCHAR( 16 ) NULL DEFAULT NULL  ";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  // add the TEXT field that will hold the ascii armored encrypted card number
+	  $query = "ALTER TABLE `billing` ADD `encrypted_creditcard_number` TEXT NULL";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  // chmod the some .gpg files, move the secring off the server
+	  // chmod 777 .gnupg folder
+	  // chmod 604 random_seet
+	  // chmod 644 pubring.gpg
+	  // chmod 644 trustdb.gpg
+	  
+	  // TODO encrypt the cards inside the database at this time
+	  // and change the viewable credit card numbers to truncated numbers with ****'s
+	  
+	  // TODO change the cc export script to export the ascii armor now
+
+	  // TODO change the billing table editor to edit the encrypted_card_field for
+	  // new credit cards and update the truncated card and show the truncated card value only
+	  
+	  
+	}
+	  
 	
 	echo "<center><h2>Database Updated</h2></center>";
 }

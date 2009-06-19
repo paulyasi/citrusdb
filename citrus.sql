@@ -46,7 +46,7 @@ CREATE TABLE `billing` (
   `contact_email` varchar(100) default NULL,
   `account_number` int(11) NOT NULL default '0',
   `billing_type` int(11) NOT NULL default '0',
-  `creditcard_number` bigint(16) default NULL,
+  `creditcard_number` varchar(16) default NULL,
   `creditcard_expire` smallint(4) unsigned zerofill default NULL,
   `billing_status` int(11) NOT NULL default '0',
   `disable_billing` enum('y','n') default NULL,
@@ -59,7 +59,8 @@ CREATE TABLE `billing` (
   `notes` text,
   `pastdue_exempt` enum('y','n','bad_debt') NOT NULL default 'n',
   `po_number` varchar(64) default NULL,
-  `organization_id` int(11) NOT NULL default '1', 
+  `organization_id` int(11) NOT NULL default '1',
+  `encrypted_creditcard_number` text NULL default NULL,
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=34 ;
 
