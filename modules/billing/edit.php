@@ -303,27 +303,25 @@ if ($save) {
 
 	print "</select>\n";
 
-echo "
-	</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_ccnumber</b></td>
-	<td bgcolor=\"#ddddee\">
-	<input size=17 name=\"creditcard_number\" type=text value=\"$creditcard_number\" 
-	onBlur=\"if(!cardval(document.forms['form1'].creditcard_number.value)) 
-		{ alert ('$l_notvalid'); document.form1.creditcard_number.style.color='#EE0000';} 
-		else { document.form1.creditcard_number.style.color='#000000'; }\">
-<A HREF=\"#\"
-		onClick=\"if(!cardval(document.forms['form1'].creditcard_number.value)) 
-		{ alert ('$l_notvalid'); } else { alert('$l_valid'); }\"
-	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_validate]</A>
-	</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_ccexpire</b></td>
-	<td bgcolor=\"#ddddee\">
-	<input size=5 name=\"creditcard_expire\" type=text value=\"$creditcard_expire\">
-	</td><tr>
+echo "</td><tr>".
+  "<td bgcolor=\"#ccccdd\"><b>$l_ccnumber</b></td>".
+  "<td bgcolor=\"#ddddee\">".
+  "<input size=17 name=\"creditcard_number\" ".
+  "type=text value=\"$creditcard_number\" ".
+  "onChange=\"if(!cardval(document.forms['form1'].creditcard_number.value)) ".
+  "{ alert ('$l_notvalid'); ".
+  "document.form1.creditcard_number.style.color='#EE0000';} ".
+  "else { document.form1.creditcard_number.style.color='#000000'; }\">".
+  "</td><tr>".
+  "<td bgcolor=\"#ccccdd\"><b>$l_ccexpire</b></td>".
+  "<td bgcolor=\"#ddddee\">".
+  "<input size=5 name=\"creditcard_expire\" ".
+  "type=text value=\"$creditcard_expire\">".
+  "</td><tr>".
 	
-	<td bgcolor=\"#ccccdd\"><b>$l_pastdueexempt</b></td>
-	<td bgcolor=\"#ddddee\">
-	<input type=radio name=pastdue_exempt value=n"; if ($pastdue_exempt == "n") { echo " checked "; }
+  "<td bgcolor=\"#ccccdd\"><b>$l_pastdueexempt</b></td>".
+  "<td bgcolor=\"#ddddee\">".
+  "<input type=radio name=pastdue_exempt value=n"; if ($pastdue_exempt == "n") { echo " checked "; }
 	echo ">$l_no
 	<input type=radio name=pastdue_exempt value=y"; if ($pastdue_exempt == "y") { echo " checked "; }
 	echo ">$l_yes
