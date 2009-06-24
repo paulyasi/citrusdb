@@ -177,7 +177,8 @@ if ($submit) {
 		b.street b_street, b.city b_city, b.state b_state, 
 		b.country b_country, b.zip b_zip, 
 		b.contact_email b_contact_email, b.account_number b_acctnum, 
-		b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp 
+		b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp,
+b.encrypted_creditcard_number b_enc_ccnum 
 		FROM billing_history h 
 		LEFT JOIN billing b ON h.billing_id = b.id  
 		WHERE h.id = '$invoice_number'";
@@ -199,7 +200,8 @@ if ($submit) {
 		$billing_fromdate = $myinvresult['h_from_date'];
 		$billing_todate = $myinvresult['h_to_date'];
 		$billing_payment_due_date = $myinvresult['h_payment_due_date'];
-		$precisetotal = $myinvresult['h_total_due'];	
+		$precisetotal = $myinvresult['h_total_due'];
+		$encrypted_creditcard = $myinvresult['b_enc_ccnum'];
 
 		// get the absolute value of the total
 		$abstotal = abs($precisetotal);
@@ -209,10 +211,9 @@ if ($submit) {
 
 		// print the line in the exported data file
 		// don't print them to billing if the amount is less than or equal to zero
-		if ($precisetotal > 0)	
-		{
-			$newline = "\"CHARGE\",$exportstring\n";
-			fwrite($handle, $newline); // write to the file
+		if ($precisetotal > 0) {
+		  $newline = "\"CHARGE\",$exportstring\n$encrypted_creditcard";
+		  fwrite($handle, $newline); // write to the file
 		}
 	} // end while
 	

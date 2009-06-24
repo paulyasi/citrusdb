@@ -142,11 +142,9 @@ if ($save) {
     $length = strlen($creditcard_number);
     $firstdigit = substr($creditcard_number, 0,1);
     $lastfour = substr($creditcard_number, -4);
-    $creditcard_number = "$firstdigit" . "***********" . "$lastfour";
+    $creditcard_number = "$firstdigit" . "***********" . "$lastfour";    
 
-    
-
-    echo "<pre>$encrypted_creditcard_number</pre>\n";
+    //echo "<pre>$encrypted_creditcard_number</pre>\n";
     
     $newcc = TRUE;
   }
@@ -203,7 +201,7 @@ if ($save) {
   automatic_to_date($DB, $from_date, $billing_type, $billing_id);
   
   print "<h3>$l_changessaved<h3>";
-  //  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
+  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
 
  } else {  
 
