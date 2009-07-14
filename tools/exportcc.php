@@ -226,7 +226,7 @@ else {
 // select the organizations from a list
 
 // ask for the billing date that they want to invoice
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\">
+  echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\">
 	<input type=hidden name=load value=exportcc>
 	<input type=hidden name=type value=tools>
 	<table>";
@@ -251,7 +251,7 @@ echo "</select></td><tr>
 	,'anchor1','yyyy-MM-dd'); return false;\"
 	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</A>
 	</td><tr>
-	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\">
+	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\" id=SubmitButton>
 	</td>
 	</form>
 	</table><br><br><br>";
@@ -290,7 +290,7 @@ echo "</select></td><tr>
 	</td>
 
 	<tr>
-	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\">
+	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\" id=SubmitButton>
 	</td>
 	</form>
 	</table><p>";

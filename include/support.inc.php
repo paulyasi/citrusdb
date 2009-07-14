@@ -40,6 +40,9 @@ $query = "INSERT into customer_history ".
   }
 
   $result = $DB->Execute($query) or die ("create_ticket query failed");
+
+  // TODO: add a feature to email ticket messages to users
+  // who have specified that in their options, for individuals or groups
 }
 
 
