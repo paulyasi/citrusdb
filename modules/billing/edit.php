@@ -114,18 +114,13 @@ if ($save) {
   //$DB->debug = true;
   // save billing information
   
-  // TODO fix this to it truncates a card to *** before it inserts it
-  // and takes the card number and encryptes it if it's new
-  // check for a truncated card, and if not truncated then it's a new card to
-  // insert into the encrypted card field and truncated it to insert it into
-  // the viewable card field
-
-  // check if there is a non-truncated credit card number in the input
-  // if the second cararcter is a * then it's already truncated
+  // check if there is a non-masked credit card number in the input
+  // if the second cararcter is a * then it's already masked
   
   $newcc = FALSE; // set to false so we don't replace it unnecessarily
 
-  // check if the credit card entered already truncated, eg: a replacement was not entered
+  // check if the credit card entered already masked
+  // eg: a replacement was not entered
   if ($creditcard_number[1] <> '*') {
 
     $gpgcommand = 'echo "'.$creditcard_number.'" | '.$gpg_path.' --armor --always-trust --batch --no-secmem-warning -e -u "'.$gpg_sender.'" -r "'.$gpg_recipient.'"';
