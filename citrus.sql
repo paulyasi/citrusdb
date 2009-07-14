@@ -801,3 +801,13 @@ INSERT INTO `cancel_reason` (`id`, `reason`) VALUES
  CREATE TABLE `login_failures` (
 `ip` VARCHAR( 64 ) NOT NULL ,
 `logintime` DATETIME NOT NULL ) ENGINE = MYISAM ;
+
+--
+-- add table indexes
+--
+ALTER TABLE `user_services` ADD INDEX `master_service_id_index` ( `master_service_id` )
+ALTER TABLE `user_services` ADD INDEX `billing_id_index` ( `billing_id` )
+ALTER TABLE `billing` ADD INDEX `billing_type_index` ( `billing_type` )
+ALTER TABLE `tax_exempt` ADD INDEX `account_number_index` ( `account_number` )
+ALTER TABLE `billing_details` ADD INDEX `billing_id_index` ( `billing_id` )
+ALTER TABLE `payment_history` ADD INDEX `billing_id_index` ( `billing_id` )

@@ -1243,7 +1243,7 @@ function billingstatus($billingid) {
   //"Canceled" - canceled, has a cancel date
   // if they have a cancel date
   $query = "SELECT cancel_date FROM customer
-	WHERE default_billing_id = '$billingid'";
+	WHERE default_billing_id = '$billingid' LIMIT 1";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die("$l_queryfailed");;
   $myresult = $result->fields;

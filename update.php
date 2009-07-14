@@ -608,7 +608,46 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
 	}
-	
+
+	if ($databaseversion = "1.3.1") {
+
+	  $query = "ALTER TABLE `user_services` ".
+	    "ADD INDEX `master_service_id_index` ( `master_service_id` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `user_services` ".
+	    "ADD INDEX `billing_id_index` ( `billing_id` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `billing` ".
+	    "ADD INDEX `billing_type_index` ( `billing_type` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `tax_exempt` ".
+	    "ADD INDEX `account_number_index` ( `account_number` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `billing_details` ".
+	    "ADD INDEX `billing_id_index` ( `billing_id` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query ="ALTER TABLE `payment_history` ".
+	    "ADD INDEX `billing_id_index` ( `billing_id` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  // set the version, using the new settings field
+	  $query = "UPDATE `settings` SET `version` = '1.3.2' ".
+	    "WHERE `id` =1 LIMIT 1";		
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	}
 	echo "<center><h2>Database Updated</h2></center>";
 }
 else 
@@ -634,13 +673,13 @@ else
 	This update script only works with versions 0.9.2 or greater
 	<p>
 	Your database version: <b>$databaseversion</b><p>
-	This script will update it to version: <b>1.3.1</b></h3>";
+	This script will update it to version: <b>1.3.2</b></h3>";
 	echo "<p style=\"font-weight: bold;\">Upgrading version 1.3.0 or ".
 	  "older will reset the rerun dates ".
 	  "to NULL when running this upgrade script.  Please make sure you ".
 	  "check for pending reruns before running this script on an active ".
 	  "system.</p>";
-	if ($databaseversion == "1.3.1") {
+	if ($databaseversion == "1.3.2") {
 		echo "<p><b>Nothing to update</b>";
 	} else {
 		echo "
