@@ -585,8 +585,10 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $invoiceresult = $DB->Execute($query) or die ("Query Failed"); 
     // used to show the invoice
-    $totalresult = $DB->Execute($query) or die ("Query Failed"); 
-    // used to add up the total charges
+
+    // useless?
+    // $totalresult = $DB->Execute($query) or die ("Query Failed"); 
+    // make a copy used to add up the total charges
     
     // get the data for the billing dates from the billing table
     $query = "SELECT * FROM billing WHERE id = $mybilling_id";
@@ -649,6 +651,10 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
 	// past due charges
 	$pastdue = $pastdue + $billed_amount;
       } // end if
+
+      // add to the running total
+      $invoicetotal = $billed_amount + $invoicetotal;
+      
     } // end while
     
     //
@@ -657,11 +663,11 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
     //
     apply_credits($DB, $mybilling_id);
     
-    // calculate the invoicetotal
-    while ($myresult = $totalresult->FetchRow()) {
-      $billed_amount = $myresult['d_billed_amount'] - $myresult['d_paid_amount'];
-      $invoicetotal = $billed_amount + $invoicetotal;
-    }
+    // useless? calculate the invoicetotal
+    //while ($myresult = $totalresult->FetchRow()) {
+    //  $billed_amount = $myresult['d_billed_amount'] - $myresult['d_paid_amount'];
+    //  $invoicetotal = $billed_amount + $invoicetotal;
+    //}
     
     $precisetotal = sprintf("%.2f", $invoicetotal);
     
