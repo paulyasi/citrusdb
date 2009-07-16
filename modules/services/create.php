@@ -229,33 +229,22 @@ if ($addnow) {
       "[ $l_showall ]</a>";
   }
 	
-  // print drop down menu to choose service categories
-  echo "<SCRIPT LANGUAGE=\"JavaScript\">".
-	"<!-- Begin".
-	"function dropdownHandler(dropdown) {".
-    "var URL = dropdown.dropcategory.options[dropdown.dropcategory.".
-    "selectedIndex].value;".
-    "window.location.href = URL;".
-    "}".
-    "// End -->".
-    "</script>";
-	
-  echo "<center><form name=dropdown><select name=dropcategory size=1 ".
-    "onchange=\"dropdownHandler(this.form)\">";
-  echo "<option value=\"#\">$l_selectcategory</option>\n";
-	
-  $query = "SELECT DISTINCT category FROM master_services ORDER BY category ";
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
-  while ($myresult = $result->FetchRow()) {
-    $categoryname = $myresult['category'];
-    echo "<option value=\"#$categoryname\">$categoryname</option>\n";
-  }
-	
-  echo "</select></form></center>";
 
-  // TODO: select service listing based upon the customer's
-  // default billing organization
+  //echo "<SCRIPT LANGUAGE=\"JavaScript\">".
+  //"<!-- Begin".
+  //"function dropdownHandler(dropdown) {".
+  //"var URL = dropdown.dropcategory.options[dropdown.dropcategory.".
+  //"selectedIndex].value;".
+  //"window.location.href = URL;".
+  //"}".
+  //"// End -->".
+  //"</script>";
+	
+  //echo "<center><form name=dropdown><select name=dropcategory size=1 ".
+  //  "onchange=\"dropdownHandler(this.form)\">";
+  //echo "<option value=\"#\">$l_selectcategory</option>\n";
+	
+  //echo "</select></form></center>";
 
   $query = "SELECT organization_id FROM billing ".
     "WHERE account_number = '$account_number' LIMIT 1";
@@ -263,13 +252,37 @@ if ($addnow) {
   $orgresult = $DB->Execute($query) or die ("$l_queryfailed");
   $myorgresult = $orgresult->fields;
   $my_organization_id = $myorgresult[0];
+
+  echo "<p>";
   
   if ($showall == 'y' & $showall_permission == true) {
+     // print list of categories to choose from
+    $query = "SELECT DISTINCT category FROM master_services ".
+      "ORDER BY category";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $result = $DB->Execute($query) or die ("$l_queryfailed");
+    while ($myresult = $result->FetchRow()) {
+      $categoryname = $myresult['category'];
+      echo "<a href=\"#$categoryname\">$categoryname</a> | \n";
+    }
+
+    // set the query for the service listing
     $query = "SELECT * FROM master_services m ".
       "LEFT JOIN general g ON g.id = m.organization_id ".
       "WHERE selling_active = 'y' ".
       "ORDER BY category, pricerate, service_description";
   } else {
+    // print list of categories to choose from
+    $query = "SELECT DISTINCT category FROM master_services ".
+      "WHERE organization_id = '$my_organization_id' ORDER BY category";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $result = $DB->Execute($query) or die ("$l_queryfailed");
+    while ($myresult = $result->FetchRow()) {
+      $categoryname = $myresult['category'];
+      echo "<a href=\"#$categoryname\">$categoryname</a> | \n";
+    }
+    
+    // set the query for the service listing
     $query = "SELECT * FROM master_services m ".
       "LEFT JOIN general g ON g.id = m.organization_id ".
       "WHERE selling_active = 'y' AND hide_online <> 'y' ".
