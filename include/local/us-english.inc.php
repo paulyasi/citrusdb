@@ -366,6 +366,7 @@ $l_removepermissions = "Remove Permissions";
 $l_reports = "Reports";
 $l_rerun = "Rerun";
 $l_rerundateerror = "Rerun date error, this account will be billed normally according to their next billing date";
+$l_rerunitemerror = "No Items to Rerun Found";
 $l_resetaddresstocustomer = "Reset Address To Customer";
 $l_response = "Response";
 $l_results_per_page = "Results Per Page";
