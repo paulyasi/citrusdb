@@ -320,10 +320,24 @@ if ($u->user_isloggedin()) {
 			windowprops = \"height=400,width=600,location=no,\"+ \"scrollbars=no,menubars=no,toolbars=no,resizable=no\";
 			window.open(page, \"Tools\", windowprops);
 		}
-		</script>
-		<script language=\"JavaScript\" src=\"include/md5.js\"></script>
-		</head>
-		<body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>";
+
+
+                function toggleOff()
+                {       
+                        var myelement = document.getElementById(\"WaitingMessage\").style;
+                        myelement.display=\"none\";     
+                }
+
+                function toggleOn()
+                {
+                        var myelement = document.getElementById(\"WaitingMessage\").style;
+                        myelement.display=\"block\";
+                }
+                
+                </script>
+                <script language=\"JavaScript\" src=\"include/md5.js\"></script>
+                </head>
+                <body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0 onload=\"toggleOff();\">";
 
 		// Check if the file is inside the path_to_citrus
 		$filepath = "$path_to_citrus/tools/index.php";
