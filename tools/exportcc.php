@@ -296,9 +296,12 @@ echo "</select></td><tr>
 	</table><p>";
 
 	// print the WaitingMessage
-	echo "<div id=\"WaitingMessage\" style=\"border: 4px double black; background-color: #ddd; position: absolute; text-align: center; top: 50px; width: 550px; height: 300px;\">
-	<BR><BR><BR><h3>Processing...</h3>
-	</div>";	
+	echo "<div id=\"WaitingMessage\" style=\"border: 4px double black; ".
+	  "background-color: #fff; position: absolute; text-align: center; ".
+	  "top: 50px; width: 550px; height: 300px;\">".
+	  "<BR><BR><BR><h3>Processing...</h3>".
+	  "<p><img src=\"images/spinner.gif\"></p>".
+	  "</div>";	
 }
 
 ?>
