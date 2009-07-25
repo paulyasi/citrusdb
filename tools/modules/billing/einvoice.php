@@ -194,7 +194,7 @@ echo "</select></td><tr>
 	</table></form>";
 
  	// print the date range form
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form2\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form2\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=billing>
 	<input type=hidden name=tooltype value=module>
 	<input type=hidden name=type value=tools>
@@ -235,7 +235,7 @@ echo "</select></td><tr>
 	</table><p>";
 
 // or ask the the single billing ID they want to invoice
-echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\">
+echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=billing>
 	<input type=hidden name=tooltype value=module>
 	<input type=hidden name=type value=tools>
@@ -248,7 +248,7 @@ echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\">
 	</table></form>";
 
 // or ask what customer id they want to invoice (uses the default_billing_id)
-echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\">
+echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=billing>
 	<input type=hidden name=tooltype value=module>
 	<input type=hidden name=type value=tools>
@@ -259,6 +259,15 @@ echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\">
 	</td><tr>
 	<td></td><td><input type=\"submit\" name=\"submit\" value=\"$l_submit\"></td>
 	</table></form>";
+
+	// print the WaitingMessage
+	echo "<div id=\"WaitingMessage\" style=\"border: 0px double black; ".
+	  "background-color: #fff; position: absolute; text-align: center; ".
+	  "top: 50px; width: 550px; height: 300px;\">".
+	  "<BR><BR><BR><h3>$l_processing...</h3>".
+	  "<p><img src=\"images/spinner.gif\"></p>".
+	  "</div>";
+ 
 }
 
 ?>

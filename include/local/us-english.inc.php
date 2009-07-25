@@ -344,6 +344,7 @@ $l_printwelcomeletters = "Welcome Letters";
 $l_privileges = "Privileges";
 $l_processcreditcards = "Process Credit Cards";
 $l_processoutstandingrefunds = "Would you like to process outstanding refunds?";
+$l_processing = "Processing";
 $l_profile = "Profile";
 $l_queryfailed = "Query Failed";
 $l_rate = "Rate";
