@@ -647,6 +647,12 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
 
+	  // add notes field to customer table
+	  $query = "ALTER TABLE `customer` ADD `notes` TEXT NULL";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+
 	}
 	echo "<center><h2>Database Updated</h2></center>";
 }

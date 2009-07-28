@@ -212,7 +212,8 @@ CREATE TABLE `customer` (
   `removal_date` date default NULL,
   `default_billing_id` int(10) unsigned NOT NULL default '0',
   `account_manager_password` varchar(32) default NULL,
-  `cancel_reason` int(11) NULL, 
+  `cancel_reason` int(11) NULL,
+  `notes` text, 
   PRIMARY KEY  (`account_number`)
 ) TYPE=MyISAM AUTO_INCREMENT=10000 ;
 
@@ -220,7 +221,7 @@ CREATE TABLE `customer` (
 -- Dumping data for table `customer`
 -- 
 
-INSERT INTO `customer` VALUES ('example', '2005-09-25', 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'MAC', 'USA', '12345', '555-555-5555', '555-666-7777', '555-555-5556', 'example@example.com', 1, 'what question?', 'secret', NULL, NULL, 1, 'test', NULL);
+INSERT INTO `customer` VALUES ('example', '2005-09-25', 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'MAC', 'USA', '12345', '555-555-5555', '555-666-7777', '555-555-5556', 'example@example.com', 1, 'what question?', 'secret', NULL, NULL, 1, 'test', NULL, NULL);
 
 -- --------------------------------------------------------
 

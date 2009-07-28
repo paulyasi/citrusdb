@@ -1,5 +1,5 @@
 <?php   
-// Copyright (C) 2002-2007  Paul Yasi <paul@citrusdb.org>
+// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -34,7 +34,8 @@ if ($base->input['billingaddress']) {
   $phone = $myresult['phone'];
   $fax = $myresult['fax'];
   $contact_email = $myresult['contact_email'];
-  $default_billing_id = $myresult['default_billing_id'];	
+  $default_billing_id = $myresult['default_billing_id'];
+  
   
   // save billing address
   $query = "UPDATE billing ".
@@ -76,6 +77,7 @@ if ($base->input['save']) {
   //$removal_date = $base->input['removal_date'];
   $account_number = $_SESSION['account_number'];
   $cancel_reason = $base->input['cancel_reason'];
+  $notes = $base->input['notes'];
   
   // get the old values to compare with the new ones to check if we need to update the billing record also
   $old_street = $base->input['old_street'];
@@ -107,6 +109,7 @@ if ($base->input['save']) {
       "secret_answer = '$secret_answer', ".
       "cancel_date = NULL, ".
       "cancel_reason = NULL, ".
+      "notes = '$notes', ".
       "account_manager_password = '$account_manager_password' ".
       "WHERE account_number = '$account_number'";
   } else {
@@ -128,6 +131,7 @@ if ($base->input['save']) {
       "secret_answer = '$secret_answer', ".
       "cancel_date = '$cancel_date', ".
       "cancel_reason = '$cancel_reason', ".
+      "notes = '$notes', ".
       "account_manager_password = '$account_manager_password' ".
       "WHERE account_number = '$account_number'";
   }
@@ -194,6 +198,7 @@ if ($base->input['save']) {
      $account_manager_password = $myresult['account_manager_password'];
      $cancel_date = $myresult['cancel_date'];
      $cancel_reason = $myresult['cancel_reason'];
+     $notes = $myresult['notes'];
 	
 echo "<a href=\"index.php?load=customer&type=module\">[ $l_undochanges ]</a>";
 
@@ -211,6 +216,7 @@ echo "<table cellpadding=0 border=0 cellspacing=0 width=720>
 	<td bgcolor=\"#ccccdd\"><b>$l_phone</b></td><td bgcolor=\"#ddddee\"><input name=\"phone\" type=text value=\"$phone\"></td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_alt_phone</b></td><td bgcolor=\"#ddddee\"><input name=\"alt_phone\" type=text value=\"$alt_phone\"></td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_fax</b></td><td bgcolor=\"#ddddee\"><input name=\"fax\" type=text value=\"$fax\"></td><tr>
+	<td bgcolor=\"#ccccdd\"><b>$l_notes</b></td><td bgcolor=\"#ddddee\"><input name=\"notes\" type=text value=\"$notes\" colspan=2></td><tr>
 	</table>
 </td>
 <td valign=top width=360>
@@ -251,6 +257,7 @@ echo "<td bgcolor=\"#ccccdd\"><b>$l_source</b></td><td bgcolor=\"#ddddee\"><inpu
 	</table>
 </td>
 <tr>
+
 <td colspan=2>
 <center>
 

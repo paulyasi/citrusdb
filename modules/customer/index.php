@@ -69,7 +69,7 @@ if ($edit) {
   //$removal_date = $myresult['removal_date'];
   $account_manager_password = $myresult['account_manager_password'];
   $cancel_reason_id = $myresult['cancel_reason'];
-
+  $notes = $myresult['notes'];
 
   // get the cancel reason text
   if ($cancel_reason_id > 0) {
@@ -149,7 +149,10 @@ if ($edit) {
   
   "<tr>".
   //"<td><b>$l_fax</b></td>".
-  "<td>$l_fax: $fax</td>".
+    "<td>$l_fax: $fax</td>".
+
+    "<tr>".
+    "<td>$l_notes: $notes</td>".
 
   // end of left table column
   
