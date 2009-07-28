@@ -98,7 +98,7 @@ if ($whycancel) {
    // set cancel date and removal date of customer record
    $query = "UPDATE customer ".
      "SET cancel_date = CURRENT_DATE, ". 
-     "cancel_reason = '$cancel_reason' "
+     "cancel_reason = '$cancel_reason' ".
      "WHERE account_number = '$account_number'";
    $result = $DB->Execute($query) or die ("$l_queryfailed");
    
