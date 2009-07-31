@@ -400,6 +400,7 @@ CREATE TABLE `master_services` (
   `usage_label` varchar(32) default NULL,
   `organization_id` int(11) NOT NULL default '1',
   `carrier_dependent` enum('y','n') NOT NULL default 'n',
+  `support_notify` varchar(32) default NULL,   
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=18 ;
 

@@ -872,6 +872,11 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     
     //$pdf=new FPDF();
     $pdf->AddPage();
+
+    // get the page the current invoice in the batch starts on
+    // necessary for batches with multiple invoices
+    $invoicestartpage = $pdf->PageNo();
+    
     $pdf->SetFont('Arial','B',18);
     $pdf->Cell(60,10,"$org_name",0);    
     $pdf->SetXY(10,20);
@@ -1034,9 +1039,10 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
       // add a new page if there are many line items
       // TODO: check for page number here
       // if page number greater than 1, then myline would be larger
+      // set an invoicestartpage at the start of each invoice for multi invoice batches
       $pagenumber = $pdf->PageNo();
       
-      if ($pagenumber > 1) {
+      if ($pagenumber - $invoicestartpage > 0) {
 	$linetotal = 49;
       } else {
 	$linetotal = 28;

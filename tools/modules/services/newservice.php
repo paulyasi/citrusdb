@@ -24,6 +24,7 @@ if (!isset($base->input['hide_online'])) { $base->input['hide_online'] = ""; }
 if (!isset($base->input['activate_notify'])) { $base->input['activate_notify'] = ""; }
 if (!isset($base->input['shutoff_notify'])) { $base->input['shutoff_notify'] = ""; }
 if (!isset($base->input['modify_notify'])) { $base->input['modify_notify'] = ""; }
+if (!isset($base->input['support_notify'])) { $base->input['support_notify'] = ""; }
 if (!isset($base->input['carrier_dependent'])) { $base->input['carrier_dependent'] = ""; }
 if (!isset($base->input['activation_string'])) { $base->input['activation_string'] = ""; }
 if (!isset($base->input['usage_label'])) { $base->input['usage_label'] = ""; }
@@ -41,6 +42,7 @@ $hide_online = $base->input['hide_online'];
 $activate_notify = $base->input['activate_notify'];
 $shutoff_notify = $base->input['shutoff_notify'];
 $modify_notify = $base->input['modify_notify'];
+$support_notify = $base->input['support_notify'];
 $carrier_dependent = $base->input['carrier_dependent'];
 $activation_string = $base->input['activation_string'];
 $usage_label = $base->input['usage_label'];
@@ -59,9 +61,9 @@ if ($myresult['admin'] == 'n') {
 if ($submit) {
 	// insert groupname and username into the groups table
 	$query = "INSERT INTO master_services 
-(service_description,pricerate,frequency,options_table,category,selling_active,activate_notify,shutoff_notify,hide_online,activation_string,usage_label,organization_id, modify_notify, carrier_dependent) 
+(service_description,pricerate,frequency,options_table,category,selling_active,activate_notify,shutoff_notify,hide_online,activation_string,usage_label,organization_id, modify_notify, support_notify, carrier_dependent) 
 VALUES
-('$service_description','$pricerate','$frequency','$options_table','$category','$selling_active','$activate_notify','$shutoff_notify','$hide_online','$activation_string','$usage_label','$organization_id', '$modify_notify', '$carrier_dependent')";
+('$service_description','$pricerate','$frequency','$options_table','$category','$selling_active','$activate_notify','$shutoff_notify','$hide_online','$activation_string','$usage_label','$organization_id', '$modify_notify', '$support_notify', '$carrier_dependent')";
 	$result = $DB->Execute($query) or die ("$l_queryfailed");
 
 	print "<h3>$l_changessaved</h3> [<a href=\"index.php?load=services&tooltype=module&type=tools\">done</a>]";
@@ -105,8 +107,12 @@ type=\"radio\" name=hide_online value=\"n\" checked>$l_no<p>
         <INPUT TYPE=\"text\" NAME=\"activate_notify\" VALUE=\"\"><P>
 	<B>$l_shutoffnotify</B>         
         <INPUT TYPE=\"text\" NAME=\"shutoff_notify\" VALUE=\"\"><P>
+
 	<B>$l_modifynotify</B>         
         <INPUT TYPE=\"text\" NAME=\"modify_notify\" VALUE=\"\"><P>
+	<B>$l_supportnotify</B>         
+        <INPUT TYPE=\"text\" NAME=\"support_notify\" VALUE=\"\"><P>
+
 <B>$l_activationstring</B>         
         <INPUT TYPE=\"text\" NAME=\"activation_string\" VALUE=\"\"><P>
 <B>$l_usagelabel</B>         

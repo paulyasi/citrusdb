@@ -651,7 +651,11 @@ if ($base->input['submit'] == "Update")
 	  $query = "ALTER TABLE `customer` ADD `notes` TEXT NULL";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
-	  
+
+	  // add support_notify field to master_services table
+	  $query = "ALTER TABLE `master_services` ADD `support_notify` VARCHAR( 32 ) NULL ;";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
 
 	}
 	echo "<center><h2>Database Updated</h2></center>";

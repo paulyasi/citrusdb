@@ -414,6 +414,7 @@ $l_street = "Street";
 $l_submit = "Submit";
 $l_submitrequest = "Submit Request";
 $l_support = "Support";
+$l_supportnotify = "Support Notify";
 $l_supportrequest = "Support Request";
 $l_tax = "Tax";
 $l_taxamount = "Tax Amount";
