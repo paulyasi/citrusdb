@@ -82,24 +82,27 @@ while ($myresult = $result->FetchRow()) {
     print "<tr bgcolor=\"#ffffdd\">";
   }
 
+  
+  // THIS WILL NOT BE BLOCKED ANYMORE, ESPECIALLY WHEN THE SUBNOTES ARE ADDED
+  // BEING ABLE TO CLICK ON TICKETS WILL BE A REQUIRED FEATURE
   // if the user is and admin or manager then have the ability to click a
   // link and open the ticket editor
   // also allow users to edit their own notes
-  $query = "SELECT * FROM user WHERE username='$user'";
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $userresult = $DB->Execute($query) or die ("$l_queryfailed");
-  $myuserresult = $userresult->fields;
-  $showall_permission = false;
-  if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')
-      OR ($user == $created_by)) {
+  //  $query = "SELECT * FROM user WHERE username='$user'";
+  //$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  //$userresult = $DB->Execute($query) or die ("$l_queryfailed");
+  //$myuserresult = $userresult->fields;
+  //$showall_permission = false;
+  //if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')
+  //    OR ($user == $created_by)) {
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
       "padding-bottom: 2px; font-size: 9pt;\"><a target=\"_parent\" ". 
       "href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
       "$id</a> &nbsp;</td>";
-  } else {
-    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px; font-size: 9pt;\">$id &nbsp;</td>";
-  }
+    //} else {
+    //print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+    //  "padding-bottom: 2px; font-size: 9pt;\">$id &nbsp;</td>";
+    //}
   
   print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
     "padding-bottom: 2px; font-size: 9pt;\">$creation_date &nbsp;</td>";
