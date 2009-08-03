@@ -158,7 +158,7 @@ if ($whycancel) {
     $dependent_cancel_url = $myresult['dependent_cancel_url'];
   
     // print a link to the url to fill out the carrier dependent cancel form
-    print "<a href=\"$dependent_cancel_url\">$l_cancelcustomer</a></p>";
+    print "<a href=\"$dependent_cancel_url$account_number\" target=\"_BLANK\">$l_cancelcustomer</a></p>";
     
   }
 
