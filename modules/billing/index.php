@@ -30,6 +30,7 @@ $resetaddr = $base->input['resetaddr'];
 $rerun = $base->input['rerun'];
 $turnoff = $base->input['turnoff'];
 $waiting = $base->input['waiting'];
+$createinvoice = $base->input['createinvoice'];
 $nsf = $base->input['nsf'];
 if ($edit)
 {
@@ -85,6 +86,13 @@ else if ($nsf)
 	if ($pallow_modify)    
 	{       
 		include('./modules/billing/nsf.php');    
+	}  else permission_error();
+}
+else if ($createinvoice) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/createinvoice.php');    
 	}  else permission_error();
 }
 
@@ -163,7 +171,8 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 	echo "<a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | 
 	<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">$l_refundreport</a> | 
 	<a href=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">$l_turnoff</a> | 
-	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a>
+	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a> | 
+	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">Create Invoice</a>
 ";
 }
 
