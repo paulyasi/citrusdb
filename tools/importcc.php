@@ -187,7 +187,7 @@ if ($submit) {
 	  $amount = 0;
 	  $fillamount = round($available + $paid_amount,2);
 	  $query = "UPDATE billing_details ".
-	    "SET paid_amount = '$fillamount' ".
+	    "SET paid_amount = '$fillamount', ".
 	    "payment_applied = CURRENT_DATE ".
 	    "WHERE id = $id";
 	  $lessthanresult = $DB->Execute($query) 

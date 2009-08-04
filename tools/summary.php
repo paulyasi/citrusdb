@@ -31,6 +31,19 @@ if ($myresult['manager'] == 'n') {
 if (!isset($base->input['organization_id'])) { $base->input['organization_id'] = "1"; }
 $organization_id = $base->input['organization_id'];
 
+
+// select the path_to_ccfile from settings
+$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$ccfileresult = $DB->Execute($query)
+  or die ("$l_queryfailed");
+$myccfileresult = $ccfileresult->fields;
+$path_to_ccfile = $myccfileresult['path_to_ccfile'];
+
+// open the file
+$filename = "$path_to_ccfile/summary.csv";
+$handle = fopen($filename, 'w'); // open the file
+
 // ask for the organization that they want to view
 echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\">
 	<input type=hidden name=load value=summary>
@@ -83,12 +96,21 @@ echo "</select><input type=\"SUBMIT\" NAME=\"submit\" value=\"$l_submit\"><p>";
 		$servicefrequency = $myresult['m_frequency'];
 		$org_name = $myresult['g_org_name'];
 		echo "<td>$service</td><td>$org_name</td><td>$count</td><tr>";
+		$newline = "$service,$count\n";
+		fwrite($handle, $newline); // write to the file
+
 		// check if the are a paid monthly service and add to count
 		if (($pricerate > 0) AND ($billingmethod <> 'free') AND ($servicefrequency > 0)) {
 			$paidsubscriptions = $paidsubscriptions + $count;
 		}		
 	}
+fclose($handle);
+// print link to download the summary file
+echo "<a href=\"index.php?load=tools/downloadfile&type=dl&filename=summary.csv\"><u class=\"bluelink\">$l_download summary.csv</u></a><p>";
+
+
 	echo "</table><p>
+
 	$l_paidsubscriptions: $paidsubscriptions
 	<p>";
 
