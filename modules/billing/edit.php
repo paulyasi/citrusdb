@@ -86,6 +86,10 @@ if (!isset($base->input['payment_due_date']) OR
     $base->input['payment_due_date'] == "") { 
   $base->input['payment_due_date'] = "0000-00-00"; 
 }
+if (!isset($base->input['rerun_date']) OR
+    $base->input['rerun_date'] == "") { 
+  $base->input['rerun_date'] = "0000-00-00"; 
+}
 
 if (!isset($base->input['contact_email'])) { $base->input['contact_email'] = ""; }
 if (!isset($base->input['notes'])) { $base->input['notes'] = ""; }
@@ -108,6 +112,7 @@ $creditcard_expire = $base->input['creditcard_expire'];
 $next_billing_date = $base->input['next_billing_date'];
 $from_date = $base->input['from_date'];
 $payment_due_date = $base->input['payment_due_date'];
+$rerun_date = $base->input['rerun_date'];
 $contact_email = $base->input['contact_email'];
 $notes = $base->input['notes'];
 $pastdue_exempt = $base->input['pastdue_exempt'];
@@ -115,8 +120,10 @@ $po_number = $base->input['po_number'];
 
 if ($save) {
   //$DB->debug = true;
-	// save billing information
-      $query = "UPDATE billing 
+  // save billing information
+  // check if rerun date should be NULL or not
+  if ($rerun_date == "0000-00-00") {
+    $query = "UPDATE billing 
 	SET name = '$name',
 	company = '$company',
 	street = '$street',
@@ -132,60 +139,85 @@ if ($save) {
 	next_billing_date = '$next_billing_date',
 	from_date = '$from_date',
 	payment_due_date = '$payment_due_date',
+rerun_date = NULL, 
 	notes = '$notes',
 	pastdue_exempt = '$pastdue_exempt',
 	po_number = '$po_number',
 	contact_email = '$contact_email' WHERE id = $billing_id";
 	$result = $DB->Execute($query) or die ("$l_queryfailed");
-	
-	// set the to_date automatically
-	automatic_to_date($DB, $from_date, $billing_type, $billing_id);
-
-	print "<h3>$l_changessaved<h3>";
-        print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
-}
-else
-{	
-	$query = "SELECT * FROM billing WHERE id = $billing_id";
-	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result = $DB->Execute($query) or die ("Billing Query Failed");
-	$myresult = $result->fields;	
-
-        // Put values into variablies and Print HTML results
-
-	$id = $myresult['id'];
-	$name = $myresult['name'];
-	$company = $myresult['company'];        
-	$street = $myresult['street'];
-	$city = $myresult['city'];
-	$state = $myresult['state'];
-	$zip = $myresult['zip'];
-	$country = $myresult['country'];
-        $phone = $myresult['phone'];
-        $fax = $myresult['fax'];
-	$billing_type = $myresult['billing_type'];
-	$creditcard_number = $myresult['creditcard_number'];
-	$creditcard_expire = $myresult['creditcard_expire'];
-        $next_billing_date = $myresult['next_billing_date'];
-        $from_date = $myresult['from_date'];
-        $to_date = $myresult['to_date'];
-	$payment_due_date = $myresult['payment_due_date'];
-       	$contact_email = $myresult['contact_email'];
-        $notes = $myresult['notes'];
-	$pastdue_exempt = $myresult['pastdue_exempt'];
-	$po_number = $myresult['po_number'];
-	$organization_id = $myresult['organization_id'];
-
-echo "<a href=\"index.php?load=billing&type=module\">[ $l_undochanges ]</a>";
-
-// get the organization info
-$query = "SELECT org_name FROM general WHERE id = $organization_id LIMIT 1";
-$orgresult = $DB->Execute($query) or die ("$l_queryfailed");
-$myorgresult = $orgresult->fields;
-$organization_name = $myorgresult['org_name']; 
-echo "<h3>$l_organizationname: $organization_name</h3>";
-
-echo "<table cellpadding=0 border=0 cellspacing=0 width=720>
+  } else {
+    $query = "UPDATE billing 
+	SET name = '$name',
+	company = '$company',
+	street = '$street',
+	city = '$city',
+	state = '$state',
+	zip = '$zip',
+	country = '$country',
+	phone = '$phone',
+	fax = '$fax',
+	billing_type = '$billing_type',
+	creditcard_number = '$creditcard_number',
+	creditcard_expire = '$creditcard_expire',
+	next_billing_date = '$next_billing_date',
+	from_date = '$from_date',
+	payment_due_date = '$payment_due_date',
+rerun_date = '$rerun_date',
+	notes = '$notes',
+	pastdue_exempt = '$pastdue_exempt',
+	po_number = '$po_number',
+	contact_email = '$contact_email' WHERE id = $billing_id";
+  }
+  
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  
+  // set the to_date automatically
+  automatic_to_date($DB, $from_date, $billing_type, $billing_id);
+  
+  print "<h3>$l_changessaved<h3>";
+  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
+ } else {	
+  $query = "SELECT * FROM billing WHERE id = $billing_id";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("Billing Query Failed");
+  $myresult = $result->fields;	
+  
+  // Put values into variablies and Print HTML results
+  
+  $id = $myresult['id'];
+  $name = $myresult['name'];
+  $company = $myresult['company'];        
+  $street = $myresult['street'];
+  $city = $myresult['city'];
+  $state = $myresult['state'];
+  $zip = $myresult['zip'];
+  $country = $myresult['country'];
+  $phone = $myresult['phone'];
+  $fax = $myresult['fax'];
+  $billing_type = $myresult['billing_type'];
+  $creditcard_number = $myresult['creditcard_number'];
+  $creditcard_expire = $myresult['creditcard_expire'];
+  $next_billing_date = $myresult['next_billing_date'];
+  $from_date = $myresult['from_date'];
+  $to_date = $myresult['to_date'];
+  $payment_due_date = $myresult['payment_due_date'];
+  $rerun_date = $myresult['rerun_date'];
+  $contact_email = $myresult['contact_email'];
+  $notes = $myresult['notes'];
+  $pastdue_exempt = $myresult['pastdue_exempt'];
+  $po_number = $myresult['po_number'];
+  $organization_id = $myresult['organization_id'];
+  
+  echo "<a href=\"index.php?load=billing&type=module\">[ $l_undochanges ]</a>";
+  
+  // get the organization info
+  $query = "SELECT org_name FROM general WHERE id = $organization_id LIMIT 1";
+  $orgresult = $DB->Execute($query) or die ("$l_queryfailed");
+  $myorgresult = $orgresult->fields;
+  $organization_name = $myorgresult['org_name']; 
+  echo "<h3>$l_organizationname: $organization_name</h3>";
+  
+  echo "<table cellpadding=0 border=0 cellspacing=0 width=720>
 <td valign=top width=360>
 <form action=\"index.php?load=billing&type=module&edit=on&save=on\" name=\"form1\" AUTOCOMPLETE=\"off\">
 	<table cellpadding=5 cellspacing=1 border=0 width=360>
@@ -285,7 +317,8 @@ echo "
 	</td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_to $l_date</b></td>
 	<td bgcolor=\"#ddddee\">$to_date</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_paymentduedate</b></td>
+
+<td bgcolor=\"#ccccdd\"><b>$l_paymentduedate</b></td>
 	<td bgcolor=\"#ddddee\">
 	<input name=\"payment_due_date\" type=text value=\"$payment_due_date\" size=12>
 	<A HREF=\"#\"
@@ -293,6 +326,16 @@ echo "
 	return false;\"
 	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</A>
 	</td><tr>
+
+<td bgcolor=\"#ccccdd\"><b>$l_rerun $l_date</b></td>
+	<td bgcolor=\"#ddddee\">
+	<input name=\"rerun_date\" type=text value=\"$rerun_date\" size=12>
+	<A HREF=\"#\"
+	onClick=\"cal.select(document.forms['form1'].rerun_date,'anchor1','yyyy-MM-dd'); 
+	return false;\"
+	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</A>
+	</td><tr>
+
 	<td bgcolor=\"#ccccdd\"><b>$l_po_number</b></td>
 	<td bgcolor=\"#ddddee\">
 	<input name=\"po_number\" type=text value=\"$po_number\"></td><tr>

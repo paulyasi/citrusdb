@@ -32,6 +32,8 @@ $turnoff = $base->input['turnoff'];
 $waiting = $base->input['waiting'];
 $createinvoice = $base->input['createinvoice'];
 $nsf = $base->input['nsf'];
+$deletepayment = $base->input['deletepayment'];
+
 if ($edit)
 {
     if ($pallow_modify)
@@ -86,6 +88,13 @@ else if ($nsf)
 	if ($pallow_modify)    
 	{       
 		include('./modules/billing/nsf.php');    
+	}  else permission_error();
+}
+else if ($deletepayment) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/deletepayment.php');    
 	}  else permission_error();
 }
 else if ($createinvoice) 

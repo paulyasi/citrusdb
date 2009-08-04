@@ -287,7 +287,7 @@ $l_orgmismatch = "Organization Mismatch";
 $l_over = "Over";
 $l_noticesent = "Notice Sent";
 
-$l_notice_text_pastdue = "Your account is past due as of $payment_due_date. Please submit payment of $total_owed before $turnoff_date to avoid any interruption in your service";
+$l_notice_text_pastdue = "Your payment was due on $payment_due_date. Please submit payment of $total_owed";
 
 $l_notice_text_shutoff = "Your service will be disabled on $turnoff_date due to billing issues.  Please pay the total amount due to reactivate your service.  The account is disabled to attain payment.  Billing fees still accrue during this period.  If payment is not received by $cancel_date your account will be canceled with all fees still due plus any additional fees due.  To retain service after the cancel date will require payment of all fees due and the re-order new service.";
 

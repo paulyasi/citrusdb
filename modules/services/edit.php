@@ -482,6 +482,128 @@ if ($save) {
       "value=\"$l_change\" class=smallbutton></td></table></form>";
   } // end if options_table
 
+
+
+  /*--------------------------------------------------------------------------*/
+  //
+  // print the whole customer history for this service
+  //
+  /*--------------------------------------------------------------------------*/
+  echo "<table cellspacing=0 cellpadding=0 border=0>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=60>".
+    "<b>$l_ticketnumber</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=150>".
+    "<b>$l_datetime</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=70>".
+    "<b>$l_createdby</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=70>".
+    "<b>$l_notify</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=60>".
+    "<b>$l_status</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=261>".
+    "<b>$l_service</b></td>";
+  
+  $query = "SELECT  ch.id, ch.creation_date, ".
+    "ch.created_by, ch.notify, ch.status, ch.description, ch.linkname, ".
+    "ch.linkname, ch.linkurl, ch.user_services_id, us.master_service_id, ".
+    "ms.service_description FROM customer_history ch ".
+    "LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+    "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+    "WHERE ch.user_services_id = '$userserviceid' ORDER BY ch.creation_date";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $linecount = 0;
+  while ($myresult = $result->FetchRow()) {
+    $id = $myresult['id'];
+    $creation_date = $myresult['creation_date'];
+    $created_by = $myresult['created_by'];
+    $notify = $myresult['notify'];
+    $status = $myresult['status'];
+    $description = $myresult['description'];
+    $linkname = $myresult['linkname'];
+    $linkurl = $myresult['linkurl'];
+    $serviceid = $myresult['user_services_id'];
+    $service_description = $myresult['service_description'];
+    
+    // translate the status
+    switch($status) {
+    case 'automatic':
+      $status = $l_automatic;
+      break;
+    case 'not done':
+      $status = $l_notdone;
+      break;
+    case 'pending':
+      $status = $l_pending;
+      break;
+    case 'completed':
+      $status = $l_completed;
+      break;
+    }
+    
+    // alternate line colors
+    if ($linecount & 1) {
+      print "<tr bgcolor=\"#ffffee\">";
+    } else {
+      print "<tr bgcolor=\"#ffffdd\">";
+    }
+    
+    
+    // THIS WILL NOT BE BLOCKED ANYMORE, ESPECIALLY WHEN THE SUBNOTES ARE ADDED
+    // BEING ABLE TO CLICK ON TICKETS WILL BE A REQUIRED FEATURE
+    // if the user is and admin or manager then have the ability to click a
+    // link and open the ticket editor
+    // also allow users to edit their own notes
+    //  $query = "SELECT * FROM user WHERE username='$user'";
+    //$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    //$userresult = $DB->Execute($query) or die ("$l_queryfailed");
+    //$myuserresult = $userresult->fields;
+    //$showall_permission = false;
+    //if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')
+    //    OR ($user == $created_by)) {
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt;\"><a target=\"_parent\" ". 
+      "href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
+      "$id</a> &nbsp;</td>";
+    //} else {
+    //print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+    //  "padding-bottom: 2px; font-size: 9pt;\">$id &nbsp;</td>";
+    //}
+    
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt;\">$creation_date &nbsp;</td>";
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt;\">$created_by &nbsp;</td>";
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt;\">$notify &nbsp;</td>";
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt;\">$status &nbsp;</td>";
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt;\">".
+      "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
+    
+    if ($linkurl) {
+      print "<a href=\"$linkurl\">$linkname</a>";
+    }
+    
+  print "</td>";
+  
+  // alternate line colors
+  if ($linecount & 1) {
+    print "<tr bgcolor=\"#ffffee\">";
+  } else {
+    print "<tr bgcolor=\"#ffffdd\">";
+  }
+  
+  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description</td>";
+  
+  // increment line count to make even/odd coloring
+  $linecount++;
+  }
+  
+  echo '</table>';
+  
+  
 } else if ($exempt) {
   // ask the user for customer tax id, and exempt id expiration date
   print "<a href=\"index.php?load=services&type=module\">[ $l_undochanges ]</a>";

@@ -120,13 +120,14 @@ while ($myresult = $result->FetchRow()) {
   // make sure that the amount is greater than zero and only
   // print the three most recent ones
 
+  // query user properties to see if we should print this special stuff
+  $query = "SELECT * FROM user WHERE username='$user' LIMIT 1";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $userresult = $DB->Execute($query) or die ("$l_queryfailed");
+  $myuserresult = $userresult->fields;
+  
   if (($amount > 0) AND ($nsfcount < 3)
       AND (($type == 'check') OR ($type == 'cash') OR ($type == 'eft'))) {
-    // query user properties to see if we should print the
-    $query = "SELECT * FROM user WHERE username='$user' LIMIT 1";
-    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-    $userresult = $DB->Execute($query) or die ("$l_queryfailed");
-    $myuserresult = $userresult->fields;
     if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
       echo "<a href=\"index.php?load=billing&type=module&nsf=on=&".
 	"paymentid=$id&amount=$amount&invoicenum=$invoice_number&".
@@ -134,6 +135,16 @@ while ($myresult = $result->FetchRow()) {
     }
     $nsfcount++;
   }
+
+  if (($status == $l_pastdue) OR ($status == $l_turnedoff) OR ($status == $l_canceled)) {
+    if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
+      echo "<a href=\"index.php?load=billing&type=module&deletepayment=on=&".
+	"paymentid=$id\" target=\"_parent\" style=\"font-size: 8pt;\">Delete</a>";
+    }
+  }
+
+  // check if we should print the delete status link
+  
   
   print "</td>";
   print "<td style=\"border-top: 1px solid grey;\">$amount &nbsp;";
