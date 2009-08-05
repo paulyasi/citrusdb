@@ -406,7 +406,7 @@ while ($myresult = $result->FetchRow()) {
       $linkname = $mynotice->pdfname;
       $contactemail = $mynotice->contactemail;
       $linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
-      $notify = "$default_billing_group";
+      $notify = "";
       $description = "Past Due Notice Sent $contactemail $url";
       $status = "not done";
       // CREATE TICKET TO default_billing_group

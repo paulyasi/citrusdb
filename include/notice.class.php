@@ -74,13 +74,16 @@ class notice
     $query = "SELECT bi.id bi_id, bi.account_number bi_account_number, ".
       "bi.contact_email bi_contact_email,  bi.name bi_name, ".
       "bi.company bi_company, bi.street bi_street, bi.city bi_city, ".
-      "bi.state bi_state, bi.zip bi_zip, ".
-      "ms.service_description, bd.billed_amount, bd.paid_amount, ".
+      "bi.state bi_state, bi.zip bi_zip, r.description r_description, ".
+      "ms.service_description ms_description, ".
+      "bd.taxed_services_id, bd.billed_amount, bd.paid_amount, ".
       "g.org_name, g.org_street, g.org_city, g.org_state, g.org_zip, ".
       "g.phone_billing, g.email_billing, bh.payment_due_date, bh.id bh_id ".
       "FROM billing_details bd ".
       "LEFT JOIN user_services us ON bd.user_services_id = us.id ".
       "LEFT JOIN master_services ms ON us.master_service_id = ms.id ".
+      "LEFT JOIN taxed_services t ON t.id = bd.taxed_services_id ".
+      "LEFT JOIN tax_rates r ON t.tax_rate_id = r.id ".
       "LEFT JOIN billing bi ON bd.billing_id = bi.id ".
       "LEFT JOIN billing_history bh ON bh.id = bd.invoice_number ".
       "LEFT JOIN general g ON bi.organization_id = g.id ".
@@ -118,7 +121,13 @@ class notice
       $this->contactemail = $myresult['bi_contact_email'];
       $billed_amount = round($myresult['billed_amount'], 2);
       $paid_amount = round($myresult['paid_amount'], 2);
-      $service_description = $myresult['service_description'];
+
+      // set the description for a service or a tax
+      if ($myresult['taxed_services_id']) {
+	$service_description = $myresult['r_description'];
+      } else {
+	$service_description = $myresult['ms_description'];
+      }
       
       $owed = round($billed_amount - $paid_amount, 2);
       
@@ -240,7 +249,8 @@ class notice
     include ("$lang");
     
     // Create Email Headers
-    $headers = "From: $this->billingemail \n";
+    $headers = "From: $this->billingemail\n";
+    $headers .= "Cc: $this->billingemail\n";
     $to = $this->contactemail;
     $subject = "$this->noticeheading";
     
