@@ -167,7 +167,7 @@ class notice
 
       $this->message .= "$org_name\n";
       $this->message .= "$org_street\n";
-      $this->message .= "$org_state $org_zip\n";
+      $this->message .= "$org_city, $org_state $org_zip\n";
       $this->message .= "$phone_billing\n";
       break;
       
@@ -197,7 +197,7 @@ class notice
       
       $this->message .= "$org_name\n";
       $this->message .= "$org_street\n";
-      $this->message .= "$org_state $org_zip\n";
+      $this->message .= "$org_city, $org_state $org_zip\n";
       $this->message .= "$phone_billing\n";
       break;      
       
@@ -227,7 +227,7 @@ class notice
 
       $this->message .= "$org_name\n";
       $this->message .= "$org_street\n";
-      $this->message .= "$org_state $org_zip\n";
+      $this->message .= "$org_city, $org_state $org_zip\n";
       $this->message .= "$phone_billing\n";
       break;      
     }
