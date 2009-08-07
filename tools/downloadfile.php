@@ -23,7 +23,7 @@ $filename = $base->input['filename'];
 // check if it is a pdf file that we allow anyone to open
 // or something else that only admin can open
 $filetype = substr($filename,-3);
-if ($filetype != "pdf") {
+if (($filetype != "pdf") OR ($filename != "summary.csv")) {
   // check that the user has admin privileges
   $query = "SELECT * FROM user WHERE username='$user'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
