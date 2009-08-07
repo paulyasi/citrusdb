@@ -24,20 +24,28 @@ if (!isset($base->input['notify'])) { $base->input['notify'] = ""; }
 if (!isset($base->input['status'])) { $base->input['status'] = ""; }
 if (!isset($base->input['description'])) { $base->input['description'] = ""; }
 if (!isset($base->input['savechanges'])) { $base->input['savechanges'] = ""; }
+if (!isset($base->input['reminderdate'])) { $base->input['reminderdate'] = ""; }
 
 $id = $base->input['id'];
 $notify = $base->input['notify'];
 $status = $base->input['status'];
 $description = $base->input['description'];
 $savechanges = $base->input['savechanges'];
+$reminderdate = $base->input['reminderdate'];
 
 if ($savechanges)
 {
   // save the changes
-
-  $query = "UPDATE customer_history SET notify = '$notify', ".
-    "status = '$status', description = '$description' ".
-    "WHERE id = $id";
+  if ($reminderdate <> '') {
+    $query = "UPDATE customer_history SET notify = '$notify', ".
+      "status = '$status', description = '$description', creation_date = '$reminderdate' ".
+      "WHERE id = $id";
+  } else {
+    $query = "UPDATE customer_history SET notify = '$notify', ".
+      "status = '$status', description = '$description' ".
+      "WHERE id = $id";   
+  }
+  
   $result = $DB->Execute($query) or die ("$l_queryfailed");
 	
   // redirect back to the account record
@@ -97,7 +105,7 @@ if ($savechanges)
       
   echo "<td bgcolor=\"#ccccdd\"><b>$l_notify</b></td>".
     "<td bgcolor=\"#ddddee\">".
-    "<form style=\"margin-bottom:0;\" action=\"index.php\">"; //end
+    "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">"; //end
 
   print "<select name=\"notify\">\n";
   print "<option selected value=\"$notify\">$notify</option>\n";
@@ -142,6 +150,9 @@ if ($savechanges)
 	</td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_description</b></td><td bgcolor=\"#ddddee\">
 	<textarea name=\"description\" rows=8 cols=50>$description</textarea></td><tr>
+<td bgcolor=\"#ccccdd\"><b>$l_reminderdate</b></td>
+<td bgcolor=\"#ddddee\"><input type=text value=\"$creation_date\" name=\"reminderdate\">
+<a href=\"#\" onClick=\"cal.select(document.forms['form1'].reminderdate,'anchor1','yyyy-MM-dd'); return false;\"NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</a></td>
 	<tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_link</b></td><td bgcolor=\"#ddddee\">
 	<a href=\"$linkurl\">$linkname</a></td><tr>
