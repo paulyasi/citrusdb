@@ -29,6 +29,7 @@ class notice
 
     //Date for today
     $this->today = date("Y-m-d");
+    $this->humanday = date("F j, Y");
     
     $this->create();
 
@@ -154,7 +155,7 @@ class notice
       eval ("\$notice_text = \"$l_notice_text_pastdue\";");
       
       // create body of message, header, footer, and content
-      $this->noticeheading = "$l_pastdue_notice\n";
+      $this->noticeheading = "$org_name\n$l_pastdue_notice\n";
 
       $this->message .= "$message_body\n\n";
       
@@ -185,7 +186,7 @@ class notice
       eval ("\$notice_text = \"$l_notice_text_shutoff\";");      
       
       // create body of message, header, footer, and content
-      $this->noticeheading = "$l_shutoff_notice\n";
+      $this->noticeheading = "$org_name\n$l_shutoff_notice\n";
 
       $this->message .= "$message_body\n\n";
       
@@ -215,7 +216,7 @@ class notice
       eval ("\$notice_text = \"$l_notice_text_cancel\";");
       
       // create body of message, header, footer, and content
-      $this->noticeheading = "$l_cancel_notice\n";
+      $this->noticeheading = "$org_name\n$l_cancel_notice\n";
 
       $this->message .= "$message_body\n\n";
       
@@ -285,6 +286,7 @@ class notice
     $pdf->Write(8, "$this->noticeheading\n\n");
     // message body
     $pdf->SetFont('Arial','B', 12);
+    $pdf->Write(5,"$this->humanday\n");
     $pdf->Write(5,"$this->message");
     
     // write the pdf file to output

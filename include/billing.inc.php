@@ -226,7 +226,7 @@ function total_pastdueitems($DB, $mybilling_id)
     "AND d.paid_amount != d.billed_amount"; 	
   
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $invoiceresult = $DB->Execute($query) or die ("Query Failed"); 
+  $invoiceresult = $DB->Execute($query) or die ("This Query Failed"); 
 
   // initialize past amounts
   $pastdue = 0;

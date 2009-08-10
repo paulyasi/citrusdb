@@ -25,6 +25,8 @@ if (!isset($base->input['status'])) { $base->input['status'] = ""; }
 if (!isset($base->input['description'])) { $base->input['description'] = ""; }
 if (!isset($base->input['savechanges'])) { $base->input['savechanges'] = ""; }
 if (!isset($base->input['reminderdate'])) { $base->input['reminderdate'] = ""; }
+if (!isset($base->input['serviceid'])) { $base->input['serviceid'] = ""; }
+if (!isset($base->input['accountnum'])) { $base->input['accountnum'] = ""; }
 
 $id = $base->input['id'];
 $notify = $base->input['notify'];
@@ -32,22 +34,29 @@ $status = $base->input['status'];
 $description = $base->input['description'];
 $savechanges = $base->input['savechanges'];
 $reminderdate = $base->input['reminderdate'];
+$serviceid = $base->input['serviceid'];
+$accountnum = $base->input['accountnum'];
 
 if ($savechanges)
 {
   // save the changes
   if ($reminderdate <> '') {
     $query = "UPDATE customer_history SET notify = '$notify', ".
-      "status = '$status', description = '$description', creation_date = '$reminderdate' ".
+      "status = '$status', description = '$description', ".
+      "creation_date = '$reminderdate', ".
+      "user_services_id = '$serviceid', ".
+      "account_number = '$accountnum' ".
       "WHERE id = $id";
   } else {
     $query = "UPDATE customer_history SET notify = '$notify', ".
-      "status = '$status', description = '$description' ".
+      "status = '$status', description = '$description', ".
+      "user_services_id = '$serviceid', ".
+      "account_number = '$accountnum' ".
       "WHERE id = $id";   
   }
   
   $result = $DB->Execute($query) or die ("$l_queryfailed");
-	
+
   // redirect back to the account record
   print "<script language=\"JavaScript\">window.location.href = \"index.php?load=support&type=module&edit=on\";</script>";			
 	
@@ -86,6 +95,7 @@ if ($savechanges)
     "&nbsp; <a href=\"index.php?load=support&type=module&edit=on\">".
     "[ $l_checknotes ]</a>".
     "<h3>$l_ticketnumber $id</h3>".
+    "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">".
     "<table cellpadding=5 border=0 cellspacing=1 width=720>".
     "<td bgcolor=\"#ccccdd\"><b>$l_createdby</b></td>".
     "<td bgcolor=\"#ddddee\">$created_by</td><tr>".
@@ -94,18 +104,21 @@ if ($savechanges)
     "<td bgcolor=\"#ccccdd\"><b>$l_customer</b></td>".
     "<td bgcolor=\"#ddddee\">".
     "<a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">".
-    "$name</a></td><tr>";
+    "$name</a>
+&nbsp;&nbsp;<input type=text value=\"$accountnum\" name=\"accountnum\" size=10>
+</td><tr>";
 
-  if ($serviceid > 0) {
+  //  if ($serviceid > 0) {
     echo "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
       "<td bgcolor=\"#ddddee\"><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">".
-      "$serviceid $service_description</a></td>".
-      "<tr>";
-  }
+      "$serviceid $service_description</a>".
+      "&nbsp;&nbsp;<input type=text value=\"$serviceid\" name=\"serviceid\" size=10>".
+      "</td><tr>";
+    //}
       
   echo "<td bgcolor=\"#ccccdd\"><b>$l_notify</b></td>".
-    "<td bgcolor=\"#ddddee\">".
-    "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">"; //end
+    "<td bgcolor=\"#ddddee\">";
+
 
   print "<select name=\"notify\">\n";
   print "<option selected value=\"$notify\">$notify</option>\n";
