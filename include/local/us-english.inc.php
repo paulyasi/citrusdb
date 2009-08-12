@@ -321,6 +321,7 @@ $l_paybillonline = "Pay Bill Online";
 $l_paymentdue = "Payment Due";
 $l_paymentduedate = "Payment Due Date";
 $l_payments = "Payments";
+$l_paymentreceipt = "Payment Receipt";
 $l_paymentreport = "Payment Report";
 $l_paymentsaved = "Payment Saved";
 $l_paymentstatus = "Payment Status";

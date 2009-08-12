@@ -21,6 +21,8 @@ if (!isset($base->input['save'])) { $base->input['save'] = ""; }
 if (!isset($base->input['resetaddr'])) { $base->input['resetaddr'] = ""; }
 if (!isset($base->input['rerun'])) { $base->input['rerun'] = ""; }
 if (!isset($base->input['turnoff'])) { $base->input['turnoff'] = ""; }
+if (!isset($base->input['cancelwfee'])) { $base->input['cancelwfee'] = ""; }
+if (!isset($base->input['collections'])) { $base->input['collections'] = ""; }
 if (!isset($base->input['waiting'])) { $base->input['waiting'] = ""; }
 
 
@@ -29,9 +31,12 @@ $save = $base->input['save'];
 $resetaddr = $base->input['resetaddr'];
 $rerun = $base->input['rerun'];
 $turnoff = $base->input['turnoff'];
+$cancelwfee = $base->input['cancelwfee'];
+$collections = $base->input['collections'];
 $waiting = $base->input['waiting'];
 $createinvoice = $base->input['createinvoice'];
 $nsf = $base->input['nsf'];
+$receipt = $base->input['receipt'];
 $deletepayment = $base->input['deletepayment'];
 
 if ($edit)
@@ -76,6 +81,20 @@ else if ($turnoff)
 		include('./modules/billing/turnoff.php');    
 	}  else permission_error();
 }
+else if ($cancelwfee) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/cancelwfee.php');    
+	}  else permission_error();
+}
+else if ($collections) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/collections.php');    
+	}  else permission_error();
+}
 else if ($waiting) 
 {    
 	if ($pallow_modify)    
@@ -88,6 +107,13 @@ else if ($nsf)
 	if ($pallow_modify)    
 	{       
 		include('./modules/billing/nsf.php');    
+	}  else permission_error();
+}
+else if ($receipt) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/receipt.php');    
 	}  else permission_error();
 }
 else if ($deletepayment) 
@@ -177,10 +203,12 @@ $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $userresult = $DB->Execute($query) or die ("$l_queryfailed");
 $myuserresult = $userresult->fields;
 if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
-	echo "<a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | 
+	echo "<br><a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | 
 	<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">$l_refundreport</a> | 
 	<a href=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">$l_turnoff</a> | 
 	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a> | 
+	<a href=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">$l_cancelwithfee</a> |
+<a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">$l_collections</a> | 
 	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">Create Invoice</a>
 ";
 }

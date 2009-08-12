@@ -163,6 +163,8 @@ class notice
       
       if ($billing_company) {
 	$this->message .= "$billing_company\n";
+      } else {
+	$this->message .= "\n";
       }
       
       $this->message .= "$billing_street\n";
@@ -194,7 +196,10 @@ class notice
       
       if ($billing_company) {
 	$this->message .= "$billing_company\n";
+      } else {
+	$this->message .= "\n";
       }
+      
       $this->message .= "$billing_street\n";
       $this->message .= "$billing_city $billing_state $billing_zip\n\n";
 
@@ -224,7 +229,10 @@ class notice
       
       if ($billing_company) {
 	$this->message .= "$billing_company\n";
+      } else {
+	$this->message .= "\n";
       }
+    
       $this->message .= "$billing_street\n";
       $this->message .= "$billing_city $billing_state $billing_zip\n\n";
 
