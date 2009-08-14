@@ -168,7 +168,7 @@ class notice
       }
       
       $this->message .= "$billing_street\n";
-      $this->message .= "$billing_city $billing_state $billing_zip\n\n";
+      $this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
 
       $this->message .= "$notice_text\n\n";
 
@@ -201,7 +201,7 @@ class notice
       }
       
       $this->message .= "$billing_street\n";
-      $this->message .= "$billing_city $billing_state $billing_zip\n\n";
+      $this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
 
       $this->message .= "$notice_text\n\n";
 
@@ -234,7 +234,7 @@ class notice
       }
     
       $this->message .= "$billing_street\n";
-      $this->message .= "$billing_city $billing_state $billing_zip\n\n";
+      $this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
 
       $this->message .= "$notice_text\n\n";
 
@@ -291,9 +291,9 @@ class notice
     $pdf->AddPage();
     // heading
     $pdf->SetFont('Arial', 'B', 16);
-    $pdf->Write(8, "$this->noticeheading\n\n");
+    $pdf->Write(8, "$this->noticeheading");
     // message body
-    $pdf->SetFont('Arial','B', 12);
+    $pdf->SetFont('Arial','B', 10);
     $pdf->Write(5,"$this->humanday\n");
     $pdf->Write(5,"$this->message");
     

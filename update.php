@@ -657,6 +657,44 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
 
+	  // change most of the float fields to decimal type
+	  // to fix large number precision
+	  $query = "ALTER TABLE `user_services` ".
+	    "CHANGE `usage_multiple` `usage_multiple` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '1'";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `payment_history` ".
+	    "CHANGE `billing_amount` `billing_amount` ".
+	    "DECIMAL( 9, 2 ) NULL DEFAULT NULL";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `billing_history` ".
+	    "CHANGE `new_charges` `new_charges` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `past_due` `past_due` ".
+	    "DECIMAL( 9, 2 ) NULL DEFAULT '0', ".
+	    "CHANGE `late_fee` `late_fee` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `tax_due` `tax_due` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `total_due` `total_due` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0'";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query="ALTER TABLE `billing_details` ".
+	    "CHANGE `billed_amount` `billed_amount` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `paid_amount` `paid_amount` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `refund_amount` `refund_amount` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0'";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
 	}
 	echo "<center><h2>Database Updated</h2></center>";
 }
