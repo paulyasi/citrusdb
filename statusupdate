@@ -182,7 +182,7 @@ while ($myresult = $result->FetchRow()) {
       "m.id m_id, m.pricerate m_pricerate, ".
       "m.frequency m_freq, ".
       "m.activation_string m_activation_string, ".
-      "m.category m_category, ".
+      "m.category m_category, m.activate_notify m_activate_notify, ".
       "m.options_table m_options_table, c.name c_name, ".
       "c.company c_company, c.street c_street, c.city c_city, ".
       "c.state c_state, c.country c_country, ".
@@ -211,6 +211,7 @@ while ($myresult = $result->FetchRow()) {
       $customer_zip = $myserviceresult['c_zip'];
       $category = $myserviceresult['m_category'];
       $removed = $myserviceresult['u_rem']; // y or n
+      $activate_notify = $myserviceresult['m_activate_notify'];
 	
       // query this with the option_table for 
       // that service to get the 
@@ -251,6 +252,14 @@ while ($myresult = $result->FetchRow()) {
       if ($removed <> 'y') {
 	fwrite($handle, $newline); // write to the file
 	$enables++;
+
+	// CREATE TICKET TO the activate_notify user if there is one
+	$notify = "$activate_notify";
+	$description = "$newline";
+	$status = "not done";
+	create_ticket($DB, $user, $notify, $account_number, $status,
+		      $description, NULL, NULL, NULL, $user_services_id);
+	
       }
     } //endwhile
   } // endif
