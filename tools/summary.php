@@ -109,13 +109,13 @@ fclose($handle);
 echo "<a href=\"index.php?load=tools/downloadfile&type=dl&filename=summary.csv\"><u class=\"bluelink\">$l_download summary.csv</u></a><p>";
 
 
-	echo "</table><p>
+echo "</table><p>
 
 	$l_paidsubscriptions: $paidsubscriptions
 	<p>";
 
-	// get the total services for each billing type
-	$query = "SELECT m.id m_id, m.service_description m_servicedescription, m.pricerate m_pricerate, 
+// get the total services for each billing type
+$query = "SELECT m.id m_id, m.service_description m_servicedescription, m.pricerate m_pricerate, 
 	m.frequency m_frequency, m.organization_id m_organization_id, g.org_name g_org_name,  
 	u.removed u_removed, u.master_service_id u_msid, count(bt.method) AS TotalNumber, 
 	b.id b_id, b.billing_type b_billing_type, bt.id bt_id, bt.method bt_method 
@@ -126,16 +126,45 @@ echo "<a href=\"index.php?load=tools/downloadfile&type=dl&filename=summary.csv\"
 	LEFT JOIN general g ON m.organization_id = g.id
 	WHERE u.removed <> 'y' AND bt.method <> 'free' AND b.organization_id = '$organization_id' AND m.pricerate > '0' 
 		AND m.frequency > '0' GROUP BY bt.method ORDER BY TotalNumber";
-	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
-	echo "<blockquote>";
-	while ($myresult = $result->FetchRow()) {
-		$count = $myresult['TotalNumber'];
-		$billingmethod = $myresult['bt_method'];
-		echo "$billingmethod: $count<br>\n";	
-	}
-	echo "</blockquote>";
-	
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$result = $DB->Execute($query) or die ("$l_queryfailed");
+echo "<blockquote>";
+while ($myresult = $result->FetchRow()) {
+  $count = $myresult['TotalNumber'];
+  $billingmethod = $myresult['bt_method'];
+  echo "$billingmethod: $count<br>\n";	
+ }
+echo "</blockquote>";
+
+
+/*-----------------------------------------------*/
+// get the number of services in each category
+/*-----------------------------------------------*/
+$query = "SELECT m.id m_id, m.service_description m_servicedescription, ".
+  "m.pricerate m_pricerate, m.category m_category, m.frequency m_frequency, ".
+  "m.organization_id m_organization_id, g.org_name g_org_name, ".
+  "u.removed u_removed, u.master_service_id u_msid, ".
+  "count(bt.method) AS TotalNumber, ".
+  "b.id b_id, b.billing_type b_billing_type, bt.id bt_id, bt.method bt_method ".
+  "FROM user_services u ".
+  "LEFT JOIN master_services m ON u.master_service_id = m.id ".
+  "LEFT JOIN billing b ON b.id = u.billing_id ".
+  "LEFT JOIN billing_types bt ON b.billing_type = bt.id ".
+  "LEFT JOIN general g ON m.organization_id = g.id ".
+  "WHERE u.removed <> 'y' AND b.organization_id = '$organization_id' ".
+  "AND m.frequency > '0' GROUP BY m.category ORDER BY TotalNumber";
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$result = $DB->Execute($query) or die ("$l_queryfailed");
+echo "<p><b>Service Category Totals: </b><br><i style=\"font-size: 8pt;\">total monthly services in each category, includes declined and turned off pending payment, does not include canceled services</i></p><blockquote>";
+while ($myresult = $result->FetchRow()) {
+  $count = $myresult['TotalNumber'];
+  $category = $myresult['m_category'];
+  echo "$category: $count<br>\n";	
+ }
+echo "</blockquote>";
+
+
+
 	// get the number of customers
     $query = "SELECT COUNT(*) FROM customer WHERE cancel_date is NULL";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);

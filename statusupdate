@@ -146,8 +146,8 @@ echo "$adds ADDs\n";
 $query = "SELECT p.billing_id, b.id, b.account_number ".
   "FROM payment_history p ".
   "LEFT JOIN billing b ON p.billing_id = b.id ".
-  "WHERE '$today' = creation_date ".
-  "AND status = 'authorized' OR status = 'waiting'";
+  "WHERE p.creation_date = '$today' ".
+  "AND p.status = 'authorized'";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 

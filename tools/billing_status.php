@@ -177,7 +177,7 @@ switch ($viewstatus) {
 echo "<table cellpadding=5><tr style=\"background: #bbb;\"><td>Status</td>".
 "<td>Acct Number</td><td>Past Invoice</td><td>Name</td><td>Company</td>";
 echo "<td>Past Amount Due</td><td>Due Date</td>";
-echo "<td>Modify Status</td></tr>";
+echo "<td>$l_category</td><td>Modify Status</td></tr>";
 
 // get the most recent payment history id for each billing id
 $query = "SELECT max(ph.id) my_id, ph.billing_id my_bid ".
@@ -210,6 +210,18 @@ while($myresult = $result->FetchRow()) {
     $invoice_number = $mypaymentresult['invoice_number'];
     $payment_due_date = $mypaymentresult['payment_due_date'];
 
+    // TODO: select unique categories of service for this billing id from
+    $categorylist = "";
+    $query = "SELECT DISTINCT m.category FROM user_services u ".
+      "LEFT JOIN master_services m ON u.master_service_id = m.id ".
+      "WHERE u.billing_id = '$billing_id' AND removed <> 'y'";
+    $categoryresult = $DB->Execute($query) or die ("category $l_queryfailed");
+    while($mycategoryresult = $categoryresult->FetchRow()) {
+      $categorylist .= $mycategoryresult['category'];
+      $categorylist .= "<br>";
+    }
+
+
     $pastcharges = sprintf("%.2f",total_pastdueitems($DB, $billing_id));
     
     echo "<tr style=\"background: #ccc;\"><td>$status</td>";
@@ -218,7 +230,8 @@ while($myresult = $result->FetchRow()) {
       "<td>$name</td>".
       "<td>$company</td>".
       "<td>$pastcharges</td>".
-      "<td>$payment_due_date</td>";
+      "<td>$payment_due_date</td>".
+      "<td>$categorylist</td>";
     
 
     // show status modification dropdown menu

@@ -984,9 +984,9 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     
     $billed_amount = sprintf("%.2f",$myresult['d_billed_amount']);
     
-    // calculate the month mulptile
+    // calculate the month multiple, only print for services, not taxes
     $pricerate = $myresult['pricerate'];
-    if ($pricerate > 0) {
+    if (($pricerate > 0) AND ($taxid == NULL)) {
       $monthmultiple = $billed_amount/$pricerate;
     } else {
       $monthmultiple = 0;
