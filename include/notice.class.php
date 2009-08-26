@@ -259,7 +259,7 @@ class notice
     
     // Create Email Headers
     $headers = "From: $this->billingemail\n";
-    $headers .= "Cc: $this->billingemail\n";
+    // $headers .= "Cc: $this->billingemail\n";
     $to = $this->contactemail;
     $subject = "$this->noticeheading";
     
