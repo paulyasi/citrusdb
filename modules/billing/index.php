@@ -35,6 +35,7 @@ $cancelwfee = $base->input['cancelwfee'];
 $collections = $base->input['collections'];
 $waiting = $base->input['waiting'];
 $createinvoice = $base->input['createinvoice'];
+$cancelnotice = $base->input['cancelnotice'];
 $nsf = $base->input['nsf'];
 $receipt = $base->input['receipt'];
 $deletepayment = $base->input['deletepayment'];
@@ -130,7 +131,13 @@ else if ($createinvoice)
 		include('./modules/billing/createinvoice.php');    
 	}  else permission_error();
 }
-
+else if ($cancelnotice) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/cancelnotice.php');    
+	}  else permission_error();
+}
 else if ($pallow_view)
 {
 // get the billing id
@@ -209,7 +216,8 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a> | 
 	<a href=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">$l_cancelwithfee</a> |
 <a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">$l_collections</a> | 
-	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">Create Invoice</a>
+	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">Create Invoice</a> | 
+	<a href=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">Cancel Notice</a>
 ";
 }
 

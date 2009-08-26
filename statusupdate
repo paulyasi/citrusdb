@@ -625,10 +625,9 @@ while ($myresult = $result->FetchRow()) {
       // $mynotice = new notice('cancel',$billing_id, 'both', $payment_due_date, $turnoff_date, $cancel_date);
       
       $linkname = "";
-      $contactemail = $mynotice->contactemail;     
       $linkurl = "";
       $notify = "$default_billing_group";
-      $description = "Send Cancellation Notice to $contactemail";
+      $description = "Turnoff and Send Cancellation Notice";
       $status = "not done";
       // CREATE TICKET TO default_billing_group about turn off
       create_ticket($DB, $user, $notify, $account_number, $status,

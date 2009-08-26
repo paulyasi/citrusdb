@@ -228,7 +228,8 @@ echo
   if ($billing_id == $not_removed_id) {    
     if (($mystatus == $l_authorized)
 	OR ($mystatus == $l_new)
-	OR ($mystatus == $l_free)) {
+	OR ($mystatus == $l_free)
+	OR ($mystatus == $l_pastdueexempt)) {
       echo "<tr style=\"background-color: bdd;\">";
     } else {
       echo "<tr style=\"background-color: fbb;\">";
