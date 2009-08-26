@@ -289,7 +289,7 @@ $l_noticesent = "Notice Sent";
 
 $l_notice_text_pastdue = "Your payment was due on $payment_due_date. Please submit payment of $total_owed";
 
-$l_notice_text_shutoff = "Your service will be disabled on $turnoff_date due to billing issues.  Please pay the total amount due to reactivate your service.  The account is disabled to attain payment.  Billing fees still accrue during this period.  If payment is not received by $cancel_date your account will be canceled with all fees still due plus any additional fees due.  To retain service after the cancel date will require payment of all fees due and the re-order new service.";
+$l_notice_text_shutoff = "Your service will be suspended on $turnoff_date due to billing issues.  Please pay the total amount due to reactivate your service.  The account is suspended to attain payment.  Billing fees still accrue during this period.  If payment is not received your account will be canceled with all fees still due plus any additional fees due.  To retain service after the cancel date will require payment of all fees due and the re-order new service.";
 
 $l_notice_text_cancel = "Your account has been canceled for payment issues.  Attached is a final invoice which must be paid in full by $cancel_date.  Once payment is received you may re-order service.  If payment is not received by $cancel_date, collections activity will begin.  Additional fees will apply for all collections activity.";
 

@@ -621,14 +621,14 @@ while ($myresult = $result->FetchRow()) {
 	"VALUES (CURRENT_DATE,'$billing_id','turnedoff')";
       $paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
 
-      // SEND CANCEL NOTICE BY BOTH PRINT and EMAIL
-      $mynotice = new notice('cancel',$billing_id, 'both', $payment_due_date, $turnoff_date, $cancel_date);
+      // DO MANUALLY INSTEAD NOW CANCEL NOTICE BY BOTH PRINT and EMAIL
+      // $mynotice = new notice('cancel',$billing_id, 'both', $payment_due_date, $turnoff_date, $cancel_date);
       
-      $linkname = $mynotice->pdfname;
+      $linkname = "";
       $contactemail = $mynotice->contactemail;     
-      $linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+      $linkurl = "";
       $notify = "$default_billing_group";
-      $description = "Cancellation Notice Sent $contactemail $url";
+      $description = "Send Cancellation Notice to $contactemail";
       $status = "not done";
       // CREATE TICKET TO default_billing_group about turn off
       create_ticket($DB, $user, $notify, $account_number, $status,
