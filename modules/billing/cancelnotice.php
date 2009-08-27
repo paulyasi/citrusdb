@@ -1,4 +1,6 @@
 <?php
+// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb dot org)
+// read the README file for more information
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
 /*----------------------------------------------------------------------------*/
@@ -11,53 +13,6 @@ if (!defined("INDEX_CITRUS")) {
 	echo "You must be logged in to run this.  Goodbye.";
         exit;
 }
-
-// Copyright (C) 2002-2008  Paul Yasi (paul at citrusdb dot org)
-// read the README file for more information
-
-// print the calendar popup javascript
-echo "<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/CalendarPopup.js\"></SCRIPT>
-	<SCRIPT LANGUAGE=\"JavaScript\">
-	var cal = new CalendarPopup();
-
-	function cardval(s) 
-	{
-		// remove non-numerics
-		var v = \"0123456789\";
-		var w = \"\";
-		for (i=0; i < s.length; i++) 
-		{
-			x = s.charAt(i);
-			if (v.indexOf(x,0) != -1)
-			{
-				w += x;
-			}
-		}
-		
-		// validate number
-		j = w.length / 2;
-		if (j < 6.5 || j > 8 || j == 7) 
-		{
-			return false;
-		}
-		
-		k = Math.floor(j);
-		m = Math.ceil(j) - k;
-		c = 0;
-		for (i=0; i<k; i++) 
-		{
-			a = w.charAt(i*2+m) * 2;
-			c += a > 9 ? Math.floor(a/10 + a%10) : a;
-		}
-		
-		for (i=0; i<k+m; i++) c += w.charAt(i*2+1-m) * 1;
-		{
-			return (c%10 == 0);
-		}
-	}
-	</SCRIPT>
-";
-
 
 // include the class used to create and send notices
 include('include/notice.class.php');
@@ -88,26 +43,40 @@ if ($save) {
   //  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
   
  } else {
+
+  // calculate their cancel_date
+
+  $query = "SELECT bi.id, bi.account_number, bh.payment_due_date, 
+  DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_canceled DAY) AS cancel_date 
+  FROM billing_details bd 
+  LEFT JOIN billing bi ON bd.billing_id = bi.id 
+  LEFT JOIN billing_history bh ON bh.id = bd.invoice_number 
+  LEFT JOIN general g ON bi.organization_id = g.id 
+  WHERE bd.billed_amount > bd.paid_amount AND bd.billing_id = '$billing_id' GROUP BY bi.id";
+  
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $myresult = $result->fields;
+  $cancel_date = $myresult['cancel_date'];
+
+  $human_cancel = humandate($cancel_date, $lang);
+    
+  // print the yes/no confirmation form
   print "<br><br>";
-  print "<table cellpadding=15 cellspacing=0 border=0 width=720><td>";
+  print "<table cellpadding=15 cellspacing=0 border=0 width=520><td><center>";
   print "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">";
 
-  print "<b>Enter cancel date for notice:</b>&nbsp;";
-  echo "<A HREF=\"#\"
-	   onClick=\"cal.select(document.forms['form1'].cancel_date,'anchor1','yyyy-MM-dd'); 
-	return false;\"
-	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</A>";
+  print "Send cancel notice to cancel on $human_cancel? <p>";
+  print "<input type=hidden name=cancel_date value=$cancel_date>";
   
-
-  print "&nbsp;<input type=text name=cancel_date>";
-		       
   print "<input type=hidden name=load value=billing>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=cancelnotice value=on>";
   print "<input type=hidden name=billing_id value=$billing_id>";
-  print "<input name=save type=submit value=\" Send \" class=smallbutton></form></td>";
+  
+  print "<input name=save type=submit value=\" $l_yes \" class=smallbutton></form></center></td>";
   print "</td><td><form style=\"margin-bottom:0;\" action=\"index.php\">";
-  print "<input name=done type=submit value=\" Cancel  \" class=smallbutton>";
+  print "<input name=done type=submit value=\" $l_no  \" class=smallbutton>";
   print "<input type=hidden name=load value=billing>";
   print "<input type=hidden name=type value=module>";
   print "</form></td></table>";

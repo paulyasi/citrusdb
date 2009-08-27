@@ -34,12 +34,15 @@ if (!isset($base->input['changestatus'])) {
   $base->input['changestatus'] = ""; }
 if (!isset($base->input['viewstatus'])) {
   $base->input['viewstatus'] = "waiting"; }
+if (!isset($base->input['history_date'])) {
+  $base->input['history_date'] = "history_date"; }
 if (!isset($base->input['billingid'])) {
   $base->input['billingid'] = ""; }
 
 $organization_id = $base->input['organization_id'];
 $changestatus = $base->input['changestatus'];
 $viewstatus = $base->input['viewstatus'];
+$history_date = $base->input['history_date'];
 $billingid = $base->input['billingid'];
 
 
@@ -75,6 +78,10 @@ echo "<option value=\"pastdue\">$l_pastdue</option>";
 echo "<option value=\"noticesent\">$l_noticesent</option>";
 echo "<option value=\"waiting\">$l_waiting</option>";
 echo "</select>";
+
+
+$yesterday  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")-1, date("Y")));
+echo "<br> On Date: <input type=text name=\"history_date\" value=\"$yesterday\">";
 
 echo "<input type=\"SUBMIT\" NAME=\"submit\" value=\"$l_submit\"></form><p>";
 
@@ -141,37 +148,38 @@ echo "<h3>$org_name: ";
 // print the status being viewed
 switch ($viewstatus) {
  case 'authorized':
-   echo "$l_authorized</h3>";
+   echo "$l_authorized";
    break;
  case 'declined':
-   echo "$l_declined</h3>";
+   echo "$l_declined";
    break;
  case 'pending':
-   echo "$l_pending</h3>";
+   echo "$l_pending";
    break;
  case 'collections':
-   echo "$l_collections</h3>";
+   echo "$l_collections";
    break;
  case 'turnedoff':
-   echo "$l_turnedoff</h3>";
+   echo "$l_turnedoff";
    break;
  case 'canceled':
-   echo "$l_canceled</h3>";
+   echo "$l_canceled";
    break;
  case 'cancelwfee':
-   echo "$l_cancelwithfee</h3>";
+   echo "$l_cancelwithfee";
    break;
  case 'pastdue':
-   echo "$l_pastdue</h3>";
+   echo "$l_pastdue";
    break;
  case 'noticesent':
-   echo "$l_noticesent</h3>";
+   echo "$l_noticesent";
    break;
  case 'waiting':
-   echo "$l_waiting</h3>";
+   echo "$l_waiting";
    break;
  }
 
+echo " on $history_date</h3>";
 
 // print column heading
 echo "<table cellpadding=5><tr style=\"background: #bbb;\"><td>Status</td>".
@@ -180,11 +188,18 @@ echo "<td>Past Amount Due</td><td>Due Date</td>";
 echo "<td>$l_category</td><td>Modify Status</td></tr>";
 
 // get the most recent payment history id for each billing id
-$query = "SELECT max(ph.id) my_id, ph.billing_id my_bid ".
+// $query = "SELECT max(ph.id) my_id, ph.billing_id my_bid ".
+//  "FROM payment_history ph ".
+//  "LEFT JOIN billing b ON b.id = ph.billing_id ".
+//  "WHERE b.organization_id = $organization_id ".
+//  "GROUP BY ph.billing_id ORDER BY ph.billing_id";
+
+$query = "SELECT ph.id my_id, ph.billing_id my_bid ".
   "FROM payment_history ph ".
   "LEFT JOIN billing b ON b.id = ph.billing_id ".
-  "WHERE b.organization_id = $organization_id ".
-  "GROUP BY ph.billing_id ORDER BY ph.billing_id";
+  "WHERE b.organization_id = $organization_id AND ph.creation_date = '$history_date' ".
+  "ORDER BY ph.billing_id";
+  
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("result $l_queryfailed");
 while($myresult = $result->FetchRow()) {
