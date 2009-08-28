@@ -135,7 +135,7 @@ while ($myresult = $result->FetchRow()) {
     $nsfcount++;
   }
 
-  if (($status == $l_pastdue) OR ($status == $l_turnedoff) OR ($status == $l_canceled) OR ($status == $l_declined) OR ($status == $l_waiting) OR ($status == $l_noticesent)) {
+  if (($status == $l_pastdue) OR ($status == $l_turnedoff) OR ($status == $l_canceled) OR ($status == $l_declined) OR ($status == $l_waiting) OR ($status == $l_noticesent) OR ($status == $l_cancelwithfee)) {
     if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
       echo "<a href=\"index.php?load=billing&type=module&deletepayment=on=&".
 	"paymentid=$id\" target=\"_parent\" style=\"font-size: 8pt;\">Delete</a>";

@@ -96,7 +96,7 @@ while ($myresult = $result->FetchRow()) {
   //if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')
   //    OR ($user == $created_by)) {
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px; font-size: 9pt;\"><a target=\"_parent\" ". 
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\"><a target=\"_parent\" ". 
       "href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
       "$id</a> &nbsp;</td>";
     //} else {
@@ -105,15 +105,15 @@ while ($myresult = $result->FetchRow()) {
     //}
   
   print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px; font-size: 9pt;\">$creation_date &nbsp;</td>";
+    "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$creation_date &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px; font-size: 9pt;\">$created_by &nbsp;</td>";
+    "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$created_by &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px; font-size: 9pt;\">$notify &nbsp;</td>";
+    "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$notify &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px; font-size: 9pt;\">$status &nbsp;</td>";
+    "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$status &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px; font-size: 9pt;\">".
+    "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">".
     "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
 
   if ($linkurl) {

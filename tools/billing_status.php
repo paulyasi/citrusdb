@@ -1,7 +1,7 @@
 <html>
 <body bgcolor="#ffffff">
 <?php
-// Copyright (C) 2003-2008  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2003-2009  Paul Yasi (paul at citrusdb.org)
 // Read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -67,7 +67,7 @@ echo "</select>";
 // ask what status they want to view
 echo "&nbsp;&nbsp; $l_billingstatus: <select name=\"viewstatus\">";
 echo "<option> </option> ";
-echo "<option value=\"authorized\">$l_authorized</option>";
+//echo "<option value=\"authorized\">$l_authorized</option>";
 echo "<option value=\"declined\">$l_declined</option>";
 echo "<option value=\"pending\">$l_pending</option>";
 echo "<option value=\"collections\">$l_collections</option>";
@@ -213,7 +213,7 @@ while($myresult = $result->FetchRow()) {
     "LEFT JOIN billing_history bh ON bd.invoice_number = bh.id ".
     "LEFT JOIN customer c ON c.account_number = b.account_number ".
     "WHERE ph.id = $recentpaymentid AND ".
-    "ph.status = '$viewstatus' AND bd.billed_amount <> bd.paid_amount LIMIT 1";
+    "ph.status = '$viewstatus' LIMIT 1";
   
   $paymentresult = $DB->Execute($query) or die ("paymentresult $l_queryfailed");
   while($mypaymentresult = $paymentresult->FetchRow()) {    
