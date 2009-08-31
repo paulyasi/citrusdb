@@ -509,7 +509,7 @@ if ($save) {
     "ms.service_description FROM customer_history ch ".
     "LEFT JOIN user_services us ON us.id = ch.user_services_id ".
     "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-    "WHERE ch.user_services_id = '$userserviceid' ORDER BY ch.creation_date";
+    "WHERE ch.user_services_id = '$userserviceid' ORDER BY ch.creation_date DESC";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   $linecount = 0;
@@ -562,7 +562,7 @@ if ($save) {
     //if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')
     //    OR ($user == $created_by)) {
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px; font-size: 9pt;\"><a target=\"_parent\" ". 
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\"><a target=\"_parent\" ". 
       "href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
       "$id</a> &nbsp;</td>";
     //} else {
@@ -571,15 +571,15 @@ if ($save) {
     //}
     
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px; font-size: 9pt;\">$creation_date &nbsp;</td>";
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$creation_date &nbsp;</td>";
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px; font-size: 9pt;\">$created_by &nbsp;</td>";
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$created_by &nbsp;</td>";
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px; font-size: 9pt;\">$notify &nbsp;</td>";
+      "padding-bottom: 2px; font-size: 9pt;font-weight: bold;\">$notify &nbsp;</td>";
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px; font-size: 9pt;\">$status &nbsp;</td>";
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$status &nbsp;</td>";
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-      "padding-bottom: 2px; font-size: 9pt;\">".
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">".
       "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
     
     if ($linkurl) {

@@ -185,7 +185,8 @@ class notice
       
     case 'shutoff':
       // create the notice text with embedded information
-      eval ("\$notice_text = \"$l_notice_text_shutoff\";");      
+      eval ("\$notice_text = \"$l_notice_text_shutoff\";");
+      eval ("\$notice_footer_shutoff = \"$l_notice_footer_shutoff\";");            
       
       // create body of message, header, footer, and content
       $this->noticeheading = "$org_name\n$l_shutoff_notice\n";
@@ -213,7 +214,9 @@ class notice
       $this->message .= "$org_name\n";
       $this->message .= "$org_street\n";
       $this->message .= "$org_city, $org_state $org_zip\n";
-      $this->message .= "$phone_billing\n";
+      $this->message .= "$phone_billing\n\n";
+
+      $this->message .= "$notice_footer_shutoff\n";
       break;      
       
     case 'cancel':
@@ -236,12 +239,12 @@ class notice
       $this->message .= "$billing_street\n";
       $this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
 
-      $this->message .= "$notice_text\n\n";
-
       $this->message .= "$l_cancel_heading:\n";
       $this->message .= "$service_list\n";
-      
+
       $this->message .= "$l_notice_text_footer\n\n";
+
+      $this->message .= "$notice_text\n\n";
 
       $this->message .= "$org_name\n";
       $this->message .= "$org_street\n";
