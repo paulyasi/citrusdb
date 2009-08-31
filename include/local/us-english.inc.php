@@ -94,7 +94,7 @@ $l_cancelwithfee = "Canceled w/Fee";
 
 $l_cancel_notice = "Cancel Notice";
 $l_cancel_subject = "Your Account has been Canceled";
-$l_cancel_heading = "Your account has been suspended for payment issues.  The following amounts are past due:";
+$l_cancel_heading = "Your account has been suspended for payment issues.  The following amounts are past due";
 $l_cancel_footer = "Please contact us to resolve this issue";
 
 $l_cannotclose = "Cannot Close";

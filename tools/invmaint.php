@@ -147,7 +147,7 @@ if ($delete) {
 	<td>$l_newcharges</td>
 	<td>$l_total</td>
 	<td>$l_billingtype</td>
-	<td></td><td></td><td></td><td></td>";
+	<td></td><td></td><td></td><td></td><td></td>";
 
    while ($myresult = $result->FetchRow()) {
      $invoice_number = $myresult['h_id'];
@@ -179,10 +179,16 @@ if ($delete) {
 	<td>[<a
 href=\"index.php?load=tools/modules/billing/emailpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=dl&submit=on\">$l_email</a>]</td>";
      if ($normal_sum == 0) {
-       echo "<td>[<a href=\"index.php?load=invmaint&invoicenum=$invoice_number&remove=on&type=tools&submit=on\">$l_remove</a>]</td><tr>";
+       echo "<td>[<a href=\"index.php?load=invmaint&invoicenum=$invoice_number&remove=on&type=tools&submit=on\">$l_remove</a>]</td>";
      } else {
-       echo "<td>$normal_sum $l_paid</td><tr>";
-     }	
+       echo "<td>$normal_sum $l_paid</td>";
+     }
+     // print payment link with prefilled in information
+     
+     echo "<td><a href=# onclick=\"popupPage('index.php?".
+       "load=payment&type=tools&invoice_number=$invoice_number&amount=$new_charges')\">$l_enterpayments</a>".
+       
+       "</td><tr>";
    }
    
    print "</table>";

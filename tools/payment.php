@@ -239,13 +239,13 @@ echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">
 	($l_applytospecificbillingid)
 	</td><tr><td>
 	<B>$l_invoicenumber:</B></td><td>
-	<INPUT TYPE=\"TEXT\" NAME=\"invoice_number\" SIZE=\"20\" MAXLENGTH=\"32\">
+	<INPUT TYPE=\"TEXT\" NAME=\"invoice_number\" SIZE=\"20\" MAXLENGTH=\"32\" value=\"$invoice_number\">
 	($l_applytospecificinvoice)
 	</td><tr><td>
 	&nbsp;
 	</td><tr><td>
 	<B>$l_amount:</B></td><td>
-        <INPUT TYPE=\"TEXT\" NAME=\"amount\" SIZE=\"20\" MAXLENGTH=\"32\">
+        <INPUT TYPE=\"TEXT\" NAME=\"amount\" SIZE=\"20\" MAXLENGTH=\"32\" value=\"$amount\">
         </td><tr><td>
         <B>$l_type</B></td><td>
 	<select name=\"payment_type\">
