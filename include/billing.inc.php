@@ -1070,6 +1070,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
   if ($printtype == "pdf") {
     // fix html characters
     $billing_notes = html_to_ascii($billing_notes);
+    $invoice_footer = html_to_ascii($invoice_footer);
     
     $lineY = $lineY + 10;
     $pdf->SetXY(10,$lineY);
@@ -1082,7 +1083,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $lineY = $lineY + 10;
     $pdf->SetFont('Arial','',9);
     $pdf->SetXY(10,$lineY);
-    $pdf->MultiCell(0,2,"$invoice_footer");
+    $pdf->MultiCell(110,4,"$invoice_footer");
   } else {		
     $output .= "$billing_notes\n";
     
@@ -1091,7 +1092,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $output .= "$l_tax: $billing_tax_due\n";
     $output .= "$l_total: $billing_total_due\n";
     
-    $output .= "$invoice_footer\n";
+    $output .= "\n$invoice_footer\n";
     
     
   }
