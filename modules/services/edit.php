@@ -278,6 +278,11 @@ if ($save) {
 	    "<td bgcolor=\"#ddddee\"><textarea cols=40 rows=6 ".
 	    "name=\"$fieldname\">$myresult[$i]</textarea>";
 	  echo "</td><tr>";
+	} elseif ($fieldname == "description"){
+	  echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
+	    "<td bgcolor=\"#ddddee\"><input size=40 maxlength=44 type=text name=\"$fieldname\" ".
+	    "value=\"$myresult[$i]\">";
+	  echo "</td><tr>";
 	} else {
 	  echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 	    "<td bgcolor=\"#ddddee\"><input type=text name=\"$fieldname\" ".
