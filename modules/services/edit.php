@@ -291,19 +291,22 @@ if ($save) {
 	  // list any applicable options url links
 	  $query = "SELECT * FROM options_urls WHERE fieldname = '$fieldname'";
 	  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	  $urlresult = $DB->Execute($query) or die ("$l_queryfailed");
-	  $urlmyresult = $urlresult->fields;	
-	
-	  // assign the query from the search to the query string
-	  // replace the s1 thru s5 etc place holders with the actual variables
-	  $s1 = $myresult[$i];
-	  $myurl = $urlmyresult['url'];
-	  $urlname = $urlmyresult['urlname'];
-	  $url = str_replace("%s1%", $s1, $myurl);
-	  if ($url) {
-	    echo "&nbsp;&nbsp; <a href=# ".
-	      "onclick=\"popupPage('$url')\">$urlname</a>";
-	  }	
+	  $urlresult = $DB->Execute($query) or die ("URL $l_queryfailed");
+	  $j = $i + 1; // to get the next field for multi field queries
+	  while ($urlmyresult = $urlresult->FetchRow()) {	  	    
+	    // assign the query from the search to the query string
+	    // replace the s1 and s2 place holders with the actual variables
+	    $s1 = $myresult[$i];
+	    $s2 = $myresult[$j];
+	    $url = $urlmyresult['url'];
+	    $urlname = $urlmyresult['urlname'];
+	    $url = str_replace("%s1%", $s1, $url);
+	    $url = str_replace("%s2%", $s2, $url);
+	    if ($url) {
+	      echo "&nbsp;&nbsp; <a href=# ".
+		"onclick=\"popupPage('$url')\">$urlname</a>";
+	    }
+	  }
 	  echo "</td><tr>\n";
 	}
 	$fieldlist .= ',' . $fieldname;
