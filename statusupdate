@@ -166,8 +166,9 @@ while ($myresult = $result->FetchRow()) {
   $historyresult = $DB->Execute($query) or die ("$l_queryfailed");
   $myhistoryresult = $historyresult->fields;
   $secondstatus = $myhistoryresult['status'];
-  if ($secondstatus == "declined"
+  if ($secondstatus == "declined" 
       OR $secondstatus == "turnedoff" 
+      OR $secondstatus == "waiting" 
       OR $secondstatus == "collections" 
       OR $secondstatus == "cancelwfee" 
       OR $secondstatus == "canceled") {
