@@ -116,6 +116,8 @@ $l_choose = "Choose One...";
 $l_city = "City";
 $l_clickheretotryagain = "Click here to try again";
 $l_collections = "Collections";
+$l_collections_heading = "The following services have been canceled";
+$l_collections_notice = "Collections Notice";
 $l_collectionsinvoicenote = "Collections Invoice Note";
 $l_commonname = "Common Name";
 $l_company = "Company";
@@ -295,6 +297,8 @@ $l_notice_footer_shutoff = "If payment is not received by $cancel_date your acco
 
 $l_notice_text_cancel = "If payment is not received by $cancel_date your account will then be canceled and collections activity will begin.  Additional fees will apply for all collections activity.  Once the account is cancelled it will require re-ordering to obtain service again.";
 
+$l_notice_text_collections = "Your account has been canceled for payment issues. Attached are the fees that must be paid in full by $cancel_date.  Once payment is received you may re-order service.  If payment is not received by $cancel_date, collections activity will begin.  Additional fees will apply for all collections activity.";
+
 $l_notice_text_footer = "Please call in with a credit card payment to $phone_billing or mail payment to the address below.  Billing fees still accrue during this period.  PLEASE ALWAYS PUT YOUR ACCOUNT OR INVOICE NUMBER ON PAYMENT TO BE SURE IT IS APPLIED CORRECTLY";
 
 $l_page = "Page";
@@ -343,6 +347,7 @@ $l_previous = "Previous";
 $l_price = "Price";
 $l_print = "Print";
 $l_printinvoices = "Print New Invoices";
+$l_printnotices = "Print Notices";
 $l_printwelcomeletters = "Welcome Letters";
 $l_privileges = "Privileges";
 $l_processcreditcards = "Process Credit Cards";
@@ -481,7 +486,7 @@ $l_wrotefile = "Wrote File";
 $l_yes = "Yes";
 $l_youareloggedinas = "You are logged in as";
 $l_youarenowloggedout = "You Are Now Logged Out";
-$l_youmusthaveadmin = "You must have admin privileges to use thie feature";
+$l_youmusthaveadmin = "You must have admin privileges to use this feature";
 $l_yourpathtocitrusisincorrect = "Your path_to_citrus variable is incorrect";
 $l_yourserviceisactive = "Your service is active and ready for use.  If you have any questions please call";
 $l_zip = "Zip";

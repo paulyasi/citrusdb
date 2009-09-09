@@ -250,7 +250,41 @@ class notice
       $this->message .= "$org_street\n";
       $this->message .= "$org_city, $org_state $org_zip\n";
       $this->message .= "$phone_billing\n";
-      break;      
+      break;
+    case 'collections':
+      // create the notice text with embedded information
+      eval ("\$notice_text = \"$l_notice_text_collections\";");
+      
+      // create body of message, header, footer, and content
+      $this->noticeheading = "$org_name\n$l_collections_notice\n";
+
+      $this->message .= "$message_body\n\n";
+      
+      $this->message .= "$billing_name\n";
+      
+      if ($billing_company) {
+	$this->message .= "$billing_company\n";
+      } else {
+	$this->message .= "\n";
+      }
+    
+      $this->message .= "$billing_street\n";
+      $this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
+
+      $this->message .= "$notice_text\n\n";
+
+      $this->message .= "$l_collections_heading:\n";
+      $this->message .= "$service_list\n";
+
+      $this->message .= "$l_notice_text_footer\n\n";
+
+      $this->message .= "$org_name\n";
+      $this->message .= "$org_street\n";
+      $this->message .= "$org_city, $org_state $org_zip\n";
+      $this->message .= "$phone_billing\n";
+      break;   
+
+      
     }
   } // end create function
 

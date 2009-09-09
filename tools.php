@@ -117,6 +117,12 @@ $l_sourcereport</a>
 $l_exemptreport</a>
 </div>
 
+<div class=icon>
+<a href=# onclick=\"popupPage('index.php?load=listpdf&type=tools')\">
+<img border=0 src=\"images/icons/citrus_report.png\"><br>
+$l_printnotices</a>
+</div>
+
 </div>
 ";
 }
