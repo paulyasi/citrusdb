@@ -45,7 +45,7 @@ c.account_number c_acctnum, b.account_number b_acctnum, b.id b_id
 	FROM billing_history h 
 	LEFT JOIN billing b ON h.billing_id = b.id  
 	LEFT JOIN customer c ON b.account_number = c.account_number
-	WHERE b.account_number = '$account_number' ORDER BY h.id DESC LIMIT 24";
+	WHERE b.account_number = '$account_number' ORDER BY h.id DESC";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$result = $DB->Execute($query) or die ("$l_queryfailed");
 	while ($myresult = $result->FetchRow())
@@ -72,9 +72,6 @@ c.account_number c_acctnum, b.account_number b_acctnum, b.id b_id
                 print "<td style=\"border-top: 1px solid grey;\">$total_due &nbsp;</td>";
 	}
 
-
-
-echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"index.php?load=all_billing_history&type=fs&account_number=$account_number\">$l_showall...</a></td>";
 	echo '</table>';
 
 	?>

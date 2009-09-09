@@ -45,7 +45,7 @@ $query = "SELECT p.id p_id, p.creation_date p_cdate, p.payment_type ".
   "FROM payment_history p ".
   "LEFT JOIN billing b ON p.billing_id = b.id ".
   "LEFT JOIN customer c ON b.account_number = c.account_number ".
-  "WHERE b.account_number = '$account_number' ORDER BY p.id DESC LIMIT 24";
+  "WHERE b.account_number = '$account_number' ORDER BY p.id DESC";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 
@@ -158,7 +158,6 @@ while ($myresult = $result->FetchRow()) {
  }
 
 
-echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"index.php?load=all_payment_history&type=fs&account_number=$account_number\">$l_showall...</a></td>";
 echo '</table>';
 ?>
 </body>
