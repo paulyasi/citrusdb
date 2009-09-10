@@ -1014,15 +1014,15 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
       $pdf->SetXY(10,$lineY);
       
       if ($monthmultiple > 1) {
-	$pdf->Cell(0,5,"$serviceid $service_description $tax_description ($pricerate x $monthmultiple) $optiondetails", 0, 0, "L", TRUE);
+	$pdf->Cell(151,5,"$serviceid $service_description $tax_description ($pricerate x $monthmultiple) $optiondetails", 0, 0, "L", TRUE);
       } else {
-	$pdf->Cell(0,5,"$serviceid $service_description $tax_description $optiondetails", 0, 0, "L", TRUE);
+	$pdf->Cell(151,5,"$serviceid $service_description $tax_description $optiondetails", 0, 0, "L", TRUE);
       }
       
       //$pdf->SetXY(110,$lineY);
       //$pdf->Cell(110,5,"$optiondetails");
       $pdf->SetXY(160,$lineY);
-      $pdf->Cell(160,5,"$billed_amount");
+      $pdf->Cell(40,5,"$billed_amount", 0, 0, "L", TRUE);
     } else {
       // printing text invoice
       if ($monthmultiple > 1) {

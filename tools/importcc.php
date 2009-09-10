@@ -28,7 +28,7 @@ if ($submit) {
   // get the path_to_citrus
   $query = "SELECT path_to_ccfile FROM settings WHERE id = 1";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $result = $DB->Execute($query) or die ("file path $l_queryfailed $query");
   $myresult = $result->fields;
   $path_to_ccfile = $myresult['path_to_ccfile'];
   
@@ -66,7 +66,7 @@ if ($submit) {
 		t.id t_id, t.method t_method FROM billing b 
 		LEFT JOIN billing_types t ON b.billing_type = t.id
 		WHERE b.id = '$billing_id'";
-    $typeresult = $DB->Execute($query) or die ("$l_queryfailed");
+    $typeresult = $DB->Execute($query) or die ("billing type $l_queryfailed $query");
     $mytyperesult = $typeresult->fields;
     $billingmethod = $mytyperesult['t_method'];
     $mybillingdate = $mytyperesult['b_next_billing_date'];
@@ -86,7 +86,7 @@ if ($submit) {
 			VALUES(CURRENT_DATE,'$transaction_code','$billing_id',
 			'$cardnumber','$cardexp','$response_code','$amount',
 			'credit','$billingmethod','$avs_response')";
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
+	$result = $DB->Execute($query) or die ("authorized payment history insert $l_queryfailed $query");
       } else { 
 	// else it's a declined transaction
 	$query = "INSERT INTO payment_history 
@@ -97,7 +97,7 @@ if ($submit) {
 			'$cardnumber','$cardexp','$response_code','$amount',
 			'declined','$billingmethod','$avs_response')";
 	$result = $DB->Execute($query) 
-	  or die ("$l_queryfailed");
+	  or die ("declined payment history insert $l_queryfailed $query");
 	
 	// push the customers email address into the 
 	// declined array
@@ -110,7 +110,7 @@ if ($submit) {
 	$query = "SELECT account_number FROM billing WHERE 
 				id = '$billing_id'";
 	$bidresult = $DB->Execute($query) 
-	  or die ("$l_queryfailed");
+	  or die ("select account number $l_queryfailed $query");
 	$mybidresult = $bidresult->fields;
 	$myaccountnumber = $mybidresult['account_number'];
 	
@@ -134,7 +134,7 @@ if ($submit) {
 			VALUES(CURRENT_DATE,'$transaction_code','$billing_id',
 			'$cardnumber','$cardexp','$response_code','$amount',
 			'authorized','$billingmethod','$avs_response')";
-      $result = $DB->Execute($query) or die ("$l_queryfailed");
+      $result = $DB->Execute($query) or die ("insert payment history $l_queryfailed $query");
       
       // update the next_billing_date, to_date, 
       // from_date, and payment_due_date for prepay/prepaycc 
@@ -153,7 +153,7 @@ if ($submit) {
 				payment_due_date = DATE_ADD('$myfromdate', 
 				INTERVAL '$mybillingfreq' MONTH)
 				WHERE id = '$billing_id'";
-	$updateresult = $DB->Execute($query) or die ("$l_queryfailed");
+	$updateresult = $DB->Execute($query) or die ("update billing $l_queryfailed $query");
       } // end if billing method
       
       // update the billing_details for things that still 
@@ -162,7 +162,7 @@ if ($submit) {
 			WHERE paid_amount < billed_amount 
 			AND billing_id = $billing_id";
       $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-      $result = $DB->Execute($query) or die ("$l_queryfailed");
+      $result = $DB->Execute($query) or die ("select billing details $l_queryfailed $query");
       
       while (($myresult = $result->FetchRow()) and (round($amount,2) > 0)) {
 	$id = $myresult['id'];
@@ -180,7 +180,7 @@ if ($submit) {
 	    "payment_applied = CURRENT_DATE ".
 	    "WHERE id = $id";
 	  $greaterthanresult = $DB->Execute($query) 
-	    or die ("$l_queryfailed");
+	    or die ("greater than $l_queryfailed $query");
 	} else { 
 	  // amount is  less than owed
 	  $available = $amount;
@@ -191,7 +191,7 @@ if ($submit) {
 	    "payment_applied = CURRENT_DATE ".
 	    "WHERE id = $id";
 	  $lessthanresult = $DB->Execute($query) 
-	    or die ("$l_queryfailed");
+	    or die ("less than $l_queryfailed $query");
 	} //end if amount
       } // end while fetchrow
     } // end if response_id = y
@@ -210,16 +210,18 @@ if ($submit) {
     // select the info for emailing the customer
     // get the org billing email address for from address           
     $query = "SELECT g.email_billing, g.declined_subject, 
-			g.declined_message, b.contact_email  
+			g.declined_message, b.contact_email, b.account_number 
 			FROM billing b
                         LEFT JOIN general g ON b.organization_id = g.id  
 			WHERE b.id = $mybillingid";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-    $result = $DB->Execute($query) or die ($l_queryfailed);
+    $result = $DB->Execute($query) or die ("email declined $l_queryfailed $query");
     $myresult = $result->fields;
     $billing_email = $myresult['email_billing'];
     $subject = $myresult['declined_subject'];
-    $message = $myresult['declined_message'];
+    $myaccountnum = $myresult['account_number'];
+    $declined_message = $myresult['declined_message'];
+    $message = "$l_account: $myaccountnum\n\n$declined_message";
     $myemail = $myresult['contact_email'];
     
     // HTML Email Headers

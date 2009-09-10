@@ -138,7 +138,7 @@ echo "$adds ADDs\n";
 //
 // if the account has an authorized status payment_history today and 
 // it's previous payment_history was bad: 
-// (declined, turnedoff, canceled, cancelwfee, collections)
+// (turnedoff, canceled, cancelwfee, collections)
 // or if they are in waiting status today
 /*-------------------------------------------------------------------*/
 
@@ -166,8 +166,7 @@ while ($myresult = $result->FetchRow()) {
   $historyresult = $DB->Execute($query) or die ("$l_queryfailed");
   $myhistoryresult = $historyresult->fields;
   $secondstatus = $myhistoryresult['status'];
-  if ($secondstatus == "declined" 
-      OR $secondstatus == "turnedoff" 
+  if ($secondstatus == "turnedoff" 
       OR $secondstatus == "waiting" 
       OR $secondstatus == "collections" 
       OR $secondstatus == "cancelwfee" 
