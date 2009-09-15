@@ -694,6 +694,18 @@ if ($base->input['submit'] == "Update")
 	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0'";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
+
+	  $query = " ALTER TABLE `general` CHANGE ".
+	    "`email_sales` `email_sales` VARCHAR( 128 ) ".
+	    "CHARACTER SET latin1 COLLATE latin1_swedish_ci ".
+	    "NULL DEFAULT NULL , ".
+	    "CHANGE `email_billing` `email_billing` VARCHAR( 128 ) ".
+	    "CHARACTER SET latin1 COLLATE latin1_swedish_ci ".
+	    "NULL DEFAULT NULL , ".
+	    "CHANGE `email_custsvc` `email_custsvc` VARCHAR( 128 ) ".
+	    "CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";	  
 	  
 	}
 	echo "<center><h2>Database Updated</h2></center>";
