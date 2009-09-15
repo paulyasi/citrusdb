@@ -466,13 +466,13 @@ if ($save) {
     $master_service_id = $myresult['master_service_id'];
     $service_description = $myresult['service_description'];
 
-    // print a list of services that share the same attributes
+    // print a list of services that share the same attributes and organization_id
         
     print "<select name=master_service_id><option selected ".
       "value=$master_service_id>$service_description ($l_current)</option>\n";
 	
     $query = "SELECT * FROM master_services ".
-      "WHERE options_table = '$optionstable'";
+      "WHERE options_table = '$optionstable' AND organization_id = $service_org_id";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $result = $DB->Execute($query) or die ("$l_queryfailed");
     while ($myresult = $result->FetchRow()) {
