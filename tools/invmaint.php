@@ -175,7 +175,11 @@ if ($delete) {
 		<td>$total_due</td>
 		<td>$billing_type</td>
 		<td>[<a href=\"index.php?load=tools/printpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=dl&submit=on\">$l_pdf</a>]</td>
+
 	<td>[<a href=\"index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=fs&submit=on\" target=\"_blank\">$l_html</a>]</td>
+
+	<td>[<a href=\"index.php?load=tools/modules/billing/extendedpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=fs&submit=on\" target=\"_blank\">extended</a>]</td>
+
 	<td>[<a
 href=\"index.php?load=tools/modules/billing/emailpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=dl&submit=on\">$l_email</a>]</td>";
      if ($normal_sum == 0) {
