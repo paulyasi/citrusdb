@@ -1026,9 +1026,9 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     } else {
       // printing text invoice
       if ($monthmultiple > 1) {
-	$output .= "$serviceid $service_description $tax_description ($pricerate x $monthmultiple) $optiondetails \t $billed_amount\n";
+	$output .= "$serviceid \t $service_description $tax_description ($pricerate x $monthmultiple) \t $optiondetails \t $billed_amount\n";
       } else {
-	$output .= "$serviceid $service_description $tax_description $optiondetails \t $billed_amount\n";
+	$output .= "$serviceid \t $service_description $tax_description \t $optiondetails \t $billed_amount\n";
       }
     }
     
