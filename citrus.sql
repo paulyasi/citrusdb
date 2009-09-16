@@ -498,7 +498,7 @@ CREATE TABLE `payment_history` (
   `paid_to` date NOT NULL default '0000-00-00',
   `invoice_number` int(128) default NULL,
   `status` set('authorized','declined','pending','donotreactivate','collections','turnedoff','credit','canceled', 'cancelwfee', 'pastdue','noticesent','waiting') default NULL,
-  `payment_type` set('creditcard','check','cash','eft') default NULL,
+  `payment_type` set('creditcard','check','cash','eft','nsf','discount') default NULL,
   `check_number` varchar(32) default NULL,
   `avs_response` varchar(32) default NULL,
   PRIMARY KEY  (`id`)
@@ -738,7 +738,7 @@ CREATE TABLE `payment_mode` (
 --
 -- Insert data into payment_mode table
 --
-INSERT INTO `payment_mode` VALUES (1, 'check'), (2, 'eft'), (3, 'cash');
+INSERT INTO `payment_mode` VALUES (1, 'check'), (2, 'eft'), (3, 'cash'), (4, 'discount');
 
 -- 
 -- Table structure for table `settings`

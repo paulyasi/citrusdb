@@ -705,7 +705,15 @@ if ($base->input['submit'] == "Update")
 	    "CHANGE `email_custsvc` `email_custsvc` VARCHAR( 128 ) ".
 	    "CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ";
 	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  $query = "INSERT INTO `payment_mode` VALUES (NULL, 'discount')";
+	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";	  
+
+	  $query = " ALTER TABLE `payment_history` CHANGE `payment_type` `payment_type` SET( 'creditcard', 'check', 'cash', 'eft', 'nsf', 'discount' ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL  ";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
 	  
 	}
 	echo "<center><h2>Database Updated</h2></center>";
