@@ -49,7 +49,8 @@ ADOdb_Session::config($sys_dbtype, $sys_dbhost, $sys_dbuser, $sys_dbpasswd, $sys
 function checkfailures() {
   global $DB;
   $ipaddress = $_SERVER["REMOTE_ADDR"];
-  $query = "SELECT * FROM login_failures WHERE ip = '$ipaddress'";
+  $query = "SELECT * FROM login_failures WHERE ip = '$ipaddress' ".
+    "AND DATE(logintime) = CURRENT_DATE";
   $result = $DB->Execute($query);
   $attempts = $result->RowCount();
   if ($attempts > 5) {
