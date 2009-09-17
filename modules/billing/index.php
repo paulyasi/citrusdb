@@ -37,6 +37,7 @@ $waiting = $base->input['waiting'];
 $createinvoice = $base->input['createinvoice'];
 $cancelnotice = $base->input['cancelnotice'];
 $shutoffnotice = $base->input['shutoffnotice'];
+$collectionsnotice = $base->input['collectionsnotice'];
 $nsf = $base->input['nsf'];
 $receipt = $base->input['receipt'];
 $deletepayment = $base->input['deletepayment'];
@@ -146,7 +147,15 @@ else if ($shutoffnotice)
 		include('./modules/billing/shutoffnotice.php');    
 	}  else permission_error();
 }
-else if ($pallow_view)
+else if ($collectionsnotice) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/collectionsnotice.php');    
+	}  else permission_error();
+}
+
+ else if ($pallow_view)
 {
 // get the billing id
 $query = "SELECT * FROM customer WHERE account_number = $account_number";
@@ -226,7 +235,8 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 <a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">$l_collections</a> | 
 	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">Create Invoice</a> | 
 	<a href=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">Cancel Notice</a> | 
-	<a href=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">Shutoff Notice</a>
+	<a href=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">Shutoff Notice</a> | 
+	<a href=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">Collections Notice</a>
 ";
 }
 
