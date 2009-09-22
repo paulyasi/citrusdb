@@ -27,7 +27,7 @@ if ($submit) {
   // get the path_to_citrus
   $query = "SELECT path_to_ccfile FROM settings WHERE id = 1";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $result = $DB->Execute($query) or die ("select file path $l_queryfailed");
   $myresult = $result->fields;
   $path_to_ccfile = $myresult['path_to_ccfile'];
   
@@ -93,7 +93,7 @@ if ($submit) {
 	"'$line[14]', ".
 	"'$line[15]')";
 			
-      $result = $DB->Execute($query) or die ("$l_queryfailed");
+      $result = $DB->Execute($query) or die ("insert customer $l_queryfailed");
 	
       // get the inserted id of the customer record
       $myinsertid = $DB->Insert_ID();  
@@ -110,7 +110,7 @@ if ($submit) {
       $query = "INSERT into billing ". 
 	"(account_number,next_billing_date,from_date, payment_due_date, organization_id) ".
 	"VALUES ('$account_number','$mydate','$mydate','$mydate', '$organization_id')";
-      $result = $DB->Execute($query)or die ("$l_queryfailed");
+      $result = $DB->Execute($query)or die ("insert billing $l_queryfailed");
       
       //
       // set the default billing ID for the customer record
@@ -120,7 +120,7 @@ if ($submit) {
 			SET default_billing_id = '$billingid' 
 			WHERE account_number = $account_number";
       $result = $DB->Execute($query)
-	or die ("$l_queryfailed");
+	or die ("update customer $l_queryfailed");
       
       echo "$l_added $l_accountnumber: $account_number<p>";
     }
@@ -142,7 +142,7 @@ if ($submit) {
 	"creditcard_expire = '$line[12]'  ".
 	"WHERE id = $billingid";
       
-      $result = $DB->Execute($query) or die ("$l_queryfailed");
+      $result = $DB->Execute($query) or die ("update billing $l_queryfailed");
       
       // add the to_date automatically
       $billing_type = $line[10];
@@ -185,7 +185,7 @@ if ($submit) {
 	  "salesperson) ".
 	  "VALUES ('$account_number', '$serviceid', ".
 	  "'$default_billing_id', '$mydate', '$user')";
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
+	$result = $DB->Execute($query) or die ("insert user_service $l_queryfailed");
 	
 	// Get the ID of the row the insert was to for 
 	// the options_table query
@@ -198,30 +198,28 @@ if ($submit) {
 	// get the info about the service
 	$query = "SELECT * FROM master_services WHERE id = $serviceid";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
+	$result = $DB->Execute($query) or die ("select master_services $l_queryfailed");
 	$myresult = $result->fields;	
 	$servicename = $myresult['service_description'];
 	$activate_notify = $myresult['activate_notify'];
 	$optionstable = $myresult['options_table'];
 	
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
-			
 	// insert data into the options table if there is one
 	if ($optionstable <> '') {
 	  $query = "INSERT into $optionstable () VALUES ('',$myinsertid,$fieldvalues)";
-	  $result = $DB->Execute($query) or die ("$l_queryfailed");
+	  $result = $DB->Execute($query) or die ("insert options table $l_queryfailed");
 	}
 	
 	// insert any linked_services into the user_services table
 	$query = "SELECT * FROM linked_services WHERE linkfrom = $serviceid";
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
+	$result = $DB->Execute($query) or die ("select linked services $l_queryfailed");
 	while ($myresult = $result->FetchRow()) {
 	  $linkto = $myresult['linkto'];
 	  // insert the linked service now
 	  $query = "INSERT into user_services (account_number, master_service_id, ".
 	    "billing_id, start_datetime, salesperson) ".
 	    "VALUES ('$account_number', '$linkto', '$default_billing_id', '$mydate', '$user')";
-	  $result = $DB->Execute($query) or die ("$l_queryfailed");
+	  $result = $DB->Execute($query) or die ("insert linked user_services $l_queryfailed");
 	}
 	
 	// add an entry to the customer history about service
