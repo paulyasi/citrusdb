@@ -171,8 +171,21 @@ if ($save) {
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=delete value=on>";
-  print "<input name=deletenow type=submit value=\" $l_yes \" ".
+  print "<input name=deletenow type=submit value=\" $l_yes, automatic removal\" ".
     "class=smallbutton></form></td>";
+
+  // if they hit yes without automatic removal, this will sent them into the delete.php file
+  // and remove the service
+
+  
+  print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\">".
+    "<input type=hidden name=optionstable value=$optionstable>";
+  print "<input type=hidden name=userserviceid value=$userserviceid>";
+  print "<input type=hidden name=load value=services>";
+  print "<input type=hidden name=type value=module>";
+  print "<input type=hidden name=delete value=on>";
+  print "<input name=deletenoauto type=submit value=\" $l_yes, no removal \" ".
+    "class=smallbutton></form></td>"; 
   
   // if they hit no, send them back to the service edit screen
 

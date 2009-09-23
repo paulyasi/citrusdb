@@ -20,6 +20,7 @@ $account_number = $_SESSION['account_number'];
 // GET Variables
 $userserviceid = $base->input['userserviceid'];
 $deletenow = $base->input['deletenow'];
+$deletenoauto = $base->input['deletenoauto'];
 $undeletenow = $base->input['undeletenow'];
 
 if ($deletenow) {
@@ -42,6 +43,14 @@ if ($deletenow) {
 	
 	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
 }
+
+if ($deletenoauto) {
+  // delete the service without an automatic removal dateand do other notifications
+  delete_service($userserviceid, 'removed', '');
+  
+  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
+}
+
 
 if ($undeletenow) {
 	// undelete the service by removing the removed flag and dates
