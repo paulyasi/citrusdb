@@ -36,6 +36,8 @@ if (!isset($base->input['viewstatus'])) {
   $base->input['viewstatus'] = "waiting"; }
 if (!isset($base->input['history_date'])) {
   $base->input['history_date'] = "history_date"; }
+if (!isset($base->input['history_date'])) {
+  $base->input['history_date2'] = "history_date2"; }
 if (!isset($base->input['billingid'])) {
   $base->input['billingid'] = ""; }
 
@@ -43,6 +45,7 @@ $organization_id = $base->input['organization_id'];
 $changestatus = $base->input['changestatus'];
 $viewstatus = $base->input['viewstatus'];
 $history_date = $base->input['history_date'];
+$history_date2 = $base->input['history_date2'];
 $billingid = $base->input['billingid'];
 
 
@@ -81,7 +84,8 @@ echo "</select>";
 
 
 $yesterday  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")-1, date("Y")));
-echo "<br> On Date: <input type=text name=\"history_date\" value=\"$yesterday\">";
+echo "<br> On Date: <input type=text name=\"history_date\" value=\"$yesterday\" size=10> to
+<input type=text name=\"history_date2\" value=\"$yesterday\" size=10>";
 
 echo "<input type=\"SUBMIT\" NAME=\"submit\" value=\"$l_submit\"></form><p>";
 
@@ -179,7 +183,7 @@ switch ($viewstatus) {
    break;
  }
 
-echo " on $history_date</h3>";
+echo " on $history_date - $history_date2</h3>";
 
 // print column heading
 echo "<table cellpadding=5><tr style=\"background: #bbb;\"><td>Status</td>".
@@ -197,8 +201,9 @@ echo "<td>$l_category</td><td>Modify Status</td></tr>";
 $query = "SELECT ph.id my_id, ph.billing_id my_bid ".
   "FROM payment_history ph ".
   "LEFT JOIN billing b ON b.id = ph.billing_id ".
-  "WHERE b.organization_id = $organization_id AND ph.creation_date = '$history_date' ".
+  "WHERE b.organization_id = $organization_id AND ph.creation_date BETWEEN '$history_date' AND '$history_date2' ".
   "ORDER BY ph.billing_id";
+
   
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("result $l_queryfailed");
