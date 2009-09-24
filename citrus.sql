@@ -766,7 +766,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- Dumping data for table `settings`
 -- 
 
-INSERT INTO `settings` VALUES (1, '1.3.1', 'users', '/home/pyasi/sites/io','16:00:00','y','n','n','n','n','n','y','http://localhost/cancel', 'billing');
+INSERT INTO `settings` VALUES (1, '1.3.2', 'users', '/home/pyasi/sites/io','16:00:00','y','n','n','n','n','n','y','http://localhost/cancel', 'billing');
 
 
 
