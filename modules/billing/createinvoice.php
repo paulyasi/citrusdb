@@ -48,13 +48,13 @@ if ($save) {
   // create billinghistory
   create_billinghistory($DB, $batchid, $method, $user);	
   
-  echo "Created invoice for $billing_id";
+  echo "$l_createdinvoice $billing_id";
   
   print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
   
  } else {
 	print "<br><br>";
-	print "<h4>Are you sure you want to create an invoice</h4>";
+	print "<h4>$l_areyousurecreateinvoice</h4>";
     print "<table cellpadding=15 cellspacing=0 border=0 width=720><td align=right width=360>";
     print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
     print "<input type=hidden name=load value=billing>";

@@ -35,8 +35,8 @@ if ($save) {
   $contactemail = $mynotice->contactemail;
   $linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
   
-  echo "<p>Sent cancel notice to $contactemail</p>";
-  echo "<p>Download pdf: <a href=\"$linkurl\">$linkname</a></p>";
+  echo "<p>$l_sent_cancel_notice $contactemail</p>";
+  echo "<p>$l_download_pdf: <a href=\"$linkurl\">$linkname</a></p>";
 
   
   
@@ -66,7 +66,7 @@ if ($save) {
   print "<table cellpadding=15 cellspacing=0 border=0 width=520><td><center>";
   print "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">";
 
-  print "Send cancel notice to cancel on $human_cancel? <p>";
+  print "$l_send_cancel_notice_question $human_cancel? <p>";
   print "<input type=hidden name=cancel_date value=$cancel_date>";
   
   print "<input type=hidden name=load value=billing>";

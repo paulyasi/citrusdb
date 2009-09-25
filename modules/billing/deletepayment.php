@@ -31,7 +31,7 @@ if ($save) {
  } else {
   
   print "<br><br>";
-  print "<h4>&nbsp;&nbsp;&nbsp; Are you sure you want to delete this payment entry?</h4>";
+  print "<h4>&nbsp;&nbsp;&nbsp; $l_areyousuredeletepayment</h4>";
   print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
     "<td align=right width=360>";
 

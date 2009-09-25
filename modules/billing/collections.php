@@ -39,7 +39,7 @@ else
 
   if ($cancel_date <> '') {
     print "<br><br>";
-    print "<h4>Are you sure you want to set this account to Collections</h4>";
+    print "<h4>$l_areyousurecollections</h4>";
     print "<table cellpadding=15 cellspacing=0 border=0 width=720><td align=right width=360>";
     print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
     print "<input type=hidden name=load value=billing>";
@@ -53,7 +53,7 @@ else
     print "<input type=hidden name=type value=module>";
     print "</form></td></table>";
   } else {
-    echo "<p><br><b>Error: This account has not been canceled first</b><br><br>";
+    echo "<p><br><b>$l_error_account_not_canceled</b><br><br>";
   }
   
  }

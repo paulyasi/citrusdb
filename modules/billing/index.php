@@ -1,5 +1,6 @@
 <?php   
-// Copyright (C) 2003-2007  Paul Yasi <paul@citrusdb.org>, read the README file for more information
+// Copyright (C) 2003-2007  Paul Yasi (paul at citrusdb.org)
+// read the README file for more information
 
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
@@ -232,11 +233,12 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 	<a href=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">$l_turnoff</a> | 
 	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a> | 
 	<a href=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">$l_cancelwithfee</a> |
-<a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">$l_collections</a> | 
-	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">Create Invoice</a> | 
-	<a href=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">Cancel Notice</a> | 
-	<a href=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">Shutoff Notice</a> | 
-	<a href=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">Collections Notice</a>
+<a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">$l_collections</a> |
+
+	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">$l_createinvoice</a> | 
+	<a href=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">$l_cancel_notice</a> | 
+	<a href=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">$l_shutoff_notice</a> | 
+	<a href=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">$l_collections_notice</a>
 ";
 }
 

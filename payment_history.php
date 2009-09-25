@@ -131,14 +131,14 @@ while ($myresult = $result->FetchRow()) {
     if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
       echo "<a href=\"index.php?load=billing&type=module&nsf=on=&".
 	"paymentid=$id&amount=$amount&invoicenum=$invoice_number&".
-	"billingid=$billingid\" target=\"_parent\" style=\"font-size: 8pt;\">Mark as NSF</a>";    }
+	"billingid=$billingid\" target=\"_parent\" style=\"font-size: 8pt;\">$l_mark_as_nsf</a>";    }
     $nsfcount++;
   }
 
   if (($status == $l_pastdue) OR ($status == $l_turnedoff) OR ($status == $l_canceled) OR ($status == $l_declined) OR ($status == $l_waiting) OR ($status == $l_noticesent) OR ($status == $l_cancelwithfee)) {
     if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
       echo "<a href=\"index.php?load=billing&type=module&deletepayment=on=&".
-	"paymentid=$id\" target=\"_parent\" style=\"font-size: 8pt;\">Delete</a>";
+	"paymentid=$id\" target=\"_parent\" style=\"font-size: 8pt;\">$l_delete</a>";
     }
   }
 
@@ -151,7 +151,7 @@ while ($myresult = $result->FetchRow()) {
   if (($amount > 0) AND ($status == $l_authorized)) {
     echo "<a href=\"index.php?load=receipt&type=fs&".
       "paymentid=$id&amount=$amount&invoicenum=$invoice_number&".
-      "billingid=$billingid&date=$date\" target=\"_parent\" style=\"font-size: 8pt;\">Receipt</a>";     
+      "billingid=$billingid&date=$date\" target=\"_parent\" style=\"font-size: 8pt;\">$l_receipt</a>";     
   }
   
   print "</td>";

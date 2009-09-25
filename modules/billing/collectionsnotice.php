@@ -37,8 +37,8 @@ if ($save) {
   $contactemail = $mynotice->contactemail;
   $linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
   
-  echo "<p>Sent collections notice to $contactemail</p>";
-  echo "<p>Download pdf: <a href=\"$linkurl\">$linkname</a></p>";
+  echo "<p>$l_sent_collections_notice_answer $contactemail</p>";
+  echo "<p>$l_download_pdf: <a href=\"$linkurl\">$linkname</a></p>";
 
   
   
@@ -70,7 +70,7 @@ if ($save) {
   print "<table cellpadding=15 cellspacing=0 border=0 width=520><td><center>";
   print "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">";
 
-  print "Send collections notice? <p>";
+  print "$l_send_collections_notice_question <p>";
   print "<input type=hidden name=cancel_date value=$cancel_date>";
   print "<input type=hidden name=turnoff_date value=$turnoff_date>";
   
