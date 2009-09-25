@@ -408,9 +408,9 @@ CREATE TABLE `master_services` (
 -- Dumping data for table `master_services`
 -- 
 
-INSERT INTO `master_services` VALUES (3, 'Example Service', 19.95, '1', 'example_options', 'example', 'y', 'n', '', '', '', 'username,password', 'items', 1, 'n');
-INSERT INTO `master_services` VALUES (2, 'Prorate', 1, '0', 'prorate_options', 'prorate', 'y', 'y', '', '', '', NULL, NULL,1, 'n');
-INSERT INTO `master_services` VALUES (1, 'Credit', -1, '0', 'credit_options', 'credit', 'y', 'y', 'admin', '', '', '', 'dollars',1, 'n');
+INSERT INTO `master_services` VALUES (3, 'Example Service', 19.95, '1', 'example_options', 'example', 'y', 'n', '', '', '', 'username,password', 'items', 1, 'n', '');
+INSERT INTO `master_services` VALUES (2, 'Prorate', 1, '0', 'prorate_options', 'prorate', 'y', 'y', '', '', '', NULL, NULL,1, 'n', '');
+INSERT INTO `master_services` VALUES (1, 'Credit', -1, '0', 'credit_options', 'credit', 'y', 'y', 'admin', '', '', '', 'dollars',1, 'n', '');
 
 -- --------------------------------------------------------
 
@@ -807,9 +807,9 @@ INSERT INTO `cancel_reason` (`id`, `reason`) VALUES
 --
 -- add table indexes
 --
-ALTER TABLE `user_services` ADD INDEX `master_service_id_index` ( `master_service_id` )
-ALTER TABLE `user_services` ADD INDEX `billing_id_index` ( `billing_id` )
-ALTER TABLE `billing` ADD INDEX `billing_type_index` ( `billing_type` )
-ALTER TABLE `tax_exempt` ADD INDEX `account_number_index` ( `account_number` )
-ALTER TABLE `billing_details` ADD INDEX `billing_id_index` ( `billing_id` )
-ALTER TABLE `payment_history` ADD INDEX `billing_id_index` ( `billing_id` )
+ALTER TABLE `user_services` ADD INDEX `master_service_id_index` ( `master_service_id` );
+ALTER TABLE `user_services` ADD INDEX `billing_id_index` ( `billing_id` );
+ALTER TABLE `billing` ADD INDEX `billing_type_index` ( `billing_type` );
+ALTER TABLE `tax_exempt` ADD INDEX `account_number_index` ( `account_number` );
+ALTER TABLE `billing_details` ADD INDEX `billing_id_index` ( `billing_id` );
+ALTER TABLE `payment_history` ADD INDEX `billing_id_index` ( `billing_id` );
