@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 /*--------------------------------------------------------------------------*/
-//
+// Copyright (C) 2009 Paul Yasi (citrusdb.org)
 // This script will email a reminder to multi-month creditcard customers
 // that they will be billed automatically in 3 weeks time.
 //

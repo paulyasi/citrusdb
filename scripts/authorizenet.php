@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-// Copyright (C) 2009 Paul Yasi(citrusdb.org) Mike Myers(geniusideastudio.com)
+// Copyright (C) 2009 Paul Yasi(citrusdb.org), Mike Myers(geniusideastudio.com)
 // read the README file for more information
 //
 // This script will run today's credit card billing via the authorize.net gateway
