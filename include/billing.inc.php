@@ -803,7 +803,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		h.total_due h_total_due, h.notes h_notes, 
 		b.id b_id, b.name b_name, b.company b_company, 
 		b.street b_street, b.city b_city, b.state b_state, 
-		b.country b_country, b.zip b_zip, 
+		b.country b_country, b.zip b_zip, b.po_number b_po_number, 
 		b.contact_email b_contact_email, b.account_number b_acctnum, 
 		b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp  
 		FROM billing_history h 
@@ -832,6 +832,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
   $billing_tax_due = sprintf("%.2f",$myinvresult['h_tax_due']);
   $billing_total_due = sprintf("%.2f",$myinvresult['h_total_due']);	
   $billing_email = $myinvresult['b_contact_email'];
+  $billing_po_number = $myinvresult['b_po_number'];
   
   // get the organization info to print on the bill
   $query = "SELECT g.org_name,g.org_street,g.org_city,g.org_state,g.org_zip,g.phone_billing,g.email_billing,g.invoice_footer  
@@ -890,7 +891,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $pdf->MultiCell(70,6,"$l_accountnumber: $billing_acctnum\n$l_invoicenumber: $invoiceid\n$billing_fromdate $l_to $billing_todate\n$l_paymentdue: $billing_payment_due_date\n$l_total: $billing_total_due",0);
     $pdf->SetXY(10,60);
     $pdf->SetFontSize(10);
-    $pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip",0);
+    $pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip\n$l_po_number: $billing_po_number",0);
     
     $pdf->SetXY(130,60);
     
@@ -913,7 +914,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $output .= "$billing_name $billing_company\n";
     $output .= "$billing_street ";
     $output .= "$billing_city $billing_state ";
-    $output .= "$billing_zip\n\n";
+    $output .= "$billing_zip\n$l_po_number: $billing_po_number\n";
     
     $output .= "----------------------------------------";
     $output .= "----------------------------------------\n";
