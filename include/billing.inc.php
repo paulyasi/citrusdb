@@ -891,7 +891,13 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $pdf->MultiCell(70,6,"$l_accountnumber: $billing_acctnum\n$l_invoicenumber: $invoiceid\n$billing_fromdate $l_to $billing_todate\n$l_paymentdue: $billing_payment_due_date\n$l_total: $billing_total_due",0);
     $pdf->SetXY(10,60);
     $pdf->SetFontSize(10);
-    $pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip\n$l_po_number: $billing_po_number",0);
+
+    if ($billing_po_number) {
+      // only print the po number if they have one
+      $pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip\n$l_po_number: $billing_po_number",0);
+    } else {
+      $pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip\n",0);
+    }
     
     $pdf->SetXY(130,60);
     
@@ -914,7 +920,15 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $output .= "$billing_name $billing_company\n";
     $output .= "$billing_street ";
     $output .= "$billing_city $billing_state ";
-    $output .= "$billing_zip\n$l_po_number: $billing_po_number\n";
+    
+    $output .= "$billing_zip\n";
+
+    if ($billing_po_number) {
+      // only print the po number if they have one
+      $output .= "$l_po_number: $billing_po_number\n";
+    } else {
+      $output .= "\n";
+    }
     
     $output .= "----------------------------------------";
     $output .= "----------------------------------------\n";
