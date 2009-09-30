@@ -117,7 +117,7 @@ if ($submit) {
 
 		// get the org billing email address for from address		
 		$query = "SELECT g.org_name, g.org_street, g.org_city, ".
-		  "g.org_state, g.org_zip, g.email_billing ".
+		  "g.org_state, g.org_zip, g.phone_billing, g.email_billing ".
 		  "FROM billing b ".
 		  "LEFT JOIN general g ON g.id = b.organization_id  ".
 		  "WHERE b.id = $invoice_billing_id";
@@ -130,6 +130,8 @@ if ($submit) {
 		$org_city = $mybillingresult['org_city'];
 		$org_state = $mybillingresult['org_state'];
 		$org_zip = $mybillingresult['org_zip'];
+		$phone_billing = $mybillingresult['phone_billing'];
+		
 
 		// get the total due from the billing_history
 		$query = "SELECT total_due FROM billing_history ".
@@ -144,7 +146,8 @@ if ($submit) {
 		  "$total_due $l_to_lc \n\n".
 		  "$org_name\n".
 		  "$org_street\n".
-		  "$org_city $org_state $org_zip\n\n".
+		  "$org_city $org_state $org_zip\n".
+		  "$phone_billing\n\n".
 		  "$l_email_heading_include.\n\n";
 
 		// HTML Email Headers
