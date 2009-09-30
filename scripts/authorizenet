@@ -312,7 +312,7 @@ if ($totalall == 0) {
       echo "Amount: $precisetotal\n";
       
       //Send charge to authorize.net	
-      $charge_result = charge_card("CC", $billing_ccnum, $billing_ccexp, $precisetotal, "GIS Bill for Account #: " . $billing_acctnum, $invoice_number, $billing_name, NULL, $billing_street, $billing_state, $billing_zip, "1");	
+      $charge_result = charge_card("CC", $billing_ccnum, $billing_ccexp, $precisetotal, "Bill for Account #: " . $billing_acctnum, $invoice_number, $billing_name, NULL, $billing_street, $billing_state, $billing_zip, "1");	
       
       $response_array = explode("|",$charge_result);			
       
