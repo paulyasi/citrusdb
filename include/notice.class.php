@@ -332,7 +332,10 @@ class notice
     // message body
     $pdf->SetFont('Arial','B', 10);
     $pdf->Write(5,"$this->humanday\n");
-    $pdf->Write(5,"$this->message");
+
+    // convert message text from html codes to ascii for pdf first
+    $message_text = html_to_ascii($this->message);
+    $pdf->Write(5,"$message_text");
     
     // write the pdf file to output
     $pdf->Output($filepath, $filedestination);
