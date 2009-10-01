@@ -1058,7 +1058,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
       $pagenumber = $pdf->PageNo();
       
       if ($pagenumber - $invoicestartpage > 0) {
-	$linetotal = 49;
+	$linetotal = 48;
       } else {
 	$linetotal = 28;
       }
@@ -1389,7 +1389,7 @@ function outputextendedinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
       $pagenumber = $pdf->PageNo();
       
       if ($pagenumber - $invoicestartpage > 0) {
-	$linetotal = 49;
+	$linetotal = 48;
       } else {
 	$linetotal = 28;
       }
