@@ -114,13 +114,14 @@ if ($submit) {
       // get the next billing date value
       $mydate = get_nextbillingdate();
       $from_date = $mydate;
+
+      $organization_id = $line[16];
       
       // make a new default billing record
       $query = "INSERT into billing ".
-	"(account_number,next_billing_date,from_date, payment_due_date) ".
-	"VALUES ('$account_number','$mydate','$mydate','$mydate')";
-      $result = $DB->Execute($query)
-	or die ("billing insert $l_queryfailed");
+	"(account_number,next_billing_date,from_date, payment_due_date, organization_id) ".
+	"VALUES ('$account_number','$mydate','$mydate','$mydate', '$organization_id')";
+      $result = $DB->Execute($query) or die ("insert billing $l_queryfailed");
       
       //
       // set the default billing ID for the customer record
