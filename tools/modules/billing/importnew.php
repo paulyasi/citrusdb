@@ -150,8 +150,7 @@ if ($submit) {
 	"contact_email = '$line[9]',".
 	"billing_type = '$line[10]',".
 	"creditcard_number = '$line[11]',".
-	"creditcard_expire = '$line[12]',".
-	"organization_id = '$line[13]' ".
+	"creditcard_expire = '$line[12]' ".
 	"WHERE id = $billingid";
       
       $result = $DB->Execute($query) 
