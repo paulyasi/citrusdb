@@ -20,7 +20,7 @@
 /*----------------------------------------------------------------------------*/
 
 // indicate the release version of citrusdb
-$softwareversion = "1.3.2-GPG-TEST";
+$softwareversion = "2.0";
 
 // check that we are running php version 5 or greater
 if (version_compare(phpversion(), "5.0.0", "<")) {

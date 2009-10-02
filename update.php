@@ -609,7 +609,7 @@ if ($base->input['submit'] == "Update")
 	  echo "$query<br>\n";
 	}
 
-	if ($databaseversion == "1.3.1-GPG-TEST") {
+	if ($databaseversion == "1.3.2") {
 
 	  // change the normal card number to varchar so it can hold ***
 	  // for the truncated card numbers we show to regular users
