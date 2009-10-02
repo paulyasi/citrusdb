@@ -83,10 +83,10 @@ CREATE TABLE `billing_details` (
   `user_services_id` int(11) default NULL,
   `taxed_services_id` int(11) default NULL,
   `invoice_number` int(11) default NULL,
-  `billed_amount` float NOT NULL default '0',
-  `paid_amount` float NOT NULL default '0',
+  `billed_amount` decimal(9,2) NOT NULL default '0',
+  `paid_amount` decimal(9,2) NOT NULL default '0',
   `batch` int(11) NOT NULL default '0',
-  `refund_amount` float NOT NULL default '0',
+  `refund_amount` decimal(9,2) NOT NULL default '0',
   `refunded` enum('y','n') NOT NULL default 'n',
   `refund_date` date NULL,
   `rerun` enum('y','n') default 'n',
@@ -119,11 +119,11 @@ CREATE TABLE `billing_history` (
   `to_date` date default '0000-00-00',
   `payment_due_date` date default NULL,
   `details` varchar(32) default NULL,
-  `new_charges` float NOT NULL default '0',
-  `past_due` float default '0',
-  `late_fee` float NOT NULL default '0',
-  `tax_due` float NOT NULL default '0',
-  `total_due` float NOT NULL default '0',
+  `new_charges` decimal(9,2) NOT NULL default '0',
+  `past_due` decimal(9,2) default '0',
+  `late_fee` decimal(9,2) NOT NULL default '0',
+  `tax_due` decimal(9,2) NOT NULL default '0',
+  `total_due` decimal(9,2) NOT NULL default '0',
   `notes` text,
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;
@@ -213,7 +213,8 @@ CREATE TABLE `customer` (
   `removal_date` date default NULL,
   `default_billing_id` int(10) unsigned NOT NULL default '0',
   `account_manager_password` varchar(32) default NULL,
-  `cancel_reason` int(11) NULL, 
+  `cancel_reason` int(11) NULL,
+  `notes` text, 
   PRIMARY KEY  (`account_number`)
 ) TYPE=MyISAM AUTO_INCREMENT=10000 ;
 
@@ -221,7 +222,7 @@ CREATE TABLE `customer` (
 -- Dumping data for table `customer`
 -- 
 
-INSERT INTO `customer` VALUES ('example', '2005-09-25', 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'MAC', 'USA', '12345', '555-555-5555', '555-666-7777', '555-555-5556', 'example@example.com', 1, 'what question?', 'secret', NULL, NULL, 1, 'test', NULL);
+INSERT INTO `customer` VALUES ('example', '2005-09-25', 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'MAC', 'USA', '12345', '555-555-5555', '555-666-7777', '555-555-5556', 'example@example.com', 1, 'what question?', 'secret', NULL, NULL, 1, 'test', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -288,11 +289,11 @@ CREATE TABLE `general` (
   `org_zip` varchar(32) NOT NULL default '',
   `org_country` varchar(32) NOT NULL default 'USA',
   `phone_sales` varchar(32) default NULL,
-  `email_sales` varchar(32) default NULL,
+  `email_sales` varchar(128) default NULL,
   `phone_billing` varchar(32) default NULL,
-  `email_billing` varchar(32) default NULL,
+  `email_billing` varchar(128) default NULL,
   `phone_custsvc` varchar(32) default NULL,
-  `email_custsvc` varchar(32) default NULL,
+  `email_custsvc` varchar(128) default NULL,
   `ccexportvarorder` varchar(255) NOT NULL default '$mybilling_id,$invoice_number,$billing_ccnum,$billing_ccexp,$abstotal,$billing_zip,$billing_street',
   `regular_pastdue` int(11) NOT NULL default '0',
   `regular_turnoff` int(11) NOT NULL default '0',
@@ -400,6 +401,7 @@ CREATE TABLE `master_services` (
   `usage_label` varchar(32) default NULL,
   `organization_id` int(11) NOT NULL default '1',
   `carrier_dependent` enum('y','n') NOT NULL default 'n',
+  `support_notify` varchar(32) default NULL,   
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=18 ;
 
@@ -407,9 +409,9 @@ CREATE TABLE `master_services` (
 -- Dumping data for table `master_services`
 -- 
 
-INSERT INTO `master_services` VALUES (3, 'Example Service', 19.95, '1', 'example_options', 'example', 'y', 'n', '', '', '', 'username,password', 'items', 1, 'n');
-INSERT INTO `master_services` VALUES (2, 'Prorate', 1, '0', 'prorate_options', 'prorate', 'y', 'y', '', '', '', NULL, NULL,1, 'n');
-INSERT INTO `master_services` VALUES (1, 'Credit', -1, '0', 'credit_options', 'credit', 'y', 'y', 'admin', '', '', '', 'dollars',1, 'n');
+INSERT INTO `master_services` VALUES (3, 'Example Service', 19.95, '1', 'example_options', 'example', 'y', 'n', '', '', '', 'username,password', 'items', 1, 'n', '');
+INSERT INTO `master_services` VALUES (2, 'Prorate', 1, '0', 'prorate_options', 'prorate', 'y', 'y', '', '', '', NULL, NULL,1, 'n', '');
+INSERT INTO `master_services` VALUES (1, 'Credit', -1, '0', 'credit_options', 'credit', 'y', 'y', 'admin', '', '', '', 'dollars',1, 'n', '');
 
 -- --------------------------------------------------------
 
@@ -491,13 +493,13 @@ CREATE TABLE `payment_history` (
   `billing_id` int(11) NOT NULL default '0',
   `creditcard_number` varchar(16) default NULL,
   `creditcard_expire` int(4) unsigned zerofill default NULL,
-  `billing_amount` float default NULL,
+  `billing_amount` decimal(9,2) default NULL,
   `response_code` varchar(100) default NULL,
   `paid_from` date NOT NULL default '0000-00-00',
   `paid_to` date NOT NULL default '0000-00-00',
   `invoice_number` int(128) default NULL,
   `status` set('authorized','declined','pending','donotreactivate','collections','turnedoff','credit','canceled', 'cancelwfee', 'pastdue','noticesent','waiting') default NULL,
-  `payment_type` set('creditcard','check','cash','eft') default NULL,
+  `payment_type` set('creditcard','check','cash','eft','nsf','discount') default NULL,
   `check_number` varchar(32) default NULL,
   `avs_response` varchar(32) default NULL,
   PRIMARY KEY  (`id`)
@@ -682,7 +684,7 @@ CREATE TABLE `user_services` (
   `end_datetime` datetime default NULL,
   `removal_date` date default NULL,
   `salesperson` varchar(40) default NULL,
-  `usage_multiple` float NOT NULL default '1',
+  `usage_multiple` decimal(9,2) NOT NULL default '1',
   `removed` set('y','n') NOT NULL default 'n',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=41 ;
@@ -737,7 +739,7 @@ CREATE TABLE `payment_mode` (
 --
 -- Insert data into payment_mode table
 --
-INSERT INTO `payment_mode` VALUES (1, 'check'), (2, 'eft'), (3, 'cash');
+INSERT INTO `payment_mode` VALUES (1, 'check'), (2, 'eft'), (3, 'cash'), (4, 'discount');
 
 -- 
 -- Table structure for table `settings`
@@ -802,3 +804,13 @@ INSERT INTO `cancel_reason` (`id`, `reason`) VALUES
  CREATE TABLE `login_failures` (
 `ip` VARCHAR( 64 ) NOT NULL ,
 `logintime` DATETIME NOT NULL ) ENGINE = MYISAM ;
+
+--
+-- add table indexes
+--
+ALTER TABLE `user_services` ADD INDEX `master_service_id_index` ( `master_service_id` );
+ALTER TABLE `user_services` ADD INDEX `billing_id_index` ( `billing_id` );
+ALTER TABLE `billing` ADD INDEX `billing_type_index` ( `billing_type` );
+ALTER TABLE `tax_exempt` ADD INDEX `account_number_index` ( `account_number` );
+ALTER TABLE `billing_details` ADD INDEX `billing_id_index` ( `billing_id` );
+ALTER TABLE `payment_history` ADD INDEX `billing_id_index` ( `billing_id` );

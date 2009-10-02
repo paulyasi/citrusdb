@@ -84,6 +84,8 @@ print "<p><table cellpadding=5 cellspacing=1><tr bgcolor=\"#eeeeee\">
 <td><b>$l_category</b></td>
 <td><b>$l_activatenotify</b></td>
 <td><b>$l_shutoffnotify</b></td>
+<td><b>$l_modifynotify</b></td>
+<td><b>$l_supportnotify</b></td>
 <td></td><tr bgcolor=\"#eeeeee\">";
 
         // get the list of users from the table
@@ -102,13 +104,18 @@ print "<p><table cellpadding=5 cellspacing=1><tr bgcolor=\"#eeeeee\">
 	$category = $myresult['category'];
 	$activate_notify = $myresult['activate_notify'];
 	$shutoff_notify = $myresult['shutoff_notify'];
+	$modify_notify = $myresult['modify_notify'];
+	$support_notify = $myresult['support_notify'];
 
 	if($category <> $previouscategory) {
-		print "<tr bgcolor=\"#dddddd\"><td colspan=8><b>$category</b></td></tr>\n";
+		print "<tr bgcolor=\"#dddddd\"><td colspan=10><b>$category</b></td></tr>\n";
 		$previouscategory = $category;
 	}
 
-	print "<tr bgcolor=\"#eeeeee\"><td>$id</td><td>$description</td><td>$pricerate</td><td>$frequency</td><td>$category</td><td>$activate_notify</td><td>$shutoff_notify</td><td><a href=\"index.php?load=services&tooltype=module&edit=on&sid=$id&type=tools\">$l_edit</a></td><tr bgcolor=\"#eeeeee\">\n";
+	print "<tr bgcolor=\"#eeeeee\"><td>$id</td><td>$description</td><td>$pricerate</td><td>$frequency</td><td>$category</td><td>$activate_notify</td><td>$shutoff_notify</td>
+<td>$modify_notify</td>
+<td>$support_notify</td>
+<td><a href=\"index.php?load=services&tooltype=module&edit=on&sid=$id&type=tools\">$l_edit</a></td><tr bgcolor=\"#eeeeee\">\n";
 }
 }
 ?>

@@ -15,20 +15,25 @@ if (!defined("INDEX_CITRUS")) {
         exit;
 }
 
-// check that the user has admin privileges
-$query = "SELECT * FROM user WHERE username='$user'";
-$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-$result = $DB->Execute($query) or die ("$l_queryfailed");
-$myresult = $result->fields;
-if ($myresult['admin'] == 'n') {
-	echo '$l_youmusthaveadmin<br>';
-        exit; 
-}
 
 // GET Variables
 if (!isset($base->input['filename'])) { $base->input['filename'] = ""; }
 $filename = $base->input['filename'];
 
+// check if it is a pdf file that we allow anyone to open
+// or something else that only admin can open
+$filetype = substr($filename,-3);
+if (($filetype != "pdf") AND ($filename != "summary.csv")) {
+  // check that the user has admin privileges
+  $query = "SELECT * FROM user WHERE username='$user'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $myresult = $result->fields;
+  if ($myresult['admin'] == 'n') {
+    echo "$l_youmusthaveadmin<br>";
+    exit; 
+  }
+ }
 
 // get the path_to_citrus
 	$query = "SELECT path_to_ccfile FROM settings WHERE id = 1";

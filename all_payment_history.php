@@ -45,7 +45,7 @@ $query = "SELECT p.id p_id, p.creation_date p_cdate, p.payment_type ".
   "FROM payment_history p ".
   "LEFT JOIN billing b ON p.billing_id = b.id ".
   "LEFT JOIN customer c ON b.account_number = c.account_number ".
-  "WHERE b.account_number = '$account_number' ORDER BY p.id DESC LIMIT 24";
+  "WHERE b.account_number = '$account_number' ORDER BY p.id DESC";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 
@@ -127,18 +127,18 @@ while ($myresult = $result->FetchRow()) {
   $myuserresult = $userresult->fields;
   
   if (($amount > 0) AND ($nsfcount < 3)
-      AND (($type == 'check') OR ($type == 'cash') OR ($type == 'eft') OR ($type == 'discount'))) {
+      AND (($type == 'check') OR ($type == 'cash') OR ($type == 'eft'))) {
     if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
       echo "<a href=\"index.php?load=billing&type=module&nsf=on=&".
 	"paymentid=$id&amount=$amount&invoicenum=$invoice_number&".
-	"billingid=$billingid\" target=\"_parent\" style=\"font-size: 8pt;\">$l_mark_as_nsf</a>";    }
+	"billingid=$billingid\" target=\"_parent\" style=\"font-size: 8pt;\">Mark as NSF</a>";    }
     $nsfcount++;
   }
 
   if (($status == $l_pastdue) OR ($status == $l_turnedoff) OR ($status == $l_canceled) OR ($status == $l_declined) OR ($status == $l_waiting) OR ($status == $l_noticesent) OR ($status == $l_cancelwithfee)) {
     if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
       echo "<a href=\"index.php?load=billing&type=module&deletepayment=on=&".
-	"paymentid=$id\" target=\"_parent\" style=\"font-size: 8pt;\">$l_delete</a>";
+	"paymentid=$id\" target=\"_parent\" style=\"font-size: 8pt;\">Delete</a>";
     }
   }
 
@@ -151,14 +151,13 @@ while ($myresult = $result->FetchRow()) {
   if (($amount > 0) AND ($status == $l_authorized)) {
     echo "<a href=\"index.php?load=receipt&type=fs&".
       "paymentid=$id&amount=$amount&invoicenum=$invoice_number&".
-      "billingid=$billingid&date=$date\" target=\"_parent\" style=\"font-size: 8pt;\">$l_receipt</a>";     
+      "billingid=$billingid&date=$date\" target=\"_parent\" style=\"font-size: 8pt;\">Receipt</a>";     
   }
   
   print "</td>";
  }
 
 
-echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"index.php?load=all_payment_history&type=fs&account_number=$account_number\">$l_showall...</a></td>";
 echo '</table>';
 ?>
 </body>

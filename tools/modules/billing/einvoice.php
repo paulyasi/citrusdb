@@ -117,7 +117,7 @@ if ($submit) {
 
 		// get the org billing email address for from address		
 		$query = "SELECT g.org_name, g.org_street, g.org_city, ".
-		  "g.org_state, g.org_zip, g.email_billing ".
+		  "g.org_state, g.org_zip, g.phone_billing, g.email_billing ".
 		  "FROM billing b ".
 		  "LEFT JOIN general g ON g.id = b.organization_id  ".
 		  "WHERE b.id = $invoice_billing_id";
@@ -130,6 +130,8 @@ if ($submit) {
 		$org_city = $mybillingresult['org_city'];
 		$org_state = $mybillingresult['org_state'];
 		$org_zip = $mybillingresult['org_zip'];
+		$phone_billing = $mybillingresult['phone_billing'];
+		
 
 		// get the total due from the billing_history
 		$query = "SELECT total_due FROM billing_history ".
@@ -144,7 +146,8 @@ if ($submit) {
 		  "$total_due $l_to_lc \n\n".
 		  "$org_name\n".
 		  "$org_street\n".
-		  "$org_city $org_state $org_zip\n\n".
+		  "$org_city $org_state $org_zip\n".
+		  "$phone_billing\n\n".
 		  "$l_email_heading_include.\n\n";
 
 		// HTML Email Headers
@@ -194,7 +197,7 @@ echo "</select></td><tr>
 	</table></form>";
 
  	// print the date range form
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form2\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form2\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=billing>
 	<input type=hidden name=tooltype value=module>
 	<input type=hidden name=type value=tools>
@@ -235,7 +238,7 @@ echo "</select></td><tr>
 	</table><p>";
 
 // or ask the the single billing ID they want to invoice
-echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\">
+echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=billing>
 	<input type=hidden name=tooltype value=module>
 	<input type=hidden name=type value=tools>
@@ -248,7 +251,7 @@ echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\">
 	</table></form>";
 
 // or ask what customer id they want to invoice (uses the default_billing_id)
-echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\">
+echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=billing>
 	<input type=hidden name=tooltype value=module>
 	<input type=hidden name=type value=tools>
@@ -259,6 +262,15 @@ echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\">
 	</td><tr>
 	<td></td><td><input type=\"submit\" name=\"submit\" value=\"$l_submit\"></td>
 	</table></form>";
+
+	// print the WaitingMessage
+	echo "<div id=\"WaitingMessage\" style=\"border: 0px double black; ".
+	  "background-color: #fff; position: absolute; text-align: center; ".
+	  "top: 50px; width: 550px; height: 300px;\">".
+	  "<BR><BR><BR><h3>$l_processing...</h3>".
+	  "<p><img src=\"images/spinner.gif\"></p>".
+	  "</div>";
+ 
 }
 
 ?>

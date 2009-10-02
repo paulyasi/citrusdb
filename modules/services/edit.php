@@ -171,8 +171,21 @@ if ($save) {
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=delete value=on>";
-  print "<input name=deletenow type=submit value=\" $l_yes \" ".
+  print "<input name=deletenow type=submit value=\" $l_yes, automatic removal\" ".
     "class=smallbutton></form></td>";
+
+  // if they hit yes without automatic removal, this will sent them into the delete.php file
+  // and remove the service
+
+  
+  print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\">".
+    "<input type=hidden name=optionstable value=$optionstable>";
+  print "<input type=hidden name=userserviceid value=$userserviceid>";
+  print "<input type=hidden name=load value=services>";
+  print "<input type=hidden name=type value=module>";
+  print "<input type=hidden name=delete value=on>";
+  print "<input name=deletenoauto type=submit value=\" $l_yes, no removal \" ".
+    "class=smallbutton></form></td>"; 
   
   // if they hit no, send them back to the service edit screen
 
@@ -237,7 +250,7 @@ if ($save) {
   }
 	
   // edit the things in the options table
-  print "<h4>$l_edit: $servicedescription ($service_org_name)".
+  print "<h4>$l_edit: $userserviceid $servicedescription ($service_org_name)".
     "&nbsp;&nbsp;&nbsp; $l_createdon: $creationdate</h4>".
     "<form action=\"index.php\"><table width=720 cellpadding=5 cellspacing=1 ".
     "border=0>";
@@ -278,6 +291,11 @@ if ($save) {
 	    "<td bgcolor=\"#ddddee\"><textarea cols=40 rows=6 ".
 	    "name=\"$fieldname\">$myresult[$i]</textarea>";
 	  echo "</td><tr>";
+	} elseif ($fieldname == "description"){
+	  echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
+	    "<td bgcolor=\"#ddddee\"><input size=40 maxlength=44 type=text name=\"$fieldname\" ".
+	    "value=\"$myresult[$i]\">";
+	  echo "</td><tr>";
 	} else {
 	  echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 	    "<td bgcolor=\"#ddddee\"><input type=text name=\"$fieldname\" ".
@@ -286,19 +304,22 @@ if ($save) {
 	  // list any applicable options url links
 	  $query = "SELECT * FROM options_urls WHERE fieldname = '$fieldname'";
 	  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	  $urlresult = $DB->Execute($query) or die ("$l_queryfailed");
-	  $urlmyresult = $urlresult->fields;	
-	
-	  // assign the query from the search to the query string
-	  // replace the s1 thru s5 etc place holders with the actual variables
-	  $s1 = $myresult[$i];
-	  $myurl = $urlmyresult['url'];
-	  $urlname = $urlmyresult['urlname'];
-	  $url = str_replace("%s1%", $s1, $myurl);
-	  if ($url) {
-	    echo "&nbsp;&nbsp; <a href=# ".
-	      "onclick=\"popupPage('$url')\">$urlname</a>";
-	  }	
+	  $urlresult = $DB->Execute($query) or die ("URL $l_queryfailed");
+	  $j = $i + 1; // to get the next field for multi field queries
+	  while ($urlmyresult = $urlresult->FetchRow()) {	  	    
+	    // assign the query from the search to the query string
+	    // replace the s1 and s2 place holders with the actual variables
+	    $s1 = $myresult[$i];
+	    $s2 = $myresult[$j];
+	    $url = $urlmyresult['url'];
+	    $urlname = $urlmyresult['urlname'];
+	    $url = str_replace("%s1%", $s1, $url);
+	    $url = str_replace("%s2%", $s2, $url);
+	    if ($url) {
+	      echo "&nbsp;&nbsp; <a href=# ".
+		"onclick=\"popupPage('$url')\">$urlname</a>";
+	    }
+	  }
 	  echo "</td><tr>\n";
 	}
 	$fieldlist .= ',' . $fieldname;
@@ -458,13 +479,13 @@ if ($save) {
     $master_service_id = $myresult['master_service_id'];
     $service_description = $myresult['service_description'];
 
-    // print a list of services that share the same attributes
+    // print a list of services that share the same attributes and organization_id
         
     print "<select name=master_service_id><option selected ".
       "value=$master_service_id>$service_description ($l_current)</option>\n";
 	
     $query = "SELECT * FROM master_services ".
-      "WHERE options_table = '$optionstable'";
+      "WHERE options_table = '$optionstable' AND organization_id = $service_org_id";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $result = $DB->Execute($query) or die ("$l_queryfailed");
     while ($myresult = $result->FetchRow()) {
@@ -482,6 +503,128 @@ if ($save) {
       "value=\"$l_change\" class=smallbutton></td></table></form>";
   } // end if options_table
 
+
+
+  /*--------------------------------------------------------------------------*/
+  //
+  // print the whole customer history for this service
+  //
+  /*--------------------------------------------------------------------------*/
+  echo "<table cellspacing=0 cellpadding=0 border=0>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=60>".
+    "<b>$l_ticketnumber</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=150>".
+    "<b>$l_datetime</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=70>".
+    "<b>$l_createdby</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=70>".
+    "<b>$l_notify</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=60>".
+    "<b>$l_status</b></td>".
+    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=261>".
+    "<b>$l_service</b></td>";
+  
+  $query = "SELECT  ch.id, ch.creation_date, ".
+    "ch.created_by, ch.notify, ch.status, ch.description, ch.linkname, ".
+    "ch.linkname, ch.linkurl, ch.user_services_id, us.master_service_id, ".
+    "ms.service_description FROM customer_history ch ".
+    "LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+    "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+    "WHERE ch.user_services_id = '$userserviceid' ORDER BY ch.creation_date DESC";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $linecount = 0;
+  while ($myresult = $result->FetchRow()) {
+    $id = $myresult['id'];
+    $creation_date = $myresult['creation_date'];
+    $created_by = $myresult['created_by'];
+    $notify = $myresult['notify'];
+    $status = $myresult['status'];
+    $description = $myresult['description'];
+    $linkname = $myresult['linkname'];
+    $linkurl = $myresult['linkurl'];
+    $serviceid = $myresult['user_services_id'];
+    $service_description = $myresult['service_description'];
+    
+    // translate the status
+    switch($status) {
+    case 'automatic':
+      $status = $l_automatic;
+      break;
+    case 'not done':
+      $status = $l_notdone;
+      break;
+    case 'pending':
+      $status = $l_pending;
+      break;
+    case 'completed':
+      $status = $l_completed;
+      break;
+    }
+    
+    // alternate line colors
+    if ($linecount & 1) {
+      print "<tr bgcolor=\"#ffffee\">";
+    } else {
+      print "<tr bgcolor=\"#ffffdd\">";
+    }
+    
+    
+    // THIS WILL NOT BE BLOCKED ANYMORE, ESPECIALLY WHEN THE SUBNOTES ARE ADDED
+    // BEING ABLE TO CLICK ON TICKETS WILL BE A REQUIRED FEATURE
+    // if the user is and admin or manager then have the ability to click a
+    // link and open the ticket editor
+    // also allow users to edit their own notes
+    //  $query = "SELECT * FROM user WHERE username='$user'";
+    //$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    //$userresult = $DB->Execute($query) or die ("$l_queryfailed");
+    //$myuserresult = $userresult->fields;
+    //$showall_permission = false;
+    //if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')
+    //    OR ($user == $created_by)) {
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\"><a target=\"_parent\" ". 
+      "href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
+      "$id</a> &nbsp;</td>";
+    //} else {
+    //print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+    //  "padding-bottom: 2px; font-size: 9pt;\">$id &nbsp;</td>";
+    //}
+    
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$creation_date &nbsp;</td>";
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$created_by &nbsp;</td>";
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt;font-weight: bold;\">$notify &nbsp;</td>";
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$status &nbsp;</td>";
+    print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
+      "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">".
+      "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
+    
+    if ($linkurl) {
+      print "<a href=\"$linkurl\">$linkname</a>";
+    }
+    
+  print "</td>";
+  
+  // alternate line colors
+  if ($linecount & 1) {
+    print "<tr bgcolor=\"#ffffee\">";
+  } else {
+    print "<tr bgcolor=\"#ffffdd\">";
+  }
+  
+  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description</td>";
+  
+  // increment line count to make even/odd coloring
+  $linecount++;
+  }
+  
+  echo '</table>';
+  
+  
 } else if ($exempt) {
   // ask the user for customer tax id, and exempt id expiration date
   print "<a href=\"index.php?load=services&type=module\">[ $l_undochanges ]</a>";

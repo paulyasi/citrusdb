@@ -227,7 +227,7 @@ else {
 // select the organizations from a list
 
 // ask for the billing date that they want to invoice
-  echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=exportcc>
 	<input type=hidden name=type value=tools>
 	<table>";
@@ -252,13 +252,13 @@ echo "</select></td><tr>
 	,'anchor1','yyyy-MM-dd'); return false;\"
 	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</A>
 	</td><tr>
-	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\" id=SubmitButton>
+	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\">
 	</td>
 	</form>
 	</table><br><br><br>";
 	
 	// print the date range form
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form2\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form2\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=exportcc>
 	<input type=hidden name=type value=tools>
 	<table>";
@@ -291,10 +291,18 @@ echo "</select></td><tr>
 	</td>
 
 	<tr>
-	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\" id=SubmitButton>
+	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\">
 	</td>
 	</form>
 	</table><p>";
+
+	// print the WaitingMessage
+	echo "<div id=\"WaitingMessage\" style=\"border: 0px double black; ".
+	  "background-color: #fff; position: absolute; text-align: center; ".
+	  "top: 50px; width: 550px; height: 300px;\">".
+	  "<BR><BR><BR><h3>$l_processing...</h3>".
+	  "<p><img src=\"images/spinner.gif\"></p>".
+	  "</div>";	
 }
 
 ?>

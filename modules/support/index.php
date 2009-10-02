@@ -113,8 +113,10 @@ else if ($delete)
 else if ($pallow_view)
 {
 
-  // if it is regarding a service, get the service description
-  $query = "SELECT us.id, us.master_service_id, ms.id, ms.service_description ".
+  // if it is regarding a service,
+  // get the service description and support_notify
+  $query = "SELECT us.id, us.master_service_id, ms.id, ".
+    "ms.service_description, ms.support_notify ".
     "FROM user_services us ".
     "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
     "WHERE us.id = '$user_services_id' LIMIT 1";
@@ -122,7 +124,8 @@ else if ($pallow_view)
   $result = $DB->Execute($query) or die ("this $l_queryfailed");
   $myresult = $result->fields;	
   $service_description = $myresult['service_description'];
-
+  $support_notify = $myresult['support_notify'];
+  
   // print the form
   echo "
 <a href=\"index.php?load=customer&type=module\">[ $l_undochanges ]</a> &nbsp; 
@@ -135,7 +138,7 @@ else if ($pallow_view)
 "; //end
 
         print "<select name=\"notify\">\n";
-	print "<option></option>\n";
+	print "<option value=\"$support_notify\">$support_notify</option>\n";
 	print "<option value=\"nobody\">$l_nobody</option>\n";
 	print "<optgroup label=\"$l_groups\">\n";
 	// print the list of groups

@@ -138,7 +138,7 @@ echo "$adds ADDs\n";
 //
 // if the account has an authorized status payment_history today and 
 // it's previous payment_history was bad: 
-// (declined, turnedoff, canceled, cancelwfee, collections)
+// (turnedoff, canceled, cancelwfee, collections)
 // or if they are in waiting status today
 /*-------------------------------------------------------------------*/
 
@@ -146,8 +146,8 @@ echo "$adds ADDs\n";
 $query = "SELECT p.billing_id, b.id, b.account_number ".
   "FROM payment_history p ".
   "LEFT JOIN billing b ON p.billing_id = b.id ".
-  "WHERE '$today' = creation_date ".
-  "AND status = 'authorized' OR status = 'waiting'";
+  "WHERE p.creation_date = '$today' ".
+  "AND p.status = 'authorized'";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 
@@ -166,8 +166,8 @@ while ($myresult = $result->FetchRow()) {
   $historyresult = $DB->Execute($query) or die ("$l_queryfailed");
   $myhistoryresult = $historyresult->fields;
   $secondstatus = $myhistoryresult['status'];
-  if ($secondstatus == "declined"
-      OR $secondstatus == "turnedoff" 
+  if ($secondstatus == "turnedoff" 
+      OR $secondstatus == "waiting" 
       OR $secondstatus == "collections" 
       OR $secondstatus == "cancelwfee" 
       OR $secondstatus == "canceled") {
@@ -182,7 +182,7 @@ while ($myresult = $result->FetchRow()) {
       "m.id m_id, m.pricerate m_pricerate, ".
       "m.frequency m_freq, ".
       "m.activation_string m_activation_string, ".
-      "m.category m_category, ".
+      "m.category m_category, m.activate_notify m_activate_notify, ".
       "m.options_table m_options_table, c.name c_name, ".
       "c.company c_company, c.street c_street, c.city c_city, ".
       "c.state c_state, c.country c_country, ".
@@ -211,6 +211,7 @@ while ($myresult = $result->FetchRow()) {
       $customer_zip = $myserviceresult['c_zip'];
       $category = $myserviceresult['m_category'];
       $removed = $myserviceresult['u_rem']; // y or n
+      $activate_notify = $myserviceresult['m_activate_notify'];
 	
       // query this with the option_table for 
       // that service to get the 
@@ -251,6 +252,16 @@ while ($myresult = $result->FetchRow()) {
       if ($removed <> 'y') {
 	fwrite($handle, $newline); // write to the file
 	$enables++;
+
+	// CREATE TICKET TO the activate_notify user if there is one
+	if ($activate_notify) {
+	  $notify = "$activate_notify";
+	  $description = "$newline";
+	  $status = "not done";
+	  create_ticket($DB, $user, $notify, $account_number, $status,
+			$description, NULL, NULL, NULL, $user_services_id);
+	}
+	
       }
     } //endwhile
   } // endif
@@ -406,7 +417,7 @@ while ($myresult = $result->FetchRow()) {
       $linkname = $mynotice->pdfname;
       $contactemail = $mynotice->contactemail;
       $linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
-      $notify = "$default_billing_group";
+      $notify = "";
       $description = "Past Due Notice Sent $contactemail $url";
       $status = "not done";
       // CREATE TICKET TO default_billing_group
@@ -613,11 +624,11 @@ while ($myresult = $result->FetchRow()) {
       // SEND CANCEL NOTICE BY BOTH PRINT and EMAIL
       $mynotice = new notice('cancel',$billing_id, 'both', $payment_due_date, $turnoff_date, $cancel_date);
       
-      $linkname = $mynotice->pdfname;
-      $contactemail = $mynotice->contactemail;     
+      $linkname = $mynotice->pdfname;      
+      $contactemail = $mynotice->contactemail;
       $linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
       $notify = "$default_billing_group";
-      $description = "Cancellation Notice Sent $contactemail $url";
+      $description = "Turnoff and Sent Cancellation Notice to $contactemail";
       $status = "not done";
       // CREATE TICKET TO default_billing_group about turn off
       create_ticket($DB, $user, $notify, $account_number, $status,
@@ -747,46 +758,58 @@ while ($myresult = $result->FetchRow()) {
   $dependent = carrier_dependent($account_number);
   
   if ($dependent == false) {
-    
-    // initialize the removed services boolean
-    $removed_services = false;
-    
-    $query = "SELECT * FROM user_services us ".
-      "WHERE account_number = $account_number AND removed <> 'y'";
+
+    // check recent history to see if we already set them to be canceled or waiting
+    $query = "SELECT status FROM payment_history ".
+      "WHERE billing_id = $billing_id ORDER BY id DESC LIMIT 1";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-    $removedresult = $DB->Execute($query) or die ("$l_queryfailed");
+    $statusresult = $DB->Execute($query) or die ("$l_queryfailed");
+    $mystatusresult = $statusresult->fields;
+    $mystatus = $mystatusresult['status'];
     
-    while ($myserviceresult = $removedresult->FetchRow()) {
-      $userserviceid = $myserviceresult['id'];
-
-      // TODO: CREATE TICKET TO SHUTOFF_NOTIFY IF NECESSARY
-      // FOR EACH SERVICE THAT IS ABOUT TO BE DELETED
-      
-      delete_service($userserviceid,'removed', $today);
-      
-      // set this to true since services were removed
-      $removed_services = true;
-    }
+    if ($mystatus <> "collections"
+	AND $mystatus <> "canceled"
+	AND $mystatus <> "cancelwfee"
+	AND $mystatus <> "waiting") {
     
-    if ($removed_services) {
-      // set cancel date and removal date of customer record
-      $query = "UPDATE customer ".
-	"SET cancel_date = CURRENT_DATE, ".
-	"removal_date = CURRENT_DATE ".
-	"WHERE account_number = $account_number";
-      $cancelresult = $DB->Execute($query) 
-	or die ("$l_queryfailed");
+      // initialize the removed services boolean
+      $removed_services = false;
       
-      // set the payment_history status to canceled      
-      $query = "INSERT INTO payment_history ".
-	"(creation_date, billing_id, status) ".
-	"VALUES (CURRENT_DATE,'$billing_id','canceled')";
-      $paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
-
-    }
+      $query = "SELECT * FROM user_services us ".
+	"WHERE account_number = $account_number AND removed <> 'y'";
+      $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+      $removedresult = $DB->Execute($query) or die ("$l_queryfailed");
+      
+      while ($myserviceresult = $removedresult->FetchRow()) {
+	$userserviceid = $myserviceresult['id'];
+	
+	// TODO: CREATE TICKET TO SHUTOFF_NOTIFY IF NECESSARY
+	// FOR EACH SERVICE THAT IS ABOUT TO BE DELETED
+	
+	delete_service($userserviceid,'removed', $today);
+	
+	// set this to true since services were removed
+	$removed_services = true;
+      }
     
-  }
-  
+      if ($removed_services) {
+	// set cancel date and removal date of customer record
+	$query = "UPDATE customer ".
+	  "SET cancel_date = CURRENT_DATE, ".
+	  "removal_date = CURRENT_DATE ".
+	  "WHERE account_number = $account_number";
+	$cancelresult = $DB->Execute($query) 
+	  or die ("$l_queryfailed");
+	
+	// set the payment_history status to canceled      
+	$query = "INSERT INTO payment_history ".
+	  "(creation_date, billing_id, status) ".
+	  "VALUES (CURRENT_DATE,'$billing_id','canceled')";
+	$paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
+	
+      }
+    }    
+  }  
  }	
 
 
@@ -819,46 +842,66 @@ while ($myresult = $result->FetchRow()) {
   $dependent = carrier_dependent($account_number);
   
   if ($dependent == true) {
-    
-    // initialize the removed services boolean
-    $removed_services = false;
-    
-    $query = "SELECT * FROM user_services us ".
-      "WHERE account_number = $account_number AND removed <> 'y'";
+
+    // check recent history to see if we already set them to be canceled or waiting
+    $query = "SELECT status FROM payment_history ".
+      "WHERE billing_id = $billing_id ORDER BY id DESC LIMIT 1";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-    $removedresult = $DB->Execute($query) or die ("$l_queryfailed");
+    $statusresult = $DB->Execute($query) or die ("$l_queryfailed");
+    $mystatusresult = $statusresult->fields;
+    $mystatus = $mystatusresult['status'];
     
-    while ($myserviceresult = $removedresult->FetchRow()) {
-      $userserviceid = $myserviceresult['id'];
-
-      delete_service($userserviceid,'removed', $today);
+    if ($mystatus <> "collections"
+	AND $mystatus <> "canceled"
+	AND $mystatus <> "cancelwfee"
+	AND $mystatus <> "waiting") {
+    
+      // initialize the removed services boolean
+      $removed_services = false;
       
-      // set this to true since services were removed
-      $removed_services = true;
-    }
-    
-    if ($removed_services) {
-      // set cancel date and removal date of customer record
-      $query = "UPDATE customer ".
-	"SET cancel_date = CURRENT_DATE, ".
-	"removal_date = CURRENT_DATE ".
-	"WHERE account_number = $account_number";
-      $cancelresult = $DB->Execute($query) or die ("$l_queryfailed");
+      $query = "SELECT * FROM user_services us ".
+	"WHERE account_number = $account_number AND removed <> 'y'";
+      $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+      $removedresult = $DB->Execute($query) or die ("$l_queryfailed");
       
-      // set the payment_history status to cancelwfee 
-      $query = "INSERT INTO payment_history ".
-	"(creation_date, billing_id, status) ".
-	"VALUES (CURRENT_DATE,'$billing_id','cancelwfee')";
-      $paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
+      while ($myserviceresult = $removedresult->FetchRow()) {
+	$userserviceid = $myserviceresult['id'];
+	
+	delete_service($userserviceid,'removed', $today);
+	
+	// set this to true since services were removed
+	$removed_services = true;
+      }
+      
+      if ($removed_services) {
+	// set cancel date and removal date of customer record
+	$query = "UPDATE customer ".
+	  "SET cancel_date = CURRENT_DATE, ".
+	  "removal_date = CURRENT_DATE ".
+	  "WHERE account_number = $account_number";
+	$cancelresult = $DB->Execute($query) or die ("$l_queryfailed");
+	
+	// set the payment_history status to cancelwfee 
+	$query = "INSERT INTO payment_history ".
+	  "(creation_date, billing_id, status) ".
+	  "VALUES (CURRENT_DATE,'$billing_id','cancelwfee')";
+	$paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
+	
+	
+	// send a collections notice by both print and email
+	$mynotice = new notice('collections',$billing_id, 'both', $payment_due_date, $turnoff_date, $cancel_date);
+	$linkname = $mynotice->pdfname;      
+	$contactemail = $mynotice->contactemail;
+	$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+	$notify = "$default_billing_group";
+	$description = "Cancel w/Fee Collections Notice Sent $contactemail $url";
+	$status = "not done";
+	// CREATE TICKET TO default_billing_group about cancelwfee
+	create_ticket($DB, $user, $notify, $account_number, $status,
+		    $description, $linkname, $linkurl);
 
-      // notify default_billing_group      
-      $notify = "$default_billing_group";
-      $description = "Cancel w/Fee";
-      $status = "not done";
-      // CREATE TICKET TO default_billing_group about cancelwfee
-      create_ticket($DB, $user, $notify, $account_number, $status, $description);
-    }
-    
+      }
+    }    
   }
   
  }	

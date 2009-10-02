@@ -1,5 +1,6 @@
 <?php   
-// Copyright (C) 2003-2007  Paul Yasi <paul@citrusdb.org>, read the README file for more information
+// Copyright (C) 2003-2007  Paul Yasi (paul at citrusdb.org)
+// read the README file for more information
 
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
@@ -21,6 +22,8 @@ if (!isset($base->input['save'])) { $base->input['save'] = ""; }
 if (!isset($base->input['resetaddr'])) { $base->input['resetaddr'] = ""; }
 if (!isset($base->input['rerun'])) { $base->input['rerun'] = ""; }
 if (!isset($base->input['turnoff'])) { $base->input['turnoff'] = ""; }
+if (!isset($base->input['cancelwfee'])) { $base->input['cancelwfee'] = ""; }
+if (!isset($base->input['collections'])) { $base->input['collections'] = ""; }
 if (!isset($base->input['waiting'])) { $base->input['waiting'] = ""; }
 
 
@@ -29,8 +32,17 @@ $save = $base->input['save'];
 $resetaddr = $base->input['resetaddr'];
 $rerun = $base->input['rerun'];
 $turnoff = $base->input['turnoff'];
+$cancelwfee = $base->input['cancelwfee'];
+$collections = $base->input['collections'];
 $waiting = $base->input['waiting'];
+$createinvoice = $base->input['createinvoice'];
+$cancelnotice = $base->input['cancelnotice'];
+$shutoffnotice = $base->input['shutoffnotice'];
+$collectionsnotice = $base->input['collectionsnotice'];
 $nsf = $base->input['nsf'];
+$receipt = $base->input['receipt'];
+$deletepayment = $base->input['deletepayment'];
+
 if ($edit)
 {
     if ($pallow_modify)
@@ -73,6 +85,20 @@ else if ($turnoff)
 		include('./modules/billing/turnoff.php');    
 	}  else permission_error();
 }
+else if ($cancelwfee) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/cancelwfee.php');    
+	}  else permission_error();
+}
+else if ($collections) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/collections.php');    
+	}  else permission_error();
+}
 else if ($waiting) 
 {    
 	if ($pallow_modify)    
@@ -87,8 +113,50 @@ else if ($nsf)
 		include('./modules/billing/nsf.php');    
 	}  else permission_error();
 }
+else if ($receipt) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/receipt.php');    
+	}  else permission_error();
+}
+else if ($deletepayment) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/deletepayment.php');    
+	}  else permission_error();
+}
+else if ($createinvoice) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/createinvoice.php');    
+	}  else permission_error();
+}
+else if ($cancelnotice) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/cancelnotice.php');    
+	}  else permission_error();
+}
+else if ($shutoffnotice) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/shutoffnotice.php');    
+	}  else permission_error();
+}
+else if ($collectionsnotice) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/collectionsnotice.php');    
+	}  else permission_error();
+}
 
-else if ($pallow_view)
+ else if ($pallow_view)
 {
 // get the billing id
 $query = "SELECT * FROM customer WHERE account_number = $account_number";
@@ -160,10 +228,17 @@ $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $userresult = $DB->Execute($query) or die ("$l_queryfailed");
 $myuserresult = $userresult->fields;
 if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
-	echo "<a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | 
+	echo "<br><a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | 
 	<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">$l_refundreport</a> | 
 	<a href=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">$l_turnoff</a> | 
-	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a>
+	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a> | 
+	<a href=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">$l_cancelwithfee</a> |
+<a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">$l_collections</a> |
+
+	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">$l_createinvoice</a> | 
+	<a href=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">$l_cancel_notice</a> | 
+	<a href=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">$l_shutoff_notice</a> | 
+	<a href=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">$l_collections_notice</a>
 ";
 }
 

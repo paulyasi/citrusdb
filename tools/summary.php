@@ -31,6 +31,19 @@ if ($myresult['manager'] == 'n') {
 if (!isset($base->input['organization_id'])) { $base->input['organization_id'] = "1"; }
 $organization_id = $base->input['organization_id'];
 
+
+// select the path_to_ccfile from settings
+$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$ccfileresult = $DB->Execute($query)
+  or die ("$l_queryfailed");
+$myccfileresult = $ccfileresult->fields;
+$path_to_ccfile = $myccfileresult['path_to_ccfile'];
+
+// open the file
+$filename = "$path_to_ccfile/summary.csv";
+$handle = fopen($filename, 'w'); // open the file
+
 // ask for the organization that they want to view
 echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\">
 	<input type=hidden name=load value=summary>
@@ -83,17 +96,26 @@ echo "</select><input type=\"SUBMIT\" NAME=\"submit\" value=\"$l_submit\"><p>";
 		$servicefrequency = $myresult['m_frequency'];
 		$org_name = $myresult['g_org_name'];
 		echo "<td>$service</td><td>$org_name</td><td>$count</td><tr>";
+		$newline = "$service,$count\n";
+		fwrite($handle, $newline); // write to the file
+
 		// check if the are a paid monthly service and add to count
 		if (($pricerate > 0) AND ($billingmethod <> 'free') AND ($servicefrequency > 0)) {
 			$paidsubscriptions = $paidsubscriptions + $count;
 		}		
 	}
-	echo "</table><p>
+fclose($handle);
+// print link to download the summary file
+echo "<a href=\"index.php?load=tools/downloadfile&type=dl&filename=summary.csv\"><u class=\"bluelink\">$l_download summary.csv</u></a><p>";
+
+
+echo "</table><p>
+
 	$l_paidsubscriptions: $paidsubscriptions
 	<p>";
 
-	// get the total services for each billing type
-	$query = "SELECT m.id m_id, m.service_description m_servicedescription, m.pricerate m_pricerate, 
+// get the total services for each billing type
+$query = "SELECT m.id m_id, m.service_description m_servicedescription, m.pricerate m_pricerate, 
 	m.frequency m_frequency, m.organization_id m_organization_id, g.org_name g_org_name,  
 	u.removed u_removed, u.master_service_id u_msid, count(bt.method) AS TotalNumber, 
 	b.id b_id, b.billing_type b_billing_type, bt.id bt_id, bt.method bt_method 
@@ -104,16 +126,45 @@ echo "</select><input type=\"SUBMIT\" NAME=\"submit\" value=\"$l_submit\"><p>";
 	LEFT JOIN general g ON m.organization_id = g.id
 	WHERE u.removed <> 'y' AND bt.method <> 'free' AND b.organization_id = '$organization_id' AND m.pricerate > '0' 
 		AND m.frequency > '0' GROUP BY bt.method ORDER BY TotalNumber";
-	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
-	echo "<blockquote>";
-	while ($myresult = $result->FetchRow()) {
-		$count = $myresult['TotalNumber'];
-		$billingmethod = $myresult['bt_method'];
-		echo "$billingmethod: $count<br>\n";	
-	}
-	echo "</blockquote>";
-	
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$result = $DB->Execute($query) or die ("$l_queryfailed");
+echo "<blockquote>";
+while ($myresult = $result->FetchRow()) {
+  $count = $myresult['TotalNumber'];
+  $billingmethod = $myresult['bt_method'];
+  echo "$billingmethod: $count<br>\n";	
+ }
+echo "</blockquote>";
+
+
+/*-----------------------------------------------*/
+// get the number of services in each category
+/*-----------------------------------------------*/
+$query = "SELECT m.id m_id, m.service_description m_servicedescription, ".
+  "m.pricerate m_pricerate, m.category m_category, m.frequency m_frequency, ".
+  "m.organization_id m_organization_id, g.org_name g_org_name, ".
+  "u.removed u_removed, u.master_service_id u_msid, ".
+  "count(bt.method) AS TotalNumber, ".
+  "b.id b_id, b.billing_type b_billing_type, bt.id bt_id, bt.method bt_method ".
+  "FROM user_services u ".
+  "LEFT JOIN master_services m ON u.master_service_id = m.id ".
+  "LEFT JOIN billing b ON b.id = u.billing_id ".
+  "LEFT JOIN billing_types bt ON b.billing_type = bt.id ".
+  "LEFT JOIN general g ON m.organization_id = g.id ".
+  "WHERE u.removed <> 'y' AND b.organization_id = '$organization_id' ".
+  "AND m.frequency > '0' GROUP BY m.category ORDER BY TotalNumber";
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$result = $DB->Execute($query) or die ("$l_queryfailed");
+echo "<p><b>Service Category Totals: </b><br><i style=\"font-size: 8pt;\">total monthly services in each category, includes declined and turned off pending payment, does not include canceled services</i></p><blockquote>";
+while ($myresult = $result->FetchRow()) {
+  $count = $myresult['TotalNumber'];
+  $category = $myresult['m_category'];
+  echo "$category: $count<br>\n";	
+ }
+echo "</blockquote>";
+
+
+
 	// get the number of customers
     $query = "SELECT COUNT(*) FROM customer WHERE cancel_date is NULL";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);

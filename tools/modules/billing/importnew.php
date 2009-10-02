@@ -2,7 +2,7 @@
 <body bgcolor="#ffffff">
 <?php
 echo "<h3>$l_importnewaccounts</h3>";
-// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org) 
+// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
 // Read the README file for more information
 
 // TODO:

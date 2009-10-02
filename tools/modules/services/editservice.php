@@ -26,6 +26,7 @@ if (!isset($base->input['hide_online'])) { $base->input['hide_online'] = ""; }
 if (!isset($base->input['activate_notify'])) { $base->input['activate_notify'] = ""; }
 if (!isset($base->input['shutoff_notify'])) { $base->input['shutoff_notify'] = ""; }
 if (!isset($base->input['modify_notify'])) { $base->input['modify_notify'] = ""; }
+if (!isset($base->input['support_notify'])) { $base->input['support_notify'] = ""; }
 if (!isset($base->input['activation_string'])) { $base->input['activation_string'] = ""; }
 if (!isset($base->input['usage_label'])) { $base->input['usage_label'] = ""; }
 if (!isset($base->input['carrier_dependent'])) {$base->input['carrier_dependent'] = ""; }
@@ -42,6 +43,7 @@ $hide_online = $base->input['hide_online'];
 $activate_notify = $base->input['activate_notify'];
 $shutoff_notify = $base->input['shutoff_notify'];
 $modify_notify = $base->input['modify_notify'];
+$support_notify = $base->input['support_notify'];
 $activation_string = $base->input['activation_string'];
 $usage_label = $base->input['usage_label'];
 $carrier_dependent = $base->input['carrier_dependent'];
@@ -69,6 +71,7 @@ if ($submit) {
     "activate_notify = '$activate_notify', ".
     "shutoff_notify = '$shutoff_notify', ".
     "modify_notify = '$modify_notify',".
+    "support_notify = '$support_notify',".    
     "activation_string = '$activation_string', ".
     "usage_label = '$usage_label', ".
     "carrier_dependent = '$carrier_dependent' ".
@@ -94,6 +97,7 @@ $hide_online = $myresult['hide_online'];
 $activate_notify = $myresult['activate_notify'];
 $shutoff_notify = $myresult['shutoff_notify'];
 $modify_notify = $myresult['modify_notify'];
+$support_notify = $myresult['support_notify'];
 $activation_string = $myresult['activation_string'];
 $usage_label = $myresult['usage_label'];
 $organization_id = $myresult['organization_id'];
@@ -147,6 +151,10 @@ VALUE=\"$service_description\" MAXLENGTH=\"128\"><P>
         <INPUT TYPE=\"text\" NAME=\"shutoff_notify\" VALUE=\"$shutoff_notify\"><P>                                    
 	<B>$l_modifynotify</B>         
         <INPUT TYPE=\"text\" NAME=\"modify_notify\" VALUE=\"$modify_notify\"><P>
+
+	<B>$l_supportnotify</B>         
+<INPUT TYPE=\"text\" NAME=\"support_notify\" VALUE=\"$support_notify\"><P>
+
 	<b>$l_activationstring</b>
 	<input type=text name=activation_string value=\"$activation_string\">
 	<p>

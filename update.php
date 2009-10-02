@@ -609,6 +609,115 @@ if ($base->input['submit'] == "Update")
 	  echo "$query<br>\n";
 	}
 
+
+	if ($databaseversion = "1.3.1") {
+
+	  $query = "ALTER TABLE `user_services` ".
+	    "ADD INDEX `master_service_id_index` ( `master_service_id` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `user_services` ".
+	    "ADD INDEX `billing_id_index` ( `billing_id` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `billing` ".
+	    "ADD INDEX `billing_type_index` ( `billing_type` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `tax_exempt` ".
+	    "ADD INDEX `account_number_index` ( `account_number` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `billing_details` ".
+	    "ADD INDEX `billing_id_index` ( `billing_id` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query ="ALTER TABLE `payment_history` ".
+	    "ADD INDEX `billing_id_index` ( `billing_id` )";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  // set the version, using the new settings field
+	  $query = "UPDATE `settings` SET `version` = '1.3.2' ".
+	    "WHERE `id` =1 LIMIT 1";		
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  // add notes field to customer table
+	  $query = "ALTER TABLE `customer` ADD `notes` TEXT NULL";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  // add support_notify field to master_services table
+	  $query = "ALTER TABLE `master_services` ADD `support_notify` VARCHAR( 32 ) NULL ;";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  // change most of the float fields to decimal type
+	  // to fix large number precision
+	  $query = "ALTER TABLE `user_services` ".
+	    "CHANGE `usage_multiple` `usage_multiple` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '1'";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `payment_history` ".
+	    "CHANGE `billing_amount` `billing_amount` ".
+	    "DECIMAL( 9, 2 ) NULL DEFAULT NULL";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE `billing_history` ".
+	    "CHANGE `new_charges` `new_charges` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `past_due` `past_due` ".
+	    "DECIMAL( 9, 2 ) NULL DEFAULT '0', ".
+	    "CHANGE `late_fee` `late_fee` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `tax_due` `tax_due` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `total_due` `total_due` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0'";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	  $query="ALTER TABLE `billing_details` ".
+	    "CHANGE `billed_amount` `billed_amount` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `paid_amount` `paid_amount` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
+	    "CHANGE `refund_amount` `refund_amount` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0'";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  $query = " ALTER TABLE `general` CHANGE ".
+	    "`email_sales` `email_sales` VARCHAR( 128 ) ".
+	    "CHARACTER SET latin1 COLLATE latin1_swedish_ci ".
+	    "NULL DEFAULT NULL , ".
+	    "CHANGE `email_billing` `email_billing` VARCHAR( 128 ) ".
+	    "CHARACTER SET latin1 COLLATE latin1_swedish_ci ".
+	    "NULL DEFAULT NULL , ".
+	    "CHANGE `email_custsvc` `email_custsvc` VARCHAR( 128 ) ".
+	    "CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  $query = "INSERT INTO `payment_mode` VALUES (NULL, 'discount')";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";	  
+
+	  $query = " ALTER TABLE `payment_history` CHANGE `payment_type` `payment_type` SET( 'creditcard', 'check', 'cash', 'eft', 'nsf', 'discount' ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL  ";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
+	}
+
 	if ($databaseversion == "1.3.2") {
 
 	  // change the normal card number to varchar so it can hold ***
@@ -639,7 +748,7 @@ if ($base->input['submit'] == "Update")
 	  
 	  
 	}
-	  
+
 	
 	echo "<center><h2>Database Updated</h2></center>";
 }
@@ -666,13 +775,13 @@ else
 	This update script only works with versions 0.9.2 or greater
 	<p>
 	Your database version: <b>$databaseversion</b><p>
-	This script will update it to version: <b>1.3.1</b></h3>";
+	This script will update it to version: <b>2.0</b></h3>";
 	echo "<p style=\"font-weight: bold;\">Upgrading version 1.3.0 or ".
 	  "older will reset the rerun dates ".
 	  "to NULL when running this upgrade script.  Please make sure you ".
 	  "check for pending reruns before running this script on an active ".
 	  "system.</p>";
-	if ($databaseversion == "1.3.1") {
+	if ($databaseversion == "2.0") {
 		echo "<p><b>Nothing to update</b>";
 	} else {
 		echo "

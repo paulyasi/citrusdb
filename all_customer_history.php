@@ -43,7 +43,7 @@ $query = "SELECT  ch.id, ch.creation_date, ".
   "ms.service_description FROM customer_history ch ".
   "LEFT JOIN user_services us ON us.id = ch.user_services_id ".
   "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-  "WHERE ch.account_number = '$account_number' ORDER BY ch.creation_date DESC LIMIT 25";
+  "WHERE ch.account_number = '$account_number' ORDER BY ch.creation_date DESC";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 $linecount = 0;
@@ -135,7 +135,6 @@ while ($myresult = $result->FetchRow()) {
   $linecount++;
  }
 
-echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"index.php?load=all_customer_history&type=fs&account_number=$account_number\">$l_showall...</a></td>";
 echo '</table>';
 
 ?>

@@ -83,6 +83,10 @@ if (!isset($base->input['payment_due_date'])
     OR $base->input['payment_due_date'] == "") { 
   $base->input['payment_due_date'] = "0000-00-00"; 
  }
+if (!isset($base->input['rerun_date']) OR
+    $base->input['rerun_date'] == "") { 
+  $base->input['rerun_date'] = "0000-00-00"; 
+ }
 
 if (!isset($base->input['contact_email'])) { $base->input['contact_email'] = ""; }
 if (!isset($base->input['notes'])) { $base->input['notes'] = ""; }
@@ -105,6 +109,7 @@ $creditcard_expire = $base->input['creditcard_expire'];
 $next_billing_date = $base->input['next_billing_date'];
 $from_date = $base->input['from_date'];
 $payment_due_date = $base->input['payment_due_date'];
+$rerun_date = $base->input['rerun_date'];
 $contact_email = $base->input['contact_email'];
 $notes = $base->input['notes'];
 $pastdue_exempt = $base->input['pastdue_exempt'];
@@ -340,7 +345,8 @@ echo "</td><tr>".
 	</td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_to $l_date</b></td>
 	<td bgcolor=\"#ddddee\">$to_date</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_paymentduedate</b></td>
+
+<td bgcolor=\"#ccccdd\"><b>$l_paymentduedate</b></td>
 	<td bgcolor=\"#ddddee\">
 	<input name=\"payment_due_date\" type=text value=\"$payment_due_date\" size=12>
 	<A HREF=\"#\"
@@ -348,6 +354,16 @@ echo "</td><tr>".
 	return false;\"
 	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</A>
 	</td><tr>
+
+<td bgcolor=\"#ccccdd\"><b>$l_rerun $l_date</b></td>
+	<td bgcolor=\"#ddddee\">
+	<input name=\"rerun_date\" type=text value=\"$rerun_date\" size=12>
+	<A HREF=\"#\"
+	onClick=\"cal.select(document.forms['form1'].rerun_date,'anchor1','yyyy-MM-dd'); 
+	return false;\"
+	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</A>
+	</td><tr>
+
 	<td bgcolor=\"#ccccdd\"><b>$l_po_number</b></td>
 	<td bgcolor=\"#ddddee\">
 	<input name=\"po_number\" type=text value=\"$po_number\"></td><tr>

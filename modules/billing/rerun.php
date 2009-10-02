@@ -103,6 +103,14 @@ if ($save) {
   echo "<td></td><td>$l_invoice</td><td>$l_id</td><td>$l_date</td>".
     "<td>$l_service</td><td>$l_price</td><tr>";
   
+  // clear the rerun date in the billing record to get ready to reset it  
+  $query = "UPDATE billing SET ".
+    "rerun_date = NULL WHERE id = '$billing_id'";
+  $updatedetail = $DB->Execute($query) or die ("Detail Update Failed");
+
+  // initialize rerun items to check later
+  $rerunitems = 0;
+    
   while ($myresult = $result->FetchRow()) {
     $detail_id = $myresult['bd_id'];
     $original_invoice_number = $myresult['original_invoice_number'];
@@ -113,15 +121,12 @@ if ($save) {
     $description = $myresult['service_description'];
 
     // clear the rerun flag on all the items shown before you allow setting
-    // of new rerun flags, also clear the rerun date in the billing record here
+    // of new rerun flags
+
     $query = "UPDATE billing_details SET ".
       "rerun = 'n' WHERE id = '$detail_id'";
     $updatedetail = $DB->Execute($query) or die ("Detail Update Failed");
 
-    $query = "UPDATE billing SET ".
-      "rerun_date = NULL WHERE id = '$billing_id'";
-    $updatedetail = $DB->Execute($query) or die ("Detail Update Failed");
-    
     // print the detail items that are unpaid and can be rerun
 
     echo "<td><input checked type=checkbox name=rerun_service_$detail_id value=\"$detail_id\"></td>\n";
@@ -136,6 +141,9 @@ if ($save) {
     $fieldname = "rerun_service_$detail_id";
 
     $fieldlist .= ',' . $fieldname;
+
+    // add to the number of items rerun
+    $rerunitems++;
   }
 
   print "<input type=hidden name=fieldlist value=$fieldlist>";
@@ -143,23 +151,30 @@ if ($save) {
   echo "</table></blockquote>\n";
   
 
-  // print the yes/no buttons
-  
-  print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
-    "<td align=right width=360>";
+  // print the yes/no buttons if there are items to rerun
+  // else print an error that there are no items to be rerun
 
-  print "<input type=hidden name=load value=billing>";
-  print "<input type=hidden name=type value=module>";
-  print "<input type=hidden name=rerun value=on>";
-  print "<input type=hidden name=billing_id value=$billing_id>";
-  print "<input name=save type=submit value=\" $l_yes \" class=smallbutton>".
-    "</form></td>";
-  print "<td align=left width=360><form style=\"margin-bottom:0;\" ".
-    "action=\"index.php\">";
-
-  print "<input type=hidden name=load value=billing>";
-  print "<input type=hidden name=type value=module>";
-  print "<input name=done type=submit value=\" $l_no  \" class=smallbutton>";
-  print "</form></td></table>";
+  if ($rerunitems > 0) {
+    
+    print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
+      "<td align=right width=360>";
+    
+    print "<input type=hidden name=load value=billing>";
+    print "<input type=hidden name=type value=module>";
+    print "<input type=hidden name=rerun value=on>";
+    print "<input type=hidden name=billing_id value=$billing_id>";
+    print "<input name=save type=submit value=\" $l_yes \" class=smallbutton>".
+      "</form></td>";
+    print "<td align=left width=360><form style=\"margin-bottom:0;\" ".
+      "action=\"index.php\">";
+    
+    print "<input type=hidden name=load value=billing>";
+    print "<input type=hidden name=type value=module>";
+    print "<input name=done type=submit value=\" $l_no  \" class=smallbutton>";
+    print "</form></td></table>";
+  } else {
+    print "<p><b>$l_rerunitemerror</b></p>";
+    
+  }
  }
 ?>

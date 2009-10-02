@@ -46,7 +46,7 @@ $query = "SELECT d.id d_id, d.billing_id d_billing_id, ".
   "LEFT JOIN master_services m ON m.id = u.master_service_id ".
   "LEFT JOIN taxed_services t ON t.id = d.taxed_services_id ".
   "LEFT JOIN tax_rates r ON t.tax_rate_id = r.id ".
-  "WHERE b.account_number = '$account_number' ORDER BY d.id DESC LIMIT 400";
+  "WHERE b.account_number = '$account_number' ORDER BY d.id DESC";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 
@@ -98,7 +98,6 @@ while ($myresult = $result->FetchRow()) {
 
  } // end while
 
-echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"index.php?load=all_billing_details&type=fs&account_number=$account_number\">$l_showall...</a></td>";
 echo '</table>';
 
 ?>

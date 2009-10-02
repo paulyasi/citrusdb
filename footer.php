@@ -15,7 +15,7 @@
 <td width="720" height="160" bgcolor="#eeeedd" valign=top>
 	<table border=0 cellpadding=0 cellspacing=0><td>
 	<?php
-	print "<iframe name=\"historyframe\" src=\"index.php?load=customer_history&type=fs&account_number=$account_number\" width=720 height=160 frameborder=0 marginwidth=0 marginheight=1 scrolling=yes></iframe>";
+	print "<iframe name=\"historyframe\" src=\"index.php?load=customer_history&type=fs&account_number=$account_number\" width=720 height=200 frameborder=0 marginwidth=0 marginheight=1 scrolling=yes></iframe>";
 	?>
 	</td></table>
 </td>

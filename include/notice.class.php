@@ -29,6 +29,7 @@ class notice
 
     //Date for today
     $this->today = date("Y-m-d");
+    $this->humanday = date("F j, Y");
     
     $this->create();
 
@@ -74,13 +75,16 @@ class notice
     $query = "SELECT bi.id bi_id, bi.account_number bi_account_number, ".
       "bi.contact_email bi_contact_email,  bi.name bi_name, ".
       "bi.company bi_company, bi.street bi_street, bi.city bi_city, ".
-      "bi.state bi_state, bi.zip bi_zip, ".
-      "ms.service_description, bd.billed_amount, bd.paid_amount, ".
+      "bi.state bi_state, bi.zip bi_zip, r.description r_description, ".
+      "ms.service_description ms_description, ".
+      "bd.taxed_services_id, bd.billed_amount, bd.paid_amount, ".
       "g.org_name, g.org_street, g.org_city, g.org_state, g.org_zip, ".
       "g.phone_billing, g.email_billing, bh.payment_due_date, bh.id bh_id ".
       "FROM billing_details bd ".
       "LEFT JOIN user_services us ON bd.user_services_id = us.id ".
       "LEFT JOIN master_services ms ON us.master_service_id = ms.id ".
+      "LEFT JOIN taxed_services t ON t.id = bd.taxed_services_id ".
+      "LEFT JOIN tax_rates r ON t.tax_rate_id = r.id ".
       "LEFT JOIN billing bi ON bd.billing_id = bi.id ".
       "LEFT JOIN billing_history bh ON bh.id = bd.invoice_number ".
       "LEFT JOIN general g ON bi.organization_id = g.id ".
@@ -118,7 +122,13 @@ class notice
       $this->contactemail = $myresult['bi_contact_email'];
       $billed_amount = round($myresult['billed_amount'], 2);
       $paid_amount = round($myresult['paid_amount'], 2);
-      $service_description = $myresult['service_description'];
+
+      // set the description for a service or a tax
+      if ($myresult['taxed_services_id']) {
+	$service_description = $myresult['r_description'];
+      } else {
+	$service_description = $myresult['ms_description'];
+      }
       
       $owed = round($billed_amount - $paid_amount, 2);
       
@@ -145,7 +155,7 @@ class notice
       eval ("\$notice_text = \"$l_notice_text_pastdue\";");
       
       // create body of message, header, footer, and content
-      $this->noticeheading = "$l_pastdue_notice\n";
+      $this->noticeheading = "$org_name\n$l_pastdue_notice\n";
 
       $this->message .= "$message_body\n\n";
       
@@ -153,10 +163,12 @@ class notice
       
       if ($billing_company) {
 	$this->message .= "$billing_company\n";
+      } else {
+	$this->message .= "\n";
       }
       
       $this->message .= "$billing_street\n";
-      $this->message .= "$billing_city $billing_state $billing_zip\n\n";
+      $this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
 
       $this->message .= "$notice_text\n\n";
 
@@ -167,16 +179,17 @@ class notice
 
       $this->message .= "$org_name\n";
       $this->message .= "$org_street\n";
-      $this->message .= "$org_state $org_zip\n";
+      $this->message .= "$org_city, $org_state $org_zip\n";
       $this->message .= "$phone_billing\n";
       break;
       
     case 'shutoff':
       // create the notice text with embedded information
-      eval ("\$notice_text = \"$l_notice_text_shutoff\";");      
+      eval ("\$notice_text = \"$l_notice_text_shutoff\";");
+      eval ("\$notice_footer_shutoff = \"$l_notice_footer_shutoff\";");            
       
       // create body of message, header, footer, and content
-      $this->noticeheading = "$l_shutoff_notice\n";
+      $this->noticeheading = "$org_name\n$l_shutoff_notice\n";
 
       $this->message .= "$message_body\n\n";
       
@@ -184,9 +197,12 @@ class notice
       
       if ($billing_company) {
 	$this->message .= "$billing_company\n";
+      } else {
+	$this->message .= "\n";
       }
+      
       $this->message .= "$billing_street\n";
-      $this->message .= "$billing_city $billing_state $billing_zip\n\n";
+      $this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
 
       $this->message .= "$notice_text\n\n";
 
@@ -197,8 +213,10 @@ class notice
       
       $this->message .= "$org_name\n";
       $this->message .= "$org_street\n";
-      $this->message .= "$org_state $org_zip\n";
-      $this->message .= "$phone_billing\n";
+      $this->message .= "$org_city, $org_state $org_zip\n";
+      $this->message .= "$phone_billing\n\n";
+
+      $this->message .= "$notice_footer_shutoff\n";
       break;      
       
     case 'cancel':
@@ -206,7 +224,7 @@ class notice
       eval ("\$notice_text = \"$l_notice_text_cancel\";");
       
       // create body of message, header, footer, and content
-      $this->noticeheading = "$l_cancel_notice\n";
+      $this->noticeheading = "$org_name\n$l_cancel_notice\n";
 
       $this->message .= "$message_body\n\n";
       
@@ -214,22 +232,59 @@ class notice
       
       if ($billing_company) {
 	$this->message .= "$billing_company\n";
+      } else {
+	$this->message .= "\n";
       }
+    
       $this->message .= "$billing_street\n";
-      $this->message .= "$billing_city $billing_state $billing_zip\n\n";
-
-      $this->message .= "$notice_text\n\n";
+      $this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
 
       $this->message .= "$l_cancel_heading:\n";
       $this->message .= "$service_list\n";
+
+      $this->message .= "$l_notice_text_footer\n\n";
+
+      $this->message .= "$notice_text\n\n";
+
+      $this->message .= "$org_name\n";
+      $this->message .= "$org_street\n";
+      $this->message .= "$org_city, $org_state $org_zip\n";
+      $this->message .= "$phone_billing\n";
+      break;
+    case 'collections':
+      // create the notice text with embedded information
+      eval ("\$notice_text = \"$l_notice_text_collections\";");
       
+      // create body of message, header, footer, and content
+      $this->noticeheading = "$org_name\n$l_collections_notice\n";
+
+      $this->message .= "$message_body\n\n";
+      
+      $this->message .= "$billing_name\n";
+      
+      if ($billing_company) {
+	$this->message .= "$billing_company\n";
+      } else {
+	$this->message .= "\n";
+      }
+    
+      $this->message .= "$billing_street\n";
+      $this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
+
+      $this->message .= "$notice_text\n\n";
+
+      $this->message .= "$l_collections_heading:\n";
+      $this->message .= "$service_list\n";
+
       $this->message .= "$l_notice_text_footer\n\n";
 
       $this->message .= "$org_name\n";
       $this->message .= "$org_street\n";
-      $this->message .= "$org_state $org_zip\n";
+      $this->message .= "$org_city, $org_state $org_zip\n";
       $this->message .= "$phone_billing\n";
-      break;      
+      break;   
+
+      
     }
   } // end create function
 
@@ -240,7 +295,8 @@ class notice
     include ("$lang");
     
     // Create Email Headers
-    $headers = "From: $this->billingemail \n";
+    $headers = "From: $this->billingemail\n";
+    // $headers .= "Cc: $this->billingemail\n";
     $to = $this->contactemail;
     $subject = "$this->noticeheading";
     
@@ -272,10 +328,14 @@ class notice
     $pdf->AddPage();
     // heading
     $pdf->SetFont('Arial', 'B', 16);
-    $pdf->Write(8, "$this->noticeheading\n\n");
+    $pdf->Write(8, "$this->noticeheading");
     // message body
-    $pdf->SetFont('Arial','B', 12);
-    $pdf->Write(5,"$this->message");
+    $pdf->SetFont('Arial','B', 10);
+    $pdf->Write(5,"$this->humanday\n");
+
+    // convert message text from html codes to ascii for pdf first
+    $message_text = html_to_ascii($this->message);
+    $pdf->Write(5,"$message_text");
     
     // write the pdf file to output
     $pdf->Output($filepath, $filedestination);
