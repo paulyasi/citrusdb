@@ -160,6 +160,50 @@ class citrus_base {
 
 } // end base class
 
+
+/*-------------------------------------------------------------------------*/
+// Ensure safe values with newlines for things like ascii armor
+/*-------------------------------------------------------------------------*/
+function safe_value_with_newlines($value)
+{
+  
+  // Do we have anything to worry about?
+  if ($value == "") {
+    // Nope
+    return "";
+  }
+  
+  // Take care of encoded spaces
+  $value = str_replace( "&#032;", " ", $value );
+  // Even sneaky ones ;)
+  $value = str_replace( chr(0xCA), "", $value );
+  
+  // Depending on environment strip slashes
+  if ( get_magic_quotes_gpc() ) {
+    $value = stripslashes($value);
+  }
+  
+  
+  // Here we convert unsafe, or convenient characters
+  $value = str_replace( "&"            , "&amp;"         , $value );
+  $value = str_replace( "<!--"         , "&#60;&#33;--"  , $value );
+  $value = str_replace( "-->"          , "--&#62;"       , $value );
+  $value = preg_replace( "/<script/i"  , "&#60;script"   , $value );
+  $value = str_replace( ">"            , "&gt;"          , $value );
+  $value = str_replace( "<"            , "&lt;"          , $value );
+  $value = str_replace( "\""           , "&quot;"        , $value );
+  $value = preg_replace( "/\\\$/"      , "&#036;"        , $value );
+  $value = str_replace( "!"            , "&#33;"         , $value );
+  $value = str_replace( "\\'"          , "'"	       , $value );
+  $value = str_replace( "\\\""         , "\""            , $value );
+  $value = str_replace( "\\"           , "&#92;"         , $value );
+  // Helps make SQL safer
+  $value = str_replace( "'"            , "&#39;"         , $value );
+  
+  return $value;
+}
+
+
 function get_nextbillingdate()
 {
 	global $DB;
