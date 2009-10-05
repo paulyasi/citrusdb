@@ -1,0 +1,74 @@
+#!/usr/local/bin/php
+<?php   
+// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
+// Read the README file for more information
+
+/*-----------------------------------------------------------------------*/
+// show the data to edit
+/*-----------------------------------------------------------------------*/
+
+// Includes and Requires
+include('./include/config.inc.php');
+include('./include/local/us-english.inc.php');
+include("$lang");
+include('./include/database.inc.php');
+include('./include/billing.inc.php');
+include('./include/support.inc.php');
+include('./include/services.inc.php');
+require './include/citrus_base.php';
+
+$query = "SELECT b.id, b.creditcard_number FROM billing b ".
+     "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+     "WHERE t.method = 'creditcard'";
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$result = $DB->Execute($query) or die ("Billing Query Failed");
+
+while ($myresult = $result->FetchRow()) {
+  $id = $myresult['id'];
+  $creditcard_number = $myresult['creditcard_number'];
+
+  //$DB->debug = true;
+  // save billing information
+  
+  // check if there is a non-masked credit card number in the input
+  // if the second cararcter is a * then it's already masked
+  
+  $newcc = FALSE; // set to false so we don't replace it unnecessarily
+  
+  // check if the credit card entered already masked
+  // eg: a replacement was not entered
+  if ($creditcard_number[1] <> '*') {
+
+    $gpgcommandline = 'echo "'.$creditcard_number.'" | '.$gpg_command.'';
+    
+    $oldhome = getEnv("HOME");
+    
+    putenv("HOME=$path_to_home");
+    $gpgresult = exec($gpgcommandline, $encrypted, $errorcode);
+    putenv("HOME=$oldhome");
+
+    $encrypted_creditcard_number = implode("\n",$encrypted);
+    
+    // wipe out the middle of the creditcard_number before it gets inserted
+    $length = strlen($creditcard_number);
+    $firstdigit = substr($creditcard_number, 0,1);
+    $lastfour = substr($creditcard_number, -4);
+    $creditcard_number = "$firstdigit" . "***********" . "$lastfour";    
+
+    //echo "$gpgcommandline<br><pre>$encrypted_creditcard_number</pre>\n";
+    
+    $query = "UPDATE billing ".
+      "SET creditcard_number = '$creditcard_number',".
+      "encrypted_creditcard_number = '$encrypted_creditcard_number'".
+      "WHERE id = $id";
+    
+    $result = $DB->Execute($query) or die ("$l_queryfailed");
+    
+  print "<h3>$billing_id creditcard updated<h3>";
+
+  } // end if creditcard_number
+
+ } // end while myresult
+
+
+?>

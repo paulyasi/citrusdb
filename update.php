@@ -740,16 +740,9 @@ if ($base->input['submit'] == "Update")
 	  // chmod 644 pubring.gpg
 	  // chmod 644 trustdb.gpg
 	  
-	  // TODO encrypt the cards inside the database at this time
+	  // TODO maybe as a seperate script, encrypt the cards inside the database at this time
 	  // and change the viewable credit card numbers to truncated numbers with ****'s
-	  
-	  
-	  // TODO change the cc export script to export the ascii armor now
-
-	  // TODO change the billing table editor to edit the encrypted_card_field for
-	  // new credit cards and update the truncated card and show the truncated card value only
-	  
-	  
+	  	  
 	}
 
 	
