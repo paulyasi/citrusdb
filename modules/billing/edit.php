@@ -128,12 +128,12 @@ if ($save) {
   // eg: a replacement was not entered
   if ($creditcard_number[1] <> '*') {
 
-    $gpgcommand = 'echo "'.$creditcard_number.'" | '.$gpg_path.' --armor --always-trust --batch --no-secmem-warning -e -u "'.$gpg_sender.'" -r "'.$gpg_recipient.'"';
+    $gpgcommandline = 'echo "'.$creditcard_number.'" | '.$gpg_command.'';
     
     $oldhome = getEnv("HOME");
     
     putenv("HOME=$path_to_home");
-    $gpgresult = exec($gpgcommand, $encrypted, $errorcode);
+    $gpgresult = exec($gpgcommandline, $encrypted, $errorcode);
     putenv("HOME=$oldhome");
 
     $encrypted_creditcard_number = implode("\n",$encrypted);
@@ -144,7 +144,7 @@ if ($save) {
     $lastfour = substr($creditcard_number, -4);
     $creditcard_number = "$firstdigit" . "***********" . "$lastfour";    
 
-    //echo "<pre>$encrypted_creditcard_number</pre>\n";
+    //echo "$gpgcommandline<br><pre>$encrypted_creditcard_number</pre>\n";
     
     $newcc = TRUE;
   }
