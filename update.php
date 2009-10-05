@@ -734,7 +734,7 @@ if ($base->input['submit'] == "Update")
 
 	  
 	  // in the instructions tell the user to
-	  // chmod the some .gpg files, move the secring off the server
+	  // chmod the some gpg files, move the secring off the server
 	  // chmod 777 .gnupg folder
 	  // chmod 604 random_seet
 	  // chmod 644 pubring.gpg

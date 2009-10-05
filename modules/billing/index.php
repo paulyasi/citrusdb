@@ -25,6 +25,7 @@ if (!isset($base->input['turnoff'])) { $base->input['turnoff'] = ""; }
 if (!isset($base->input['cancelwfee'])) { $base->input['cancelwfee'] = ""; }
 if (!isset($base->input['collections'])) { $base->input['collections'] = ""; }
 if (!isset($base->input['waiting'])) { $base->input['waiting'] = ""; }
+if (!isset($base->input['asciiarmor'])) { $base->input['asciiarmor'] = ""; }
 
 
 // GET Variables
@@ -35,6 +36,7 @@ $turnoff = $base->input['turnoff'];
 $cancelwfee = $base->input['cancelwfee'];
 $collections = $base->input['collections'];
 $waiting = $base->input['waiting'];
+$asciiarmor = $base->input['asciiarmor'];
 $createinvoice = $base->input['createinvoice'];
 $cancelnotice = $base->input['cancelnotice'];
 $shutoffnotice = $base->input['shutoffnotice'];
@@ -104,6 +106,13 @@ else if ($waiting)
 	if ($pallow_modify)    
 	{       
 		include('./modules/billing/waiting.php');    
+	}  else permission_error();
+}
+else if ($asciiarmor) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/asciiarmor.php');    
 	}  else permission_error();
 }
 else if ($nsf) 

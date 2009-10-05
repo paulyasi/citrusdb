@@ -310,6 +310,7 @@ echo "</td><tr>".
   "{ alert ('$l_notvalid'); ".
   "document.form1.creditcard_number.style.color='#EE0000';} ".
   "else { document.form1.creditcard_number.style.color='#000000'; }\">".
+  " <a href=\"index.php?load=billing&type=module&asciiarmor=on&billing_id=1\">Armor</a>".
   "</td><tr>".
   "<td bgcolor=\"#ccccdd\"><b>$l_ccexpire</b></td>".
   "<td bgcolor=\"#ddddee\">".
