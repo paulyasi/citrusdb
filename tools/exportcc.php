@@ -212,7 +212,7 @@ b.encrypted_creditcard_number b_enc_ccnum
 		// print the line in the exported data file
 		// don't print them to billing if the amount is less than or equal to zero
 		if ($precisetotal > 0) {
-		  $newline = "\"CHARGE\",$exportstring\n$encrypted_creditcard";
+		  $newline = "\"CHARGE\",$exportstring\n$encrypted_creditcard\n";
 		  fwrite($handle, $newline); // write to the file
 		}
 	} // end while

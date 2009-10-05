@@ -732,6 +732,8 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
 
+	  
+	  // in the instructions tell the user to
 	  // chmod the some .gpg files, move the secring off the server
 	  // chmod 777 .gnupg folder
 	  // chmod 604 random_seet
@@ -740,6 +742,7 @@ if ($base->input['submit'] == "Update")
 	  
 	  // TODO encrypt the cards inside the database at this time
 	  // and change the viewable credit card numbers to truncated numbers with ****'s
+	  
 	  
 	  // TODO change the cc export script to export the ascii armor now
 
