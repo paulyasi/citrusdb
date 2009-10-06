@@ -118,6 +118,7 @@ $l_changeyourpassword = "Change Your Password";
 $l_checknotes = "Check Notes";
 $l_checknumber = "Check Number";
 $l_choose = "Choose One...";
+$l_ciphertext = "Ciphertext";
 $l_city = "City";
 $l_clickheretotryagain = "Click here to try again";
 $l_collections = "Collections";
