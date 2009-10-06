@@ -4,7 +4,8 @@
 // Read the README file for more information
 
 /*-----------------------------------------------------------------------*/
-// show the data to edit
+// encrypt the credit cards in the citrus database using
+// the gpg settings from the new config file
 /*-----------------------------------------------------------------------*/
 
 // Includes and Requires
@@ -28,12 +29,9 @@ while ($myresult = $result->FetchRow()) {
   $creditcard_number = $myresult['creditcard_number'];
 
   //$DB->debug = true;
-  // save billing information
   
   // check if there is a non-masked credit card number in the input
   // if the second cararcter is a * then it's already masked
-  
-  $newcc = FALSE; // set to false so we don't replace it unnecessarily
   
   // check if the credit card entered already masked
   // eg: a replacement was not entered

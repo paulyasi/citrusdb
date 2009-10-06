@@ -740,7 +740,7 @@ if ($base->input['submit'] == "Update")
 	  // chmod 644 pubring.gpg
 	  // chmod 644 trustdb.gpg
 	  
-	  // TODO maybe as a seperate script, encrypt the cards inside the database at this time
+	  // also run the encryptcards script to encrypt the cards inside the database at this time
 	  // and change the viewable credit card numbers to truncated numbers with ****'s
 	  	  
 	}
