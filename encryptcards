@@ -40,10 +40,18 @@ while ($myresult = $result->FetchRow()) {
     $gpgcommandline = 'echo "'.$creditcard_number.'" | '.$gpg_command.'';
     
     $oldhome = getEnv("HOME");
-    
+
+    // destroy the output array before we use it again
+    unset($encrypted);
+      
     putenv("HOME=$path_to_home");
     $gpgresult = exec($gpgcommandline, $encrypted, $errorcode);
     putenv("HOME=$oldhome");
+
+    // if there is a gpg error, stop here
+    if ($errorcode > 0) {
+      die ("Credit Card Encryption Error");
+    }    
 
     $encrypted_creditcard_number = implode("\n",$encrypted);
     
@@ -56,13 +64,13 @@ while ($myresult = $result->FetchRow()) {
     //echo "$gpgcommandline<br><pre>$encrypted_creditcard_number</pre>\n";
     
     $query = "UPDATE billing ".
-      "SET creditcard_number = '$creditcard_number',".
-      "encrypted_creditcard_number = '$encrypted_creditcard_number'".
+      "SET creditcard_number = '$creditcard_number', ".
+      "encrypted_creditcard_number = '$encrypted_creditcard_number' ".
       "WHERE id = $id";
     
     $cardupdate = $DB->Execute($query) or die ("card update query failed");
     
-    print "$id creditcard updated\n";
+    print "$id creditcard updated $encrypted_creditcard_number\n";
 
   } else {
     print "$id skipped\n";
