@@ -62,10 +62,10 @@ if ($save) {
   
   print "<br><br>";
   print "<h4>Replace the ciphertext<br>(in ascii armor format)</h4>";
-  print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
-    "<td align=right width=360>";
+  print "<table cellpadding=15 cellspacing=0 border=0 width=620>".
+    "<td align=center width=360>";
   print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-  print "<textarea name=encrypted cols=80 rows=20>$encrypted_card</textarea><br>";
+  print "<textarea name=encrypted cols=70 rows=20>$encrypted_card</textarea><br>";
   print "<input type=hidden name=load value=billing>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=asciiarmor value=on>";
