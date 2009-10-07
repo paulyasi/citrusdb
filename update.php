@@ -742,7 +742,14 @@ if ($base->input['submit'] == "Update")
 	  
 	  // also run the encryptcards script to encrypt the cards inside the database at this time
 	  // and change the viewable credit card numbers to truncated numbers with ****'s
-	  	  
+
+	  // set the version number in the database to 2.0
+	  $query = "UPDATE `settings` SET `version` = '2.0' ".
+	    "WHERE `id` =1 LIMIT 1";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  
 	}
 
 	

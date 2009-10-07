@@ -136,6 +136,11 @@ if ($save) {
     $gpgresult = exec($gpgcommandline, $encrypted, $errorcode);
     putenv("HOME=$oldhome");
 
+    // if there is a gpg error, stop here
+    if ($errorcode > 0) {
+      die ("Credit Card Encryption Error");
+    }
+
     $encrypted_creditcard_number = implode("\n",$encrypted);
     
     // wipe out the middle of the creditcard_number before it gets inserted
@@ -249,7 +254,7 @@ if ($save) {
   
   echo "<table cellpadding=0 border=0 cellspacing=0 width=720>
 <td valign=top width=360>
-<form action=\"index.php?load=billing&type=module&edit=on&save=on\" name=\"form1\" AUTOCOMPLETE=\"off\">
+<form action=\"index.php?load=billing&type=module&edit=on&save=on\" name=\"form1\" AUTOCOMPLETE=\"off\" method=post>
 	<table cellpadding=5 cellspacing=1 border=0 width=360>
 	<td bgcolor=\"#ccccdd\" width=180><b>$l_id</b></td><td width=180 bgcolor=\"#ddddee\">$id</td><tr>
 	<td bgcolor=\"#ccccdd\"><b>Name</b></td><td bgcolor=\"#ddddee\">
