@@ -95,7 +95,7 @@ if ($save) {
   $result = $DB->Execute($query) or die ("Detail Query Failed"); 
   $i = 0;
 
-  print "<form style=\"margin-bottom:0;\" action=\"index.php\">\n";
+  print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>\n";
 
   echo "<blockquote><table border=1 cellpadding=1>\n";
 
