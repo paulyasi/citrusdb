@@ -134,7 +134,7 @@ else if ($pallow_view)
 <td bgcolor=\"#ccccdd\"><b>$l_createdby</b></td><td bgcolor=\"#ddddee\">$user</td><tr>
 <td bgcolor=\"#ccccdd\"><b>$l_service</b></td><td bgcolor=\"#ddddee\">$user_services_id $service_description</td><tr>
 <td bgcolor=\"#ccccdd\"><b>$l_notify</b></td><td bgcolor=\"#ddddee\">
-<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">
+<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\" method=post>
 "; //end
 
         print "<select name=\"notify\">\n";

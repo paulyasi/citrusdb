@@ -252,7 +252,7 @@ if ($save) {
   // edit the things in the options table
   print "<h4>$l_edit: $userserviceid $servicedescription ($service_org_name)".
     "&nbsp;&nbsp;&nbsp; $l_createdon: $creationdate</h4>".
-    "<form action=\"index.php\"><table width=720 cellpadding=5 cellspacing=1 ".
+    "<form action=\"index.php\" method=post><table width=720 cellpadding=5 cellspacing=1 ".
     "border=0>";
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";

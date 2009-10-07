@@ -95,7 +95,7 @@ if ($savechanges)
     "&nbsp; <a href=\"index.php?load=support&type=module&edit=on\">".
     "[ $l_checknotes ]</a>".
     "<h3>$l_ticketnumber $id</h3>".
-    "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">".
+    "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\" method=post>".
     "<table cellpadding=5 border=0 cellspacing=1 width=720>".
     "<td bgcolor=\"#ccccdd\"><b>$l_createdby</b></td>".
     "<td bgcolor=\"#ddddee\">$created_by</td><tr>".

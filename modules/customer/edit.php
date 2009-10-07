@@ -56,7 +56,8 @@ if ($base->input['billingaddress']) {
 }
 if ($base->input['save']) {
   // save customer information
-  
+  //$DB->debug = true;
+
   // GET Variables
   $name = $base->input['name'];
   $company = $base->input['company'];
@@ -204,7 +205,7 @@ echo "<a href=\"index.php?load=customer&type=module\">[ $l_undochanges ]</a>";
 
 echo "<table cellpadding=0 border=0 cellspacing=0 width=720>
 <td valign=top width=360>
-<form action=\"index.php\">
+<form action=\"index.php\" method=post>
 	<table cellpadding=5 cellspacing=1 border=0 width=360>
 	<td bgcolor=\"#ccccdd\" width=180><b>$l_signupdate</b></td><td width=180 bgcolor=\"#ddddee\">$signup_date</td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_name</b></td><td bgcolor=\"#ddddee\"><input name=\"name\" type=text value=\"$name\"></td><tr>

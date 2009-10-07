@@ -138,9 +138,10 @@ if ($save) {
 
     // if there is a gpg error, stop here
     if ($errorcode > 0) {
-      die ("Credit Card Encryption Error");
+      die ("Credit Card Encryption Error, See Webserver Log");
     }
-
+    
+    // change the ouput array into ascii ciphertext block
     $encrypted_creditcard_number = implode("\n",$encrypted);
     
     // wipe out the middle of the creditcard_number before it gets inserted
