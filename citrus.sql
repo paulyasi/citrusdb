@@ -335,7 +335,6 @@ CREATE TABLE `groups` (
 -- 
 
 INSERT INTO `groups` VALUES (9, 'users', 'admin');
-INSERT INTO `groups` VALUES (26, 'users', 'online');
 INSERT INTO `groups` VALUES (27, 'billing', 'admin');
 
 -- --------------------------------------------------------
@@ -666,7 +665,6 @@ CREATE TABLE `user` (
 -- 
 
 INSERT INTO `user` VALUES (5, 'admin', '098f6bcd4621d373cade4e832627b4f6', 'Admin User', 'y', 'y', NULL, '');
-INSERT INTO `user` VALUES (20, 'online', '81dc9bdb52d04dc20036dbd8313ed055', 'Online Request', 'n', 'n', NULL, '');
 
 -- --------------------------------------------------------
 
