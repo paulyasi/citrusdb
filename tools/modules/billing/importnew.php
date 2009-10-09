@@ -5,10 +5,6 @@ echo "<h3>$l_importnewaccounts</h3>";
 // Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
 // Read the README file for more information
 
-// TODO:
-// Update this to import the ascii armored card on a seperate line
-// instead of combined with the customer data line
-
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
 /*----------------------------------------------------------------------------*/

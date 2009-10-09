@@ -56,7 +56,6 @@ while ($myresult = $result->FetchRow()) {
     $encrypted_creditcard_number = implode("\n",$encrypted);
     
     // wipe out the middle of the creditcard_number before it gets inserted
-    $length = strlen($creditcard_number);
     $firstdigit = substr($creditcard_number, 0,1);
     $lastfour = substr($creditcard_number, -4);
     $creditcard_number = "$firstdigit" . "***********" . "$lastfour";    

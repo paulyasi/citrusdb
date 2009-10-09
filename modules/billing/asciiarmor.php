@@ -25,7 +25,6 @@ $encrypted = $_POST['encrypted'];
 $encrypted = safe_value_with_newlines($encrypted);
 
 if ($save) {
-  // TODO
   // make sure the first lines says -----BEGIN PGP MESSAGE-----
   // make sure the last line says -----END PGP MESSAGE-----
   
