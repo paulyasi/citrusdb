@@ -18,9 +18,7 @@ include('./include/support.inc.php');
 include('./include/services.inc.php');
 require './include/citrus_base.php';
 
-$query = "SELECT b.id, b.creditcard_number FROM billing b ".
-     "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-     "WHERE t.method = 'creditcard'";
+$query = "SELECT id, creditcard_number FROM billing WHERE creditcard_number IS NOT NULL AND creditcard_number <> '0'";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("Billing Query Failed");
 
