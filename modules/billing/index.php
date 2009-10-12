@@ -216,12 +216,14 @@ while ($myresult = $result->FetchRow())
 	$organization_id = $myresult['b_organization_id'];
 }
 
-// wipe out the middle of the card number
-$length = strlen($creditcard_number);
-$firstdigit = substr($creditcard_number, 0,1);
-$lastfour = substr($creditcard_number, -4);
-$creditcard_number = "$firstdigit" . "***********" . "$lastfour";
-
+// if the card number is not blank, wipe out the middle of the card number
+ if ($creditcard_number <> '') {
+   $length = strlen($creditcard_number);
+   $firstdigit = substr($creditcard_number, 0,1);
+   $lastfour = substr($creditcard_number, -4);
+   $creditcard_number = "$firstdigit" . "***********" . "$lastfour";
+ }
+ 
 // get the billing status
 $mystatus = billingstatus($default_billing_id);
 

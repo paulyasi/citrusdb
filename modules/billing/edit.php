@@ -61,11 +61,7 @@ if (!isset($base->input['country'])) { $base->input['country'] = ""; }
 if (!isset($base->input['phone'])) { $base->input['phone'] = ""; }
 if (!isset($base->input['fax'])) { $base->input['fax'] = ""; }
 if (!isset($base->input['billing_type'])) { $base->input['billing_type'] = ""; }
-
-if (!isset($base->input['creditcard_number'])
-    OR $base->input['creditcard_number'] == "") { 
-  $base->input['creditcard_number'] = "0"; 
- }
+if (!isset($base->input['creditcard_number'])) { $base->input['creditcard_number'] = ""; }
 
 if (!isset($base->input['creditcard_expire'])
     OR $base->input['creditcard_expire'] == "") { 
@@ -124,9 +120,9 @@ if ($save) {
   
   $newcc = FALSE; // set to false so we don't replace it unnecessarily
 
-  // check if the credit card entered already masked
+  // check if the credit card entered already masked and not blank
   // eg: a replacement was not entered
-  if ($creditcard_number[1] <> '*') {
+  if ($creditcard_number[1] <> '*' AND $creditcard_number <> '') {
 
     $gpgcommandline = 'echo "'.$creditcard_number.'" | '.$gpg_command.'';
     
@@ -159,6 +155,7 @@ if ($save) {
   }
 
   if ($newcc == TRUE) {
+    // insert with a new credit card and encrypted ciphertext
     $query = "UPDATE billing ".
       "SET name = '$name',".
       "company = '$company',".
@@ -181,7 +178,32 @@ if ($save) {
       "contact_email = '$contact_email', ".
       "encrypted_creditcard_number = '$encrypted_creditcard_number'".
       "WHERE id = $billing_id";
+  } elseif ($creditcard_number == '') {
+    // no card number, insert an empty NULL credit card and NULL ciphertext
+    $query = "UPDATE billing ".
+      "SET name = '$name',".
+      "company = '$company',".
+      "street = '$street',".
+      "city = '$city',".
+      "state = '$state',".
+      "zip = '$zip',".
+      "country = '$country',".
+      "phone = '$phone',".
+      "fax = '$fax',".
+      "billing_type = '$billing_type',".
+      "creditcard_number = NULL, ".
+      "creditcard_expire = NULL, ".
+      "next_billing_date = '$next_billing_date',".
+      "from_date = '$from_date',".
+      "payment_due_date = '$payment_due_date',".
+      "notes = '$notes',".
+      "pastdue_exempt = '$pastdue_exempt',".
+      "po_number = '$po_number',".
+      "contact_email = '$contact_email', ".
+      "encrypted_creditcard_number = NULL ".
+      "WHERE id = $billing_id";    
   } else {
+    // insert without changing the credit card or ciphertext
         $query = "UPDATE billing ".
       "SET name = '$name',".
       "company = '$company',".
