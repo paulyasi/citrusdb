@@ -18,7 +18,7 @@ include('./include/support.inc.php');
 include('./include/services.inc.php');
 require './include/citrus_base.php';
 
-$query = "SELECT id, creditcard_number FROM billing WHERE creditcard_number IS NOT NULL AND creditcard_number <> '0'";
+$query = "SELECT id, creditcard_number FROM billing WHERE creditcard_number IS NOT NULL AND creditcard_number <> '0' AND creditcard_number <> ''";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("Billing Query Failed");
 
@@ -35,8 +35,8 @@ while ($myresult = $result->FetchRow()) {
   // eg: a replacement was not entered
   if ($creditcard_number[1] <> '*') {
 
-    $gpgcommandline = 'echo "'.$creditcard_number.'" | '.$gpg_command.'';
-    
+    $gpgcommandline = "echo $creditcard_number | $gpg_command";
+    echo "$gpgcommandline\n";
     $oldhome = getEnv("HOME");
 
     // destroy the output array before we use it again

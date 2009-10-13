@@ -23,7 +23,7 @@ include('./include/services.inc.php');
 require './include/citrus_base.php';
 
 $query = "SELECT id, creditcard_number, encrypted_creditcard_number ".
-  "FROM billing WHERE encrypted_creditcard_number";
+  "FROM billing WHERE encrypted_creditcard_number IS NOT NULL";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("Billing Query Failed");
 
@@ -80,6 +80,9 @@ while ($myresult = $result->FetchRow()) {
     }    
 
     $decrypted_creditcard_number = implode("\n",$decrypted);
+
+    # get rid of quotes around the card number
+    $decrypted_creditcard_number = 
     
     $query = "UPDATE billing ".
       "SET creditcard_number = '$decrypted_creditcard_number' ".
