@@ -124,7 +124,7 @@ if ($save) {
   // eg: a replacement was not entered
   if ($creditcard_number[1] <> '*' AND $creditcard_number <> '') {
 
-    $gpgcommandline = 'echo "'.$creditcard_number.'" | '.$gpg_command.'';
+    $gpgcommandline = "echo $creditcard_number | $gpg_command";
     
     $oldhome = getEnv("HOME");
 
