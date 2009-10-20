@@ -734,9 +734,11 @@ if ($base->input['submit'] == "Update")
 
 	  
 	  // in the instructions tell the user to
+	  // maybe specifying the --homedir negates the need for this?
 	  // chmod the some gpg files, move the secring off the server
 	  // chmod 777 .gnupg folder
-	  // chmod 604 random_seet
+	  // chmod 604 random_seed
+	  // chmod 604 secring.gpg
 	  // chmod 644 pubring.gpg
 	  // chmod 644 trustdb.gpg
 	  

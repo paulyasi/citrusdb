@@ -1,5 +1,5 @@
 <?php
-// Copyright (C) 2002-2008  Paul Yasi <paul@citrusdb.org>
+// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -30,12 +30,16 @@ if (!isset($base->input['billingdate'])) { $base->input['billingdate'] = ""; }
 if (!isset($base->input['organization_id'])) { $base->input['organization_id'] = ""; }
 if (!isset($base->input['billingdate1'])) { $base->input['billingdate1'] = ""; }
 if (!isset($base->input['billingdate2'])) { $base->input['billingdate2'] = ""; }
+if (!isset($base->input['passphrase'])) { $base->input['passphrase'] = ""; }
 
 $submit = $base->input['submit'];
 $billingdate = $base->input['billingdate'];
 $organization_id = $base->input['organization_id'];
 $billingdate1 = $base->input['billingdate1'];
 $billingdate2 = $base->input['billingdate2'];
+$passphrase = $base->input['passphrase'];
+
+print "$billingdate $passphrase";
 
 // make sure the user is in a group that is allowed to run this
 
@@ -201,10 +205,53 @@ b.encrypted_creditcard_number b_enc_ccnum
 		$billing_todate = $myinvresult['h_to_date'];
 		$billing_payment_due_date = $myinvresult['h_payment_due_date'];
 		$precisetotal = $myinvresult['h_total_due'];
-		$encrypted_creditcard = $myinvresult['b_enc_ccnum'];
+		$encrypted_creditcard_number = $myinvresult['b_enc_ccnum'];
 
 		// get the absolute value of the total
 		$abstotal = abs($precisetotal);
+
+		// TODO: decrypt the encrypted_creditcard and replace the billing_ccnum value with it
+
+		// write the encrypted_creditcard_number to a temporary file
+		// and decrypt that file to stdout to get the CC
+		// select the path_to_ccfile from settings
+		$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$ccfileresult = $DB->Execute($query) 
+		  or die ("$l_queryfailed");
+		$myccfileresult = $ccfileresult->fields;
+		$path_to_ccfile = $myccfileresult['path_to_ccfile'];
+		
+		// open the file
+		$cipherfilename = "$path_to_ccfile/ciphertext.tmp";
+		$cipherhandle = fopen($cipherfilename, 'w');
+		
+		// write the ciphertext we want to decrypt into the file
+		fwrite($cipherhandle, $encrypted_creditcard_number);
+		
+		// close the file
+		fclose($cipherhandle);
+		
+		$gpgcommandline = "echo $passphrase | $gpg_decrypt $cipherfilename";
+		
+		$oldhome = getEnv("HOME");
+		
+		// destroy the output array before we use it again
+		unset($decrypted);
+		
+		putenv("HOME=$path_to_home");
+		$gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
+		putenv("HOME=$oldhome");
+
+		// if there is a gpg error, stop here
+		if ($errorcode > 0) {
+		  echo "$gpgcommandline<br>\n";
+		  die ("Credit Card Decryption Error");
+		}
+
+		// set the billing_ccnum to the decrypted_creditcard_number
+		$decrypted_creditcard_number = implode("\n",$decrypted);
+		$billing_ccnum = $decrypted_creditcard_number;		
 				
 		// determine the variable export order values
 		eval ("\$exportstring = \"$ccexportvarorder\";");
@@ -212,7 +259,7 @@ b.encrypted_creditcard_number b_enc_ccnum
 		// print the line in the exported data file
 		// don't print them to billing if the amount is less than or equal to zero
 		if ($precisetotal > 0) {
-		  $newline = "\"CHARGE\",$exportstring\n$encrypted_creditcard\n";
+		  $newline = "\"CHARGE\",$exportstring\n";
 		  fwrite($handle, $newline); // write to the file
 		}
 	} // end while
@@ -227,7 +274,7 @@ else {
 // select the organizations from a list
 
 // ask for the billing date that they want to invoice
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\" onsubmit=\"toggleOn();\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"POST\" name=\"form1\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=exportcc>
 	<input type=hidden name=type value=tools>
 	<table>";
@@ -252,13 +299,14 @@ echo "</select></td><tr>
 	,'anchor1','yyyy-MM-dd'); return false;\"
 	NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</A>
 	</td><tr>
+<td align=right>$l_passphrase:</td><td><input type=password name=passphrase></td><tr>
 	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\">
 	</td>
 	</form>
 	</table><br><br><br>";
 	
 	// print the date range form
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form2\" onsubmit=\"toggleOn();\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"POST\" name=\"form2\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=exportcc>
 	<input type=hidden name=type value=tools>
 	<table>";
@@ -288,9 +336,8 @@ echo "</select></td><tr>
 	onClick=\"cal.select(document.forms['form2'].billingdate2
 	,'anchorb2','yyyy-MM-dd'); return false;\"
 	NAME=\"anchorb2\" ID=\"anchorb2\" style=\"color:blue\">[$l_select]</A>
-	</td>
-
-	<tr>
+	</td><tr>
+<td align=right>$l_passphrase:</td><td><input type=password name=passphrase></td><tr>
 	<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\">
 	</td>
 	</form>

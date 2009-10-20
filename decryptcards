@@ -12,6 +12,9 @@
 // is run you'll have to move the secret keys back onto the server to run it
 /*-----------------------------------------------------------------------*/
 
+// get the passphrase from the command line
+$passphrase = $argv[1];
+
 // Includes and Requires
 include('./include/config.inc.php');
 include('./include/local/us-english.inc.php');
@@ -41,7 +44,7 @@ while ($myresult = $result->FetchRow()) {
   // eg: a replacement was not entered
   if ($creditcard_number[1] == '*') {
 
-    // TODO: write the encrypted_creditcard_number to a temporary file
+    // write the encrypted_creditcard_number to a temporary file
     // and decrypt that file to stdout to get the CC
     // select the path_to_ccfile from settings
     $query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
@@ -63,7 +66,7 @@ while ($myresult = $result->FetchRow()) {
     // close the file
     fclose($handle);
 	
-    $gpgcommandline = "$gpg_decrypt $filename";
+    $gpgcommandline = "echo $passphrase | $gpg_decrypt $filename";
     
     $oldhome = getEnv("HOME");
 
@@ -81,9 +84,6 @@ while ($myresult = $result->FetchRow()) {
 
     $decrypted_creditcard_number = implode("\n",$decrypted);
 
-    # get rid of quotes around the card number
-    $decrypted_creditcard_number = 
-    
     $query = "UPDATE billing ".
       "SET creditcard_number = '$decrypted_creditcard_number' ".
       "WHERE id = $id";

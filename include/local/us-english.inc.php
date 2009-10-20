@@ -318,6 +318,7 @@ $l_paid = "Paid";
 $l_paidamount = "Paid Amount";
 $l_paidandactive = "Paid and Still Active";
 $l_paidsubscriptions = "Paid Subscriptions";
+$l_passphrase = "Passphrase";
 $l_password = "Password";
 $l_passwordchanged = "Password Changed";
 $l_passwordsdonotmatch = "Passwords do not match";
