@@ -309,6 +309,7 @@ CREATE TABLE `general` (
   `dependent_shutoff_notice` INT NOT NULL DEFAULT '0',
   `dependent_turnoff` INT NOT NULL DEFAULT '0',
   `dependent_canceled` INT NOT NULL DEFAULT '0',
+  `exportprefix` VARCHAR( 64 ) NULL,
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=2 ;
 
@@ -316,7 +317,7 @@ CREATE TABLE `general` (
 -- Dumping data for table `general`
 -- 
 
-INSERT INTO `general` VALUES (1,'Citrus DB', '1 Citrus St.', 'Citrus City', 'Orange', '12346', 'USA', '123-456-7890', 'test@citrusdb.org', '617-555-5554', 'billing@citrusdb.org', '555-123456', 'customer@citrusdb.org', '$mybilling_id,$invoice_number,$billing_ccnum,$billing_ccexp,$abstotal,$billing_zip,$billing_street', 1, 14, 30,'','','','','Billing Notice','Please contact COMPANY at 555-555-5555 concerning an issue billing your credit card.','','','','','');
+INSERT INTO `general` VALUES (1,'Citrus DB', '1 Citrus St.', 'Citrus City', 'Orange', '12346', 'USA', '123-456-7890', 'test@citrusdb.org', '617-555-5554', 'billing@citrusdb.org', '555-123456', 'customer@citrusdb.org', '$mybilling_id,$invoice_number,$billing_ccnum,$billing_ccexp,$abstotal,$billing_zip,$billing_street', 1, 14, 30,'','','','','Billing Notice','Please contact COMPANY at 555-555-5555 concerning an issue billing your credit card.','','','','','','citrus');
 
 -- --------------------------------------------------------
 

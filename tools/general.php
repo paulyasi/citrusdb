@@ -49,6 +49,7 @@ if (!isset($base->input['collections_invoicenote'])) { $base->input['collections
 if (!isset($base->input['declined_subject'])) { $base->input['declined_subject'] = ""; }
 if (!isset($base->input['declined_message'])) { $base->input['declined_message'] = ""; }
 if (!isset($base->input['invoice_footer'])) { $base->input['invoice_footer'] = ""; }
+if (!isset($base->input['exportprefix'])) { $base->input['exportprefix'] = ""; }
 
 
 $submit = $base->input['submit'];
@@ -84,6 +85,7 @@ $collections_invoicenote = $base->input['collections_invoicenote'];
 $declined_subject = $base->input['declined_subject'];
 $declined_message = $base->input['declined_message'];
 $invoice_footer = $base->input['invoice_footer'];
+$exportprefix = $base->input['exportprefix'];
 
 
 // convert the $ccexportvarorder &#036; dollar signs back to actual dollar signs and &quot; back to quotes
@@ -158,6 +160,7 @@ default_invoicenote = '$default_invoicenote',
 	collections_invoicenote = '$collections_invoicenote',
 	declined_subject = '$declined_subject',
 	declined_message = '$declined_message',
+exportprefix = '$exportprefix',
 	invoice_footer = '$invoice_footer' WHERE id = $id";
   $result = $DB->Execute($query) or die ("Query Failed");
   
@@ -226,6 +229,7 @@ $collections_invoicenote = $myresult['collections_invoicenote'];
 $declined_subject = $myresult['declined_subject'];
 $declined_message = $myresult['declined_message'];
 $invoice_footer = $myresult['invoice_footer'];
+$exportprefix = $myresult['exportprefix'];
 
 // print the general variables in a form
 	
@@ -276,6 +280,10 @@ echo "<hr><h2>$org_name</h2>
         <B>$l_creditcardexportvars</B></td><td>
         <INPUT TYPE=\"TEXT\" NAME=\"ccexportvarorder\" VALUE=\"$ccexportvarorder\" SIZE=\"50\" MAXLENGTH=\"255\">
         </td><tr><td>
+        <B>$l_exportfileprefix</B></td><td>
+        <INPUT TYPE=\"TEXT\" NAME=\"exportprefix\" VALUE=\"$exportprefix\" SIZE=\"32\" MAXLENGTH=\"64\">
+        </td><tr><td>
+
 
 	<B>$l_pastduedays</B></td><td>
         $l_pastdue: <INPUT TYPE=\"TEXT\" NAME=\"regular_pastdue\" VALUE=\"$regular_pastdue\" SIZE=\"2\" MAXLENGTH=\"3\"> &nbsp; 

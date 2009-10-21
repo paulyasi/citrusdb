@@ -208,6 +208,7 @@ $l_exempt = "Exempt";
 $l_exemptreport = "Exempt Report";
 $l_expirationdate = "Expiration Date";
 $l_exportcreditcards = "Export Credit Cards";
+$l_exportfileprefix = "Export File Prefix";
 $l_extended = "extended";
 $l_fax = "Fax";
 $l_fileuploaded = "File Uploaded";

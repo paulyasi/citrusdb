@@ -143,19 +143,20 @@ if ($submit) {
 	$path_to_ccfile = $myccfileresult['path_to_ccfile'];	
 
 	// select the info from general to get the path_to_ccfile
-	$query = "SELECT ccexportvarorder FROM general WHERE id = '$organization_id'";
+	$query = "SELECT ccexportvarorder,exportprefix FROM general WHERE id = '$organization_id'";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$ccvarresult = $DB->Execute($query) 
 		or die ("$l_queryfailed");
 	$myccvarresult = $ccvarresult->fields;
-	$ccexportvarorder = $myccvarresult['ccexportvarorder'];	
+	$ccexportvarorder = $myccvarresult['ccexportvarorder'];
+	$exportprefix = $myccvarresult['exportprefix'];	
 	
 	// convert the $ccexportvarorder &#036; dollar signs back to actual dollar signs and &quot; back to quotes
 	$ccexportvarorder = str_replace( "&#036;"           , "$"        , $ccexportvarorder );
 	$ccexportvarorder = str_replace( "&quot;"           , "\\\""        , $ccexportvarorder );
 
 	// open the file
-	$filename = "$path_to_ccfile/export$batchid.csv";
+	$filename = "$path_to_ccfile" . "/" . "$exportprefix" . "export" . "$batchid.csv";
 	$handle = fopen($filename, 'w'); // open the file
 
 	// query the batch for the invoices to do
@@ -267,7 +268,7 @@ b.encrypted_creditcard_number b_enc_ccnum
 	// close the file
 	fclose($handle); // close the file
 
-	echo "$l_wrotefile $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=export$batchid.csv\"><u class=\"bluelink\">$l_download export$batchid.csv</u></a><p>";	
+	echo "$l_wrotefile $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=$exportprefix" . "export" . "$batchid.csv\"><u class=\"bluelink\">$l_download" . "$exportprefix" . "export" . "$batchid.csv</u></a><p>";	
  } // end if totalall
 }
 else {

@@ -745,6 +745,11 @@ if ($base->input['submit'] == "Update")
 	  // also run the encryptcards script to encrypt the cards inside the database at this time
 	  // and change the viewable credit card numbers to truncated numbers with ****'s
 
+	  // add the export prefix field that holds a prefix for the organization being exported
+	  $query = "ALTER TABLE `general` ADD `exportprefix` VARCHAR( 64 ) NULL ;";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+	  
 	  // set the version number in the database to 2.0
 	  $query = "UPDATE `settings` SET `version` = '2.0' ".
 	    "WHERE `id` =1 LIMIT 1";
