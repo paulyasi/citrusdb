@@ -171,9 +171,9 @@ if ($submit) {
 	if ($line[0] == "-----END PGP MESSAGE-----") {
 	  // TODO: insert the whole ascii armor data ($armordata)
 	  // into the billing table encrypted_creditcard_number field
-	  $query = "";
-	  echo "$armordata";
-	  
+	  $query = "UPDATE billing SET encrypted_creditcard_number = '$armordata' WHERE id = $billingid";
+	  $result = $DB->Execute($query) or die ("billing card update $l_queryfailed");  
+	  //echo "$armordata";	  
 	  
 	  // reset line count and other markers when done
 	  echo "RESET LINECOUNT<p>";
