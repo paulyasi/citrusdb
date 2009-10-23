@@ -256,6 +256,7 @@ $l_logintext = "Enter your username and password";
 $l_logout = "Logout";
 $l_manager = "Manager";
 $l_mark_as_nsf = "Mark as NSF";
+$l_masked_ccnumber = "Masked Credit Card Number";
 $l_membername = "Member Name";
 $l_method = "Method";
 $l_method_warning = "You must manually process a refund for this billing method";

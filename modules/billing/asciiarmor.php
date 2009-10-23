@@ -68,7 +68,7 @@ if ($save) {
     "<td align=center width=360>";
   print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
   print "<textarea name=encrypted cols=70 rows=20>$encrypted_card</textarea><br>";
-  print "$l_creditcard: <input type=text name=creditcard_number value=\"$creditcard_number\"><br>";  
+  print "$l_masked_ccnumber: <input type=text name=creditcard_number value=\"$creditcard_number\"><br>";  
   print "<input type=hidden name=load value=billing>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=asciiarmor value=on>";
