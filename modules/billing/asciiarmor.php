@@ -20,6 +20,7 @@ if (!defined("INDEX_CITRUS")) {
 // GET Variables
 if (!isset($base->input['billing_id'])) { $base->input['billing_id'] = ""; }
 $billing_id = $base->input['billing_id'];
+$creditcard_number = $base->input['creditcard_number'];
 
 $encrypted = $_POST['encrypted'];
 $encrypted = safe_value_with_newlines($encrypted);
@@ -41,9 +42,10 @@ if ($save) {
   }
   
   
-  // set the account payment_history to waiting
+  // update the billing record with the new info
   $query = "UPDATE billing SET ".
-    "encrypted_creditcard_number = '$encrypted' ".
+    "encrypted_creditcard_number = '$encrypted', ".
+    "creditcard_number = '$creditcard_number' ".
     "WHERE id = '$billing_id' LIMIT 1";
   $billingupdate = $DB->Execute($query) or die ("$l_queryfailed");
 
@@ -52,12 +54,13 @@ if ($save) {
 
 } else {
 
-  $query = "SELECT encrypted_creditcard_number FROM billing ".
+  $query = "SELECT encrypted_creditcard_number, creditcard_number FROM billing ".
     "WHERE id = '$billing_id'";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("Armor Query Failed");
   $myresult = $result->fields;	
   $encrypted_card = $myresult['encrypted_creditcard_number'];
+  $creditcard_number = $myresult['creditcard_number'];
   
   print "<br><br>";
   print "<h4>Replace the ciphertext<br>(in ascii armor format)</h4>";
@@ -65,6 +68,7 @@ if ($save) {
     "<td align=center width=360>";
   print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
   print "<textarea name=encrypted cols=70 rows=20>$encrypted_card</textarea><br>";
+  print "$l_creditcard: <input type=text name=creditcard_number value=\"$creditcard_number\"><br>";  
   print "<input type=hidden name=load value=billing>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=asciiarmor value=on>";
