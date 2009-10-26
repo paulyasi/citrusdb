@@ -92,6 +92,7 @@ CREATE TABLE `billing_details` (
   `rerun_date` date NULL, 
   `payment_applied` date NULL,
   `original_invoice_number` int(11) NULL,
+  `payment_history_id` int(11) NULL,
   PRIMARY KEY  (`id`),
   KEY `creation_date` (`creation_date`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;

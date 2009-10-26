@@ -38,6 +38,10 @@ function card_approved($DB, $transaction_code, $billing_id, $cardnumber,
 			'$cardnumber','$cardexp','$response_code','$amount',
 			'authorized','$billingmethod','$avs_response')";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
+
+  // get the id of the payment_history entry so it can be associated with
+  // the billing_detail items that it paid for
+  $payment_history_id = $DB->Insert_ID();
   
   // update the next_billing_date, to_date, 
   // from_date, and payment_due_date for prepay/prepaycc 
@@ -80,7 +84,8 @@ function card_approved($DB, $transaction_code, $billing_id, $cardnumber,
       $fillamount = round($owed + $paid_amount,2);
       $query = "UPDATE billing_details ".
 	"SET paid_amount = '$fillamount', ".
-	"payment_applied = CURRENT_DATE ".
+	"payment_applied = CURRENT_DATE, ".
+	"payment_history_id = '$payment_history_id' ".
 	"WHERE id = $id";
       $greaterthanresult = $DB->Execute($query) 
 	or die ("$l_queryfailed");
@@ -92,6 +97,7 @@ function card_approved($DB, $transaction_code, $billing_id, $cardnumber,
       $query = "UPDATE billing_details ".
 	"SET paid_amount = '$fillamount', ".
 	"payment_applied = CURRENT_DATE ".
+	"payment_history_id = '$payment_history_id' ".	
 	"WHERE id = $id";
       $lessthanresult = $DB->Execute($query) 
 	or die ("$l_queryfailed");

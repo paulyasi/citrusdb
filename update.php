@@ -716,6 +716,23 @@ if ($base->input['submit'] == "Update")
 	  echo "$query<br>\n";
 	  
 	}
+
+	if ($databaseversion = "1.3.2") {
+
+
+	  $query = "ALTER TABLE `billing_details` ADD `payment_history_id` ".
+	    "INT NULL ;";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
+	  // set the version, using the new settings field
+	  $query = "UPDATE `settings` SET `version` = '1.3.3' ".
+	    "WHERE `id` =1 LIMIT 1";		
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";	  
+	  
+	}
+	
 	echo "<center><h2>Database Updated</h2></center>";
 }
 else 
@@ -741,13 +758,13 @@ else
 	This update script only works with versions 0.9.2 or greater
 	<p>
 	Your database version: <b>$databaseversion</b><p>
-	This script will update it to version: <b>1.3.2</b></h3>";
+	This script will update it to version: <b>1.3.3</b></h3>";
 	echo "<p style=\"font-weight: bold;\">Upgrading version 1.3.0 or ".
 	  "older will reset the rerun dates ".
 	  "to NULL when running this upgrade script.  Please make sure you ".
 	  "check for pending reruns before running this script on an active ".
 	  "system.</p>";
-	if ($databaseversion == "1.3.2") {
+	if ($databaseversion == "1.3.3") {
 		echo "<p><b>Nothing to update</b>";
 	} else {
 		echo "
