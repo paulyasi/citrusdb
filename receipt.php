@@ -56,16 +56,18 @@ echo "$l_paid: $amount on $human_date for:<p>";
 
 // get the resulting list of services that have payment applied with
 // the matching payment_history_id
-
+//$DB->debug = true;
 
 $query = "SELECT bd.original_invoice_number, bd.paid_amount,".
-  "bd.billed_amount, ms.service_description FROM ".
+  "bd.billed_amount, ms.service_description, tr.description FROM ".
   "billing_details bd ".
   "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
   "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-  "WHERE bd.payment_history_id = '$paymentid'";
+  "LEFT JOIN taxed_services ts ON ts.id = bd.taxed_services_id ".
+  "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+  "WHERE bd.payment_history_id = '$paymentid' ORDER BY bd.taxed_services_id";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-$result = $DB->Execute($query) or die ("invoice1 Query Failed");
+$result = $DB->Execute($query) or die ("Receipt Query Failed");
 
 echo "<table>";
 echo "<td>$l_invoice</td><td>$l_description</td><td>$l_paid</td><td>$l_stillowed</td><tr>";
@@ -73,13 +75,18 @@ echo "<td>$l_invoice</td><td>$l_description</td><td>$l_paid</td><td>$l_stillowed
 while ($myresult = $result->FetchRow()) {
   $invoice = $myresult['original_invoice_number'];
   $description = $myresult['service_description'];
+  $tax_description = $myresult['description'];
   $paid_amount = sprintf("%.2f",$myresult['paid_amount']);
   $billed_amount = sprintf("%.2f",$myresult['billed_amount']);  
 
   $owed_amount = sprintf("%.2f",$billed_amount - $paid_amount);
 
+  if ($tax_description) {
+    // print the tax as description instead
+  echo "<td>$invoice</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><td>$owed_amount</td><tr>";
+  } else {
   echo "<td>$invoice</td><td>$description</td><td>$paid_amount</td><td>$owed_amount</td><tr>";
-  
+  }
  }
 echo "</table>";
 
