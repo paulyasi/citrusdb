@@ -43,7 +43,7 @@ $org_name = $myresult['org_name'];
 
 echo "<h2>$org_name</h2>".
 "<h3>$l_paymentreceipt</h3>".
-"$l_paymentid: $paymentid<br><br>\n\n".
+"$l_accountnumber: $billing_account_number<br><br>\n\n".
 "$billing_name<br>".
 "$billing_company<br>".
 "$billing_street<br>".
