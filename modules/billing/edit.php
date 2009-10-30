@@ -126,14 +126,14 @@ if ($save) {
 
     $gpgcommandline = "echo $creditcard_number | $gpg_command";
     
-    $oldhome = getEnv("HOME");
+    //$oldhome = getEnv("HOME");
 
     // destroy the output array before we use it again
     unset($encrypted);
     
-    putenv("HOME=$path_to_home");
+    //putenv("HOME=$path_to_home");
     $gpgresult = exec($gpgcommandline, $encrypted, $errorcode);
-    putenv("HOME=$oldhome");
+    //putenv("HOME=$oldhome");
 
     // if there is a gpg error, stop here
     if ($errorcode > 0) {

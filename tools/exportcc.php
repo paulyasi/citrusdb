@@ -235,14 +235,14 @@ b.encrypted_creditcard_number b_enc_ccnum
 		
 		$gpgcommandline = "echo $passphrase | $gpg_decrypt $cipherfilename";
 		
-		$oldhome = getEnv("HOME");
+		//$oldhome = getEnv("HOME");
 		
 		// destroy the output array before we use it again
 		unset($decrypted);
 		
-		putenv("HOME=$path_to_home");
+		//putenv("HOME=$path_to_home");
 		$gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
-		putenv("HOME=$oldhome");
+		//putenv("HOME=$oldhome");
 
 		// if there is a gpg error, stop here
 		if ($errorcode > 0) {
