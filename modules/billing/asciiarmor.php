@@ -26,21 +26,33 @@ $encrypted = $_POST['encrypted'];
 $encrypted = safe_value_with_newlines($encrypted);
 
 if ($save) {
+
+
   // make sure the first lines says -----BEGIN PGP MESSAGE-----
   // make sure the last line says -----END PGP MESSAGE-----
   
-  $encrypted_line = explode("\n", $encrypted);
-  $firstline = rtrim($encrypted_line[0]); // rtrim to remove the newline character at the end
-  $lastline = array_pop($encrypted_line); // do not rtrim since no newline should be here
+  $encrypted_lines = explode("\n", $encrypted);
+  $firstline = rtrim($encrypted_lines[0]); // rtrim to remove the newline character at the end
+  $lastline = array_pop($encrypted_lines); // do not rtrim since no newline should be here
+  
   if ($firstline <> "-----BEGIN PGP MESSAGE-----") {
     echo "\"$firstline\" ";
-    die ("Error in ciphertext format");
+    die ("Error first line of ciphertext format");
   }
   if ($lastline <> "-----END PGP MESSAGE-----") {
     echo "\"$lastline\" ";
-    die ("Error in ciphertext format");
+    die ("Error last line of  ciphertext format");
   }
   
+  // make sure each line is no more than 65 characters long (includes newline)
+  foreach ($encrypted_lines as $line) {
+    $length = strlen($line);
+    //echo "$line<br>\n";
+    if ($length > 65) {
+      die ("Error in ciphertext format lines");
+    }
+  }
+
   
   // update the billing record with the new info
   $query = "UPDATE billing SET ".

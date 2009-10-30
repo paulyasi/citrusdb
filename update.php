@@ -740,7 +740,7 @@ if ($base->input['submit'] == "Update")
 	  // chmod 604 random_seed
 	  // chmod 604 secring.gpg
 	  // chmod 644 pubring.gpg
-	  // chmod 644 trustdb.gpg
+	  // chmod 666 trustdb.gpg
 	  
 	  // also run the encryptcards script to encrypt the cards inside the database at this time
 	  // and change the viewable credit card numbers to truncated numbers with ****'s
