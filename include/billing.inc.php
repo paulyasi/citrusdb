@@ -855,6 +855,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
   /*------------------------------------------------------------*/
   
   // convert dates to human readable form
+  $billing_mydate = humandate($mydate, $lang);
   $billing_fromdate = humandate($billing_fromdate, $lang);
   $billing_todate = humandate($billing_todate, $lang);
   $billing_payment_due_date = humandate($billing_payment_due_date, $lang);
@@ -883,12 +884,12 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $pdf->SetXY(10,20);
     $pdf->SetFont('Arial','',9);    
     $pdf->MultiCell(80,4,"$org_street\n$org_city, $org_state $org_zip\n$phone_billing\n$email_billing",0);
-    $pdf->Rect(135,10,1,30,"F");
+    $pdf->Rect(135,10,1,36,"F");
 
     //$pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip",0);
     $pdf->SetXY(140,10);
     $pdf->SetFontSize(10);
-    $pdf->MultiCell(70,6,"$l_accountnumber: $billing_acctnum\n$l_invoicenumber: $invoiceid\n$billing_fromdate $l_to $billing_todate\n$l_paymentdue: $billing_payment_due_date\n$l_total: $billing_total_due",0);
+    $pdf->MultiCell(70,6,"$billing_mydate\n$l_accountnumber: $billing_acctnum\n$l_invoicenumber: $invoiceid\n$billing_fromdate $l_to $billing_todate\n$l_paymentdue: $billing_payment_due_date\n$l_total: $billing_total_due",0);
     $pdf->SetXY(10,60);
     $pdf->SetFontSize(10);
 
@@ -910,7 +911,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $pdf->Cell(50,5,"$l_amount");
     
   } else {
-    $output = "$l_accountnumber: $billing_acctnum\n\n";
+    $output = "$billing_mydate\n$l_accountnumber: $billing_acctnum\n\n";
     $output .= "$l_invoicenumber: $invoiceid\n";
     $output .= "$billing_fromdate - $billing_todate \n";
     $output .= "$l_paymentduedate: $billing_payment_due_date\n";
@@ -1191,6 +1192,7 @@ function outputextendedinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
   /*------------------------------------------------------------*/
   
   // convert dates to human readable form
+  $billing_mydate = humandate($mydate, $lang);
   $billing_fromdate = humandate($billing_fromdate, $lang);
   $billing_todate = humandate($billing_todate, $lang);
   $billing_payment_due_date = humandate($billing_payment_due_date, $lang);
