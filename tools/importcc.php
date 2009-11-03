@@ -135,6 +135,10 @@ if ($submit) {
 			'$cardnumber','$cardexp','$response_code','$amount',
 			'authorized','$billingmethod','$avs_response')";
       $result = $DB->Execute($query) or die ("insert payment history $l_queryfailed $query");
+
+      // get the payment_history_id that is associated with the billing_details
+      // for this payment
+      $payment_history_id = $DB->Insert_ID();
       
       // update the next_billing_date, to_date, 
       // from_date, and payment_due_date for prepay/prepaycc 
@@ -177,7 +181,8 @@ if ($submit) {
 	  $fillamount = round($owed + $paid_amount,2);
 	  $query = "UPDATE billing_details ".
 	    "SET paid_amount = '$fillamount', ".
-	    "payment_applied = CURRENT_DATE ".
+	    "payment_applied = CURRENT_DATE, ".
+	    "payment_history_id = '$payment_history_id' ".	    
 	    "WHERE id = $id";
 	  $greaterthanresult = $DB->Execute($query) 
 	    or die ("greater than $l_queryfailed $query");
@@ -188,7 +193,8 @@ if ($submit) {
 	  $fillamount = round($available + $paid_amount,2);
 	  $query = "UPDATE billing_details ".
 	    "SET paid_amount = '$fillamount', ".
-	    "payment_applied = CURRENT_DATE ".
+	    "payment_applied = CURRENT_DATE, ".
+	    "payment_history_id = '$payment_history_id' ".	    
 	    "WHERE id = $id";
 	  $lessthanresult = $DB->Execute($query) 
 	    or die ("less than $l_queryfailed $query");

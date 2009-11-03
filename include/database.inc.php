@@ -20,6 +20,7 @@
 /*----------------------------------------------------------------------------*/
 
 // indicate the release version of citrusdb
+
 $softwareversion = "2.0";
 
 // check that we are running php version 5 or greater

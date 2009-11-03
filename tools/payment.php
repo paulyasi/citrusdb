@@ -78,8 +78,26 @@ if ($submit) {
       "WHERE paid_amount < billed_amount AND billing_id = $billing_id";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $result = $DB->Execute($query) or die ("select detail $l_queryfailed");	
-  }
+  }  
+  
+  /*-------------------------------------------------------------------*/
+  // Insert result into the Payment History
+  /*--------------------------------------------------------------------*/	
+  
+  // insert info into the payment history
+  $query = "INSERT INTO payment_history (creation_date, billing_id, ".
+    "billing_amount, status, payment_type, invoice_number, check_number) ".
+    "VALUES (CURRENT_DATE,'$billing_id','$payment',".
+    "'authorized','$payment_type','$invoice_number','$check_number')";
+  $paymentresult = $DB->Execute($query) or die ("insert history $l_queryfailed");
 
+  // get the payment history id that will be inserted into the billing_details
+  // items that are paid by this entry
+  $payment_history_id = $DB->Insert_ID();
+
+  /*------------------------------------------------------------------------*/
+  // go through the billing details items
+  /*------------------------------------------------------------------------*/  
   while (($myresult = $result->FetchRow()) and (round($amount,2) > 0)) {
     $id = $myresult['id'];
     $paid_amount = sprintf("%.2f",$myresult['paid_amount']);
@@ -95,7 +113,8 @@ if ($submit) {
       $fillamount = round($owed + $paid_amount,2);
       $query = "UPDATE billing_details ".
 	"SET paid_amount = '$fillamount', ".
-	"payment_applied = CURRENT_DATE ".
+	"payment_applied = CURRENT_DATE, ".
+	"payment_history_id = '$payment_history_id' ".	    
 	"WHERE id = $id";
       $greaterthanresult = $DB->Execute($query)
 	or die ("detail update $l_queryfailed");
@@ -106,25 +125,12 @@ if ($submit) {
       $fillamount = round($available + $paid_amount,2);
       $query = "UPDATE billing_details ".
 	"SET paid_amount = '$fillamount', ".
-	"payment_applied = CURRENT_DATE ".
+	"payment_applied = CURRENT_DATE, ".
+	"payment_history_id = '$payment_history_id' ".	    	
 	"WHERE id = $id";
       $lessthenresult = $DB->Execute($query) or die ("detail update $l_queryfailed");
-    }
-  }
-
-  
-  /*-------------------------------------------------------------------*/
-  // Insert result into the Payment History
-  /*--------------------------------------------------------------------*/	
-  // NOT NEED ANYMORE: subtract any over payment amount from the payment
-  // $payment = round($payment - $amount,2);
-  
-  // insert info into the payment history
-  $query = "INSERT INTO payment_history (creation_date, billing_id, ".
-    "billing_amount, status, payment_type, invoice_number, check_number) ".
-    "VALUES (CURRENT_DATE,'$billing_id','$payment',".
-    "'authorized','$payment_type','$invoice_number','$check_number')";
-  $paymentresult = $DB->Execute($query) or die ("insert history $l_queryfailed");
+    } // end if amount >= owed
+  } // end while myresult and amount > 0
 
 
   /*--------------------------------------------------------------------*/

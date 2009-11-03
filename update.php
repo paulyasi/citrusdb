@@ -749,6 +749,11 @@ if ($base->input['submit'] == "Update")
 	  $query = "ALTER TABLE `general` ADD `exportprefix` VARCHAR( 64 ) NULL ;";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
+
+	  $query = "ALTER TABLE `billing_details` ADD `payment_history_id` ".
+	    "INT NULL ;";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
 	  
 	  // set the version number in the database to 2.0
 	  $query = "UPDATE `settings` SET `version` = '2.0' ".
@@ -759,7 +764,6 @@ if ($base->input['submit'] == "Update")
 	  
 	}
 
-	
 	echo "<center><h2>Database Updated</h2></center>";
 }
 else 
@@ -785,12 +789,15 @@ else
 	This update script only works with versions 0.9.2 or greater
 	<p>
 	Your database version: <b>$databaseversion</b><p>
+
 	This script will update it to version: <b>2.0</b></h3>";
+
 	echo "<p style=\"font-weight: bold;\">Upgrading version 1.3.0 or ".
 	  "older will reset the rerun dates ".
 	  "to NULL when running this upgrade script.  Please make sure you ".
 	  "check for pending reruns before running this script on an active ".
 	  "system.</p>";
+
 	if ($databaseversion == "2.0") {
 		echo "<p><b>Nothing to update</b>";
 	} else {

@@ -43,46 +43,51 @@ $org_name = $myresult['org_name'];
 
 echo "<h2>$org_name</h2>".
 "<h3>$l_paymentreceipt</h3>".
+"$l_accountnumber: $billing_account_number<br><br>\n\n".
 "$billing_name<br>".
 "$billing_company<br>".
 "$billing_street<br>".
 "$billing_city $billing_state $billing_zip<p>";
 
-$payment_date = humandate($payment_date, $lang);
+$human_date = humandate($payment_date, $lang);
 
-echo "$l_paid: $amount on $payment_date<p>";
-
-/*--------------------------------------------------------------------
-// get the resulting list of services to have payments removed from
-
-if ($invoice_number > 0) {
-  $query = "SELECT * FROM billing_details ".
-    "WHERE paid_amount > 0 AND invoice_number = $invoice_number";
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("invoice1 Query Failed");
-  $invoiceresult = $DB->Execute($query) or die ("invoice2 $l_queryfailed");
-  
-  // update values with missing information
-  $myresult = $invoiceresult->fields;
-  $billingid = $myresult['billing_id'];
-  
-  // else remove payments by billing id
- } else {
-  $query = "SELECT * FROM billing_details 
-		WHERE paid_amount > 0 AND billing_id = $billingid";
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("billingid $l_queryfailed");	
- }
+echo "$l_paid: $amount on $human_date for:<p>";
 
 
-// go through the list and subtract the payment from each until
-// the amount is depleted
+// get the resulting list of services that have payment applied with
+// the matching payment_history_id
+//$DB->debug = true;
 
-while (($myresult = $result->FetchRow()) and (round($amount,2) > 0)) {
-  $id = $myresult['id'];
+$query = "SELECT bd.original_invoice_number, bd.paid_amount,".
+  "bd.billed_amount, ms.service_description, tr.description FROM ".
+  "billing_details bd ".
+  "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
+  "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+  "LEFT JOIN taxed_services ts ON ts.id = bd.taxed_services_id ".
+  "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+  "WHERE bd.payment_history_id = '$paymentid' ORDER BY bd.taxed_services_id";
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$result = $DB->Execute($query) or die ("Receipt Query Failed");
+
+echo "<table>";
+echo "<td>$l_invoice</td><td>$l_description</td><td>$l_paid</td><td>$l_stillowed</td><tr>";
+
+while ($myresult = $result->FetchRow()) {
+  $invoice = $myresult['original_invoice_number'];
+  $description = $myresult['service_description'];
+  $tax_description = $myresult['description'];
   $paid_amount = sprintf("%.2f",$myresult['paid_amount']);
-  
+  $billed_amount = sprintf("%.2f",$myresult['billed_amount']);  
+
+  $owed_amount = sprintf("%.2f",$billed_amount - $paid_amount);
+
+  if ($tax_description) {
+    // print the tax as description instead
+  echo "<td>$invoice</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><td>$owed_amount</td><tr>";
+  } else {
+  echo "<td>$invoice</td><td>$description</td><td>$paid_amount</td><td>$owed_amount</td><tr>";
+  }
  }
--------------------------------------------------------------------------*/
+echo "</table>";
 
 ?>
