@@ -14,5 +14,5 @@ $path_to_citrus = '/home/pyasi/citrus_project/citrusdb-gpg';
 $hidden_hash_var='youmustchangethis';
 $lang = './include/local/us-english.inc.php';
 $gpg_command = "/usr/bin/gpg --homedir /home/pyasi/.gnupg --armor --always-trust --batch --no-secmem-warning -e -r 'Paul Yasi'";
-$gpg_decrypt = "/usr/bin/gpg --homedir /home/pyasi/.gnupg --passphrase-fd 0 --yes --no-tty --decrypt";
+$gpg_decrypt = "/usr/bin/gpg --homedir /home/pyasi/.gnupg --passphrase-fd 0 --yes --no-tty --skip-verify --decrypt";
 //$path_to_home = '/home/pyasi'; // user with the gpg keyring
