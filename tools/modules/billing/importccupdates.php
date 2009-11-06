@@ -40,27 +40,28 @@ if ($submit) {
 	$fp = @fopen($myfile, "r") or die ("$l_cannotopen $myfile");
 	
 	/*------------------------*/
-	// Import format
-	//acctnum
-	//realname
-	//address
-	//city
-	//state
-	//zip
-	//cardnumber
-	//ccexp
+	// Import format:
+	// account_number, name, street, city, state, zip, cc number (masked), cc expiration
+	// -----BEGIN PGP MESSAGE-----
+	// ascii armored lines with credit card info
+	// -----END PGP MESSAGE-----
 	/*------------------------*/
 
 	$linecount = 0;
+	$armordata = "";
+	$asciiarmor = FALSE;
 	// get each whole line
 	while ($line = @fgetcsv($fp, 4096)) {
-		
-		//$DB->debug = true;
+	  
+	  $linecount++;
+	  //$DB->debug = true;
 
-		list($account_number, $name, $street, $city, $state, $zip, $cardnumber, $cardexp) = $line;
-		
-		// Update the billing record	
-		$query = "UPDATE billing SET
+	  if ($linecount == 1) {
+	    // update the plaintext billing record info
+	    list($account_number, $name, $street, $city, $state, $zip, $cardnumber, $cardexp) = $line;
+	    
+	    // Update the billing record	
+	    $query = "UPDATE billing SET
 		name = '$name',
 		street = '$street',
 		city = '$city',
@@ -69,14 +70,42 @@ if ($submit) {
 		creditcard_number = '$cardnumber',
 		creditcard_expire = '$cardexp' 
 		WHERE account_number = '$account_number'";	
+	    
+	    $result = $DB->Execute($query) or die ("$l_queryfailed");
+	    echo "$query $l_changessaved, $l_account: $account_number<p>";		
+	  }
+	  else {
+	    // update the asciiarmor encrypted_creditcard_number field
+	    if (($line[0] == "-----BEGIN PGP MESSAGE-----") OR ($asciiarmor == TRUE)) {
+
+	      // set a boolean to indicate we are reading the ascii armor now
+	      $asciiarmor = TRUE;
+
+	      // read in the line of asciiarmored data
+	      $armordate .= "$line[0]\n";
+
+	      // when we reach the end of the PGP message insert the data into the billing table
+	      if ($line[0] == "-----END PGP MESSAGE-----") {
+		$query = "UPDATE billing SET encrypted_creditcard_number = '$armordata' WHERE account_number = '$account_number'";
+		$result = $DB->Execute($query) or die ("billing card update $l_queryfailed");  
+
+		// reset line count and other markers when done
+		echo "RESET LINECOUNT<p>";
+		$linecount = 0;
+		$armordata = "";
+		$asciiarmor = FALSE;
 		
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		echo "$query $l_changessaved, $l_account: $account_number<p>";		
+	      } // end if END PGP MESSAGE
+
+	    }// end if php message
+	    
+	  }// end if lincount
+	  
 	} // end while	       
 	
 	// close the file
 	@fclose($fp) or die ("$l_cannotclose $myfile");
-
+	
 	// delete the file when we are done
 	unlink($myfile);	
 }
