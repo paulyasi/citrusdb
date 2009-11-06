@@ -720,11 +720,18 @@ if ($base->input['submit'] == "Update")
 	if ($databaseversion = "1.3.2") {
 
 
+	  // add payment_history_id to link individual payments to items
 	  $query = "ALTER TABLE `billing_details` ADD `payment_history_id` ".
 	    "INT NULL ;";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
-
+	  
+	  // add automatic_receipt marker to know who wants automatic receipts
+	  $query = "ALTER TABLE `billing` ADD `automatic_receipt` ".
+	    "ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";	  
+	  
 	  // set the version, using the new settings field
 	  $query = "UPDATE `settings` SET `version` = '1.3.3' ".
 	    "WHERE `id` =1 LIMIT 1";		

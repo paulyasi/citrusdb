@@ -59,7 +59,8 @@ CREATE TABLE `billing` (
   `notes` text,
   `pastdue_exempt` enum('y','n','bad_debt') NOT NULL default 'n',
   `po_number` varchar(64) default NULL,
-  `organization_id` int(11) NOT NULL default '1', 
+  `organization_id` int(11) NOT NULL default '1',
+  `automatic_receipt` enum('y','n') NOT NULL default 'n',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=34 ;
 
@@ -67,7 +68,7 @@ CREATE TABLE `billing` (
 -- Dumping data for table `billing`
 -- 
 
-INSERT INTO `billing` VALUES (1, 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'ABC', 'USA', '12345', '555-555-5555', '555-555-5556', '', 1, 7, 5000000000000001, 0909, 0, NULL, '2007-10-07', NULL, '2007-10-07', '2007-11-07', '2007-10-07', NULL, '', 'n', NULL, 1);
+INSERT INTO `billing` VALUES (1, 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'ABC', 'USA', '12345', '555-555-5555', '555-555-5556', '', 1, 7, 5000000000000001, 0909, 0, NULL, '2007-10-07', NULL, '2007-10-07', '2007-11-07', '2007-10-07', NULL, '', 'n', NULL, 1, 'n');
 
 -- --------------------------------------------------------
 

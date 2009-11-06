@@ -95,6 +95,7 @@ if (!isset($base->input['contact_email'])) { $base->input['contact_email'] = "";
 if (!isset($base->input['notes'])) { $base->input['notes'] = ""; }
 if (!isset($base->input['pastdue_exempt'])) { $base->input['pastdue_exempt'] = ""; }
 if (!isset($base->input['po_number'])) { $base->input['po_number'] = ""; }
+if (!isset($base->input['automatic_receipt'])) { $base->input['automatic_receipt'] = ""; }
 
 $billing_id = $base->input['billing_id'];
 $name = $base->input['name'];
@@ -117,6 +118,7 @@ $contact_email = $base->input['contact_email'];
 $notes = $base->input['notes'];
 $pastdue_exempt = $base->input['pastdue_exempt'];
 $po_number = $base->input['po_number'];
+$automatic_receipt = $base->input['automatic_receipt'];
 
 if ($save) {
   //$DB->debug = true;
@@ -143,6 +145,7 @@ rerun_date = NULL,
 	notes = '$notes',
 	pastdue_exempt = '$pastdue_exempt',
 	po_number = '$po_number',
+	automatic_receipt = '$automatic_receipt',
 	contact_email = '$contact_email' WHERE id = $billing_id";
 	$result = $DB->Execute($query) or die ("$l_queryfailed");
   } else {
@@ -166,6 +169,7 @@ rerun_date = '$rerun_date',
 	notes = '$notes',
 	pastdue_exempt = '$pastdue_exempt',
 	po_number = '$po_number',
+	automatic_receipt = '$automatic_receipt',
 	contact_email = '$contact_email' WHERE id = $billing_id";
   }
   
@@ -206,6 +210,7 @@ rerun_date = '$rerun_date',
   $notes = $myresult['notes'];
   $pastdue_exempt = $myresult['pastdue_exempt'];
   $po_number = $myresult['po_number'];
+  $automatic_receipt = $myresult['automatic_receipt'];
   $organization_id = $myresult['organization_id'];
   
   echo "<a href=\"index.php?load=billing&type=module\">[ $l_undochanges ]</a>";
@@ -298,6 +303,14 @@ echo "
 	<input type=radio name=pastdue_exempt value=bad_debt"; if ($pastdue_exempt == "bad_debt") { echo " checked "; }
         echo ">$l_bad_debt
 	
+	</td><tr>
+
+	<td bgcolor=\"#ccccdd\"><b>$l_automaticreceipt</b></td>
+	<td bgcolor=\"#ddddee\">
+	<input type=radio name=automatic_receipt value=n"; if ($automatic_receipt == "n") { echo " checked "; }
+	echo ">$l_no
+	<input type=radio name=automatic_receipt value=y"; if ($automatic_receipt == "y") { echo " checked "; }
+	echo ">$l_yes
 	</td><tr>
 	
 	<td bgcolor=\"#ccccdd\"><b>$l_nextbillingdate</b></td>
