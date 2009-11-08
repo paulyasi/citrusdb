@@ -71,13 +71,15 @@ class user {
 	  "incorrect $user_name $password ";
 	
 	// keep track of login failures to stop them trying forever
-	$this->loginfailure();
+	$this->loginfailure($user_name);
 	
 	return false;
 
       } else {
 
 	$this->user_set_tokens($user_name);
+
+	$this->loginsuccess($user_name);
 
 	if (!isset($GLOBALS['REMOTE_ADDR'])) {
 	  $GLOBALS['REMOTE_ADDR'] = "";
@@ -112,7 +114,7 @@ class user {
   /*--------------------------------------------------------------------*/
   // keep track of failed login attempts from IP addresses
   /*--------------------------------------------------------------------*/
-  function loginfailure() {
+  function loginfailure($user_name) {
 
     global $DB;
     
@@ -121,8 +123,19 @@ class user {
     $query="INSERT INTO login_failures(ip,logintime) ".
 	    "VALUES ('$ipaddress',CURRENT_TIMESTAMP)";
     $result=$DB->Execute($query) or die ("Log Insert Failed");
+
+    log_activity($DB,$user_name,'','login','failure');
+    
   }
 
+  /*--------------------------------------------------------------------*/
+  // keep track of login success
+  /*--------------------------------------------------------------------*/  
+  function loginsuccess($user_name) {
+    global $DB;
+    log_activity($DB,$user_name,'','login','success');
+  }
+  
   /*--------------------------------------------------------------------*/
   // Set the cookie tokens
   /*--------------------------------------------------------------------*/

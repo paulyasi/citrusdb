@@ -359,6 +359,45 @@ function getPagerData($numHits, $limit, $page)
 	return $ret; 
 }
 
+function log_activity($DB,$citrus_user,$account_number,$activity_type,$activity_result)
+{
+  $datetime = date("Y-m-d H:i:s");
+  $user_ip_address = $_SERVER["REMOTE_ADDR"];
+  
+  switch($activity_type) {
+
+  case 'login':
+    $query = "INSERT INTO activity_log (datetime,citrus_user,user_ip_address,activity_type,activity_result) ".
+      "VALUES ('$datetime','$citrus_user','$user_ip_address','$activity_type','$activity_result')";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $result = $DB->Execute($query) or die ("login activity_log insert failed");
+    break;
+    
+  case 'logout':
+    
+    break;
+  case 'view_customer':
+    
+    break;
+  case 'edit_customer':
+    
+    break;
+  case 'view_billing':
+    
+    break;
+  case 'edit_billing':
+    
+    break;
+  case 'export_carddata':
+    
+    break;
+  case 'import_carddata':
+    
+    break;
+    
+  } // end activity_type switch
+} // end log_activity
+
 
 
 ?>
