@@ -819,12 +819,10 @@ ALTER TABLE `payment_history` ADD INDEX `billing_id_index` ( `billing_id` );
 -- Table structure for activity_log table
 --
  CREATE TABLE `activity_log` (
-`id` BIGINT NOT NULL AUTO_INCREMENT ,
 `datetime` DATETIME NOT NULL ,
 `citrus_user` VARCHAR( 128 ) NOT NULL ,
 `user_ip_address` VARCHAR( 64 ) NOT NULL ,
 `customer_account_number` INT NOT NULL ,
 `activity_type` ENUM( 'login', 'view_customer', 'edit_customer', 'view_billing', 'edit_billing', 'export_carddata', 'import_carddata', 'logout' ) NOT NULL ,
-`activity_result` ENUM( 'success', 'failure' ) NOT NULL ,
-PRIMARY KEY ( `id` )
+`activity_result` ENUM( 'success', 'failure' ) NOT NULL 
 ) ENGINE = MYISAM 
