@@ -58,7 +58,7 @@ if (!isset($base->input['account_number'])) { $base->input['account_number'] = "
 if ($base->input['submit'] == $l_login) {
 	// check the user login information
 	$u->user_login($base->input['user_name'],$base->input['password']);
-	
+
 	// redirect to myself to get the cookie loaded
 	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=search&type=base\";</script>";
 }

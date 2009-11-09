@@ -374,14 +374,28 @@ function log_activity($DB,$citrus_user,$account_number,$activity_type,$activity_
     break;
     
   case 'logout':
-    
+    $query = "INSERT INTO activity_log (datetime,citrus_user,user_ip_address,activity_type,activity_result) ".
+      "VALUES ('$datetime','$citrus_user','$user_ip_address','$activity_type','$activity_result')";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $result = $DB->Execute($query) or die ("logout activity_log insert failed");    
     break;
+    
   case 'view_customer':
-    
+    $query = "INSERT INTO activity_log (datetime,citrus_user,user_ip_address,customer_account_number, ".
+      "activity_type,activity_result) ".
+      "VALUES ('$datetime','$citrus_user','$user_ip_address','$account_number','$activity_type','$activity_result')";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $result = $DB->Execute($query) or die ("view_customer activity_log insert failed");     
     break;
+    
   case 'edit_customer':
-    
+    $query = "INSERT INTO activity_log (datetime,citrus_user,user_ip_address,customer_account_number, ".
+      "activity_type,activity_result) ".
+      "VALUES ('$datetime','$citrus_user','$user_ip_address','$account_number','$activity_type','$activity_result')";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $result = $DB->Execute($query) or die ("edit_customer activity_log insert failed");       
     break;
+    
   case 'view_billing':
     
     break;

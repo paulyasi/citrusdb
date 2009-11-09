@@ -48,6 +48,7 @@ if ($base->input['billingaddress']) {
     "fax = '$fax', ".
     "contact_email = '$contact_email' WHERE id = $default_billing_id";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
+
   print "<h3>$l_changessaved<h3>";
 		
   // redirect them back to the customer record
@@ -137,9 +138,12 @@ if ($base->input['save']) {
       "WHERE account_number = '$account_number'";
   }
   $result = $DB->Execute($query) or die ("$l_queryfailed");
+    
+  // add a log entry that this customer record was viewed
+  log_activity($DB,$user,$account_number,'edit_customer','success');  
   
   print "<h3>$l_changessaved<h3>";
-  
+
   // if the name, company, street, city, state, zip, phone, fax, or contact_email changed, ask if they want to update 
   // the default billing record address also.
   if ( ($street != $old_street) OR ($city != $old_city)
