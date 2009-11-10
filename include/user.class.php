@@ -124,7 +124,7 @@ class user {
 	    "VALUES ('$ipaddress',CURRENT_TIMESTAMP)";
     $result=$DB->Execute($query) or die ("Log Insert Failed");
 
-    log_activity($DB,$user_name,'','login','failure');
+    log_activity($DB,$user_name,0,'login','dashboard','failure');
     
   }
 
@@ -133,7 +133,7 @@ class user {
   /*--------------------------------------------------------------------*/  
   function loginsuccess($user_name) {
     global $DB;
-    log_activity($DB,$user_name,'','login','success');
+    log_activity($DB,$user_name,0,'login','dashboard','success');
   }
   
   /*--------------------------------------------------------------------*/

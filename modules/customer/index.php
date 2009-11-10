@@ -279,7 +279,7 @@ echo
  }
 
  // add a log entry that this customer record was viewed
- log_activity($DB,$user,$account_number,'view_customer','success');
+ log_activity($DB,$user,$account_number,'view','customer','success');
  
 } else permission_error();
 ?>

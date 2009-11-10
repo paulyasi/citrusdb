@@ -818,11 +818,13 @@ ALTER TABLE `payment_history` ADD INDEX `billing_id_index` ( `billing_id` );
 --
 -- Table structure for activity_log table
 --
- CREATE TABLE `activity_log` (
-`datetime` DATETIME NOT NULL ,
-`citrus_user` VARCHAR( 128 ) NOT NULL ,
-`user_ip_address` VARCHAR( 64 ) NOT NULL ,
-`customer_account_number` INT NOT NULL ,
-`activity_type` ENUM( 'login', 'view_customer', 'edit_customer', 'view_billing', 'edit_billing', 'export_carddata', 'import_carddata', 'logout' ) NOT NULL ,
-`activity_result` ENUM( 'success', 'failure' ) NOT NULL 
-) ENGINE = MYISAM 
+
+CREATE TABLE IF NOT EXISTS `activity_log` (
+  `datetime` datetime NOT NULL,
+  `user` varchar(128) NOT NULL,
+  `ip_address` varchar(64) NOT NULL,
+  `account_number` int(11) default NULL,
+  `activity_type` enum('login','logout','view','edit','create','delete','export','import') NOT NULL,
+  `record_type` enum('dashboard','customer','billing','services','support','reports','admin') NOT NULL,
+  `result` enum('success','failure') NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
