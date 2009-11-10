@@ -91,8 +91,6 @@ while ($myreceiptresult = $receiptresult->FetchRow()) {
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("Receipt Query Failed");
   
-  $message .= "$l_invoice\t$l_description\t$l_paid\t$l_stillowed\n";
-  
   while ($myresult = $result->FetchRow()) {
     $invoice = $myresult['original_invoice_number'];
     $description = $myresult['service_description'];
@@ -104,9 +102,9 @@ while ($myreceiptresult = $receiptresult->FetchRow()) {
     
     if ($tax_description) {
       // print the tax as description instead
-      $message .= "$invoice\t   $tax_description\t$paid_amount\t$owed_amount\n";
+      $message .= "$invoice\t   $tax_description\t$l_paid: $paid_amount\t$l_stillowed: $owed_amount\n";
     } else {
-      $message .= "$invoice\t$description\t$paid_amount\t$owed_amount\n";
+      $message .= "$invoice\t$description\t$l_paid: $paid_amount\t$l_stillowed: $owed_amount\n";
     }
   }
   echo "\n";
