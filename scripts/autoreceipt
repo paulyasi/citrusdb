@@ -14,9 +14,6 @@ $from_email = "yourname@example.com";
 
 $subject = "Receipt for Internet Service";
 
-// initialize the message body to be empty
-$message = "";
-
 // Includes
 include('./include/config.inc.php');
 include('./include/database.inc.php');
@@ -38,6 +35,10 @@ $receiptresult = $DB->Execute($query) or die ("automatic_receipt select for toda
 
 // go through each receipt recipient
 while ($myreceiptresult = $receiptresult->FetchRow()) {
+  
+  // initialize the message body to be empty
+  $message = "";
+
   $paymentid = $myreceiptresult['ph_id'];
   $amount = $myreceiptresult['billing_amount'];
   $billingid = $myreceiptresult['b_id'];
