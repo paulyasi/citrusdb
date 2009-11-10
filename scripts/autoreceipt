@@ -39,7 +39,7 @@ $receiptresult = $DB->Execute($query) or die ("automatic_receipt select for toda
 // go through each receipt recipient
 while ($myreceiptresult = $receiptresult->FetchRow()) {
   $paymentid = $myreceiptresult['ph_id'];
-  $amount = $myreceipttresult['billing_amount'];
+  $amount = $myreceiptresult['billing_amount'];
   $billingid = $myreceiptresult['b_id'];
   $payment_date = $myreceiptresult['creation_date'];
   
