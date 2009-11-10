@@ -11,7 +11,7 @@ $u = new user();
 
 $user_name = $u->user_getname();
 
-log_activity($DB,$user_name,0,'logout','dashboard','success');
+log_activity($DB,$user_name,0,'logout','dashboard',0,'success');
 
 if ($u->user_isloggedin()) {
   $u->user_logout();	

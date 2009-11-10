@@ -140,7 +140,7 @@ if ($base->input['save']) {
   $result = $DB->Execute($query) or die ("$l_queryfailed");
     
   // add a log entry that this customer record was viewed
-  log_activity($DB,$user,$account_number,'edit_customer','success');  
+  log_activity($DB,$user,$account_number,'edit','customer',0,'success');  
   
   print "<h3>$l_changessaved<h3>";
 

@@ -762,7 +762,8 @@ if ($base->input['submit'] == "Update")
 	    "`ip_address` varchar(64) NOT NULL, ".
 	    "`account_number` int(11) default NULL, ".
 	    "`activity_type` enum('login','logout','view','edit','create','delete','export','import') NOT NULL, ".
-	    "`record_type` enum('dashboard','customer','billing','services','support','reports','admin') NOT NULL, ".
+      	    "`record_type` enum('dashboard','customer','billing','services','support','reports','admin') NOT NULL, ".
+	    "`record_id` int(11) default NULL, ".
 	    "`result` enum('success','failure') NOT NULL ".
 	    ") ENGINE=MyISAM";
 	  

@@ -826,5 +826,6 @@ CREATE TABLE IF NOT EXISTS `activity_log` (
   `account_number` int(11) default NULL,
   `activity_type` enum('login','logout','view','edit','create','delete','export','import') NOT NULL,
   `record_type` enum('dashboard','customer','billing','services','support','reports','admin') NOT NULL,
+  `record_id` int(11) default NULL,
   `result` enum('success','failure') NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
