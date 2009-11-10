@@ -288,7 +288,7 @@ $query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
   "LEFT JOIN general g ON bi.organization_id = g.id ".
   "WHERE bd.billed_amount > bd.paid_amount ".
   "AND bi.pastdue_exempt <> 'y' ".
-  "AND bi.rerun_date IS NOT NULL ".
+  "AND bi.rerun_date IS NULL ".
   "AND '$today' >= DATE_ADD(bh.payment_due_date, INTERVAL g.regular_pastdue DAY) ".
   "AND '$today' < DATE_ADD(bh.payment_due_date, INTERVAL g.regular_turnoff DAY) ".
   "GROUP BY bi.id";
@@ -370,7 +370,7 @@ $query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
   "LEFT JOIN general g ON bi.organization_id = g.id ".
   "WHERE bd.billed_amount > bd.paid_amount ".
   "AND bi.pastdue_exempt <> 'y' ".
-  "AND bi.rerun_date IS NOT NULL ".
+  "AND bi.rerun_date IS NULL ".
   "AND '$today' >= DATE_ADD(bh.payment_due_date, ".
   "INTERVAL g.dependent_pastdue DAY) ".
   "AND '$today' < DATE_ADD(bh.payment_due_date, ".
@@ -447,7 +447,7 @@ $query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
   "LEFT JOIN general g ON bi.organization_id = g.id ".
   "WHERE bd.billed_amount > bd.paid_amount ".
   "AND bi.pastdue_exempt <> 'y' ".
-  "AND bi.rerun_date IS NOT NULL ".
+  "AND bi.rerun_date IS NULL ".
   "AND '$today' >= DATE_ADD(bh.payment_due_date, ".
   "INTERVAL g.dependent_shutoff_notice DAY) ".
   "AND '$today' < DATE_ADD(bh.payment_due_date, ".
@@ -525,7 +525,7 @@ $query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
   "LEFT JOIN general g ON bi.organization_id = g.id ".
   "WHERE bd.billed_amount > bd.paid_amount ".
   "AND bi.pastdue_exempt <> 'y' ".
-  "AND bi.rerun_date IS NOT NULL ".
+  "AND bi.rerun_date IS NULL ".
   "AND '$today' >= DATE_ADD(bh.payment_due_date, ".
   "INTERVAL g.regular_turnoff DAY) ".
   "AND '$today' < DATE_ADD(bh.payment_due_date, ".
@@ -587,7 +587,7 @@ $query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
   "LEFT JOIN general g ON bi.organization_id = g.id ".
   "WHERE bd.billed_amount > bd.paid_amount ".
   "AND bi.pastdue_exempt <> 'y' ".
-  "AND bi.rerun_date IS NOT NULL ".
+  "AND bi.rerun_date IS NULL ".
   "AND '$today' >= DATE_ADD(bh.payment_due_date, ".
   "INTERVAL g.dependent_turnoff DAY) ".
   "AND '$today' < DATE_ADD(bh.payment_due_date, ".
@@ -749,7 +749,7 @@ $query = "SELECT DISTINCT bi.id, bi.account_number ".
   "LEFT JOIN general g ON bi.organization_id = g.id ".
   "WHERE bd.billed_amount > bd.paid_amount ".
   "AND bi.pastdue_exempt <> 'y' ".
-  "AND bi.rerun_date IS NOT NULL ".  
+  "AND bi.rerun_date IS NULL ".  
   "AND '$today' >= DATE_ADD(bh.payment_due_date, ".
   "INTERVAL g.regular_canceled DAY)";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -834,7 +834,7 @@ $query = "SELECT DISTINCT bi.id, bi.account_number ".
   "LEFT JOIN general g ON bi.organization_id = g.id ".
   "WHERE bd.billed_amount > bd.paid_amount ".
   "AND bi.pastdue_exempt <> 'y' ".
-  "AND bi.rerun_date IS NOT NULL ".  
+  "AND bi.rerun_date IS NULL ".  
   "AND '$today' >= DATE_ADD(bh.payment_due_date, ".
   "INTERVAL g.dependent_canceled DAY)";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
