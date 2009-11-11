@@ -91,7 +91,7 @@ $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("Receipt Query Failed");
 
 echo "<table>";
-echo "<td>$l_invoice</td><td>$l_description</td><td>$l_paid</td><td>$l_stillowed</td><tr>";
+echo "<td>$l_invoice</td><td>$l_description</td><td>$l_paid</td><tr>";
 
 while ($myresult = $result->FetchRow()) {
   $invoice = $myresult['original_invoice_number'];
@@ -104,9 +104,9 @@ while ($myresult = $result->FetchRow()) {
 
   if ($tax_description) {
     // print the tax as description instead
-  echo "<td>$invoice</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><td>$owed_amount</td><tr>";
+  echo "<td>$invoice</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><tr>";
   } else {
-  echo "<td>$invoice</td><td>$description</td><td>$paid_amount</td><td>$owed_amount</td><tr>";
+  echo "<td>$invoice</td><td>$description</td><td>$paid_amount</td><tr>";
   }
  }
 echo "</table>";
