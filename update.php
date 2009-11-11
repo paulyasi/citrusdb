@@ -765,7 +765,7 @@ if ($base->input['submit'] == "Update")
 	    "'delete','undelete','export','import','cancel','uncancel') ".
 	    "NOT NULL,".
 	    "`record_type` enum('dashboard','customer','billing','service',".
-	    "'support','creditcard','admin_general','admin_settings',".
+	    "'creditcard','admin_general','admin_settings',".
 	    "'admin_users','admin_groups','admin_modules',".
 	    "'admin_billingtypes','admin_services','admin_taxrates',".
 	    "'admin_taxedservices','admin_linkedservices') NOT NULL,".

@@ -76,6 +76,9 @@ if ($save) {
   $query = "UPDATE $optionstable SET $fieldvalues ".
     "WHERE user_services = $userserviceid";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
+
+  // add a log entry that this service was edited
+  log_activity($DB,$user,$account_number,'edit','service',$userserviceid,'success');  
   
   print "<script language=\"JavaScript\">window.location.href = ".
     "\"index.php?load=services&type=module\";</script>";
@@ -85,6 +88,10 @@ if ($save) {
   $query = "UPDATE user_services SET usage_multiple = $usage_multiple ".
     "WHERE id = $userserviceid";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
+
+  // add a log entry that this service was edited
+  log_activity($DB,$user,$account_number,'edit','service',$userserviceid,'success');    
+  
   print "<script language=\"JavaScript\">window.location.href = ".
     "\"index.php?load=services&type=module\";</script>";
 
@@ -93,6 +100,10 @@ if ($save) {
   $query = "UPDATE user_services SET billing_id = $billing_id ".
     "WHERE id = $userserviceid";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
+
+  // add a log entry that this service was edited
+  log_activity($DB,$user,$account_number,'edit','service',$userserviceid,'success');    
+  
   print "<script language=\"JavaScript\">window.location.href = ".
     "\"index.php?load=services&type=module\";</script>";
 
@@ -151,6 +162,10 @@ if ($save) {
   service_message('change', $account_number,
 		  $old_master_service_id, $userserviceid, 
 		  $master_service_id, $new_user_service_id);
+
+  // log an entry for a create and delete of the service as part of the change
+  log_activity($DB,$user,$account_number,'create','service',$new_user_service_id,'success');
+  log_activity($DB,$user,$account_number,'delete','service',$userserviceid,'success');  
 
   print "<script language=\"JavaScript\">window.location.href = ".
     "\"index.php?load=services&type=module\";</script>";

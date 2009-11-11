@@ -40,6 +40,9 @@ if ($deletenow) {
 	
 	// delete the service and do other notifications
 	delete_service($userserviceid, 'removed', $removal_date);
+
+	// add a log entry that this service was deleted
+	log_activity($DB,$user,$account_number,'delete','service',$userserviceid,'success');	
 	
 	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
 }
@@ -56,6 +59,8 @@ if ($undeletenow) {
 	// undelete the service by removing the removed flag and dates
 	undelete_service($userserviceid, $l_undelete);
 	
+	// add a log entry that this service was undeleted
+	log_activity($DB,$user,$account_number,'undelete','service',$userserviceid,'success');	
 	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
 
 }

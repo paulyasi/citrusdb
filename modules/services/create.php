@@ -89,6 +89,9 @@ if ($addnow) {
   service_message('added', $account_number, $serviceid,
 		  $user_service_id, NULL, NULL);
 
+  // add a log entry that this service was added
+  log_activity($DB,$user,$account_number,'create','service',$user_service_id,'success');
+
   print "$l_addedservice<p>";
   print "<script language=\"JavaScript\">window.location.href = ".
     "\"index.php?load=services&type=module\";</script>";
