@@ -359,14 +359,24 @@ function getPagerData($numHits, $limit, $page)
 	return $ret; 
 }
 
-function log_activity($DB,$user,$account_number,$activity_type,$record_type,$record_id,$result)
+function log_activity($DB,$user,$account_number,$activity_type,$record_type,
+		      $record_id,$result)
 {
-  // make an entry into the activity_log table regarding the activity passed to this function
+  // make an entry into the activity_log table regarding the activity passed
+  // to this function
   $datetime = date("Y-m-d H:i:s");
   $ip_address = $_SERVER["REMOTE_ADDR"];
-  
-  $query = "INSERT INTO activity_log ".
-    "VALUES ('$datetime','$user','$ip_address',$account_number,'$activity_type','$record_type','$record_id','$result')";
+
+  // take advantage of mysql insert delayed to speed up this function if we can
+  if ($sys_dbtype == "mysql") {  
+    $query = "INSERT DELAYED INTO activity_log ".
+      "VALUES ('$datetime','$user','$ip_address',$account_number,".
+      "'$activity_type','$record_type','$record_id','$result')";
+  } else {
+    $query = "INSERT INTO activity_log ".
+      "VALUES ('$datetime','$user','$ip_address',$account_number,".
+      "'$activity_type','$record_type','$record_id','$result')";    
+  }
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("activity_log insert failed");
   
