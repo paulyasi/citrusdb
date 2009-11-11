@@ -22,6 +22,16 @@ $invoice_number = $base->input['invoicenum'];
 $billingid = $base->input['billingid'];
 $payment_date = $base->input['date'];
 
+// grab the payment type, cardnumber, and check number
+$query = "SELECT payment_type, creditcard_number, check_number ".
+  "FROM payment_history WHERE id = '$paymentid'";
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$result = $DB->Execute($query) or die ("payment history Query Failed");
+$myresult = $result->fields;
+$payment_type = $myresult['payment_type'];
+$creditcard_number = $myresult['creditcard_number'];
+$check_number = $myresult['check_number'];
+
 /*-------------------------------------------------------------------------*/
 // print paid_amounts from billing_details
 /*-------------------------------------------------------------------------*/
@@ -51,8 +61,19 @@ echo "<h2>$org_name</h2>".
 
 $human_date = humandate($payment_date, $lang);
 
-echo "$l_paid: $amount on $human_date for:<p>";
-
+if ($payment_type == "creditcard") {    
+  // wipe out the middle of the card number
+  $length = strlen($creditcard_number);
+  $firstdigit = substr($creditcard_number, 0,1);
+  $lastfour = substr($creditcard_number, -4);
+  $creditcard_number = "$firstdigit" . "***********" . "$lastfour";
+  
+  echo "$l_paid with $payment_type ($creditcard_number), ".
+    "$amount on $human_date for:\n<br><br>";
+ } else {
+  echo "$l_paid with $payment_type (number: $check_number), ".
+    "$amount on $human_date for:\n<br><br>";    
+ }
 
 // get the resulting list of services that have payment applied with
 // the matching payment_history_id
