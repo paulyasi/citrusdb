@@ -58,7 +58,6 @@ $org_zip = $myresult['org_zip'];
 echo "<h2>$org_name</h2>".
 "$org_street<br>".
 "$org_city, $org_state $org_zip<br>".
-"<br>".
 "<h3>$l_paymentreceipt</h3>".
 "$l_accountnumber: $billing_account_number<br><br><br>\n\n".
 "$billing_name<br>".
