@@ -232,7 +232,12 @@ if ($save) {
   automatic_to_date($DB, $from_date, $billing_type, $billing_id);
 
 
-  // add a log entry that this billing record was edited
+  // add a log entry if the credit card was edited
+  if ($newcc == TRUE) {
+    log_activity($DB,$user,$account_number,'edit','creditcard',$billing_id,'success');
+  }
+  
+  // add a log entry that this billing record was edited  
   log_activity($DB,$user,$account_number,'edit','billing',$billing_id,'success'); 
   
   print "<h3>$l_changessaved<h3>";

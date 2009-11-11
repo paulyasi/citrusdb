@@ -61,6 +61,9 @@ if ($save) {
     "WHERE id = '$billing_id' LIMIT 1";
   $billingupdate = $DB->Execute($query) or die ("$l_queryfailed");
 
+  // add a log entry that this billing record was edited
+  log_activity($DB,$user,$account_number,'edit','creditcard',$billing_id,'success');  
+
   print "<script language=\"JavaScript\">window.location.href = ".
     "\"index.php?load=billing&type=module\";</script>";
 
