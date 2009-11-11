@@ -756,17 +756,23 @@ if ($base->input['submit'] == "Update")
 	  echo "$query<br>\n";
 
 	  // create the new activity_log table
-	  $query = "CREATE TABLE IF NOT EXISTS `activity_log` ( ".
-	    "`datetime` datetime NOT NULL, ".
-	    "`user` varchar(128) NOT NULL, ".
-	    "`ip_address` varchar(64) NOT NULL, ".
-	    "`account_number` int(11) default NULL, ".
-	    "`activity_type` enum('login','logout','view','edit','create','delete','export','import') NOT NULL, ".
-      	    "`record_type` enum('dashboard','customer','billing','services','support','reports','admin') NOT NULL, ".
-	    "`record_id` int(11) default NULL, ".
-	    "`result` enum('success','failure') NOT NULL ".
-	    ") ENGINE=MyISAM";
-	  
+	  $query = "CREATE TABLE IF NOT EXISTS `activity_log` (".
+	    "`datetime` datetime NOT NULL,".
+	    "`user` varchar(128) NOT NULL,".
+	    "`ip_address` varchar(64) NOT NULL,".
+	    "`account_number` int(11) default NULL,".
+	    "`activity_type` enum('login','logout','view','edit','create',".
+	    "'delete','undelete','export','import','cancel','uncancel') ".
+	    "NOT NULL,".
+	    "`record_type` enum('dashboard','customer','billing','service',".
+	    "'support','reports','admin_general','admin_settings',".
+	    "'admin_users','admin_groups','admin_modules',".
+	    "'admin_billingtypes','admin_services','admin_taxrates',".
+	    "'admin_taxedservices','admin_linkedservices') NOT NULL,".
+	    "`record_id` int(11) default NULL,".
+	    "`result` enum('success','failure') NOT NULL".
+	    ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";	  
+	  	  
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";	  
 	  

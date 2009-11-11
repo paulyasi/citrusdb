@@ -93,6 +93,7 @@ if ($whycancel) {
    while ($myserviceresult = $result->FetchRow()) {
      $userserviceid = $myserviceresult['id'];
      delete_service($userserviceid,'canceled',$removal_date);
+     log_activity($DB,$user,$account_number,'delete','service',$userserviceid,'success');
    }
    
    // set cancel date and removal date of customer record
@@ -135,6 +136,9 @@ if ($whycancel) {
      "(creation_date, billing_id, status) ".
      "VALUES (CURRENT_DATE,'$default_billing_id','canceled')";
    $paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
+
+   // log this customer being canceled/deleted
+   log_activity($DB,$user,$account_number,'cancel','customer',0,'success');
    
    // redirect them to the customer page	
    print "<script language=\"JavaScript\">window.location.href = \"index.php?load=customer&type=module\";</script>";

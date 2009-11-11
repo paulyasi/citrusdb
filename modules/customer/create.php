@@ -78,6 +78,10 @@ if ($base->input['save']) {
 	$billingid = $DB->Insert_ID();
 	$query = "UPDATE customer SET default_billing_id = '$billingid' WHERE account_number = $account_number";
 	$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+	// log this record creation
+	log_activity($DB,$user,$account_number,'create','customer',0,'success');
+
 	
 	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=customer&type=module\";</script>";
 }

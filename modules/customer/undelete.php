@@ -52,7 +52,10 @@ if ($undeletenow) {
 
   // set the to_date automatically
   automatic_to_date($DB, $from_date, $billing_type, $billing_id);
-  
+
+  // log this uncancel
+  log_activity($DB,$user,$account_number,'uncancel','customer',0,'success');
+
   // redirect them to the customer page	
   print "<script language=\"JavaScript\">window.location.href = \"index.php?load=customer&type=module\";</script>";
   
