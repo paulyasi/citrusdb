@@ -50,14 +50,21 @@ $billing_state = $myresult['state'];
 $billing_zip = $myresult['zip'];
 $billing_account_number = $myresult['account_number'];
 $org_name = $myresult['org_name'];
+$org_street = $myresult['org_street'];
+$org_city = $myresult['org_city'];
+$org_state = $myresult['org_state'];
+$org_zip = $myresult['org_zip'];
 
 echo "<h2>$org_name</h2>".
+"$org_street<br>".
+"$org_city, $org_state $org_zip<br>".
+"<br>".
 "<h3>$l_paymentreceipt</h3>".
-"$l_accountnumber: $billing_account_number<br><br>\n\n".
+"$l_accountnumber: $billing_account_number<br><br><br>\n\n".
 "$billing_name<br>".
 "$billing_company<br>".
 "$billing_street<br>".
-"$billing_city $billing_state $billing_zip<p>";
+"$billing_city $billing_state $billing_zip\n<br><br><br>";
 
 $human_date = humandate($payment_date, $lang);
 
