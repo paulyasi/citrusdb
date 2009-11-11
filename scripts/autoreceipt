@@ -24,7 +24,8 @@ include('./include/support.inc.php');
 
 // Select records that paid today and requested a receipt from the database
 $query = "SELECT b.id b_id, b.contact_email, b.name, b.company, ".
-  "b.account_number, ph.id ph_id, ph.billing_amount, ph.creation_date ".
+  "b.account_number, ph.id ph_id, ph.billing_amount, ph.creation_date, ".
+  "ph.payment_type, ph.creditcard_number, ph.check_number ".
   "FROM billing b ".
   "LEFT JOIN customer c on c.account_number = b.account_number ".
   "LEFT JOIN payment_history ph ON ph.billing_id = b.id ".
@@ -43,6 +44,9 @@ while ($myreceiptresult = $receiptresult->FetchRow()) {
   $amount = $myreceiptresult['billing_amount'];
   $billingid = $myreceiptresult['b_id'];
   $payment_date = $myreceiptresult['creation_date'];
+  $payment_type = $myreceiptresult['payment_type'];
+  $creditcard_number = $myreceiptresult['creditcard_number'];
+  $check_number = $myreceiptresult['check_number'];
   
   /*-------------------------------------------------------------------------*/
   // print paid_amounts from billing_details
@@ -73,9 +77,22 @@ while ($myreceiptresult = $receiptresult->FetchRow()) {
     "$billing_city $billing_state $billing_zip\n\n";
   
   $human_date = humandate($payment_date, $lang);
+
   
-  $message .= "$l_paid: $amount on $human_date for:\n";
-  
+
+  if ($payment_type == "creditcard") {    
+    // wipe out the middle of the card number
+    $length = strlen($creditcard_number);
+    $firstdigit = substr($creditcard_number, 0,1);
+    $lastfour = substr($creditcard_number, -4);
+    $creditcard_number = "$firstdigit" . "***********" . "$lastfour";
+    
+    $message .= "$l_paid with $payment_type ($creditcard_number), ".
+      "$amount on $human_date for:\n";
+  } else {
+    $message .= "$l_paid with $payment_type (number: $check_number), ".
+      "$amount on $human_date for:\n";    
+  }
   
   // get the resulting list of services that have payment applied with
   // the matching payment_history_id
@@ -103,9 +120,9 @@ while ($myreceiptresult = $receiptresult->FetchRow()) {
     
     if ($tax_description) {
       // print the tax as description instead
-      $message .= "$invoice\t   $tax_description\t$l_paid: $paid_amount\t$l_stillowed: $owed_amount\n";
+      $message .= "$invoice\t   $tax_description\t$paid_amount\n";
     } else {
-      $message .= "$invoice\t$description\t$l_paid: $paid_amount\t$l_stillowed: $owed_amount\n";
+      $message .= "$invoice\t$description\t$paid_amount\n";
     }
   }
   echo "\n";
