@@ -526,17 +526,17 @@ if ($save) {
   //
   /*--------------------------------------------------------------------------*/
   echo "<table cellspacing=0 cellpadding=0 border=0>".
-    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=60>".
+    "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=60>".
     "<b>$l_ticketnumber</b></td>".
-    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=150>".
+    "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=150>".
     "<b>$l_datetime</b></td>".
-    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=70>".
+    "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=70>".
     "<b>$l_createdby</b></td>".
-    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=70>".
+    "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=70>".
     "<b>$l_notify</b></td>".
-    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=60>".
+    "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=60>".
     "<b>$l_status</b></td>".
-    "<td bgcolor=\"#eeeedd\" style=\"padding: 4px;\" width=261>".
+    "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=261>".
     "<b>$l_service</b></td>";
   
   $query = "SELECT  ch.id, ch.creation_date, ".
@@ -579,9 +579,9 @@ if ($save) {
     
     // alternate line colors
     if ($linecount & 1) {
-      print "<tr bgcolor=\"#ffffee\">";
+      print "<tr bgcolor=\"#ddddee\">";
     } else {
-      print "<tr bgcolor=\"#ffffdd\">";
+      print "<tr bgcolor=\"#ddddff\">";
     }
     
     
@@ -626,9 +626,9 @@ if ($save) {
   
   // alternate line colors
   if ($linecount & 1) {
-    print "<tr bgcolor=\"#ffffee\">";
+    print "<tr bgcolor=\"#ddddee\">";
   } else {
-    print "<tr bgcolor=\"#ffffdd\">";
+    print "<tr bgcolor=\"#ddddff\">";
   }
   
   print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description</td>";
