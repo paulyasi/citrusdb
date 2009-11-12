@@ -268,6 +268,10 @@ b.encrypted_creditcard_number b_enc_ccnum
 	// close the file
 	fclose($handle); // close the file
 
+	// log this export activity
+	log_activity($DB,$user,0,'export','creditcard',$batchid,'success');
+	
+
 	echo "$l_wrotefile $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=$exportprefix" . "export" . "$batchid.csv\"><u class=\"bluelink\">$l_download" . "$exportprefix" . "export" . "$batchid.csv</u></a><p>";	
  } // end if totalall
 }
