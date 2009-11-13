@@ -1,5 +1,7 @@
 <?php
-// TODO: Move the functions listed below to the billing module tools folder
+$exportcc_url = "$ssl_url_prefix" . "index.php?load=exportcc&type=tools";
+
+$importcc_url = "index.php?load=importcc&type=tools";
 
 echo "<div class=toolblock style=\"height: 200px;\">
 <b>$l_billing</b>
@@ -11,12 +13,12 @@ echo "<div class=toolblock style=\"height: 200px;\">
 $l_importnewaccounts</a></div>
 
 <div class=icon>
-<a href=# onclick = \"popupPage('index.php?load=exportcc&type=tools')\">
+<a href=# onclick = \"popupPage('$exportcc_url')\">
 <img border=0 src=\"images/icons/citrus_creditcards.png\"><br>
 $l_exportcreditcards</a></div>
 
 <div class=icon>
- <a href=# onclick = \"popupPage('index.php?load=importcc&type=tools')\">
+ <a href=# onclick = \"popupPage('$importcc_url')\">
 <img border=0 src=\"images/icons/citrus_creditcards.png\"><br>
 $l_importcreditcards</a></div>
 

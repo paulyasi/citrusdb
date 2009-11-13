@@ -101,6 +101,7 @@ if ($u->user_isloggedin()) {
 		echo "<html>
 		<head>
 		<title>$l_title</title>
+<base href=\"$url_prefix\" />
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
 		<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
                 <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
@@ -133,6 +134,7 @@ if ($u->user_isloggedin()) {
 		<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
         <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
+<base href=\"$url_prefix\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -157,7 +159,7 @@ if ($u->user_isloggedin()) {
 		if (!$_SESSION['account_number']) {
 			$_SESSION['account_number'] = 1;	
 		}
-		
+
 		$account_number = $_SESSION['account_number'];
 		
 		$time_start = getmicrotime();
@@ -219,6 +221,7 @@ if ($u->user_isloggedin()) {
 		<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
         <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
+<base href=\"$url_prefix\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -305,6 +308,7 @@ if ($u->user_isloggedin()) {
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
 		<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
         <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
+<base href=\"$url_prefix\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -360,6 +364,7 @@ echo "<html>
 <LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
 <LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
 <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
+<base href=\"$url_prefix\" />
 <script language=\"JavaScript\">
 function h(oR) {
 	oR.style.backgroundColor='ffdd77';

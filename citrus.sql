@@ -825,7 +825,7 @@ CREATE TABLE IF NOT EXISTS `activity_log` (
   `ip_address` varchar(64) NOT NULL,
   `account_number` int(11) default NULL,
   `activity_type` enum('login','logout','view','edit','create','delete','undelete','export','import','cancel','uncancel') NOT NULL,
-  `record_type` enum('dashboard','customer','billing','service','creditcard','admin_general','admin_settings','admin_users','admin_groups','admin_modules','admin_billingtypes','admin_services','admin_taxrates','admin_taxedservices','admin_linkedservices') NOT NULL,
+  `record_type` enum('dashboard','customer','billing','service','creditcard') NOT NULL,
   `record_id` int(11) default NULL,
   `result` enum('success','failure') NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;

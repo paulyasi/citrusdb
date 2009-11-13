@@ -228,8 +228,9 @@ while ($myresult = $result->FetchRow())
 $mystatus = billingstatus($default_billing_id);
 
 // print the default billing information
+$edit_default_billing_url = "$ssl_url_prefix" . "index.php?load=billing&type=module&edit=on&billing_id=$billing_id";
 echo "
-<a href=index.php?load=billing&type=module&edit=on&billing_id=$billing_id>[ $l_editdefaultbilling ]</a>
+<a href=$edit_default_billing_url>[ $l_editdefaultbilling ]</a>
 <a href=index.php?load=billing&type=module&resetaddr=on&account_number=$account_number>[ $l_resetaddresstocustomer ]</a>
 <a href=index.php?load=billing&type=module&rerun=on&billing_id=$billing_id>[ $l_rerun ]</a>
 ";
@@ -318,8 +319,10 @@ while ($myresult = $result->FetchRow())
 
 	$mystatus = billingstatus($billing_id);
 
+	$alternate_billing_id_url = "$ssl_url_prefix" . "index.php?load=billing&type=module&edit=on&billing_id=$billing_id";
+
 	print "<td><b>$billing_orgname</b> &nbsp;<a
-href=\"index.php?load=billing&type=module&edit=on&billing_id=$billing_id\">$billing_id</a></td><td>$billing_type</td><td>$mystatus</td>";
+href=\"$alternate_billing_id_url\">$billing_id</a></td><td>$billing_type</td><td>$mystatus</td>";
 
 if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) 
 {

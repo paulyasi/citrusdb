@@ -238,10 +238,12 @@ if ($save) {
   }
   
   // add a log entry that this billing record was edited  
-  log_activity($DB,$user,$account_number,'edit','billing',$billing_id,'success'); 
+  log_activity($DB,$user,$account_number,'edit','billing',$billing_id,'success');
+
+  $redirect_url = "$url_prefix" . "index.php?load=billing&type=module";
   
   print "<h3>$l_changessaved<h3>";
-  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
+  print "<script language=\"JavaScript\">window.location.href = \"$redirect_url\";</script>";
 
  } else {  
 
@@ -286,10 +288,12 @@ if ($save) {
   $myorgresult = $orgresult->fields;
   $organization_name = $myorgresult['org_name']; 
   echo "<h3>$l_organizationname: $organization_name</h3>";
+
+  $billing_form_url = "$ssl_url_prefix" . "index.php?load=billing&type=module&edit=on&save=on";
   
   echo "<table cellpadding=0 border=0 cellspacing=0 width=720>
 <td valign=top width=360>
-<form action=\"index.php?load=billing&type=module&edit=on&save=on\" name=\"form1\" AUTOCOMPLETE=\"off\" method=post>
+<form action=\"$billing_form_url\" name=\"form1\" AUTOCOMPLETE=\"off\" method=post>
 	<table cellpadding=5 cellspacing=1 border=0 width=360>
 	<td bgcolor=\"#ccccdd\" width=180><b>$l_id</b></td><td width=180 bgcolor=\"#ddddee\">$id</td><tr>
 	<td bgcolor=\"#ccccdd\"><b>Name</b></td><td bgcolor=\"#ddddee\">

@@ -250,9 +250,11 @@ echo
       echo "<tr style=\"background-color: eee; color: aaa;\">";
     }
   }
-    
+
+  $edit_billing_url = "$ssl_url_prefix" . "index.php?load=billing&type=module&edit=on&";
+  
   print "<td style=\"font-weight: bold;\">$billing_orgname&nbsp;".
-    "<a href=\"index.php?load=billing&type=module&edit=on&".
+    "<a href=\"$edit_billing_url".
     "billing_id=$billing_id\">$l_edit $billing_id</a>";
 
   print "</td><td>$billing_type</td><td>$mystatus</td>";

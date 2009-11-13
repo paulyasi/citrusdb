@@ -15,4 +15,9 @@ $hidden_hash_var='youmustchangethis';
 $lang = './include/local/us-english.inc.php';
 $gpg_command = "/usr/bin/gpg --homedir /home/pyasi/.gnupg --armor --always-trust --batch --no-secmem-warning -e -r 'Paul Yasi'";
 $gpg_decrypt = "/usr/bin/gpg --homedir /home/pyasi/.gnupg --passphrase-fd 0 --yes --no-tty --skip-verify --decrypt";
-//$path_to_home = '/home/pyasi'; // user with the gpg keyring
+//$path_to_home = '/home/pyasi'; // user with gpg keyring
+
+// use these url prefixes to redirect around between the ssl card data pages and regular pages
+// also maybe can be used with base href to help limit cross site scripting attacks
+$url_prefix = "http://localhost/~pyasi/citrus_project/citrusdb-gpg/";
+$ssl_url_prefix = "https://localhost/~pyasi/citrus_project/citrusdb-gpg/";
