@@ -66,11 +66,11 @@ echo "</select>";
 echo "&nbsp;&nbsp; $l_billingstatus: <select name=\"viewstatus\">";
 echo "<option> </option> ";
 //echo "<option value=\"authorized\">$l_authorized</option>";
-echo "<option value=\"declined\">$l_declined</option>";
+//echo "<option value=\"declined\">$l_declined</option>";
 echo "<option value=\"pending\">$l_pending</option>";
 echo "<option value=\"collections\">$l_collections</option>";
 echo "<option value=\"turnedoff\">$l_turnedoff</option>";
-echo "<option value=\"canceled\">$l_canceled</option>";
+//echo "<option value=\"canceled\">$l_canceled</option>";
 echo "<option value=\"cancelwfee\">$l_cancelwithfee</option>";
 echo "<option value=\"pastdue\">$l_pastdue</option>";
 echo "<option value=\"pastdueexempt\">$l_pastdueexempt</option>";
@@ -215,6 +215,7 @@ if (($viewstatus == 'authorized') OR ($viewstatus == 'declined') OR ($viewstatus
     "LEFT JOIN billing_history bh ON bd.invoice_number = bh.id ".
     "LEFT JOIN customer c ON c.account_number = b.account_number ".
     "WHERE ph.id = $recentpaymentid AND b.pastdue_exempt <> 'y' AND ".
+    "c.cancel_date IS NULL AND ".
     "ph.status = '$viewstatus' AND bd.billed_amount > bd.paid_amount LIMIT 1";
 } elseif (($viewstatus == 'cancelwfee') OR ($viewstatus == 'canceled') OR ($viewstatus == 'collections')) {
 // ok to include pastdue exempt accounts in this listing
@@ -236,7 +237,7 @@ $query = "SELECT ph.billing_id, b.account_number, b.name, b.company, ".
     "LEFT JOIN billing_history bh ON bd.invoice_number = bh.id ".
     "LEFT JOIN customer c ON c.account_number = b.account_number ".
     "WHERE ph.id = $recentpaymentid AND b.pastdue_exempt = 'y' ".
-    "AND bd.billed_amount > bd.paid_amount LIMIT 1";	
+    "AND c.cancel_date IS NULL AND bd.billed_amount > bd.paid_amount LIMIT 1";	
 }
 
   $paymentresult = $DB->Execute($query) or die ("paymentresult $l_queryfailed");
