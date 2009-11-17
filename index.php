@@ -261,15 +261,18 @@ if ($u->user_isloggedin()) {
 		// print the left side bar 
 		
 		echo '<div id="sidebar">
-		<p align=center class="smalltext">
-		<img src="images/my-logo.png">
+		<p align=center>
+		<img src="images/my-logo.png"></p>';
+
+		/* TEST HIDING THE MODULES ON THE SIDE, PUT SOME DASHBOARD THERE?
 		<p align=center class="smalltext">';
 		echo "<b>$l_accountnum:&nbsp; $account_number &nbsp; </b><br>";
 		echo "$acct_name<br>";
 		echo "$acct_company<br></p><p align=right>";
 		
 		include('./modules.php');
-		
+		*/
+		include ('./dashboard.php');
 		print '</div><div id="header">';
 		
 		include('./header.php');  
