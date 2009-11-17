@@ -19,11 +19,12 @@ if (!defined("INDEX_CITRUS")) {
 
 // query the customer_history for the number of 
 // waiting messages sent to that user
-$supportquery = "SELECT * FROM customer_history 
-				WHERE notify = '$user' 
-				AND status = \"not done\" ";
+$supportquery = "SELECT * FROM customer_history WHERE notify = '$user' ".
+  "AND status = \"not done\" AND date(creation_date) <= CURRENT_DATE";
 $supportresult = $DB->Execute($supportquery) or die ("$l_queryfailed");
 $num_rows = $supportresult->RowCount();
+
+echo "<hr>";
 
 if ($num_rows > 0) {
   if ($num_rows > 1) {
@@ -47,9 +48,8 @@ while ($mygroupresult = $supportresult->FetchRow()) {
   }
   
   $groupname = $mygroupresult['groupname'];
-  $query = "SELECT * FROM customer_history 
-				WHERE notify = '$groupname' 
-				AND status = \"not done\" ";
+  $query = "SELECT * FROM customer_history WHERE notify = '$groupname' ".
+    "AND status = \"not done\" AND date(creation_date) <= CURRENT_DATE";
   $gpresult = $DB->Execute($query) or die ("$l_queryfailed");
   $num_rows = $gpresult->RowCount();
   
@@ -65,6 +65,7 @@ while ($mygroupresult = $supportresult->FetchRow()) {
   
  }
 
-
+echo "<p align=center><a href=\"index.php?load=tickets&type=base\">View Messages</a></p>";
+echo "<hr>";
 
 ?>

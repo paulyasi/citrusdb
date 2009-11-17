@@ -99,7 +99,7 @@ while ($myresult = $result->FetchRow())
 			$num_rows = $gpresult->RowCount() + $num_rows;
 		}
 
-		print "<div><a href=\"index.php?load=support&type=module&edit=on\" class=smalltext>$num_rows $l_newmessage</a></div>";
+		print "<div><a href=\"index.php?load=tickets&type=base\" class=smalltext>$num_rows $l_newmessage</a></div>";
 	}
 	
 }
