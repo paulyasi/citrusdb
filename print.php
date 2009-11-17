@@ -17,6 +17,8 @@ if (!defined("INDEX_CITRUS")) {
         exit;
 }
 
+$account_number = $base->input['acnum'];
+
 echo "<h3>$l_customerrecord</h3><blockquote>";
 
 //

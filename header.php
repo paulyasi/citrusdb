@@ -4,7 +4,7 @@ echo "
 
 <td width=\"20%\" align=center><a href=\"index.php?load=customer&type=module&create=on\"><img src=\"images/new-icon.png\" alt=\"$l_new\" border=0><br>$l_new</a></td>
 <td width=\"20%\" align=center><a href=\"index.php?load=search&type=base\"><img src=\"images/search-icon.png\" alt=\"$l_search\" border=0><br>$l_search</a></td>
-<td width=\"20%\" align=center><a href=\"index.php?load=print&type=base\"><img src=\"images/print-icon.png\" alt=\"$l_print\" border=0><br>$l_print</a></td>
+<td width=\"20%\" align=center><a href=\"index.php?load=print&type=fs&acnum=$account_number\"><img src=\"images/print-icon.png\" alt=\"$l_print\" border=0><br>$l_print</a></td>
 <td width=\"20%\" align=center><a href=\"index.php?load=tools&type=base\"><img src=\"images/admin-icon.png\" alt=\"$l_tools\" border=0><br>$l_tools</a></td>
 <td width=\"20%\" align=center>
 ";
