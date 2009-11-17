@@ -156,6 +156,16 @@ if ($save) {
     $newcc = TRUE;
   }
 
+  // build the rerun_date string that gets put into the insert
+  // check if rerun_date should be NULL or not
+  if ($rerun_date == "0000-00-00") {
+    // rerun date is null
+    $rerun_date_string = "rerun_date = NULL, ";
+  } else {
+    // rerun date has something in it
+    $rerun_date_string = "rerun_date = '$rerun_date', ";
+  }
+
   if ($newcc == TRUE) {
     // insert with a new credit card and encrypted ciphertext
     $query = "UPDATE billing ".
@@ -174,6 +184,7 @@ if ($save) {
       "next_billing_date = '$next_billing_date',".
       "from_date = '$from_date',".
       "payment_due_date = '$payment_due_date',".
+      "$rerun_date_string".
       "notes = '$notes',".
       "pastdue_exempt = '$pastdue_exempt',".
       "po_number = '$po_number',".
@@ -199,6 +210,7 @@ if ($save) {
       "next_billing_date = '$next_billing_date',".
       "from_date = '$from_date',".
       "payment_due_date = '$payment_due_date',".
+      "$rerun_date_string".      
       "notes = '$notes',".
       "pastdue_exempt = '$pastdue_exempt',".
       "po_number = '$po_number',".
@@ -223,6 +235,7 @@ if ($save) {
       "next_billing_date = '$next_billing_date',".
       "from_date = '$from_date',".
       "payment_due_date = '$payment_due_date',".
+      "$rerun_date_string".	  
       "notes = '$notes',".
       "pastdue_exempt = '$pastdue_exempt',".
       "po_number = '$po_number',".
@@ -279,6 +292,7 @@ if ($save) {
   $from_date = $myresult['from_date'];
   $to_date = $myresult['to_date'];
   $payment_due_date = $myresult['payment_due_date'];
+  $rerun_date = $myresult['rerun_date'];
   $contact_email = $myresult['contact_email'];
   $notes = $myresult['notes'];
   $pastdue_exempt = $myresult['pastdue_exempt'];
