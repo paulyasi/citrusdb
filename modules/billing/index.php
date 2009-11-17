@@ -297,10 +297,6 @@ echo "
 [ <a href=\"index.php?load=billing&type=module&create=on\">$l_addaltbilling</a> ]<br>
 ";
 
- 
-// add a log entry that this billing record was viewed
-log_activity($DB,$user,$account_number,'view','billing',$billing_id,'success'); 
-
 // print a list of alternate billing id's if any
 $query = "SELECT b.id b_id, g.org_name g_org_name, t.name t_name 
 FROM billing b 

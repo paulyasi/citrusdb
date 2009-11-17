@@ -279,9 +279,6 @@ echo
  if (file_exists($filepath)) {
    include('./modules/services/index.php');
  }
-
- // add a log entry that this customer record was viewed
- log_activity($DB,$user,$account_number,'view','customer',0,'success');
  
 } else permission_error();
 ?>

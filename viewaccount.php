@@ -16,6 +16,8 @@ if (!defined("INDEX_CITRUS")) {
 $account_number = $base->input['acnum'];
 $_SESSION['account_number'] = $account_number;
 
+// log this account view
+log_activity($DB, $user, $account_number, 'view', 'customer', 0, 'success');
 ?>
 
 <html>
