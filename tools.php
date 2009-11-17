@@ -89,9 +89,9 @@ $l_refundreport</a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=billing_status&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=pastdue&type=tools')\">
 <img border=0 src=\"images/icons/citrus_declines.png\"><br>
-$l_billingstatus</a>
+$l_pastduereport</a>
 </div>
 
 <div class=icon>

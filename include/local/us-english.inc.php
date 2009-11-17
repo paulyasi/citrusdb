@@ -65,6 +65,7 @@ $l_areyousureyouwanttoremoveinvoice = "Are you sure you want to remove invoice n
 $l_areyousureyouwanttoremovethegroupid = "Are you sure you want to remove the group id";
 $l_areyousureyouwanttoremovetheuserid = "Are you sure you want to remove the user id";
 $l_automatic = "Automatic";
+$l_automaticreceipt = "Automatic Receipt";
 $l_authorized = "Authorized";
 $l_avs = "AVS";
 $l_back = "Back";

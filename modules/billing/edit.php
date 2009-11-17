@@ -88,6 +88,7 @@ if (!isset($base->input['contact_email'])) { $base->input['contact_email'] = "";
 if (!isset($base->input['notes'])) { $base->input['notes'] = ""; }
 if (!isset($base->input['pastdue_exempt'])) { $base->input['pastdue_exempt'] = ""; }
 if (!isset($base->input['po_number'])) { $base->input['po_number'] = ""; }
+if (!isset($base->input['automatic_receipt'])) { $base->input['automatic_receipt'] = ""; }
 
 $billing_id = $base->input['billing_id'];
 $name = $base->input['name'];
@@ -110,6 +111,7 @@ $contact_email = $base->input['contact_email'];
 $notes = $base->input['notes'];
 $pastdue_exempt = $base->input['pastdue_exempt'];
 $po_number = $base->input['po_number'];
+$automatic_receipt = $base->input['automatic_receipt'];
 
 if ($save) {
   //$DB->debug = true;
@@ -176,6 +178,7 @@ if ($save) {
       "pastdue_exempt = '$pastdue_exempt',".
       "po_number = '$po_number',".
       "contact_email = '$contact_email', ".
+      "automatic_receipt = '$automatic_receipt', ".      
       "encrypted_creditcard_number = '$encrypted_creditcard_number'".
       "WHERE id = $billing_id";
   } elseif ($creditcard_number == '') {
@@ -200,6 +203,7 @@ if ($save) {
       "pastdue_exempt = '$pastdue_exempt',".
       "po_number = '$po_number',".
       "contact_email = '$contact_email', ".
+      "automatic_receipt = '$automatic_receipt', ".
       "encrypted_creditcard_number = NULL ".
       "WHERE id = $billing_id";    
   } else {
@@ -222,6 +226,7 @@ if ($save) {
       "notes = '$notes',".
       "pastdue_exempt = '$pastdue_exempt',".
       "po_number = '$po_number',".
+      "automatic_receipt = '$automatic_receipt', ".	
       "contact_email = '$contact_email' ".
       "WHERE id = $billing_id";
   }
@@ -278,6 +283,7 @@ if ($save) {
   $notes = $myresult['notes'];
   $pastdue_exempt = $myresult['pastdue_exempt'];
   $po_number = $myresult['po_number'];
+  $automatic_receipt = $myresult['automatic_receipt'];
   $organization_id = $myresult['organization_id'];
   
   echo "<a href=\"index.php?load=billing&type=module\">[ $l_undochanges ]</a>";
@@ -371,6 +377,14 @@ echo "</td><tr>".
 	<input type=radio name=pastdue_exempt value=bad_debt"; if ($pastdue_exempt == "bad_debt") { echo " checked "; }
         echo ">$l_bad_debt
 	
+	</td><tr>
+
+	<td bgcolor=\"#ccccdd\"><b>$l_automaticreceipt</b></td>
+	<td bgcolor=\"#ddddee\">
+	<input type=radio name=automatic_receipt value=n"; if ($automatic_receipt == "n") { echo " checked "; }
+	echo ">$l_no
+	<input type=radio name=automatic_receipt value=y"; if ($automatic_receipt == "y") { echo " checked "; }
+	echo ">$l_yes
 	</td><tr>
 	
 	<td bgcolor=\"#ccccdd\"><b>$l_nextbillingdate</b></td>

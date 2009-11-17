@@ -61,6 +61,7 @@ CREATE TABLE `billing` (
   `po_number` varchar(64) default NULL,
   `organization_id` int(11) NOT NULL default '1',
   `encrypted_creditcard_number` text NULL default NULL,
+  `automatic_receipt` enum('y','n') NOT NULL default 'n',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=34 ;
 
@@ -68,7 +69,7 @@ CREATE TABLE `billing` (
 -- Dumping data for table `billing`
 -- 
 
-INSERT INTO `billing` VALUES (1, 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'ABC', 'USA', '12345', '555-555-5555', '555-555-5556', '', 1, 7, '5***********0001', 0909, 0, NULL, '2007-10-07', NULL, '2007-10-07', '2007-11-07', '2007-10-07', NULL, '', 'n', '', 1, '-----BEGIN PGP MESSAGE-----\nVersion: GnuPG v1.4.6 (GNU/Linux)\n\nhQIOA5EpLKAGbJnoEAgAiE78z7h8Cwv3j13JgEnA1mS1NJt4/wC88U7bydZjZX5F\nHPIp89SFlF1OwzTQlJ3Gke3/oVLRQMi5Tg1GMDdTcyon5yqz4Ay7gdO66du21HhA\nVqZYheytSCMbw8mfiHIWj1p0ou4hfhhutk4zbAtlQrHzq6taLL68pSUOcOZskq8Y\nM5MeDZJ+KpIwzuxeEvSWftlxrKT2FL9sOwOB+kGo5j8Ot5wxh/6xckYNdPJiZRuG\n4rZFqwr0X2ybNOoTEhOi65fMpg9ksSTKNvlV82fZmZN6pJhhBwZhEMUUmM/1QYGJ\nNU8N8WhaGNYrnERF4shWR5ctgu9Ke7kOVLarTvoMtQf+LwxeAMV7v7An+0gddF+v\nnUjaZmKB0DdEIXcCyj5vBVTzo6ArwzmIOhOC7eoe8D4nXNrLHsyKHWUt8aEAhCjJ\nurjRePyCqZUUN7lBsoYfMBQugr0myHm8ZqEk6UBEAvmVq4MSoVl3sAeBFJcmss7t\nPweyHbFCZbRwUcExGUaG3xHdCdb29JE3rPD4a3cMLFPecQlmPWHXNNlPHdGVltVF\nOg6pYJ2TUr4eXGIuJr/AKp8snWcx2N3wZVRsEnP9FH2RIvZ+j6b19Ugi/FAC9Qvj\n9G2/cX9a6CQ0vwwciOg7FcjiuTNntwecuatOdTh8lWiiwVlBuTU27h8tu/t5FIFh\nedJBAXY+/vwEoyFKjbXsnU5v6W9mRA6yUSeszxIQ26xfftbd1zyAmUgHwTBmQ3yB\ndhHZ87glQiWZ33rj8fB1SIITABs=\n=Rift\n-----END PGP MESSAGE-----');
+INSERT INTO `billing` VALUES (1, 'Example Customer', 'Example Company', 'Example St', 'ExampleCity', 'ABC', 'USA', '12345', '555-555-5555', '555-555-5556', '', 1, 7, '5***********0001', 0909, 0, NULL, '2007-10-07', NULL, '2007-10-07', '2007-11-07', '2007-10-07', NULL, '', 'n', '', 1, '-----BEGIN PGP MESSAGE-----\nVersion: GnuPG v1.4.6 (GNU/Linux)\n\nhQIOA5EpLKAGbJnoEAgAiE78z7h8Cwv3j13JgEnA1mS1NJt4/wC88U7bydZjZX5F\nHPIp89SFlF1OwzTQlJ3Gke3/oVLRQMi5Tg1GMDdTcyon5yqz4Ay7gdO66du21HhA\nVqZYheytSCMbw8mfiHIWj1p0ou4hfhhutk4zbAtlQrHzq6taLL68pSUOcOZskq8Y\nM5MeDZJ+KpIwzuxeEvSWftlxrKT2FL9sOwOB+kGo5j8Ot5wxh/6xckYNdPJiZRuG\n4rZFqwr0X2ybNOoTEhOi65fMpg9ksSTKNvlV82fZmZN6pJhhBwZhEMUUmM/1QYGJ\nNU8N8WhaGNYrnERF4shWR5ctgu9Ke7kOVLarTvoMtQf+LwxeAMV7v7An+0gddF+v\nnUjaZmKB0DdEIXcCyj5vBVTzo6ArwzmIOhOC7eoe8D4nXNrLHsyKHWUt8aEAhCjJ\nurjRePyCqZUUN7lBsoYfMBQugr0myHm8ZqEk6UBEAvmVq4MSoVl3sAeBFJcmss7t\nPweyHbFCZbRwUcExGUaG3xHdCdb29JE3rPD4a3cMLFPecQlmPWHXNNlPHdGVltVF\nOg6pYJ2TUr4eXGIuJr/AKp8snWcx2N3wZVRsEnP9FH2RIvZ+j6b19Ugi/FAC9Qvj\n9G2/cX9a6CQ0vwwciOg7FcjiuTNntwecuatOdTh8lWiiwVlBuTU27h8tu/t5FIFh\nedJBAXY+/vwEoyFKjbXsnU5v6W9mRA6yUSeszxIQ26xfftbd1zyAmUgHwTBmQ3yB\ndhHZ87glQiWZ33rj8fB1SIITABs=\n=Rift\n-----END PGP MESSAGE-----', 'n');
 
 -- --------------------------------------------------------
 

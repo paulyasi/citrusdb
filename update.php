@@ -750,6 +750,7 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
 
+	  // add payment_history_id to link individual payments to items
 	  $query = "ALTER TABLE `billing_details` ADD `payment_history_id` ".
 	    "INT NULL ;";
 	  $result = $DB->Execute($query) or die ("query failed");
@@ -769,7 +770,13 @@ if ($base->input['submit'] == "Update")
 	    "`record_id` int(11) default NULL,".
 	    "`result` enum('success','failure') NOT NULL".
 	    ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";	  
-	  	  
+
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";	  	  
+	  
+	  // add automatic_receipt marker to know who wants automatic receipts
+	  $query = "ALTER TABLE `billing` ADD `automatic_receipt` ".
+	    "ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";	  
 	  

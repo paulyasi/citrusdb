@@ -22,6 +22,16 @@ $invoice_number = $base->input['invoicenum'];
 $billingid = $base->input['billingid'];
 $payment_date = $base->input['date'];
 
+// grab the payment type, cardnumber, and check number
+$query = "SELECT payment_type, creditcard_number, check_number ".
+  "FROM payment_history WHERE id = '$paymentid'";
+$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+$result = $DB->Execute($query) or die ("payment history Query Failed");
+$myresult = $result->fields;
+$payment_type = $myresult['payment_type'];
+$creditcard_number = $myresult['creditcard_number'];
+$check_number = $myresult['check_number'];
+
 /*-------------------------------------------------------------------------*/
 // print paid_amounts from billing_details
 /*-------------------------------------------------------------------------*/
@@ -40,19 +50,36 @@ $billing_state = $myresult['state'];
 $billing_zip = $myresult['zip'];
 $billing_account_number = $myresult['account_number'];
 $org_name = $myresult['org_name'];
+$org_street = $myresult['org_street'];
+$org_city = $myresult['org_city'];
+$org_state = $myresult['org_state'];
+$org_zip = $myresult['org_zip'];
 
 echo "<h2>$org_name</h2>".
+"$org_street<br>".
+"$org_city, $org_state $org_zip<br>".
 "<h3>$l_paymentreceipt</h3>".
-"$l_accountnumber: $billing_account_number<br><br>\n\n".
+"$l_accountnumber: $billing_account_number<br><br><br>\n\n".
 "$billing_name<br>".
 "$billing_company<br>".
 "$billing_street<br>".
-"$billing_city $billing_state $billing_zip<p>";
+"$billing_city $billing_state $billing_zip\n<br><br><br>";
 
 $human_date = humandate($payment_date, $lang);
 
-echo "$l_paid: $amount on $human_date for:<p>";
-
+if ($payment_type == "creditcard") {    
+  // wipe out the middle of the card number
+  $length = strlen($creditcard_number);
+  $firstdigit = substr($creditcard_number, 0,1);
+  $lastfour = substr($creditcard_number, -4);
+  $creditcard_number = "$firstdigit" . "***********" . "$lastfour";
+  
+  echo "$l_paid with $payment_type ($creditcard_number), ".
+    "$amount on $human_date for:\n<br><br>";
+ } else {
+  echo "$l_paid with $payment_type (number: $check_number), ".
+    "$amount on $human_date for:\n<br><br>";    
+ }
 
 // get the resulting list of services that have payment applied with
 // the matching payment_history_id
@@ -70,7 +97,7 @@ $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("Receipt Query Failed");
 
 echo "<table>";
-echo "<td>$l_invoice</td><td>$l_description</td><td>$l_paid</td><td>$l_stillowed</td><tr>";
+echo "<td>$l_invoice</td><td>$l_description</td><td>$l_paid</td><tr>";
 
 while ($myresult = $result->FetchRow()) {
   $invoice = $myresult['original_invoice_number'];
@@ -83,9 +110,9 @@ while ($myresult = $result->FetchRow()) {
 
   if ($tax_description) {
     // print the tax as description instead
-  echo "<td>$invoice</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><td>$owed_amount</td><tr>";
+  echo "<td>$invoice</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><tr>";
   } else {
-  echo "<td>$invoice</td><td>$description</td><td>$paid_amount</td><td>$owed_amount</td><tr>";
+  echo "<td>$invoice</td><td>$description</td><td>$paid_amount</td><tr>";
   }
  }
 echo "</table>";
