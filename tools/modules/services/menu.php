@@ -5,7 +5,7 @@ echo "<div class=toolblock>
 <b>$l_services</b>
 <br>	
 	<div class=icon>
-	<a href=# onclick = \"popupPage('index.php?load=tools/printwelcome&type=fs')\">
+	<a href=# onclick = \"popupPage('index.php?load=tools/printwelcome&type=fs'); return false;\">
 	<img border=0 src=\"images/icons/citrus_print.png\"><br>
 	$l_printwelcomeletters</a>
 	</div>

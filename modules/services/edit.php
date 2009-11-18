@@ -332,7 +332,7 @@ if ($save) {
 	    $url = str_replace("%s2%", $s2, $url);
 	    if ($url) {
 	      echo "&nbsp;&nbsp; <a href=# ".
-		"onclick=\"popupPage('$url')\">$urlname</a>";
+		"onclick=\"popupPage('$url'); return false;\">$urlname</a>";
 	    }
 	  }
 	  echo "</td><tr>\n";

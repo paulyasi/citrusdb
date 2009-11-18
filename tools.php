@@ -28,13 +28,13 @@ echo "<div class=toolblock><b>$l_user: $user</b><br>";
 
 echo "
 	<div class=icon>
-	<a href=# onclick=\"popupPage('index.php?load=changepass&type=tools')\">
+	<a href=# onclick=\"popupPage('index.php?load=changepass&type=tools'); return false;\">
 	<img src=\"images/icons/citrus_changepass.png\" border=0><br>
 	$l_changeyourpassword</a>
 	</div>
 	
 	<div class=icon>
-	<a href=# onclick=\"popupPage('index.php?load=version&type=tools')\">
+	<a href=# onclick=\"popupPage('index.php?load=version&type=tools'); return false;\">
 	<img src=\"images/icons/citrus_version.png\" border=0><br>
 	$l_version</a>
 	</div>
@@ -71,54 +71,54 @@ echo "<div class=toolblock style=\"height: 180px;\">
 <br>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=summary&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=summary&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_report.png\"><br>
 $l_customersummary</a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=revenue&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=revenue&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_report.png\"><br>
 $l_revenuereport</a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=refunds&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=refunds&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_report.png\"><br>
 $l_refundreport</a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=pastdue&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=pastdue&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_declines.png\"><br>
 $l_pastduereport</a>
 </div>
 
 <div class=icon>
-<a href=# onclick = \"popupPage('index.php?load=billing&tooltype=module&type=tools&declined=on')\">
+<a href=# onclick = \"popupPage('index.php?load=billing&tooltype=module&type=tools&declined=on'); return false;\">
 <img border=0 src=\"images/icons/citrus_declines.png\"><br>
 $l_paymentstatus</a></div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=servicereport&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=servicereport&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_report.png\"><br>
 $l_servicereport</a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=sourcereport&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=sourcereport&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_report.png\"><br>
 $l_sourcereport</a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=exemptreport&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=exemptreport&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_report.png\"><br>
 $l_exemptreport</a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=listpdf&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=listpdf&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_report.png\"><br>
 $l_printnotices</a>
 </div>
@@ -136,43 +136,43 @@ echo "<div class=toolblock>
 <b>$l_admin</b>
 <br>
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=general&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=general&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_config.png\">
 $l_generalconfiguration</a></li>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=settings&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=settings&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_config.png\">
 $l_settings</a></li>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=users&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=users&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_users.png\"><br>
 $l_users</a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=groups&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=groups&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_groups.png\"><br>
 $l_groups</a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=modules&type=tools')\">
+<a href=# onclick=\"popupPage('index.php?load=modules&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_modules.png\"><br>
 $l_editmodules</a>
 </div>
 
 <div class=icon>
-<a href=# onclick = \"popupPage('index.php?load=billing&tooltype=module&type=tools&billingtypes=on')\">
+<a href=# onclick = \"popupPage('index.php?load=billing&tooltype=module&type=tools&billingtypes=on'); return false;\">
 <img border=0 src=\"images/icons/citrus_edit.png\"><br>
 $l_editbillingtypes</a>
 </div>
 
 <div class=icon>
-<a href=# onclick = \"popupPage('index.php?load=services&tooltype=module&type=tools')\">
+<a href=# onclick = \"popupPage('index.php?load=services&tooltype=module&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_edit.png\"><br>
 $l_editservices</a>
 </div>

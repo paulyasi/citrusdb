@@ -24,15 +24,18 @@ $supportquery = "SELECT * FROM customer_history WHERE notify = '$user' ".
 $supportresult = $DB->Execute($supportquery) or die ("$l_queryfailed");
 $num_rows = $supportresult->RowCount();
 
-echo "<hr>";
+$hasmessages = 0;
+
+echo "<hr><center>";
 
 if ($num_rows > 0) {
+  $hasmessages = 1;
   if ($num_rows > 1) {
     // plural messages
-    print "<p align=center><b>$num_rows new $user messages</b><p>";
+    print "<b><a href=\"index.php?load=tickets&type=base\">$num_rows new messages for $user</b></a><br>";
   } else {
     // singular message
-    print "<p align=center><b>$num_rows new $user message</b><p>";    
+    print "<b><a href=\"index.php?load=tickets&type=base\">$num_rows new message for $user</a></b><br>";
   }
  }
 
@@ -54,19 +57,22 @@ while ($mygroupresult = $supportresult->FetchRow()) {
   $num_rows = $gpresult->RowCount();
   
   if ($num_rows > 0) {
+    $hasmessges = 1;
     if ($num_rows > 1) {
       // plural messages
-      print "<p align=center><b>$num_rows new $groupname messages</b><p>";
+      print "<b><a href=\"index.php?load=tickets&type=base\">$num_rows new messages for $groupname</a></b><br>";
     } else {
       // singular message
-      print "<p align=center><b>$num_rows new $groupname message</b><p>";      
+      print "<b><a href=\"index.php?load=tickets&type=base\">$num_rows new message for $groupname</a></b><br>";      
     }
   }
   
  }
 
-echo "<p align=center><a href=\"index.php?load=tickets&type=base\">View Messages</a></p>";
-echo "<hr>";
+if ($hasmessages == 0) {
+  echo "<a href=\"index.php?load=tickets&type=base\">No New Messages</a><br>";
+ }
+echo "</center><hr>";
 echo "<p align=center><b>Recently Viewed:</b>";
 echo "<table cellpadding=10><td class=\"smalltext\">";
 // show recent customers viewed
@@ -80,6 +86,7 @@ while ($myresult = $result->FetchRow()) {
   echo "<a href=\"index.php?load=viewaccount&type=fs&acnum=$account_number\">$account_number: $name</a><br>";
 
  }
-echo "</td></table></p><hr>";
-
+echo "</td></table></p>";
+echo "<hr>";
+echo "show who is logged in down here";
 ?>
