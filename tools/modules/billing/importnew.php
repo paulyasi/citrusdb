@@ -276,7 +276,10 @@ if ($submit) {
   @fclose($fp) or die ("$l_cannotclose $myfile");
   
   // delete the file when we are done
-  unlink($myfile);	
+  unlink($myfile);
+
+  // log the importing of accounts
+  log_activity($DB,$user,$account_number,'import','customer',0,'success');  
  }
 
 // uploadnew will redirect back to this file to perform the submit processing

@@ -107,7 +107,10 @@ if ($submit) {
 	@fclose($fp) or die ("$l_cannotclose $myfile");
 	
 	// delete the file when we are done
-	unlink($myfile);	
+	unlink($myfile);
+
+	// log this activity
+	log_activity($DB,$user,0,'import','billing',0,'success');	
 }
 
 // uploadnew will redirect back to this file to perform the submit processing

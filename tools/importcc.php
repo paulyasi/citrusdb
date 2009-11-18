@@ -238,6 +238,10 @@ if ($submit) {
     echo "sent decline to $to\n";
   } // end foreach
   echo "<p>$l_done</p>";
+
+  // log this import activity
+  log_activity($DB,$user,0,'import','creditcard',0,'success');
+  
  } // end if submit
 
 // use the uploadcc.php file to upload the file to the io directory

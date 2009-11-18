@@ -141,6 +141,9 @@ if ($submit) {
 	// close the file
 	fclose($handle); // close the file
 
+	// log this export activity
+	log_activity($DB,$user,0,'export','creditcard',$batchid,'success');
+
 	echo "$l_wrotefile $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=refund$today-$organization_id.csv\"><u class=\"bluelink\">$l_download refund$today-$organization_id.csv</u></a><p>";	
 
 
