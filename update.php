@@ -778,7 +778,13 @@ if ($base->input['submit'] == "Update")
 	  $query = "ALTER TABLE `billing` ADD `automatic_receipt` ".
 	    "ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
 	  $result = $DB->Execute($query) or die ("query failed");
-	  echo "$query<br>\n";	  
+	  echo "$query<br>\n";
+
+	  // add closed_by and closed_date fields to customer_history table
+	  $query = "ALTER TABLE `customer_history` ADD `closed_by` ".
+	    "VARCHAR( 64 ) NULL ,ADD `closed_date` DATETIME NULL ;";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
 	  
 	  // set the version number in the database to 2.0
 	  $query = "UPDATE `settings` SET `version` = '2.0' ".

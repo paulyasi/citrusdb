@@ -242,7 +242,9 @@ CREATE TABLE `customer_history` (
   `description` text NOT NULL,
   `linkurl` VARCHAR( 255 ) NULL,
   `linkname` VARCHAR( 64 ) NULL,
-  `user_services_id` INT NULL, 
+  `user_services_id` INT NULL,
+  `closed_by` varchar(64) NULL,
+  `closed_date` datetime NULL,
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=3 ;
 
@@ -250,10 +252,6 @@ CREATE TABLE `customer_history` (
 -- Dumping data for table `customer_history`
 -- 
 
-INSERT INTO `customer_history` VALUES (1, '2006-02-08 14:02:04', 'admin', '', 1, 'automatic', 'Shutoff Example Service','','', '');
-INSERT INTO `customer_history` VALUES (2, '2006-02-08 14:02:33', 'admin', '', 1, 'automatic', 'Added Example Service','','', '');
-
--- --------------------------------------------------------
 
 -- 
 -- Table structure for table `example_options`

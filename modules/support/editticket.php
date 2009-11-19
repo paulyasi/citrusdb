@@ -66,7 +66,7 @@ if ($savechanges)
     "ch.created_by ch_created_by, ch.notify ch_notify, ".
     "ch.account_number ch_account_number, ch.status ch_status, ".
     "ch.description ch_description, ch.linkname, ch.linkurl, c.name c_name, ".
-    "ch.user_services_id ch_user_services_id, ".
+    "ch.user_services_id ch_user_services_id, ch.closed_by ch_closed_by, ch.closed_date ch_closed_date, ".
     "ms.service_description service_description ".
     "FROM customer_history ch ".
     "LEFT JOIN customer c ON c.account_number = ch.account_number ".
@@ -88,19 +88,21 @@ if ($savechanges)
   $linkname = $myresult['linkname'];
   $linkurl = $myresult['linkurl'];
   $serviceid = $myresult['ch_user_services_id'];
+  $closed_by = $myresult['ch_closed_by'];
+  $closed_date = $myresult['ch_closed_date'];
   $service_description = $myresult['service_description'];
 	
 	
   echo "<a href=\"index.php?load=customer&type=module\">[ $l_undochanges ]</a>".
-    "&nbsp; <a href=\"index.php?load=support&type=module&edit=on\">".
+    "&nbsp; <a href=\"index.php?load=tickets&type=base\">".
     "[ $l_checknotes ]</a>".
     "<h3>$l_ticketnumber $id</h3>".
     "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\" method=post>".
     "<table cellpadding=5 border=0 cellspacing=1 width=720>".
     "<td bgcolor=\"#ccccdd\"><b>$l_createdby</b></td>".
-    "<td bgcolor=\"#ddddee\">$created_by</td><tr>".
-    "<td bgcolor=\"#ccccdd\"><b>$l_creation</b></td>".
-    "<td bgcolor=\"#ddddee\">$creation_date</td><tr>".
+    "<td bgcolor=\"#ddddee\">$created_by $creation_date</td><tr>".
+    "<td bgcolor=\"#ccccdd\"><b>$l_closed_by</b></td>".
+    "<td bgcolor=\"#ddddee\">$closed_by $closed_date</td><tr>".
     "<td bgcolor=\"#ccccdd\"><b>$l_customer</b></td>".
     "<td bgcolor=\"#ddddee\">".
     "<a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">".

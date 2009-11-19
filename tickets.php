@@ -37,8 +37,9 @@ if ($pending) {
   /*--------------------------------------------------------------------------*/
   // make the customer_history id as completed
   /*--------------------------------------------------------------------------*/
-  $query = "UPDATE customer_history SET status = \"completed\" WHERE id = $id";
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $mydate = date("Y-m-d H:i:s");
+  $query = "UPDATE customer_history SET status = 'completed', closed_by = '$user', closed_date = '$mydate' WHERE id = $id";
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
   print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base&\";</script>";	
  } else {
   /*--------------------------------------------------------------------------*/

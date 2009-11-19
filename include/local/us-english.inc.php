@@ -122,6 +122,7 @@ $l_choose = "Choose One...";
 $l_ciphertext = "Ciphertext";
 $l_city = "City";
 $l_clickheretotryagain = "Click here to try again";
+$l_closed_by = "Closed By";
 $l_collections = "Collections";
 $l_collections_heading = "The following services have been canceled";
 $l_collections_notice = "Collections Notice";
