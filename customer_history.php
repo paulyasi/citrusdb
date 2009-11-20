@@ -130,6 +130,18 @@ while ($myresult = $result->FetchRow()) {
   }
 
   print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description</td>";
+
+  // get the sub_history printed here
+  $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
+  $subresult = $DB->Execute($query) or die ("sub_history $l_queryfailed");
+  
+  while ($mysubresult = $subresult->FetchRow()) {
+    $sub_creation_date = $mysubresult['creation_date'];
+    $sub_created_by = $mysubresult['created_by'];
+    $sub_description = $mysubresult['description'];
+    
+    print "<tr><td style=\"padding: 1px; border: 1px solid #bbb;\">$sub_created_by</td><td colspan=8 style=\"padding: 1px; border: 1px solid #bbb;\">$sub_description</td>\n";
+    }
   
   // increment line count to make even/odd coloring
   $linecount++;

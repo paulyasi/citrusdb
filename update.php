@@ -785,7 +785,20 @@ if ($base->input['submit'] == "Update")
 	    "VARCHAR( 64 ) NULL ,ADD `closed_date` DATETIME NULL ;";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
+
 	  
+	  // sub_history table to hold new entries associated with the same customer history entry
+	  $query = "CREATE TABLE IF NOT EXISTS `sub_history` (".
+	    "`id` int(10) unsigned NOT NULL auto_increment,".
+	    "`creation_date` datetime NOT NULL default '0000-00-00 00:00:00',".
+	    "`created_by` varchar(20) NOT NULL default 'citrus',".
+	    "`customer_history_id` int(11) NOT NULL default '0',".
+	    "`description` text NOT NULL,".
+	    "PRIMARY KEY  (`id`)".
+	    ") ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
+	  $result = $DB->Execute($query) or die ("query failed");
+	  echo "$query<br>\n";
+
 	  // set the version number in the database to 2.0
 	  $query = "UPDATE `settings` SET `version` = '2.0' ".
 	    "WHERE `id` =1 LIMIT 1";

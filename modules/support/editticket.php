@@ -27,6 +27,7 @@ if (!isset($base->input['savechanges'])) { $base->input['savechanges'] = ""; }
 if (!isset($base->input['reminderdate'])) { $base->input['reminderdate'] = ""; }
 if (!isset($base->input['serviceid'])) { $base->input['serviceid'] = ""; }
 if (!isset($base->input['accountnum'])) { $base->input['accountnum'] = ""; }
+if (!isset($base->input['addnote'])) { $base->input['addnote'] = ""; }
 
 $id = $base->input['id'];
 $notify = $base->input['notify'];
@@ -36,29 +37,37 @@ $savechanges = $base->input['savechanges'];
 $reminderdate = $base->input['reminderdate'];
 $serviceid = $base->input['serviceid'];
 $accountnum = $base->input['accountnum'];
+$addnote = $base->input['addnote'];
 
-if ($savechanges)
-{
-  // save the changes
+if ($savechanges) {
+
+  // TODO: if they modify the status from not done or pending to completed, mark this user as the one who closed the ticket too
+  // save the changes to the customer_history
   if ($reminderdate <> '') {
     $query = "UPDATE customer_history SET notify = '$notify', ".
-      "status = '$status', description = '$description', ".
+      "status = '$status', ".
       "creation_date = '$reminderdate', ".
       "user_services_id = '$serviceid', ".
       "account_number = '$accountnum' ".
       "WHERE id = $id";
   } else {
     $query = "UPDATE customer_history SET notify = '$notify', ".
-      "status = '$status', description = '$description', ".
+      "status = '$status', ".
       "user_services_id = '$serviceid', ".
       "account_number = '$accountnum' ".
       "WHERE id = $id";   
   }
   
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $result = $DB->Execute($query) or die ("result $l_queryfailed");
+
+  // if there is a new note added, put that into the sub_history
+  if ($addnote) {
+    $query = "INSERT sub_history SET customer_history_id = '$id', creation_date = CURRENT_TIMESTAMP, created_by = '$user', description = '$addnote'";
+    $result = $DB->Execute($query) or die ("sub_history insert $l_queryfailed");    
+  }
 
   // redirect back to the account record
-  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=support&type=module&edit=on\";</script>";			
+  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";			
 	
  } else {
   // show the ticket info to edit
@@ -90,8 +99,7 @@ if ($savechanges)
   $serviceid = $myresult['ch_user_services_id'];
   $closed_by = $myresult['ch_closed_by'];
   $closed_date = $myresult['ch_closed_date'];
-  $service_description = $myresult['service_description'];
-	
+  $service_description = $myresult['service_description'];	
 	
   echo "<a href=\"index.php?load=customer&type=module\">[ $l_undochanges ]</a>".
     "&nbsp; <a href=\"index.php?load=tickets&type=base\">".
@@ -100,7 +108,7 @@ if ($savechanges)
     "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\" method=post>".
     "<table cellpadding=5 border=0 cellspacing=1 width=720>".
     "<td bgcolor=\"#ccccdd\"><b>$l_createdby</b></td>".
-    "<td bgcolor=\"#ddddee\">$created_by $creation_date</td><tr>".
+    "<td bgcolor=\"#ddddee\">$created_by $creation_date</td>".
     "<td bgcolor=\"#ccccdd\"><b>$l_closed_by</b></td>".
     "<td bgcolor=\"#ddddee\">$closed_by $closed_date</td><tr>".
     "<td bgcolor=\"#ccccdd\"><b>$l_customer</b></td>".
@@ -108,15 +116,13 @@ if ($savechanges)
     "<a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">".
     "$name</a>
 &nbsp;&nbsp;<input type=text value=\"$accountnum\" name=\"accountnum\" size=10>
-</td><tr>";
+</td>";
 
-  //  if ($serviceid > 0) {
     echo "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
       "<td bgcolor=\"#ddddee\"><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">".
       "$serviceid $service_description</a>".
       "&nbsp;&nbsp;<input type=text value=\"$serviceid\" name=\"serviceid\" size=10>".
       "</td><tr>";
-    //}
       
   echo "<td bgcolor=\"#ccccdd\"><b>$l_notify</b></td>".
     "<td bgcolor=\"#ddddee\">";
@@ -143,7 +149,7 @@ if ($savechanges)
   // print the list of users
   $query = "SELECT username FROM user ORDER BY username";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $result = $DB->Execute($query) or die ("users list $l_queryfailed");
 	
   while ($myresult = $result->FetchRow()) {
     $username = $myresult['username'];
@@ -154,7 +160,7 @@ if ($savechanges)
 
 
   echo "
-	</td><tr>
+	</td>
 	<td bgcolor=\"#ccccdd\"><b>$l_status</b></td><td bgcolor=\"#ddddee\">
 	<select name=\"status\">
 	<option selected value=\"$status\">$status</option>
@@ -163,16 +169,32 @@ if ($savechanges)
 	<option value=\"completed\">$l_completed</option>
 	</select>
 	</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_description</b></td><td bgcolor=\"#ddddee\">
-	<textarea name=\"description\" rows=8 cols=50>$description</textarea></td><tr>
 <td bgcolor=\"#ccccdd\"><b>$l_reminderdate</b></td>
 <td bgcolor=\"#ddddee\"><input type=text value=\"$creation_date\" name=\"reminderdate\">
 <a href=\"#\" onClick=\"cal.select(document.forms['form1'].reminderdate,'anchor1','yyyy-MM-dd'); return false;\"NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\">[$l_select]</a></td>
-	<tr>
+	
 	<td bgcolor=\"#ccccdd\"><b>$l_link</b></td><td bgcolor=\"#ddddee\">
 	<a href=\"$linkurl\">$linkname</a></td><tr>
+
+	<td bgcolor=\"#ccccdd\"><b>$l_description</b></td><td colspan=3 bgcolor=\"#ddddee\">
+	<br>$description<br><br></td><tr>";
+  
+  // print the current notes attached to this item
+  $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
+  $subresult = $DB->Execute($query) or die ("sub_history $l_queryfailed");
+
+  while ($mysubresult = $subresult->FetchRow()) {
+    $sub_creation_date = $mysubresult['creation_date'];
+    $sub_created_by = $mysubresult['created_by'];
+    $sub_description = $mysubresult['description'];
+    
+    print "<td bgcolor=\"#ccccdd\"><b>$sub_created_by<br>$sub_creation_date</b></td><td colspan=3 bgcolor=\"#ddddee\">$sub_description</td><tr>\n";
+  }
+
+  // print the end of the form  
+  echo"<td bgcolor=\"#ccccdd\"><b>Add Note:</b></td><td colspan=3 bgcolor=\"#ddddee\"><textarea name=\"addnote\" rows=5 cols=70></textarea></td>
 	<tr>
-	<td colspan=2 align=center>
+	<td colspan=4 align=center>
 	<input type=hidden name=load value=support>
 	<input type=hidden name=type value=module>
 	<input type=hidden name=editticket value=on>

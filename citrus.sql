@@ -828,3 +828,16 @@ CREATE TABLE IF NOT EXISTS `activity_log` (
   `record_id` int(11) default NULL,
   `result` enum('success','failure') NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Table structure for sub_history table
+--
+
+CREATE TABLE IF NOT EXISTS `sub_history` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `creation_date` datetime NOT NULL default '0000-00-00 00:00:00',
+  `created_by` varchar(20) NOT NULL default 'citrus',
+  `customer_history_id` int(11) NOT NULL default '0',
+  `description` text NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
