@@ -129,7 +129,7 @@ while ($myresult = $result->FetchRow()) {
     print "<tr bgcolor=\"#ffffdd\">";
   }
 
-  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description</td>";
+  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description<br>";
 
   // get the sub_history printed here
   $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
@@ -140,8 +140,11 @@ while ($myresult = $result->FetchRow()) {
     $sub_created_by = $mysubresult['created_by'];
     $sub_description = $mysubresult['description'];
     
-    print "<tr><td style=\"padding: 1px; border: 1px solid #bbb;\">$sub_created_by</td><td colspan=8 style=\"padding: 1px; border: 1px solid #bbb;\">$sub_description</td>\n";
+    print "&nbsp;&nbsp;&nbsp;$sub_created_by: $sub_description<br>\n";
     }
+
+  // end this table block
+  echo "</td>";
   
   // increment line count to make even/odd coloring
   $linecount++;

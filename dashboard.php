@@ -43,8 +43,6 @@ $num_rows = $supportresult->RowCount();
 
 $nummessages = 0;
 
-echo "<center>";
-
 $nummessages = $nummessaes + $num_rows;
 
 // query the customer_history for messages sent to 
@@ -96,5 +94,8 @@ if ($nummessages > 0) {
     echo "<div><a href=\"index.php?load=tickets&type=base\">No New Messages</a><div>";
   }
  }
+
+// show other dashboard specifictabs down here:
+
 
 ?>
