@@ -128,7 +128,7 @@ if ($pending) {
     print "<td width=50% colspan=3><a href=\"index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
 
     print "<tr><td width=100% colspan=8>".
-      "&nbsp; $description  <a href=\"$linkurl\">$linkname</a></td>";
+      "&nbsp; $description  <a href=\"$linkurl\">$linkname</a>";
 
     // get the sub_history printed here
     $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
@@ -139,9 +139,12 @@ if ($pending) {
       $sub_created_by = $mysubresult['created_by'];
       $sub_description = $mysubresult['description'];
       
-      print "<tr><td style=\"border: 1px solid #bbb;\">$sub_created_by<br>$sub_creation_date</td><td colspan=8 style=\"border: 1px solid #bbb;\">$sub_description</td>\n";
+      print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: $sub_description</p>\n";
     }
-    
+
+    // end the table block
+    echo "</td>";
+        
     print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";  
     print " | <a href=\"index.php?load=tickets&type=base&pending=on&id=$id\">$l_pending</a>"; 
     print " | <a href=\"index.php?load=tickets&type=base&completed=on&id=$id\">$l_finished</a></td></table>";
@@ -230,7 +233,7 @@ if ($pending) {
     print "<td width=50% colspan=3><a href=\"index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
     
     print "<tr><td width=100% colspan=8>".
-      "&nbsp; $description  <a href=\"$linkurl\">$linkname</a></td>";
+      "&nbsp; $description  <a href=\"$linkurl\">$linkname</a>";
 
     // get the sub_history printed here
     $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
@@ -241,8 +244,11 @@ if ($pending) {
       $sub_created_by = $mysubresult['created_by'];
       $sub_description = $mysubresult['description'];
       
-      print "<tr><td style=\"border: 1px solid #bbb;\">$sub_created_by<br>$sub_creation_date</td><td colspan=8 style=\"border: 1px solid #bbb;\">$sub_description</td>\n";
+      print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: $sub_description</p>\n";
     }
+
+    // end the table block
+    echo "</td>";
     
     print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";
     print " | <a href=\"index.php?load=tickets&type=base&pending=on&id=$id\">$l_pending</a>"; 

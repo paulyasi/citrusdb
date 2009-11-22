@@ -631,7 +631,21 @@ if ($save) {
     print "<tr bgcolor=\"#ddddff\">";
   }
   
-  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description</td>";
+  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description";
+  
+  // get the sub_history printed here
+  $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
+  $subresult = $DB->Execute($query) or die ("sub_history $l_queryfailed");
+  
+  while ($mysubresult = $subresult->FetchRow()) {
+    $sub_creation_date = $mysubresult['creation_date'];
+    $sub_created_by = $mysubresult['created_by'];
+    $sub_description = $mysubresult['description'];
+    
+    print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: $sub_description</p>\n";
+  }
+  
+  echo "</td>";
   
   // increment line count to make even/odd coloring
   $linecount++;
