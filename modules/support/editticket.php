@@ -1,5 +1,5 @@
 <?php   
-// Copyright (C) 2002-2007  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -28,6 +28,7 @@ if (!isset($base->input['reminderdate'])) { $base->input['reminderdate'] = ""; }
 if (!isset($base->input['serviceid'])) { $base->input['serviceid'] = ""; }
 if (!isset($base->input['accountnum'])) { $base->input['accountnum'] = ""; }
 if (!isset($base->input['addnote'])) { $base->input['addnote'] = ""; }
+if (!isset($base->input['oldstatus'])) { $base->input['oldstatus'] = ""; }
 
 $id = $base->input['id'];
 $notify = $base->input['notify'];
@@ -38,10 +39,10 @@ $reminderdate = $base->input['reminderdate'];
 $serviceid = $base->input['serviceid'];
 $accountnum = $base->input['accountnum'];
 $addnote = $base->input['addnote'];
+$oldstatus = $base->input['oldstatus'];
 
 if ($savechanges) {
 
-  // TODO: if they modify the status from not done or pending to completed, mark this user as the one who closed the ticket too
   // save the changes to the customer_history
   if ($reminderdate <> '') {
     $query = "UPDATE customer_history SET notify = '$notify', ".
@@ -59,6 +60,17 @@ if ($savechanges) {
   }
   
   $result = $DB->Execute($query) or die ("result $l_queryfailed");
+
+  // if the oldstatus changed from not done or pending to completed
+  // then mark this user as the one who closed this ticket
+  if ((($oldstatus == "not done") OR ($oldstatus == "pending"))
+      AND ($status == "completed")) {
+    $query = "UPDATE customer_history SET ".
+      "closed_by = '$user', ".
+      "closed_date = CURRENT_TIMESTAMP ".
+      "WHERE id = $id";
+    $result = $DB->Execute($query) or die ("result $l_queryfailed");    
+  }
 
   // if there is a new note added, put that into the sub_history
   if ($addnote) {
@@ -168,6 +180,7 @@ if ($savechanges) {
 	<option value=\"pending\">$l_pending</option>
 	<option value=\"completed\">$l_completed</option>
 	</select>
+<input type=hidden name=oldstatus value=\"$status\">
 	</td><tr>
 <td bgcolor=\"#ccccdd\"><b>$l_reminderdate</b></td>
 <td bgcolor=\"#ddddee\"><input type=text value=\"$creation_date\" name=\"reminderdate\">

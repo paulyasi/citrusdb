@@ -190,7 +190,7 @@ href=\"index.php?load=tools/modules/billing/emailpreviousinvoice&billingid=$bill
      // print payment link with prefilled in information
      
      echo "<td><a href=# onclick=\"popupPage('index.php?".
-       "load=payment&type=tools&invoice_number=$invoice_number&amount=$new_charges')\">$l_enterpayments</a>".
+       "load=payment&type=tools&invoice_number=$invoice_number&amount=$new_charges'); return false;\">$l_enterpayments</a>".
        
        "</td><tr>";
    }
