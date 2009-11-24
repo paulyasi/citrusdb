@@ -1790,15 +1790,15 @@ function create_billing_record($organization_id, $my_account_number, $DB)
 	$creditcard_number = $myresult['creditcard_number'];
 	$creditcard_expire = $myresult['creditcard_expire'];
 	$billing_status = $myresult['billing_status'];
-	$disable_billing = $myresult['disable_billing'];
 	$next_billing_date = $myresult['next_billing_date'];
-	$prev_billing_date = $myresult['prev_billing_date'];
 	$from_date = $myresult['from_date'];
 	$to_date = $myresult['to_date'];
 	$payment_due_date = $myresult['payment_due_date'];
 	$rerun_date = $myresult['rerun_date'];
 	$pastdue_exempt = $myresult['pastdue_exempt'];
-	$po_number = $myresult['po_number'];	
+	$po_number = $myresult['po_number'];
+	$encrypted_creditcard_number = $myresult['encrypted_creditcard_number'];
+	$automatic_receipt = $myresult['automatic_receipt'];	
 
 	// save billing information
         $query = "INSERT into billing
@@ -1816,13 +1816,14 @@ function create_billing_record($organization_id, $my_account_number, $DB)
 	billing_type = '$billing_type',
 	creditcard_number = '$creditcard_number',
 	creditcard_expire = '$creditcard_expire',
-	disable_billing = '$disable_billing',
 	next_billing_date = '$next_billing_date',
 	from_date = '$from_date',
 	to_date = '$to_date',
 	payment_due_date = '$payment_due_date',
 	pastdue_exempt = '$pastdue_exempt',
 	po_number = '$po_number',
+	encrypted_creditcard_number = '$encrypted_creditcard_number',
+	automatic_receipt = '$automatic_receipt',
 	organization_id = '$organization_id'";
 	$result = $DB->Execute($query) or die ("$l_queryfailed");
 	$myinsertid = $DB->Insert_ID();

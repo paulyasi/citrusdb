@@ -320,7 +320,7 @@ function enum_select($table,$name,$default) {
 	 $result = $DB->Execute($sql) or die ("Enum Query Failed");         
 	 echo "<select name='$name'>\n\t"; 
 	 if($default) {
-	   echo "<option selected value=$default>$default</option>\n\t";
+	   echo "<option selected value='$default'>$default</option>\n\t";
 	 }
 	 while($myrow = $result->FetchRow()){ 
 		$enum_field = substr($myrow[1],0,4); 

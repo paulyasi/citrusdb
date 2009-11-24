@@ -317,6 +317,8 @@ $l_notice_text_collections = "Your account has been canceled for payment issues.
 
 $l_notice_text_footer = "Please call in with a credit card payment to $phone_billing or mail payment to the address below.  Billing fees still accrue during this period.  PLEASE ALWAYS PUT YOUR ACCOUNT OR INVOICE NUMBER ON PAYMENT TO BE SURE IT IS APPLIED CORRECTLY";
 
+$l_collections_text_footer = "Please call in with a credit card payment to $phone_billing or mail payment to the address below.  PLEASE ALWAYS PUT YOUR ACCOUNT OR INVOICE NUMBER ON PAYMENT TO BE SURE IT IS APPLIED CORRECTLY";
+
 $l_page = "Page";
 $l_paid = "Paid";
 $l_paidamount = "Paid Amount";

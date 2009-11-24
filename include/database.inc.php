@@ -43,6 +43,8 @@ ini_set("register_globals", "Off");
 include_once("./include/adodb/session/adodb-session2.php");
 ADOdb_Session::config($sys_dbtype, $sys_dbhost, $sys_dbuser, $sys_dbpasswd, $sys_dbname,$options=false);
 
+// show debug info
+$DB->debug = true;
 
 /*--------------------------------------------------------------------*/
 // check for too many login falures

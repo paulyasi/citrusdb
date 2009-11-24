@@ -276,7 +276,7 @@ class notice
       $this->message .= "$l_collections_heading:\n";
       $this->message .= "$service_list\n";
 
-      $this->message .= "$l_notice_text_footer\n\n";
+      $this->message .= "$l_collections_notice_text_footer\n\n";
 
       $this->message .= "$org_name\n";
       $this->message .= "$org_street\n";
