@@ -741,6 +741,11 @@ if ($base->input['submit'] == "Update")
 	  // chmod 604 secring.gpg
 	  // chmod 644 pubring.gpg
 	  // chmod 666 trustdb.gpg
+	  // or if you put the gpg keyring in the apache user then you
+	  // wont' need to mess with these chmod's
+	  // however this will definitely require the server to be
+	  // dedicated to internal operations like citrusdb
+	  // but it's probably the right way to do it
 	  
 	  // also run the encryptcards script to encrypt the cards inside the database at this time
 	  // and change the viewable credit card numbers to truncated numbers with ****'s

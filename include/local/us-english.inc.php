@@ -141,6 +141,7 @@ $l_createinvoice = "Create Invoice";
 $l_createdinvoice = "Created invoice for";
 $l_createdon = "Created On";
 $l_creation = "Creation";
+$l_creationdate = "Creation Date";
 $l_credit = "Credit";
 $l_creditcard = "Credit Card";
 $l_creditcardexportvars = "Credit Card Export Variable Order";
@@ -438,6 +439,7 @@ $l_shutoff_heading = "The following services are scheduled for shutoff";
 $l_shutoff_footer = "Please contact us to resolve this issue";
 
 $l_signupdate = "Signup Date";
+$l_signupdaterange = "Signup Date Range";
 $l_softwareversion = "Citrus Software Version";
 $l_sorrynorecordsfound = "Sorry No Records Found";
 $l_sortorder = "Sort Order";

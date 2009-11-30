@@ -545,19 +545,26 @@ CREATE TABLE `searches` (
 
 -- 
 -- Dumping data for table `searches`
--- 
+--
+INSERT INTO `searches` (`id`, `query`, `owner`, `outputform`) VALUES
+(1, 'SELECT * FROM customer WHERE account_number = %s1%', NULL, ''),
+(2, '(SELECT * FROM customer WHERE name LIKE ''%%s1%%'') UNION (SELECT * FROM customer WHERE company LIKE ''%%s1%%'')', NULL, NULL),
+(3, 'SELECT name,company,street,phone,account_number FROM customer WHERE phone LIKE ''%%s1%%''', NULL, NULL),
+(4, 'SELECT * FROM customer c LEFT JOIN billing b on b.id = c.default_billing_id WHERE c.signup_date BETWEEN ''%s1%'' AND ''%s2%'' ORDER BY c.signup_date', NULL, NULL),
+(5, 'SELECT * FROM billing WHERE id = %s1%', NULL, NULL),
+(6, 'SELECT * FROM billing WHERE company LIKE ''%%s1%%''', NULL, NULL),
+(7, 'SELECT * FROM billing WHERE payment_due_date = ''%%s1%%''', NULL, NULL),
+(8, 'SELECT * FROM customer_history WHERE id = %s1%', NULL, NULL),
+(9, 'SELECT * FROM example_options do LEFT JOIN user_services us ON us.id = do.user_services WHERE username LIKE ''%%s1%%'' ', NULL, NULL),
+(10, 'SELECT * FROM example_options wo LEFT JOIN user_services us ON us.id = wo.user_services WHERE password LIKE ''%%s1%%'' ', NULL, NULL),
+(11, 'SELECT * FROM example_options wo LEFT JOIN user_services us ON us.id = wo.user_services WHERE equipment LIKE ''%%s1%%'' ', NULL, NULL),
+(12, 'SELECT cu.account_number, cu.name, cu.company, cu.street, cu.phone\r\nFROM customer cu WHERE cu.street LIKE ''%%s1%%''', NULL, NULL),
+(13, 'SELECT bh.id AS InvoiceNumber, b.account_number, b.name, b.company FROM `billing_history` bh LEFT JOIN billing b ON bh.billing_id = b.id WHERE bh.id = ''%s1%''', NULL, NULL),
+(14, 'SELECT * FROM billing WHERE contact_email LIKE ''%%s1%%''', NULL, NULL),
+(15, 'SELECT b.id id, b.name, b.company, b.account_number account_number, b.next_billing_date next_billing_date, bt.name billing_type, c.cancel_date cancel_date, c.removal_date removal_date, ms.service_description service_description FROM user_services us LEFT JOIN billing b ON us.billing_id = b.id LEFT JOIN customer c ON b.account_number = c.account_number LEFT JOIN billing_types bt ON b.billing_type = bt.id LEFT JOIN master_services ms ON us.master_service_id = ms.id WHERE b.next_billing_date BETWEEN ''%s1%'' AND ''%s2%'' AND us.removed <> ''y'' AND bt.method <> ''free'' GROUP BY b.id ORDER BY b.next_billing_date', NULL, NULL),
+(16, 'SELECT * FROM customer_history WHERE DATE(creation_date) = ''%s1%'' ORDER BY created_by ASC', NULL, NULL),
+(17, 'SELECT * FROM customer_history WHERE created_by = ''%s1%'' ORDER BY creation_date DESC', NULL, NULL);
 
-INSERT INTO `searches` VALUES (1, 'SELECT * FROM customer WHERE account_number = %s1%', NULL, '');
-INSERT INTO `searches` VALUES (2, 'SELECT * FROM customer WHERE company LIKE ''%%s1%%''', NULL, NULL);
-INSERT INTO `searches` VALUES (3, 'SELECT * FROM customer WHERE name LIKE ''%%s1%%''', NULL, NULL);
-INSERT INTO `searches` VALUES (4, 'SELECT * FROM customer WHERE phone LIKE ''%%s1%%''', NULL, NULL);
-INSERT INTO `searches` VALUES (5, 'SELECT * FROM billing WHERE id = %s1%', NULL, NULL);
-INSERT INTO `searches` VALUES (6, 'SELECT * FROM billing WHERE company LIKE ''%%s1%%''', NULL, NULL);
-INSERT INTO `searches` VALUES (7, 'SELECT * FROM billing WHERE payment_due_date = ''%%s1%%''', NULL, NULL);
-INSERT INTO `searches` VALUES (8, 'SELECT * FROM customer_history WHERE id = %s1%', NULL, NULL);
-INSERT INTO `searches` VALUES (9, 'SELECT * FROM example_options do LEFT JOIN user_services us ON us.id = do.user_services WHERE username LIKE ''%%s1%%'' ', NULL, NULL);
-INSERT INTO `searches` VALUES (10, 'SELECT * FROM example_options wo LEFT JOIN user_services us ON us.id = wo.user_services WHERE password LIKE ''%%s1%%'' ', NULL, NULL);
-INSERT INTO `searches` VALUES (11, 'SELECT * FROM example_options wo LEFT JOIN user_services us ON us.id = wo.user_services WHERE equipment LIKE ''%%s1%%'' ', NULL, NULL);
 
 -- --------------------------------------------------------
 
