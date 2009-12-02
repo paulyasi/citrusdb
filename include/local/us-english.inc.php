@@ -146,6 +146,7 @@ $l_credit = "Credit";
 $l_creditcard = "Credit Card";
 $l_creditcardexportvars = "Credit Card Export Variable Order";
 $l_foroverpayment = "for overpayment";
+$l_foritemsbilledduringthisperiod = "For items billed during this period";
 $l_currency = "&#36;";
 $l_current = "current";
 $l_customer = "Customer";

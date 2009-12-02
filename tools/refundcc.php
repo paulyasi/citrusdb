@@ -1,5 +1,5 @@
 <?php
-// Copyright (C) 2002-2008  Paul Yasi <paul@citrusdb.org>
+// Copyright (C) 2002-2008  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -28,10 +28,12 @@ echo "<h3>$l_refund</h3>
 //GET Variables
 if (!isset($base->input['billingdate'])) { $base->input['billingdate'] = ""; }
 if (!isset($base->input['organization_id'])) { $base->input['organization_id'] = ""; }
+if (!isset($base->input['passphrase'])) { $base->input['passphrase'] = ""; }
 
 $submit = $base->input['submit'];
 $billingdate = $base->input['billingdate'];
 $organization_id = $base->input['organization_id'];
+$passphrase = $base->input['passphrase'];
 
 // make sure the user is in a group that is allowed to run this
 
@@ -56,13 +58,14 @@ if ($submit) {
 	$path_to_ccfile = $myccfileresult['path_to_ccfile'];	
 
 	// select the info from general to get the path_to_ccfile
-	$query = "SELECT ccexportvarorder FROM general 
+	$query = "SELECT ccexportvarorder,exportprefix FROM general 
 			WHERE id = '$organization_id'";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$ccvarresult = $DB->Execute($query) 
 		or die ("$l_queryfailed");
 	$myccvarresult = $ccvarresult->fields;
-	$ccexportvarorder = $myccvarresult['ccexportvarorder'];	
+	$ccexportvarorder = $myccvarresult['ccexportvarorder'];
+	$exportprefix = $myccvarresult['exportprefix'];
 	
 	// convert the $ccexportvarorder &#036; dollar signs back to actual dollar signs and &quot; back to quotes
 	$ccexportvarorder = str_replace( "&#036;"           , "$"        , $ccexportvarorder );
@@ -70,7 +73,8 @@ if ($submit) {
 
 	// open the file
 	$today = date("Y-m-d");
-	$filename = "$path_to_ccfile/refund$today-$organization_id.csv";
+	$filename = "$path_to_ccfile" . "/" . "$exportprefix" . "refund" . "$today.csv";
+
 	$handle = fopen($filename, 'w'); // open the file
 
 	// query from billing_details the refunds to do
@@ -79,7 +83,7 @@ if ($submit) {
 			b.street b_street, b.city b_city, 
 			b.state b_state, b.zip b_zip, 
 			b.account_number b_acctnum, 
-			b.creditcard_number b_ccnum, 
+			b.creditcard_number b_ccnum, b.encrypted_creditcard_number b_enc_num, 
 			b.creditcard_expire b_ccexp, 
 			b.from_date b_from_date, 
 			b.to_date b_to_date, 
@@ -115,10 +119,48 @@ if ($submit) {
 		$billing_fromdate = $myresult['b_from_date'];
 		$billing_todate = $myresult['b_to_date'];
 		$billing_payment_due_date = $myresult['b_payment_due_date'];
-		$precisetotal = $myresult['RefundTotal'];	
+		$precisetotal = $myresult['RefundTotal'];
+		$encrypted_creditcard_number = $myresult['b_enc_num'];
 
 		// get the absolute value of the total
 		$abstotal = abs($precisetotal);
+
+		// write the encrypted_creditcard_number to a temporary file
+ 		// and decrypt that file to stdout to get the CC
+ 		// select the path_to_ccfile from settings
+ 		$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
+ 		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+ 		$ccfileresult = $DB->Execute($query) 
+ 		  or die ("$l_queryfailed");
+ 		$myccfileresult = $ccfileresult->fields;
+ 		$path_to_ccfile = $myccfileresult['path_to_ccfile'];
+ 		
+ 		// open the file
+ 		$cipherfilename = "$path_to_ccfile/ciphertext.tmp";
+ 		$cipherhandle = fopen($cipherfilename, 'w');
+ 		
+ 		// write the ciphertext we want to decrypt into the file
+ 		fwrite($cipherhandle, $encrypted_creditcard_number);
+ 		
+ 		// close the file
+ 		fclose($cipherhandle);
+ 		
+ 		$gpgcommandline = "echo $passphrase | $gpg_decrypt $cipherfilename";
+ 		
+		// destroy the output array before we use it again
+ 		unset($decrypted);
+ 		
+		$gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
+ 		 
+ 		// if there is a gpg error, stop here
+ 		if ($errorcode > 0) {
+ 		  echo "$gpgcommandline<br>\n";
+ 		  die ("Credit Card Decryption Error");
+ 		}
+ 
+ 		// set the billing_ccnum to the decrypted_creditcard_number
+ 		$decrypted_creditcard_number = implode("\n",$decrypted);
+ 		$billing_ccnum = $decrypted_creditcard_number;
 				
 		// determine the variable export order values
 		eval ("\$exportstring = \"$ccexportvarorder\";");
@@ -144,13 +186,18 @@ if ($submit) {
 	// log this export activity
 	log_activity($DB,$user,0,'export','creditcard',$batchid,'success');
 
-	echo "$l_wrotefile $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=refund$today-$organization_id.csv\"><u class=\"bluelink\">$l_download refund$today-$organization_id.csv</u></a><p>";	
+	$myfile = "$exportprefix" . "refund" . "$today.csv";
+
+	echo "$l_wrotefile $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=$myfile\"><u class=\"bluelink\">$l_download $myfile</u></a><p>";	
 
 
 }
 else {
 // ask if they want to process outstanding refunds
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\">
+
+  $form_action_url ="$ssl_url_prefix" . "index.php";
+  
+  echo "<FORM ACTION=\"$form_action_url\" METHOD=\"GET\" name=\"form1\">
 	<input type=hidden name=load value=refundcc>
 	<input type=hidden name=type value=tools>
 	<input type=hidden name=refund value=on>
@@ -168,7 +215,7 @@ echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\">
                 echo "<option value=\"$myid\">$myorg</option>";
         }
 echo "</select></td><tr>
-
+<td align=right>$l_passphrase:</td><td><input type=password name=passphrase></td><tr>
 	<td>$l_processoutstandingrefunds:</td>
 	<td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_yes\"></td>
 	</form></table><br><br><br>";

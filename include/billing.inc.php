@@ -1726,6 +1726,9 @@ function apply_credits($DB, $billing_id)
       $billed_amount = $myfindresult['billed_amount'];
       
       $owed = $billed_amount - $paid_amount;		
+
+      // TODO the queries below should update the payment_applied date
+      // for that item being paid for by the credit amount
       
       if ($amount >= $owed) {
 	$amount = $amount - $owed;
@@ -1749,6 +1752,9 @@ function apply_credits($DB, $billing_id)
     //
     // reduce the amount of the credit left by the amount applied
     
+    // TODO: I think this query should also update the payment_applied date
+    // for the credit amount
+
     $credit_applied = $credit_amount - $amount;
     $credit_paid_total = $credit_paid_amount - $credit_applied;
     $query = "UPDATE billing_details ".

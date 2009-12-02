@@ -39,6 +39,7 @@ $day1 = $base->input['day1'];
 $day2 = $base->input['day2'];
 
 echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">
+$l_foritemsbilledduringthisperiod<p>
 	<table>
 	From: <input type=text name=\"day1\" value=\"$day1\"> - 
 	To: <input type=text name=\"day2\" value=\"$day2\">
