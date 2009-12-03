@@ -1735,6 +1735,7 @@ function apply_credits($DB, $billing_id)
 	$fillamount = $owed + $paid_amount;
 	$query = "UPDATE billing_details ".
 	  "SET paid_amount = '$fillamount' ".
+	  "payment_applied = CURRENT_DATE ".
 	  "WHERE id = $id";
 	$greaterthanresult = $DB->Execute($query) or die ("$l_queryfailed");
       } else { 
@@ -1744,6 +1745,7 @@ function apply_credits($DB, $billing_id)
 	$fillamount = $available + $paid_amount;
 	$query = "UPDATE billing_details ".
 	  "SET paid_amount = '$fillamount' ".
+	  "payment_applied = CURRENT_DATE ".
 	  "WHERE id = $id";
 	$lessthenresult = $DB->Execute($query) or die ("$l_queryfailed");
       }
@@ -1759,6 +1761,7 @@ function apply_credits($DB, $billing_id)
     $credit_paid_total = $credit_paid_amount - $credit_applied;
     $query = "UPDATE billing_details ".
       "SET paid_amount = '$credit_paid_total' ".
+      "payment_applied = CURRENT_DATE ".      
       "WHERE id = '$credit_id'";	
     $totalcreditresult = $DB->Execute($query) or die ("$l_queryfailed");
   }
