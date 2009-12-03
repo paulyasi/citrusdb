@@ -6,6 +6,8 @@
 // This script will run today's credit card billing via the authorize.net gateway
 // To run this script, copy this script to the root of your citrus folder
 // It can be executed from the command line or in a cron job
+// When you run this script you must supply the GPG passphrase to decrypt the card
+// data stored in citrusdb before it can be sent to authorize.net
 //
 // This script requires php with the cURL module installed.
 // For Debian/Ubuntu it is available to install as a package named php5-curl
@@ -19,6 +21,9 @@ $auth_api_login='';
 
 // the transaction key for your authorize.net gateway
 $auth_transaction_key='';
+
+// get the passphrase from the command line
+$passphrase = $argv[1];
 
 //Include the billing functions
 include('./include/config.inc.php');
@@ -283,7 +288,8 @@ if ($totalall == 0) {
 		b.street b_street, b.city b_city, b.state b_state, 
 		b.country b_country, b.zip b_zip, 
 		b.contact_email b_contact_email, b.account_number b_acctnum, 
-		b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp 
+		b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp,
+b.encrypted_creditcard_number b_enc_ccnum 
 		FROM billing_history h 
 		LEFT JOIN billing b ON h.billing_id = b.id  
 		WHERE h.id = '$invoice_number'";
@@ -305,7 +311,8 @@ if ($totalall == 0) {
     $billing_fromdate = $myinvresult['h_from_date'];
     $billing_todate = $myinvresult['h_to_date'];
     $billing_payment_due_date = $myinvresult['h_payment_due_date'];
-    $precisetotal = $myinvresult['h_total_due'];	
+    $precisetotal = $myinvresult['h_total_due'];
+    $encrypted_creditcard_number = $myinvresult['b_enc_ccnum'];
     
     // get the absolute value of the total
     $abstotal = abs($precisetotal);
@@ -316,6 +323,47 @@ if ($totalall == 0) {
       echo "ccnum: $billing_ccnum\n";
       echo "ccexp: $billing_ccexp\n";
       echo "Amount: $precisetotal\n";
+
+      // write the encrypted_creditcard_number to a temporary file
+      // and decrypt that file to stdout to get the CC
+      // select the path_to_ccfile from settings
+      $query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
+      $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+      $ccfileresult = $DB->Execute($query) 
+	or die ("$l_queryfailed");
+      $myccfileresult = $ccfileresult->fields;
+      $path_to_ccfile = $myccfileresult['path_to_ccfile'];
+      
+      // open the file
+      $cipherfilename = "$path_to_ccfile/ciphertext.tmp";
+      $cipherhandle = fopen($cipherfilename, 'w');
+      
+      // write the ciphertext we want to decrypt into the file
+      fwrite($cipherhandle, $encrypted_creditcard_number);
+      
+      // close the file
+      fclose($cipherhandle);
+      
+      $gpgcommandline = "echo $passphrase | $gpg_decrypt $cipherfilename";
+      
+      //$oldhome = getEnv("HOME");
+      
+      // destroy the output array before we use it again
+      unset($decrypted);
+      
+      //putenv("HOME=$path_to_home");
+      $gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
+      //putenv("HOME=$oldhome");
+      
+      // if there is a gpg error, stop here
+      if ($errorcode > 0) {
+	echo "$gpgcommandline<br>\n";
+	die ("Credit Card Decryption Error");
+      }
+      
+      // set the billing_ccnum to the decrypted_creditcard_number
+      $decrypted_creditcard_number = implode("\n",$decrypted);
+      $billing_ccnum = $decrypted_creditcard_number;
       
       //Send charge to authorize.net	
       $charge_result = charge_card("CC", $billing_ccnum, $billing_ccexp, $precisetotal, "Bill for Account #: " . $billing_acctnum, $invoice_number, $billing_name, NULL, $billing_street, $billing_state, $billing_zip, "1");	
