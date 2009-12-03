@@ -40,7 +40,7 @@ $query = "SELECT user.*, master.service_description, master.options_table,
 	FROM user_services AS user, master_services AS master 
 	WHERE user.master_service_id = master.id 
 	AND user.account_number = '$account_number' AND user.removed = 'y' 
-	ORDER BY master.service_description, user.id";
+	ORDER BY user.usage_multiple DESC, master.pricerate DESC";
         $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$result = $DB->Execute($query) or die ("$l_queryfailed");
 
