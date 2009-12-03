@@ -75,7 +75,7 @@ if ($submit) {
 	$today = date("Y-m-d");
 	$filename = "$path_to_ccfile" . "/" . "$exportprefix" . "refund" . "$today.csv";
 
-	$handle = fopen($filename, 'w'); // open the file
+	$handle = fopen($filename, 'w') or die ("cannot open $filename"); // open the file
 
 	// query from billing_details the refunds to do
 	$query = "SELECT ROUND(SUM(bd.refund_amount),2) AS RefundTotal, 
@@ -137,7 +137,7 @@ if ($submit) {
  		
  		// open the file
  		$cipherfilename = "$path_to_ccfile/ciphertext.tmp";
- 		$cipherhandle = fopen($cipherfilename, 'w');
+ 		$cipherhandle = fopen($cipherfilename, 'w') or die ("cannot open $cipherfilename");
  		
  		// write the ciphertext we want to decrypt into the file
  		fwrite($cipherhandle, $encrypted_creditcard_number);

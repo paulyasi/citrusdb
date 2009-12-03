@@ -336,7 +336,7 @@ b.encrypted_creditcard_number b_enc_ccnum
       
       // open the file
       $cipherfilename = "$path_to_ccfile/ciphertext.tmp";
-      $cipherhandle = fopen($cipherfilename, 'w');
+      $cipherhandle = fopen($cipherfilename, 'w') or die ("cannot open $cipherfilename");
       
       // write the ciphertext we want to decrypt into the file
       fwrite($cipherhandle, $encrypted_creditcard_number);

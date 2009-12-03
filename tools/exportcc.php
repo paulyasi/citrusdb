@@ -157,7 +157,7 @@ if ($submit) {
 
 	// open the file
 	$filename = "$path_to_ccfile" . "/" . "$exportprefix" . "export" . "$batchid.csv";
-	$handle = fopen($filename, 'w'); // open the file
+	$handle = fopen($filename, 'w') or die ("cannot open $filename"); // open the file
 
 	// query the batch for the invoices to do
 	$query = "SELECT DISTINCT d.invoice_number FROM billing_details d 
@@ -225,7 +225,7 @@ b.encrypted_creditcard_number b_enc_ccnum
 		
 		// open the file
 		$cipherfilename = "$path_to_ccfile/ciphertext.tmp";
-		$cipherhandle = fopen($cipherfilename, 'w');
+		$cipherhandle = fopen($cipherfilename, 'w') or die ("cannot open $cipherfilename");
 		
 		// write the ciphertext we want to decrypt into the file
 		fwrite($cipherhandle, $encrypted_creditcard_number);

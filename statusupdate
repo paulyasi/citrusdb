@@ -43,7 +43,7 @@ $default_billing_group = $myccfileresult['default_billing_group'];
 // open the file
 $today = $activatedate;
 $filename = "$path_to_ccfile/accounts$today.csv";
-$handle = fopen($filename, 'a'); // open the file
+$handle = fopen($filename, 'a') or die ("cannot open $filename"); // open the file
 
 
 /*-------------------------------------------------------------------*/
