@@ -1,6 +1,6 @@
 <?php
 $exportcc_url = "$ssl_url_prefix" . "index.php?load=exportcc&type=tools";
-
+$refundcc_url = "$ssl_url_prefix" . "index.php?load=refundcc&type=tools";
 $importcc_url = "index.php?load=importcc&type=tools";
 
 echo "<div class=toolblock style=\"height: 200px;\">
@@ -43,7 +43,7 @@ $l_emailinvoices</a></div>
 $l_enterpayments</a></div>
 
 <div class=icon>
-<a href=# onclick = \"popupPage('index.php?load=refundcc&type=tools'); return false;\">
+<a href=# onclick = \"popupPage('$refundcc_url'); return false;\">
 <img border=0 src=\"images/icons/citrus_creditcards.png\"><br>
 $l_refund</a></div>
 
