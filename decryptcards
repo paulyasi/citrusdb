@@ -56,7 +56,7 @@ while ($myresult = $result->FetchRow()) {
  
     // open the file
     $filename = "$path_to_ccfile/ciphertext.tmp";
-    $handle = fopen($filename, 'w');
+    $handle = fopen($filename, 'w') or die("cannot open $filename");
 
     //echo "$encrypted_creditcard_number\n";
 
