@@ -197,7 +197,7 @@ else {
 
   $form_action_url ="$ssl_url_prefix" . "index.php";
   
-  echo "<FORM ACTION=\"$form_action_url\" METHOD=\"GET\" name=\"form1\">
+  echo "<FORM ACTION=\"$form_action_url\" METHOD=\"POST\" name=\"form1\" AUTOCOMPLETE=\"off\">
 	<input type=hidden name=load value=refundcc>
 	<input type=hidden name=type value=tools>
 	<input type=hidden name=refund value=on>

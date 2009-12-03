@@ -281,7 +281,7 @@ else {
 // ask for the billing date that they want to invoice
 $form_action_url = "$ssl_url_prefix" . "index.php";
   
-echo "<FORM ACTION=\"$form_action_url\" METHOD=\"POST\" name=\"form1\" onsubmit=\"toggleOn();\">
+echo "<FORM ACTION=\"$form_action_url\" METHOD=\"POST\" name=\"form1\" onsubmit=\"toggleOn();\" AUTOCOMPLETE=\"off\">
 	<input type=hidden name=load value=exportcc>
 	<input type=hidden name=type value=tools>
 	<table>";
@@ -313,7 +313,7 @@ echo "</select></td><tr>
 	</table><br><br><br>";
 	
 	// print the date range form
-echo "<FORM ACTION=\"$form_action_url\" METHOD=\"POST\" name=\"form2\" onsubmit=\"toggleOn();\">
+echo "<FORM ACTION=\"$form_action_url\" METHOD=\"POST\" name=\"form2\" onsubmit=\"toggleOn();\" AUTOCOMPLETE=\"off\">
 	<input type=hidden name=load value=exportcc>
 	<input type=hidden name=type value=tools>
 	<table>";

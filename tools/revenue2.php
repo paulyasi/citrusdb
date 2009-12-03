@@ -39,6 +39,7 @@ $day1 = $base->input['day1'];
 $day2 = $base->input['day2'];
 
 echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">
+Revenue from items fully paid for during this period:<br>
 	<table>
 	From: <input type=text name=\"day1\" value=\"$day1\"> - 
 	To: <input type=text name=\"day2\" value=\"$day2\">
@@ -65,8 +66,8 @@ if ($day1) {
 		LEFT JOIN user_services us ON us.id = bd.user_services_id 
 		LEFT JOIN master_services ms ON us.master_service_id = ms.id 
 		LEFT JOIN general g ON ms.organization_id = g.id 
-		WHERE bd.payment_applied BETWEEN '$day1' AND '$day2'
-		AND bd.taxed_services_id IS NULL 
+		WHERE bd.payment_applied BETWEEN '$day1' AND '$day2' 
+		AND bd.taxed_services_id IS NULL AND bd.paid_amount = bd.billed_amount 
 		GROUP BY ms.id ORDER BY ms.category";
 	
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -97,7 +98,7 @@ if ($day1) {
 				ON bd.taxed_services_id = ts.id 
 			LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
 			WHERE bd.payment_applied BETWEEN '$day1' AND '$day2' 
-			AND bd.taxed_services_id IS NOT NULL 
+			AND bd.taxed_services_id IS NOT NULL AND bd.paid_amount = bd.billed_amount
 			GROUP BY tr.id";
   
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -124,7 +125,7 @@ if ($day1) {
 			LEFT JOIN credit_options cr ON cr.user_services = us.id
 			LEFT JOIN general g ON g.id = ms.organization_id 
 			WHERE bd.payment_applied BETWEEN '$day1' AND '$day2' 
-			AND bd.taxed_services_id IS NULL 
+			AND bd.taxed_services_id IS NULL AND bd.paid_amount = bd.billed_amount
 			AND ms.id = 1  
 			GROUP BY cr.description"; 
 	
