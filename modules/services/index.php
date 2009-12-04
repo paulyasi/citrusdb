@@ -16,9 +16,11 @@ if (!defined("INDEX_CITRUS")) {
 }
 
 if (!isset($base->input['history'])) { $base->input['history'] = ""; }
+if (!isset($base->input['category'])) { $base->input['category'] = ""; }
 
 // GET Variables
 $history = $base->input['history'];
+$category = $base->input['category'];
 
 //session_start();
 $account_number = $_SESSION['account_number'];
@@ -57,8 +59,21 @@ if ($edit) {
 
    echo "&nbsp;&nbsp;".
      "<a href=\"index.php?load=services&type=module&history=on\">".
-     "[ $l_history ]</a>".
-     "<table cellpadding=0 border=0 cellspacing=0 width=720><td valign=top>".
+     "[ $l_history ]</a> | <a href=\"index.php?load=services&type=module\">$l_showall</a> | ";
+
+   // show links to limit listing to certain categories of services assigned to this customer
+   $query = "SELECT DISTINCT category FROM user_services AS user, master_services AS master ".
+     "WHERE user.master_service_id = master.id ".
+     "AND user.account_number = '$account_number' AND removed <> 'y' ".
+     "ORDER BY category";
+   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+   $result = $DB->Execute($query) or die ("$l_queryfailed");
+   while ($myresult = $result->FetchRow()) {
+     $categoryname = $myresult['category'];
+     echo "<a href=\"index.php?load=services&type=module&category=$categoryname\">$categoryname</a> | \n";
+   }
+   
+   echo "<table cellpadding=0 border=0 cellspacing=0 width=720><td valign=top>".
      "<table cellpadding=3 cellspacing=1 border=0 width=720>".
      "<td bgcolor=\"#ccccdd\"><b>$l_id</b></td>".
      "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
@@ -71,14 +86,28 @@ if ($edit) {
 
    // select all the user information in user_services and connect it with the 
    // master_services description and cost
+
+   // check if they asked for just a specific category
+   if ($category) {
+     echo "<tr><td colspan=9 bgcolor=\"#ccccdd\"><b style=\"font-size: 14pt;\">$l_category: $category</b></td><tr>";
+     $query = "SELECT user.*, master.service_description, master.options_table, ".
+       "master.pricerate, master.frequency, ".
+       "master.organization_id master_organization_id ".
+       "FROM user_services AS user, master_services AS master ".
+       "WHERE user.master_service_id = master.id ".
+       "AND user.account_number = '$account_number' AND removed <> 'y' ".
+       "AND master.category = '$category' ".
+       "ORDER BY user.usage_multiple DESC, master.pricerate DESC";
+   } else {
+     $query = "SELECT user.*, master.service_description, master.options_table, ".
+       "master.pricerate, master.frequency, ".
+       "master.organization_id master_organization_id ".
+       "FROM user_services AS user, master_services AS master ".
+       "WHERE user.master_service_id = master.id ".
+       "AND user.account_number = '$account_number' AND removed <> 'y' ".
+       "ORDER BY user.usage_multiple DESC, master.pricerate DESC";
+   }
    
-   $query = "SELECT user.*, master.service_description, master.options_table, ".
-     "master.pricerate, master.frequency, ".
-     "master.organization_id master_organization_id ".
-     "FROM user_services AS user, master_services AS master ".
-     "WHERE user.master_service_id = master.id ".
-     "AND user.account_number = '$account_number' AND removed <> 'y' ".
-     "ORDER BY user.usage_multiple DESC, master.pricerate DESC";
    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
    $result = $DB->Execute($query) or die ("$l_queryfailed");
 
