@@ -29,6 +29,7 @@ $billing_id = $base->input['billing_id'];
 $amount = $base->input['amount'];
 $payment_type = $base->input['payment_type'];
 $invoice_number = $base->input['invoice_number'];
+if ($invoice_number == '') { $invoice_number = 0; }
 $check_number = $base->input['check_number'];
 
 if ($submit) {
@@ -56,7 +57,7 @@ if ($submit) {
     // enter payments by account number
     /*--------------------------------------------------------------------*/
   } elseif ($account_num > 0) {
-    $query = "SELECT bd.id, bd.paid_amount, bd.billed_amount, bd.billing_id ".
+    $query = "SELECT bd.id, bd.paid_amount, bd.billed_amount, bd.billing_id, bd.discount_amount ".
       "FROM billing_details bd ".
       "LEFT JOIN billing bi ON bd.billing_id = bi.id ".
       "LEFT JOIN customer cu ON bi.id = cu.default_billing_id ".
@@ -89,7 +90,7 @@ if ($submit) {
     "billing_amount, status, payment_type, invoice_number, check_number) ".
     "VALUES (CURRENT_DATE,'$billing_id','$payment',".
     "'authorized','$payment_type','$invoice_number','$check_number')";
-  $paymentresult = $DB->Execute($query) or die ("insert history $l_queryfailed");
+  $paymentresult = $DB->Execute($query) or die ("$query insert history $l_queryfailed");
 
   // get the payment history id that will be inserted into the billing_details
   // items that are paid by this entry
@@ -102,6 +103,11 @@ if ($submit) {
     $id = $myresult['id'];
     $paid_amount = sprintf("%.2f",$myresult['paid_amount']);
     $billed_amount = sprintf("%.2f",$myresult['billed_amount']);
+
+    if ($payment_type == 'discount') {
+      // get the discount amount and update it also
+      $discount_amount = sprintf("%.2f",$myresult['discount_amount']);
+    }
     
     // calculate amount owed
     $owed = round($billed_amount - $paid_amount,2);
@@ -111,9 +117,17 @@ if ($submit) {
     if (round($amount,2) >= round($owed,2)) {
       $amount = round($amount - $owed, 2);
       $fillamount = round($owed + $paid_amount,2);
+
+      if ($payment_type == 'discount') {
+	$filldiscount = round($owed + $discount_amount,2);
+	$discount_string = "discount_amount = '$filldiscount', ";
+      } else {
+	$discount_string = "";
+      }
+      
       $query = "UPDATE billing_details ".
 	"SET paid_amount = '$fillamount', ".
-	"payment_applied = CURRENT_DATE, ".
+	"payment_applied = CURRENT_DATE, $discount_string".
 	"payment_history_id = '$payment_history_id' ".	    
 	"WHERE id = $id";
       $greaterthanresult = $DB->Execute($query)
@@ -123,9 +137,17 @@ if ($submit) {
       $available = $amount;
       $amount = 0;
       $fillamount = round($available + $paid_amount,2);
+
+      if ($payment_type == 'discount') {
+	$filldiscount = round($available + $discount_amount,2);
+	$discount_string = "discount_amount = '$filldiscount', ";
+      } else {
+	$discount_string = "";
+      }
+      
       $query = "UPDATE billing_details ".
 	"SET paid_amount = '$fillamount', ".
-	"payment_applied = CURRENT_DATE, ".
+	"payment_applied = CURRENT_DATE, $discount_string".
 	"payment_history_id = '$payment_history_id' ".	    	
 	"WHERE id = $id";
       $lessthenresult = $DB->Execute($query) or die ("detail update $l_queryfailed");

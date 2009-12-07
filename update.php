@@ -731,25 +731,7 @@ if ($base->input['submit'] == "Update")
 	  $query = "ALTER TABLE `billing` ADD `encrypted_creditcard_number` TEXT NULL";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
-
 	  
-	  // in the instructions tell the user to
-	  // maybe specifying the --homedir negates the need for this?
-	  // chmod the some gpg files, move the secring off the server
-	  // chmod 777 .gnupg folder
-	  // chmod 604 random_seed
-	  // chmod 604 secring.gpg
-	  // chmod 644 pubring.gpg
-	  // chmod 666 trustdb.gpg
-	  // or if you put the gpg keyring in the apache user then you
-	  // wont' need to mess with these chmod's
-	  // however this will definitely require the server to be
-	  // dedicated to internal operations like citrusdb
-	  // but it's probably the right way to do it
-	  
-	  // also run the encryptcards script to encrypt the cards inside the database at this time
-	  // and change the viewable credit card numbers to truncated numbers with ****'s
-
 	  // add the export prefix field that holds a prefix for the organization being exported
 	  $query = "ALTER TABLE `general` ADD `exportprefix` VARCHAR( 64 ) NULL ;";
 	  $result = $DB->Execute($query) or die ("query failed");
@@ -790,7 +772,6 @@ if ($base->input['submit'] == "Update")
 	    "VARCHAR( 64 ) NULL ,ADD `closed_date` DATETIME NULL ;";
 	  $result = $DB->Execute($query) or die ("query failed");
 	  echo "$query<br>\n";
-
 	  
 	  // sub_history table to hold new entries associated with the same customer history entry
 	  $query = "CREATE TABLE IF NOT EXISTS `sub_history` (".
@@ -801,8 +782,13 @@ if ($base->input['submit'] == "Update")
 	    "`description` text NOT NULL,".
 	    "PRIMARY KEY  (`id`)".
 	    ") ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-	  $result = $DB->Execute($query) or die ("query failed");
+	  $result = $DB->Execute($query) or die ("$query query failed");
 	  echo "$query<br>\n";
+
+	  $query = "ALTER TABLE `billing_details` ADD `discount_amount` ".
+	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0.00';";
+	  $result = $DB->Execute($query) or die ("$query query failed");
+	  echo "$query<br>\n";	  
 
 	  // set the version number in the database to 2.0
 	  $query = "UPDATE `settings` SET `version` = '2.0' ".
