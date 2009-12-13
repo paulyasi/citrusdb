@@ -2,7 +2,7 @@
 <body bgcolor="#ffffff">
 <?php
 echo "<h3>$l_revenuereport</h3>";
-// Copyright (C) 2003-2009  Paul Yasi <paul ad citrusdb.org>
+// Copyright (C) 2003-2009  Paul Yasi <paul at citrusdb.org>
 // Read the README file for more information
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
@@ -199,6 +199,31 @@ if ($day1) {
   }
   echo "</table>";
 
+
+  
+  // show discounts entered for a specified date range
+  $query = "SELECT ph.billing_amount, ph.invoice_number, ".
+    "ph.creation_date, bi.name, bi.company ".
+    "FROM payment_history ph ".
+    "LEFT JOIN billing bi ON ph.billing_id = bi.id ".
+    "WHERE ph.creation_date BETWEEN '$day1' AND '$day2' ".
+    "AND ph.payment_type = 'discount'";
+  
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+
+  echo "<p><table><td>$l_discount</td><td>$l_name</td><td>$l_amount</td><tr>";
+  while ($myresult = $result->FetchRow()) {
+    $invoice_number = $myresult['invoice_number'];    
+    $date = humandate($myresult['creation_date'], $lang);    
+    $name = $myresult['name'];
+    $company = $myresult['company'];    
+    $amount = $myresult['billing_amount'];    
+    echo "<td>$date ($invoice_number)</td><td>$name $company</td><td>$amount</td><tr>";
+  }
+  echo "</table>";
+  
+  
 }
 	
 ?>

@@ -182,6 +182,7 @@ $l_detail1 = "Detail 1";
 $l_detail2 = "Detail 2";
 $l_details = "Details";
 $l_disablebilling = "Disable Billing";
+$l_discount = "Discount";
 $l_done = "done";
 $l_donotreactivate = "Do Not Reactivate";
 $l_download = "Download";
