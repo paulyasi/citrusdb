@@ -27,8 +27,8 @@ if ($year) {
   // print out a graph that compares each of the last 12 months
   // of service start_dates compared to end_dates
   $current  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
-  echo "$year: $category";
-  echo "<table border=1>";
+  echo "$year $l_servicegrowth: $category";
+  echo "<table border=0>";
 
   $month = array(1, 2, 3, 4, 5, 6, 7, 8, 9 , 10, 11, 12);
 
@@ -43,7 +43,9 @@ if ($year) {
     $myresult = $result->fields;
     $count = $myresult['count'];
     $monthvar = $monthname[$mymonth];
-    echo "<td style=\"color: green; text-align: center;\">$count </td>\n";
+    $countmultiplier = $count * 2;
+    $countpixels = "$countmultiplier" . "px";
+    echo "<td valign=bottom><div style=\"height: $countpixels; background-color: green;\"></div></td>\n";
   }
   
   echo "<tr>";
@@ -63,7 +65,7 @@ if ($year) {
     $myresult = $result->fields;
     $count = $myresult['count'];
     $monthvar = $monthname[$mymonth];
-    $countmultiplier = $count * 10;
+    $countmultiplier = $count * 2;
     $countpixels = "$countmultiplier" . "px";
     echo "<td valign=top><div style=\"height: $countpixels; background-color: red;\"></div></td>\n";
   }
