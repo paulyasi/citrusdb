@@ -785,11 +785,6 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("$query query failed");
 	  echo "$query<br>\n";
 
-	  $query = "ALTER TABLE `billing_details` ADD `discount_amount` ".
-	    "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0.00';";
-	  $result = $DB->Execute($query) or die ("$query query failed");
-	  echo "$query<br>\n";	  
-
 	  // set the version number in the database to 2.0
 	  $query = "UPDATE `settings` SET `version` = '2.0' ".
 	    "WHERE `id` =1 LIMIT 1";

@@ -131,7 +131,8 @@ while ($myresult = $result->FetchRow()) {
     if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
       echo "<a href=\"index.php?load=billing&type=module&nsf=on=&".
 	"paymentid=$id&amount=$amount&invoicenum=$invoice_number&".
-	"billingid=$billingid\" target=\"_parent\" style=\"font-size: 8pt;\">$l_mark_as_nsf</a>";    }
+	"billingid=$billingid&payment_type=$type\" target=\"_parent\" ".
+	"style=\"font-size: 8pt;\">$l_mark_as_nsf</a>";    }
     $nsfcount++;
   }
 

@@ -1,5 +1,5 @@
 <?php   
-// Copyright (C) 2008  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2009 Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -20,6 +20,7 @@ $paymentid = $base->input['paymentid'];
 $amount = $base->input['amount'];
 $invoice_number = $base->input['invoicenum'];
 $billingid = $base->input['billingid'];
+$payment_type = $base->input['payment_type'];
 
 if ($save) {
   // set the account payment_history to nsf
@@ -46,10 +47,10 @@ if ($save) {
     $myresult = $invoiceresult->fields;
     $billingid = $myresult['billing_id'];
 
-    // else remove payments by billing id
+    // else remove payments where paid anything
   } else {
-    $query = "SELECT * FROM billing_details 
-		WHERE paid_amount > 0 AND billing_id = $billingid";
+    $query = "SELECT * FROM billing_details ". 
+      "WHERE paid_amount > 0 AND billing_id = $billingid";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $result = $DB->Execute($query) or die ("billingid $l_queryfailed");	
   }
@@ -66,22 +67,29 @@ if ($save) {
     if (round($amount,2) >= round($paid_amount,2)) {
       $amount = round($amount - $paid_amount, 2);
       $fillamount = 0;
+
       $query = "UPDATE billing_details ".
 	"SET paid_amount = '$fillamount' ".
 	"WHERE id = $id";
       $greaterthanresult = $DB->Execute($query)
 	or die ("greaterthan $l_queryfailed");
+
     } else { 
       // amount is less than paid_amount
       $available = $amount;
       $amount = 0;
       $fillamount = round($paid_amount - $available,2);
+
       $query = "UPDATE billing_details ".
 	"SET paid_amount = '$fillamount' ".
 	"WHERE id = $id";
       $lessthenresult = $DB->Execute($query) 
 	or die ("lessthan $l_queryfailed");
+
     }
+
+    //echo "$query<br>\n";
+    
   }
 
   // redirect back to the billing screen
@@ -102,7 +110,8 @@ if ($save) {
   print "<input type=hidden name=paymentid value=$paymentid>";
   print "<input type=hidden name=amount value=$amount>";
   print "<input type=hidden name=invoicenum value=$invoice_number>";
-  print "<input type=hidden name=billingid value=$billingid>";    
+  print "<input type=hidden name=billingid value=$billingid>";
+  print "<input type=hidden name=payment_type value=$payment_type>";    
   print "<input name=save type=submit value=\" $l_yes \" ".
     "class=smallbutton></form></td>";
   print "<td align=left width=360><form style=\"margin-bottom:0;\" ".
