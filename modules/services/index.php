@@ -59,10 +59,20 @@ if ($edit) {
 
    echo "&nbsp;&nbsp;".
      "<a href=\"index.php?load=services&type=module&history=on\">".
-     "[ $l_history ]</a> | <a href=\"index.php?load=services&type=module\">$l_showall</a> | ";
+     "[ $l_history ]</a> &nbsp;&nbsp;&nbsp;&nbsp;";
 
-   // show links to limit listing to certain categories of services assigned to this customer
-   $query = "SELECT DISTINCT category FROM user_services AS user, master_services AS master ".
+   if ($category) {
+     // print the showall tab as unactive
+     echo "<a href=\"index.php?load=services&type=module\" style=\"font-weight: normal; border: 1px solid #eee; padding-left: 5px; padding-right: 5px; background-color: #eee;\">$l_showall</a> ";
+   } else {
+     // print the showall tab as active
+     echo "<a href=\"index.php?load=services&type=module\" style=\"font-weight: normal; border: 1px solid #ccd; padding-left: 5px; padding-right: 5px; background-color: #ccd;\">$l_showall</a> ";     
+   }
+
+   // show links to limit listing to certain categories of services
+   // assigned to this customer
+   $query = "SELECT DISTINCT category FROM user_services AS user, ".
+     "master_services AS master ".
      "WHERE user.master_service_id = master.id ".
      "AND user.account_number = '$account_number' AND removed <> 'y' ".
      "ORDER BY category";
@@ -70,7 +80,13 @@ if ($edit) {
    $result = $DB->Execute($query) or die ("$l_queryfailed");
    while ($myresult = $result->FetchRow()) {
      $categoryname = $myresult['category'];
-     echo "<a href=\"index.php?load=services&type=module&category=$categoryname\">$categoryname</a> | \n";
+     if ($category == $categoryname) {
+       echo "<a href=\"index.php?load=services&type=module&".
+	 "category=$categoryname\">$categoryname</a> \n";
+     } else {
+       echo "<a href=\"index.php?load=services&type=module&".
+	 "category=$categoryname\">$categoryname</a> \n";       
+     }
    }
    
    echo "<table cellpadding=0 border=0 cellspacing=0 width=720><td valign=top>".
