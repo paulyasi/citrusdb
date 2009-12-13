@@ -123,6 +123,12 @@ $l_exemptreport</a>
 $l_printnotices</a>
 </div>
 
+<div class=icon>
+<a href=# onclick=\"popupPage('index.php?load=servicegrowth&type=tools'); return false;\">
+<img border=0 src=\"images/icons/citrus_report.png\"><br>
+$l_servicegrowth</a>
+</div>
+
 </div>
 ";
 }
