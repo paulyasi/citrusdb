@@ -82,10 +82,10 @@ if ($edit) {
      $categoryname = $myresult['category'];
      if ($category == $categoryname) {
        echo "<a href=\"index.php?load=services&type=module&".
-	 "category=$categoryname\">$categoryname</a> \n";
+	 "category=$categoryname\" style=\"font-weight: normal; border: 1px solid #ccd; padding-left: 5px; padding-right: 5px; background-color: #ccd;\">$categoryname</a> \n";
      } else {
        echo "<a href=\"index.php?load=services&type=module&".
-	 "category=$categoryname\">$categoryname</a> \n";       
+	 "category=$categoryname\" style=\"font-weight: normal; border: 1px solid #eee; padding-left: 5px; padding-right: 5px; background-color: #eee;\">$categoryname</a> \n";       
      }
    }
    
@@ -105,7 +105,8 @@ if ($edit) {
 
    // check if they asked for just a specific category
    if ($category) {
-     echo "<tr><td colspan=9 bgcolor=\"#ccccdd\"><b style=\"font-size: 14pt;\">$l_category: $category</b></td><tr>";
+     //echo "<tr><td colspan=9 bgcolor=\"#ccccdd\"><b style=\"font-size: 14pt;\">$l_category: $category</b></td><tr>";
+     
      $query = "SELECT user.*, master.service_description, master.options_table, ".
        "master.pricerate, master.frequency, ".
        "master.organization_id master_organization_id ".
