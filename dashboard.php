@@ -89,9 +89,9 @@ if ($nummessages > 0) {
   }
  } else {
   if ($load == "tickets") {
-    echo "<div><a href=\"index.php?load=tickets&type=base\">No New Messages</a><div>";
+    echo "<div><a href=\"index.php?load=tickets&type=base\">No New Messages</a></div>";
   } else {
-    echo "<div><a href=\"index.php?load=tickets&type=base\">No New Messages</a><div>";
+    echo "<div><a href=\"index.php?load=tickets&type=base\">No New Messages</a></div>";
   }
  }
 
