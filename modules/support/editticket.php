@@ -43,23 +43,29 @@ $oldstatus = $base->input['oldstatus'];
 
 if ($savechanges) {
 
-  // save the changes to the customer_history
+
+  // first check if user_services_id is empty or zero, if so, set to NULL
+  if (($user_services_id == '') OR ($user_services_id == 0)) {
+    $user_services_string = "";
+  } else {
+    $user_seervices_string = "user_services_id = '$serviceid', ";
+  }
+  
+  // save the changes to the customer_history  
   if ($reminderdate <> '') {
     $query = "UPDATE customer_history SET notify = '$notify', ".
       "status = '$status', ".
-      "creation_date = '$reminderdate', ".
-      "user_services_id = '$serviceid', ".
+      "creation_date = '$reminderdate', $user_services_string".
       "account_number = '$accountnum' ".
       "WHERE id = $id";
   } else {
     $query = "UPDATE customer_history SET notify = '$notify', ".
-      "status = '$status', ".
-      "user_services_id = '$serviceid', ".
+      "status = '$status', $user_services_string".
       "account_number = '$accountnum' ".
       "WHERE id = $id";   
   }
   
-  $result = $DB->Execute($query) or die ("result $l_queryfailed");
+  $result = $DB->Execute($query) or die ("result $l_queryfailed $query");
 
   // if the oldstatus changed from not done or pending to completed
   // then mark this user as the one who closed this ticket
