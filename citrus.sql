@@ -520,7 +520,7 @@ CREATE TABLE `prorate_options` (
   `id` int(11) NOT NULL auto_increment,
   `user_services` int(11) NOT NULL default '0',
   `service_description` varchar(255) default NULL,
-  `service_id` int(11) default NULL,
+  `service_id` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;
 
