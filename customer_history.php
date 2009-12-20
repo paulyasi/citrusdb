@@ -113,14 +113,18 @@ while ($myresult = $result->FetchRow()) {
   print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
     "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$status &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-    "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">".
-    "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
+    "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">";
 
+  // if they have a valid service id that is greater than zero, print the link to it here
+  if ($serviceid > 0) {
+    print "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a>";
+  }
+  
   if ($linkurl) {
     print "<a href=\"$linkurl\">$linkname</a>";
   }
   
-  print "</td>";
+  print "&nbsp;</td>";
 
   // alternate line colors
   if ($linecount & 1) {

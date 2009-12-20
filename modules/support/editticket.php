@@ -136,10 +136,14 @@ if ($savechanges) {
 &nbsp;&nbsp;<input type=text value=\"$accountnum\" name=\"accountnum\" size=10>
 </td>";
 
-    echo "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td>".
-      "<td bgcolor=\"#ddddee\"><a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">".
-      "$serviceid $service_description</a>".
-      "&nbsp;&nbsp;<input type=text value=\"$serviceid\" name=\"serviceid\" size=10>".
+  echo "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td><td bgcolor=\"#ddddee\">";
+
+  // print a service id link if there is an associated service
+  if ($serviceid > 0) {
+    echo "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\">".
+      "$serviceid $service_description</a>";
+  }
+  echo "&nbsp;&nbsp;<input type=text value=\"$serviceid\" name=\"serviceid\" size=10>".
       "</td><tr>";
       
   echo "<td bgcolor=\"#ccccdd\"><b>$l_notify</b></td>".
