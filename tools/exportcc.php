@@ -39,7 +39,7 @@ $billingdate1 = $base->input['billingdate1'];
 $billingdate2 = $base->input['billingdate2'];
 $passphrase = $base->input['passphrase'];
 
-print "$billingdate $passphrase";
+print "$billingdate";
 
 // make sure the user is in a group that is allowed to run this
 

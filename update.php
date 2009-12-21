@@ -610,7 +610,7 @@ if ($base->input['submit'] == "Update")
 	}
 
 
-	if ($databaseversion = "1.3.1") {
+	if ($databaseversion == "1.3.1") {
 
 	  $query = "ALTER TABLE `user_services` ".
 	    "ADD INDEX `master_service_id_index` ( `master_service_id` )";
@@ -724,23 +724,23 @@ if ($base->input['submit'] == "Update")
 	  // for the truncated card numbers we show to regular users
 	  $query = " ALTER TABLE `billing` CHANGE `creditcard_number` ".
 	    "`creditcard_number` VARCHAR( 16 ) NULL DEFAULT NULL  ";
-	  $result = $DB->Execute($query) or die ("query failed");
+	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 
 	  // add the TEXT field that will hold the ascii armored encrypted card number
 	  $query = "ALTER TABLE `billing` ADD `encrypted_creditcard_number` TEXT NULL";
-	  $result = $DB->Execute($query) or die ("query failed");
+	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 	  
 	  // add the export prefix field that holds a prefix for the organization being exported
 	  $query = "ALTER TABLE `general` ADD `exportprefix` VARCHAR( 64 ) NULL ;";
-	  $result = $DB->Execute($query) or die ("query failed");
+	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 
 	  // add payment_history_id to link individual payments to items
 	  $query = "ALTER TABLE `billing_details` ADD `payment_history_id` ".
 	    "INT NULL ;";
-	  $result = $DB->Execute($query) or die ("query failed");
+	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 
 	  // create the new activity_log table
@@ -758,19 +758,19 @@ if ($base->input['submit'] == "Update")
 	    "`result` enum('success','failure') NOT NULL".
 	    ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";	  
 
-	  $result = $DB->Execute($query) or die ("query failed");
+	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";	  	  
 	  
 	  // add automatic_receipt marker to know who wants automatic receipts
 	  $query = "ALTER TABLE `billing` ADD `automatic_receipt` ".
 	    "ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
-	  $result = $DB->Execute($query) or die ("query failed");
+	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 
 	  // add closed_by and closed_date fields to customer_history table
 	  $query = "ALTER TABLE `customer_history` ADD `closed_by` ".
 	    "VARCHAR( 64 ) NULL ,ADD `closed_date` DATETIME NULL ;";
-	  $result = $DB->Execute($query) or die ("query failed");
+	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 	  
 	  // sub_history table to hold new entries associated with the same customer history entry
@@ -788,7 +788,7 @@ if ($base->input['submit'] == "Update")
 	  // set the version number in the database to 2.0
 	  $query = "UPDATE `settings` SET `version` = '2.0' ".
 	    "WHERE `id` =1 LIMIT 1";
-	  $result = $DB->Execute($query) or die ("query failed");
+	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 
 	  
