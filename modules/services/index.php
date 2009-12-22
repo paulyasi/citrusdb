@@ -170,7 +170,7 @@ if ($edit) {
      // multiply the pricerate and the usage_multiple to get the price to show
      $totalprice = sprintf("%.2f",$pricerate * $usage_multiple);
 
-     print "\n<tr onMouseOver='h(this);' onmouseout='deh(this);' onmouseclick='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";' bgcolor=\"#ddddee\">";
+     print "\n<tr onMouseOver='h(this);' onmouseout='deh(this);' onmouseup='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";' bgcolor=\"#ddddee\">";
      print "\n".
        "<td>$id</td>".
        "<td>$service_description</td>".
