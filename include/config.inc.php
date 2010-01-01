@@ -1,6 +1,6 @@
 <?php
 /*----------------------------------------------------------------------------*/
-// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2002-2010  Paul Yasi (paul at citrusdb.org)
 // Read the README file for more information
 /*----------------------------------------------------------------------------*/
 
