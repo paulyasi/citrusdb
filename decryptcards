@@ -88,7 +88,8 @@ while ($myresult = $result->FetchRow()) {
 
     echo "$decrypted";
     // remove extra line endings from the decrypted output
-    $decrypted_creditcard_number = str_replace( '\n', '', $decrypted );
+    //$decrypted_creditcard_number = str_replace( '\n', '', $decrypted );
+    $decrypted_creditcard_number = $decrypted;
 
     $query = "UPDATE billing ".
       "SET creditcard_number = '$decrypted_creditcard_number' ".

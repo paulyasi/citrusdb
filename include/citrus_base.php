@@ -394,6 +394,37 @@ function log_activity($DB,$user,$account_number,$activity_type,$record_type,
 /*---------------------------------------------------------------------------*/
 function encrypt_command ($gpg_command, $data)
 {
+  $descriptors = array(
+		       0 => array("pipe", "r"), //stdin
+		       1 => array("pipe", "w"), //stdout
+		       2 => array("file", "/tmp/encrypt-error.txt", "a"), //stderr
+		       );
+
+  $process = proc_open($gpg_command, $descriptors, $pipes);
+
+  if (is_resource($process)) {
+    // send data to encrypt to stdin
+    fwrite($pipes[0], $data);
+    fclose($pipes[0]);
+
+    // read stdout
+    $stdout = stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+
+    // read stderr
+    //$stderr = stream_get_contents($pipes[2]);
+    //fclose($pipes[2]);
+
+    // It is important that you close any pipes before calling
+    // proc_close in order to avoid a deadlock
+    proc_close($process);
+
+    $return_value = trim($stdout, "\n");
+    //echo "$stdout";
+
+  }
+
+  return $return_value;
 
 }
 
@@ -434,7 +465,7 @@ function decrypt_command ($gpg_command, $passphrase)
     // proc_close in order to avoid a deadlock
     proc_close($process);
 
-    $return_value = $stdout;
+    $return_value = trim($stdout, "\n");
     //echo "$stdout";
 
   }
