@@ -66,7 +66,7 @@ while ($myresult = $result->FetchRow()) {
     // close the file
     fclose($handle);
 	
-    $gpgcommandline = "echo $passphrase | $gpg_decrypt $filename";
+    //$gpgcommandline = "echo $passphrase | $gpg_decrypt $filename";
     
     //$oldhome = getEnv("HOME");
 
@@ -74,14 +74,19 @@ while ($myresult = $result->FetchRow()) {
     unset($decrypted);
       
     //    putenv("HOME=$path_to_home");
-    $gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
+    //$gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
     // putenv("HOME=$oldhome");
+
+    // try the new decrypt_command function
+    $gpgcommandline = "$gpg_decrypt $filename";
+    $decrypted = decrypt_command($gpgcommandline, $passphrase);
 
     // if there is a gpg error, stop here
     if ($errorcode > 0) {
       die ("Credit Card Decryption Error");
     }    
 
+    echo "$decrypted";
     $decrypted_creditcard_number = implode("\n",$decrypted);
 
     $query = "UPDATE billing ".

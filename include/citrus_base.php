@@ -1,6 +1,6 @@
 <?php
 /*----------------------------------------------------------------------------*/
-// Copyright (C) 2005  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2005-2010  Paul Yasi (paul at citrusdb.org)
 // Read the README file for more information
 /*----------------------------------------------------------------------------*/
 
@@ -383,5 +383,63 @@ function log_activity($DB,$user,$account_number,$activity_type,$record_type,
 } // end log_activity
 
 
+/*---------------------------------------------------------------------------*/
+// encrypt_command
+//
+// sends data to encrypt to stdin, returns result code
+//
+// expects a gpg command like
+// /usr/bin/gpg --homedir /home/www-data/.gnupg --armor --batch -e -r 'CitrusDB'
+//
+/*---------------------------------------------------------------------------*/
+function encrypt_command ($gpg_command, $data)
+{
+
+}
+
+/*---------------------------------------------------------------------------*/
+// decrypt_command
+//
+// sends passphrase to stdin, returns decrypted data
+//
+// expects a gpg command like:
+// /usr/bin/gpg --homedir /home/www-data/.gnupg --passphrase-fd 0 --yes --no-tty --skip-verify --decrypt file.gpg
+//
+/*---------------------------------------------------------------------------*/
+function decrypt_command ($gpg_command, $passphrase)
+{
+  
+  $descriptors = array(
+		       0 => array("pipe", "r"), //stdin
+		       1 => array("pipe", "w"), //stdout
+		       2 => array("file", "/tmp/error-output.txt", "a"), //stderr
+		       );
+
+  $process = proc_open($gpg_command, $descriptors, $pipes);
+
+  if (is_resource($process)) {
+    // send passphrase to stdin
+    fwrite($pipes[0], $passphrase);
+    fclose($pipes[0]);
+
+    // read stdout
+    $stdout = stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+
+    // read stderr
+    //$stderr = stream_get_contents($pipes[2]);
+    //fclose($pipes[2]);
+
+    // It is important that you close any pipes before calling
+    // proc_close in order to avoid a deadlock
+    proc_close($process);
+
+    $return_value = $stdout;
+    //echo "$stdout";
+
+  }
+
+  return $return_value;
+}
 
 ?>
