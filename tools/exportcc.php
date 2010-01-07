@@ -233,25 +233,23 @@ b.encrypted_creditcard_number b_enc_ccnum
 		// close the file
 		fclose($cipherhandle);
 		
-		$gpgcommandline = "echo $passphrase | $gpg_decrypt $cipherfilename";
+		//$gpgcommandline = "echo $passphrase | $gpg_decrypt $cipherfilename";
 		
 		//$oldhome = getEnv("HOME");
 		
 		// destroy the output array before we use it again
 		unset($decrypted);
 		
-		//putenv("HOME=$path_to_home");
-		$gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
-		//putenv("HOME=$oldhome");
+		$gpgcommandline = "$gpg_decrypt $cipherfilename";
+		$decrypted = decrypt_command($gpgcommandline, $passphrase);
 
 		// if there is a gpg error, stop here
-		if ($errorcode > 0) {
-		  echo "$gpgcommandline<br>\n";
-		  die ("Credit Card Decryption Error");
+		if (substr($decrypted,0,5) == "error") {
+		  die ("Credit Card Encryption Error: $decrypted");
 		}
-
-		// set the billing_ccnum to the decrypted_creditcard_number
-		$decrypted_creditcard_number = implode("\n",$decrypted);
+ 		 
+ 		// set the billing_ccnum to the decrypted_creditcard_number
+ 		$decrypted_creditcard_number = $decrypted;
 		$billing_ccnum = $decrypted_creditcard_number;		
 				
 		// determine the variable export order values

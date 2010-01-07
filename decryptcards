@@ -80,11 +80,11 @@ while ($myresult = $result->FetchRow()) {
     // try the new decrypt_command function
     $gpgcommandline = "$gpg_decrypt $filename";
     $decrypted = decrypt_command($gpgcommandline, $passphrase);
-
+    
     // if there is a gpg error, stop here
-    if ($errorcode > 0) {
-      die ("Credit Card Decryption Error");
-    }    
+    if (substr($decrypted,0,5) == "error") {
+      die ("Credit Card Encryption Error: $decrypted");
+    }
 
     echo "$decrypted";
     // remove extra line endings from the decrypted output

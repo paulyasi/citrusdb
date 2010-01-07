@@ -145,21 +145,23 @@ if ($submit) {
  		// close the file
  		fclose($cipherhandle);
  		
- 		$gpgcommandline = "echo $passphrase | $gpg_decrypt $cipherfilename";
+ 		//$gpgcommandline = "echo $passphrase | $gpg_decrypt $cipherfilename";
  		
 		// destroy the output array before we use it again
  		unset($decrypted);
  		
-		$gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
+		//$gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
+
+		$gpgcommandline = "$gpg_decrypt $cipherfilename";
+		$decrypted = decrypt_command($gpgcommandline, $passphrase);
+
+		// if there is a gpg error, stop here
+		if (substr($decrypted,0,5) == "error") {
+		  die ("Credit Card Encryption Error: $decrypted");
+		}
  		 
- 		// if there is a gpg error, stop here
- 		if ($errorcode > 0) {
- 		  echo "$gpgcommandline<br>\n";
- 		  die ("Credit Card Decryption Error");
- 		}
- 
  		// set the billing_ccnum to the decrypted_creditcard_number
- 		$decrypted_creditcard_number = implode("\n",$decrypted);
+ 		$decrypted_creditcard_number = $decrypted;
  		$billing_ccnum = $decrypted_creditcard_number;
 				
 		// determine the variable export order values
