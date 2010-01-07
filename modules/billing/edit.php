@@ -125,8 +125,8 @@ if ($save) {
   // check if the credit card entered already masked and not blank
   // eg: a replacement was not entered
   if ($creditcard_number[1] <> '*' AND $creditcard_number <> '') {
-
-    $gpgcommandline = "echo $creditcard_number | $gpg_command";
+   
+    //$gpgcommandline = "echo $creditcard_number | $gpg_command";
     
     //$oldhome = getEnv("HOME");
 
@@ -134,16 +134,18 @@ if ($save) {
     unset($encrypted);
     
     //putenv("HOME=$path_to_home");
-    $gpgresult = exec($gpgcommandline, $encrypted, $errorcode);
+    //$gpgresult = exec($gpgcommandline, $encrypted, $errorcode);
     //putenv("HOME=$oldhome");
 
+    $encrypted = encrypt_command($gpg_command, $creditcard_number);
+
     // if there is a gpg error, stop here
-    if ($errorcode > 0) {
-      die ("Credit Card Encryption Error, See Webserver Log");
+    if (substr($encrypted,0,5) == "error") {
+      die ("Credit Card Encryption Error: $encrypted");
     }
     
     // change the ouput array into ascii ciphertext block
-    $encrypted_creditcard_number = implode("\n",$encrypted);
+    $encrypted_creditcard_number = $encrypted;
     
     // wipe out the middle of the creditcard_number before it gets inserted
     $length = strlen($creditcard_number);
