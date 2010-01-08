@@ -163,13 +163,11 @@ if ($submit) {
 	// and not anything else
 	$asciiarmor = TRUE;
 	
-	// TODO:
 	// read in the ASCII ARMORED credit card data ad the end
 	// and put it into the billing record
 	$armordata .= "$line[0]\n";
 
 	if ($line[0] == "-----END PGP MESSAGE-----") {
-	  // TODO: insert the whole ascii armor data ($armordata)
 	  // into the billing table encrypted_creditcard_number field
 	  $query = "UPDATE billing SET encrypted_creditcard_number = '$armordata' WHERE id = $billingid";
 	  $result = $DB->Execute($query) or die ("billing card update $l_queryfailed");  
@@ -232,7 +230,7 @@ if ($submit) {
 	// insert data into the options table if there is one
 	if ($optionstable <> '') {
 	  $query = "INSERT into $optionstable () ".
-	    "VALUES ('',$myinsertid,$fieldvalues)";
+	    "VALUES (NULL,$myinsertid,$fieldvalues)";
 	  $result = $DB->Execute($query) 
 	    or die ("options table insert $l_queryfailed");
 	}

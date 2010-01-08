@@ -191,7 +191,7 @@ if ($submit) {
 	  $path_to_ccfile = $myccfileresult['path_to_ccfile'];
 	  
 	  // open the file
-	  $cipherfilename = "$path_to_ccfile/ciphertext.tmp";
+	  $cipherfilename = "$path_to_ccfile/cipherimport.tmp";
 	  $cipherhandle = fopen($cipherfilename, 'w') or die ("cannot open $cipherfilename");
 	  
 	  // write the ciphertext we want to decrypt into the file
@@ -212,7 +212,7 @@ if ($submit) {
 	  }
 	  
 	  // insert the card number into the billing table
-	  $query = "UPDATE billing SET creditcard_number = '$cardnumber' WHERE id = $billingid";
+	  $query = "UPDATE billing SET creditcard_number = '$decrypted' WHERE id = $billingid";
 	  $result = $DB->Execute($query) or die ("billing card update $l_queryfailed");  
 
 	  // reset line count and other markers when done
