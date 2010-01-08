@@ -195,7 +195,7 @@ if ($submit) {
 	  $cipherhandle = fopen($cipherfilename, 'w') or die ("cannot open $cipherfilename");
 	  
 	  // write the ciphertext we want to decrypt into the file
-	  fwrite($cipherhandle, $encrypted_creditcard_number);
+	  fwrite($cipherhandle, $armordata);
 	  
 	  // close the file
 	  fclose($cipherhandle);
@@ -272,7 +272,7 @@ if ($submit) {
 	// insert data into the options table if there is one
 	if ($optionstable <> '') {
 	  $query = "INSERT into $optionstable () ".
-	    "VALUES ('',$myinsertid,$fieldvalues)";
+	    "VALUES (NULL,$myinsertid,$fieldvalues)";
 	  $result = $DB->Execute($query) 
 	    or die ("options table insert $l_queryfailed");
 	}
