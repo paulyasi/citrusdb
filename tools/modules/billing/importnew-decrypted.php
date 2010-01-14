@@ -319,7 +319,7 @@ if ($submit) {
   unlink($myfile);
 
   // log the importing of accounts
-  log_activity($DB,$user,$account_number,'import','customer',0,'success');  
+  //log_activity($DB,$user,$account_number,'import','customer',0,'success');  
  }
 
 // uploadnew will redirect back to this file to perform the submit processing
