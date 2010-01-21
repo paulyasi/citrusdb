@@ -454,10 +454,10 @@ if ($save) {
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   while ($myresult = $result->FetchRow()) {
-    $billing_id = $myresult['id'];
+    $mybilling_id = $myresult['id'];
     $org_name = $myresult['org_name'];
     $billing_type = $myresult['name'];
-    print "<option value=$billing_id>$billing_id ($org_name) $billing_type".
+    print "<option value=$mybilling_id>$mybilling_id ($org_name) $billing_type".
       "</option>";
   }
 
