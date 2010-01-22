@@ -26,7 +26,6 @@ if (!isset($base->input['description'])) { $base->input['description'] = ""; }
 if (!isset($base->input['savechanges'])) { $base->input['savechanges'] = ""; }
 if (!isset($base->input['reminderdate'])) { $base->input['reminderdate'] = ""; }
 if (!isset($base->input['serviceid'])) { $base->input['serviceid'] = ""; }
-if (!isset($base->input['accountnum'])) { $base->input['accountnum'] = ""; }
 if (!isset($base->input['addnote'])) { $base->input['addnote'] = ""; }
 if (!isset($base->input['oldstatus'])) { $base->input['oldstatus'] = ""; }
 
@@ -37,7 +36,6 @@ $description = $base->input['description'];
 $savechanges = $base->input['savechanges'];
 $reminderdate = $base->input['reminderdate'];
 $serviceid = $base->input['serviceid'];
-$accountnum = $base->input['accountnum'];
 $addnote = $base->input['addnote'];
 $oldstatus = $base->input['oldstatus'];
 
@@ -48,20 +46,18 @@ if ($savechanges) {
   if (($user_services_id == '') OR ($user_services_id == 0)) {
     $user_services_string = "";
   } else {
-    $user_seervices_string = "user_services_id = '$serviceid', ";
+    $user_services_string = ", user_services_id = '$serviceid' ";
   }
   
   // save the changes to the customer_history  
   if ($reminderdate <> '') {
     $query = "UPDATE customer_history SET notify = '$notify', ".
       "status = '$status', ".
-      "creation_date = '$reminderdate', $user_services_string".
-      "account_number = '$accountnum' ".
+      "creation_date = '$reminderdate' $user_services_string".
       "WHERE id = $id";
   } else {
     $query = "UPDATE customer_history SET notify = '$notify', ".
-      "status = '$status', $user_services_string".
-      "account_number = '$accountnum' ".
+      "status = '$status' $user_services_string".
       "WHERE id = $id";   
   }
   
@@ -133,8 +129,7 @@ if ($savechanges) {
     "<td bgcolor=\"#ddddee\">".
     "<a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">".
     "$name</a>
-&nbsp;&nbsp;<input type=text value=\"$accountnum\" name=\"accountnum\" size=10>
-</td>";
+&nbsp;&nbsp;($accountnum)</td>";
 
   echo "<td bgcolor=\"#ccccdd\"><b>$l_service</b></td><td bgcolor=\"#ddddee\">";
 

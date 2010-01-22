@@ -314,11 +314,7 @@ Set the gpg decrypt command that is used when decrypting the
 cards for batch exports or when re-keying the data.  The decrypt
 command must include the &ndash;passphrase-fd 0 command because the
 passphrase will be passed to gpg by citrus's decryption
-function.  The use of &ndash;passphrase-fd 0 may pose an issue for
-those on a shared server where a user may be able to see the 
-process list and time it to see the passphrase being used.  This
-is one of the reasons that citrusdb should not be run on
-a shared server.  
+function.
 
 <p>
 <pre class="example">
