@@ -31,6 +31,7 @@ echo "<table cellspacing=0 cellpadding=4 border=0>".
 "<td bgcolor=\"#dddddd\" width=100><b>$l_from</b></td>".
 "<td bgcolor=\"#dddddd\" width=100><b>$l_to</b></td>".
 "<td bgcolor=\"#dddddd\" width=100><b>$l_duedate</b></td>".
+"<td bgcolor=\"#dddddd\" width=100><b>$l_paid</b></td>".
 "<td bgcolor=\"#dddddd\" width=100><b>$l_billedamount</b></td>".
 "<td bgcolor=\"#dddddd\" width=150><b>$l_paidamount</b></td>";
 
@@ -47,10 +48,11 @@ $query = "SELECT d.id d_id, d.billing_id d_billing_id, ".
   "d.rerun d_rerun, d.original_invoice_number d_original_invoice, ".
   "m.service_description m_description, r.description r_description, ".
   "bh.from_date bh_from_date, bh.to_date bh_to_date, ".
-  "bh.payment_due_date bh_due_date ".
+  "bh.payment_due_date bh_due_date, ph.creation_date ph_creation_date ".
   "FROM billing_details d ".
   "LEFT JOIN billing b ON b.id = d.billing_id ".
   "LEFT JOIN billing_history bh ON bh.id = d.original_invoice_number ".
+  "LEFT JOIN payment_history ph ON ph.id = d.payment_history_id ".
   "LEFT JOIN user_services u ON u.id = d.user_services_id ".
   "LEFT JOIN master_services m ON m.id = u.master_service_id ".
   "LEFT JOIN taxed_services t ON t.id = d.taxed_services_id ".
@@ -81,8 +83,9 @@ while ($myresult = $result->FetchRow()) {
   $from_date = $myresult['bh_from_date'];
   $to_date = $myresult['bh_to_date'];
   $due_date = $myresult['bh_due_date'];
+  $payment_date = $myresult['ph_creation_date'];
 
-  print "<tr bgcolor=\"#eeeeee\">";
+  print "<tr style=\"font-size: 9pt;\" bgcolor=\"#eeeeee\">";
   print "<td style=\"border-top: 1px solid grey;\">$id &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$date &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$description &nbsp;</td>";
@@ -93,7 +96,7 @@ while ($myresult = $result->FetchRow()) {
   print "<td style=\"border-top: 1px solid grey;\">$from_date</td>";
   print "<td style=\"border-top: 1px solid grey;\">$to_date</td>";
   print "<td style=\"border-top: 1px solid grey;\">$due_date</td>";
-
+  print "<td style=\"border-top: 1px solid grey;\">$payment_date&nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$billedamount &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$paidamount &nbsp;";
 
