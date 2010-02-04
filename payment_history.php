@@ -30,6 +30,7 @@ echo "<table cellspacing=0 cellpadding=2 border=0>".
 "<td bgcolor=\"#eedddd\" width=100><b>$l_status</b></td>".
 "<td bgcolor=\"#eedddd\" width=50><b>$l_avs</b></td>".
 "<td bgcolor=\"#eedddd\" width=190><b>$l_number</b></td>".
+"<td bgcolor=\"#eedddd\" width=40><b>$l_exp</b></td>".
 "<td bgcolor=\"#eedddd\" width=100><b>$l_amount</b></td>";
 
 // get the billing_history for this account
@@ -41,7 +42,8 @@ $query = "SELECT p.id p_id, p.creation_date p_cdate, p.payment_type ".
   "p.billing_amount p_billing_amount, p.response_code p_response_code, ".
   "p.avs_response p_avs_response, p.check_number p_check_number, ".
   "c.account_number c_acctnum, p.creditcard_number p_creditcard_number, ".
-  "b.account_number b_acctnum, b.id b_id ".
+  "p.creditcard_expire p_creditcard_expire, b.account_number b_acctnum, ".
+  "b.id b_id ".
   "FROM payment_history p ".
   "LEFT JOIN billing b ON p.billing_id = b.id ".
   "LEFT JOIN customer c ON b.account_number = c.account_number ".
@@ -62,6 +64,7 @@ while ($myresult = $result->FetchRow()) {
   $avs_response = $myresult['p_avs_response'];
   $check_number = $myresult['p_check_number'];
   $creditcard_number = $myresult['p_creditcard_number'];
+  $creditcard_expire = $myresult['p_creditcard_expire'];
   $amount = sprintf("%.2f",$myresult['p_billing_amount']);
   $billingid = $myresult['p_billing_id'];
   $invoice_number = $myresult['p_invoice_number'];
@@ -147,6 +150,7 @@ while ($myresult = $result->FetchRow()) {
   
   
   print "</td>";
+  print "<td style=\"border-top: 1px solid grey;\">$creditcard_expire &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$amount &nbsp;";
 
   if (($amount > 0) AND ($status == $l_authorized)) {

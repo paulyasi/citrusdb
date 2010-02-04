@@ -211,6 +211,7 @@ $l_examplepassword = "Example Password";
 $l_exampleusername = "Example Username";
 $l_exempt = "Exempt";
 $l_exemptreport = "Exempt Report";
+$l_exp = "Exp";
 $l_expirationdate = "Expiration Date";
 $l_exportcreditcards = "Export Credit Cards";
 $l_exportfileprefix = "Export File Prefix";

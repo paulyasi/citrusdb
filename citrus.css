@@ -138,7 +138,7 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 #tabnav a.active
 	{
-		background: white;
+		background: #fff;
 		border-left: 2px solid #aaa;
 		border-right: 1px solid #fff;
 		border-top: 1px solid #aaa;
