@@ -215,19 +215,27 @@ if ($submit) {
   foreach ($declined as $key=>$mybillingid) {
     // select the info for emailing the customer
     // get the org billing email address for from address           
-    $query = "SELECT g.email_billing, g.declined_subject, 
-			g.declined_message, b.contact_email, b.account_number 
-			FROM billing b
-                        LEFT JOIN general g ON b.organization_id = g.id  
-			WHERE b.id = $mybillingid";
+    $query = "SELECT g.email_billing, g.declined_subject, g.declined_message, ".
+      "b.contact_email, b.account_number, b.creditcard_number, b.creditcard_expire ". 
+      "FROM billing b ".
+      "LEFT JOIN general g ON b.organization_id = g.id ".
+      "WHERE b.id = $mybillingid";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $result = $DB->Execute($query) or die ("email declined $l_queryfailed $query");
     $myresult = $result->fields;
     $billing_email = $myresult['email_billing'];
     $subject = $myresult['declined_subject'];
     $myaccountnum = $myresult['account_number'];
+
+    
+    // wipe out the middle of the creditcard_number before it gets inserted
+    $firstdigit = substr($myresult['creditcard_number'], 0,1);
+    $lastfour = substr($myresult['creditcard_number'], -4);
+    $maskedcard = "$firstdigit" . "***********" . "$lastfour";  
+    
+    $expdate = $myresult['creditcard_expire'];
     $declined_message = $myresult['declined_message'];
-    $message = "$l_account: $myaccountnum\n\n$declined_message";
+    $message = "$l_account: $myaccountnum\n$l_creditcard: $maskedcard $expdate\n\n$declined_message";
     $myemail = $myresult['contact_email'];
     
     // HTML Email Headers
