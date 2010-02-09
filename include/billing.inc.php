@@ -915,7 +915,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $output .= "$l_invoicenumber: $invoiceid\n";
     $output .= "$billing_fromdate - $billing_todate \n";
     $output .= "$l_paymentduedate: $billing_payment_due_date\n";
-    $output .= "$l_total: $billing_total_due\n\n";
+    $output .= "\n\n";
     
     $output .= "$l_to: $billing_email\n";
     $output .= "$billing_name $billing_company\n";
