@@ -95,6 +95,8 @@ if ($nummessages > 0) {
   }
  }
 
+echo "</div>";
+
 // show other dashboard specifictabs down here:
 
 
