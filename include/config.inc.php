@@ -15,7 +15,7 @@ $hidden_hash_var='youmustchangethis';
 $lang = './include/local/us-english.inc.php';
 $gpg_command = "/usr/bin/gpg --homedir /home/www-data/.gnupg --armor --batch -e -r 'CitrusDB'";
 $gpg_decrypt = "/usr/bin/gpg --homedir /home/www-data/.gnupg --passphrase-fd 0 --yes --no-tty --skip-verify --decrypt";
-$gpg_sign = "/usr/bin/gpg --homedir /home/www-data/.gnupg --passphrase-fd 0 --yes --no-tty --clearsign";
+$gpg_sign = "/usr/bin/gpg --homedir /home/www-data/.gnupg --passphrase-fd 0 --yes --no-tty --clearsign -u 'CitrusDB'";
 
 // use these url prefixes to redirect between the ssl carddata and regular pages
 // also maybe can be used with base href to help limit cross site scripting
