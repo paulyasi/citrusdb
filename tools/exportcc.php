@@ -1,29 +1,25 @@
 <?php
-// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2002-2010  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
 /*----------------------------------------------------------------------------*/
 if(constant("INDEX_CITRUS") <> 1){
-	echo "You must be logged in to run this.  Goodbye.";
-	exit;	
+  echo "You must be logged in to run this.  Goodbye.";
+  exit;	
 }
 
 if (!defined("INDEX_CITRUS")) {
-	echo "You must be logged in to run this.  Goodbye.";
-        exit;
+  echo "You must be logged in to run this.  Goodbye.";
+  exit;
 }
 
 echo "<h3>$l_exportcreditcards</h3>
 <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/CalendarPopup.js\"></SCRIPT>
 	<SCRIPT LANGUAGE=\"JavaScript\">
 	var cal = new CalendarPopup();
-	</SCRIPT>
-";
-
-//Include the billing functions
-//include('include/billing.inc.php');
+	</SCRIPT>";
 
 //GET Variables
 if (!isset($base->input['billingdate'])) { $base->input['billingdate'] = ""; }
@@ -45,11 +41,42 @@ print "$billingdate";
 
 if ($submit) {
 	
-	//$DB->debug = true;
+  //$DB->debug = true;
 
-	/*--------------------------------------------------------------------*/
-	// Create the billing data
-	/*--------------------------------------------------------------------*/
+  /*--------------------------------------------------------------------------*/
+  // TODO: make a file and sign it first to verify the passphrase entered
+  // before we start making a new batch for them
+  /*--------------------------------------------------------------------------*/
+  // select the path_to_ccfile from settings
+  $query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $ccfileresult = $DB->Execute($query)
+    or die ("$l_queryfailed");
+  $myccfileresult = $ccfileresult->fields;
+  $path_to_ccfile = $myccfileresult['path_to_ccfile'];  
+  
+  // make a file to sign
+  $signfilename = "$path_to_ccfile/signtext.tmp";
+  $signhandle = fopen($signfilename, 'w') or die ("cannot open $signfilename");
+
+  // write some example text to sign with a private key
+  $signtext = "Sign this";
+  fwrite($signhandle, $signtext);
+
+  // close the file
+  fclose($signhandle);
+
+  $gpgsigncommand = "$gpg_sign $signfilename";
+  $signed = sign_command($gpgsigncommand, $passphrase);
+
+  // if there is a gpg error, stop here
+  if (substr($signed,0,5) == "error") {
+    die ("Signature Error: $signed");
+  }      
+
+  /*--------------------------------------------------------------------*/
+  // Create the billing data
+  /*--------------------------------------------------------------------*/
 
 	// determine the next available batch number
         $batchid = get_nextbatchnumber($DB);
@@ -134,15 +161,7 @@ if ($submit) {
 	// print the credit card billing to a file
 	/*--------------------------------------------------------------------*/
 
-	// select the path_to_ccfile from settings
-	$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
-	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$ccfileresult = $DB->Execute($query) 
-		or die ("$l_queryfailed");
-	$myccfileresult = $ccfileresult->fields;
-	$path_to_ccfile = $myccfileresult['path_to_ccfile'];	
-
-	// select the info from general to get the path_to_ccfile
+	// select the info from general to get the export variables
 	$query = "SELECT ccexportvarorder,exportprefix FROM general WHERE id = '$organization_id'";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$ccvarresult = $DB->Execute($query) 
