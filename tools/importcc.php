@@ -226,7 +226,6 @@ if ($submit) {
     $billing_email = $myresult['email_billing'];
     $subject = $myresult['declined_subject'];
     $myaccountnum = $myresult['account_number'];
-
     
     // wipe out the middle of the creditcard_number before it gets inserted
     $firstdigit = substr($myresult['creditcard_number'], 0,1);
