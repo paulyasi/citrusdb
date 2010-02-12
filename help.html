@@ -324,6 +324,17 @@ function.
 </p>
 </li>
 <li>
+Set the gpg sign command will be used by citrus to verify
+the passphrase entered before creating a batch file.
+
+<p>
+  <pre class="example">
+    $gpg_sign = "/usr/bin/gpg --homedir /home/www-data/.gnupg
+    --passphrase-fd 0 --yes --no-tty --clearsign -u 'CitrusDB'";
+  </pre>
+</p>
+</li>
+<li>   
 Set the regular url and ssl url prefixes for your database url.
 The ssl url is required for entering billing data or when
 exporting credit card data.  You may use a self-signed
