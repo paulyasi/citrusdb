@@ -165,7 +165,12 @@ if ($submit) {
 	
 	// read in the ASCII ARMORED credit card data ad the end
 	// and put it into the billing record
-	$armordata .= "$line[0]\n";
+	// don't put a new line character after the last line
+	if ($line[0] == "-----END PGP MESSAGE-----") {
+	  $armordata .= "$line[0]";	  
+	} else {
+	  $armordata .= "$line[0]\n";
+	}
 
 	if ($line[0] == "-----END PGP MESSAGE-----") {
 	  // into the billing table encrypted_creditcard_number field
