@@ -266,7 +266,7 @@ if ($addnow) {
     $result = $DB->Execute($query) or die ("$l_queryfailed");
     while ($myresult = $result->FetchRow()) {
       $categoryname = $myresult['category'];
-      echo "<a href=\"#$categoryname\">$categoryname</a> | \n";
+      echo "<a href=\"index.php?load=services&type=module&create=on&showall=y#$categoryname\">$categoryname</a> | \n";
     }
 
     // set the query for the service listing
@@ -282,7 +282,7 @@ if ($addnow) {
     $result = $DB->Execute($query) or die ("$l_queryfailed");
     while ($myresult = $result->FetchRow()) {
       $categoryname = $myresult['category'];
-      echo "<a href=\"#$categoryname\">$categoryname</a> | \n";
+      echo "<a href=\"index.php?load=services&type=module&create=on#$categoryname\">$categoryname</a> | \n";
     }
     
     // set the query for the service listing
