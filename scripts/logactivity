@@ -44,7 +44,7 @@ while ($myactivitylog = $activitylog->FetchRow()) {
   // get each item from the activity log
   $date = $myactivitylog['date'];
   $time = $myactivitylog['time'];
-  $user = $myreceiptresult['user'];
+  $user = $myactivitylog['user'];
   $ip_address = $myactivitylog['ip_address'];
   $account_number = $myactivitylog['account_number'];
   $activity_type = $myactivitylog['activity_type'];
