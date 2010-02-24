@@ -41,8 +41,37 @@ $query = "INSERT into customer_history ".
 
   $result = $DB->Execute($query) or die ("create_ticket query failed");
 
-  // TODO: add a feature to email ticket messages to users
-  // who have specified that in their options, for individuals or groups
+  /*--------------------------------------------------------------------------*/
+  // send xmpp messages about new tickets to a the xmpp screen name
+  // that has been specified as a field in the user table
+  /*--------------------------------------------------------------------------*/
+
+  $query = "SELECT screenname FROM user WHERE username = '$user'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("select screename $l_queryfailed");
+  $myresult = $result->fields;	
+  $screenname = $myresult['screenname'];
+
+  // if they have specified a screenname then send them a notification
+  if ($screenname) {
+    include 'XMPPHP/XMPP.php';
+
+    // TODO: edit this to use database jabber user defined in config file
+    $conn = new XMPPHP_XMPP('localhost', 5222, 'citrusdb', 'citrusdb', 'xmpphp', 'localhost', $printlog=false, $loglevel=XMPPHP_Log::LEVEL_INFO);
+    
+    try {
+      $conn->connect();
+      $conn->processUntil('session_start');
+      $conn->presence();
+      $conn->message("$screenname", "$description");
+      $conn->disconnect();
+    } catch(XMPPHP_Exception $e) {
+      die($e->getMessage());
+    }
+    
+  }
+  
+  
 }
 
 
