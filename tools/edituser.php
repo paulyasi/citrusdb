@@ -2,7 +2,8 @@
 <body bgcolor="#ffffff">
 <?php
 echo "<h3>$l_edituser</h3>";
-// Copyright (C) 2002-2005  Paul Yasi <paul@citrusdb.org>, read the README file for more information
+// Copyright (C) 2002-2005  Paul Yasi (paul at citrusdb.org)
+// read the README file for more information
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
 /*----------------------------------------------------------------------------*/
@@ -22,6 +23,8 @@ if (!isset($base->input['username'])) { $base->input['username'] = ""; }
 if (!isset($base->input['realname'])) { $base->input['realname'] = ""; }
 if (!isset($base->input['admin'])) { $base->input['admin'] = ""; }
 if (!isset($base->input['manager'])) { $base->input['manager'] = ""; }
+if (!isset($base->input['email'])) { $base->input['email'] = ""; }
+if (!isset($base->input['screenname'])) { $base->input['screenname'] = ""; }
 
 $submit = $base->input['submit'];
 $userid = $base->input['userid'];
@@ -29,6 +32,8 @@ $username = $base->input['username'];
 $realname = $base->input['realname'];
 $admin = $base->input['admin'];
 $manager = $base->input['manager'];
+$email = $base->input['email'];
+$screenname = $base->input['screenname'];
 
 // check that the user has admin privileges
 $query = "SELECT * FROM user WHERE username='$user'";
@@ -36,8 +41,8 @@ $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 $myresult = $result->fields;
 if ($myresult['admin'] == 'n') {
-        echo '$l_youmusthaveadmin<br>';
-        exit;
+  echo '$l_youmusthaveadmin<br>';
+  exit;
 }
 
 if ($submit) {
@@ -53,7 +58,7 @@ if ($submit) {
 
 }
 
-        // get the variables out of the id 1 general configuration table
+        // get the variables out of the general configuration table
         $query = "SELECT * FROM user WHERE id = '$userid'";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
         $result = $DB->Execute($query) or die ("$l_queryfailed");
@@ -64,6 +69,8 @@ if ($submit) {
         $realname = $myresult['real_name'];
         $admin = $myresult['admin'];
         $manager = $myresult['manager'];
+        $email = $myresult['email'];
+        $screenname = $myresult['screenname'];
 
 echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
         <script language=\"JavaScript\" src=\"include/verify.js\"></script>
@@ -76,7 +83,11 @@ echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
         <B>$l_name:</B><BR>
         <INPUT TYPE=\"TEXT\" NAME=\"realname\" VALUE=\"$realname\" SIZE=\"20\" MAXLENGTH=\"65\">
         <P>
-        <B>$l_username:</B><INPUT TYPE=\"TEXT\" NAME=\"username\" VALUE=\"$username\" SIZE=\"20\" MAXLENGTH=\"65\">
+        <B>$l_username:</B> <INPUT TYPE=\"TEXT\" NAME=\"username\" VALUE=\"$username\" SIZE=\"20\" MAXLENGTH=\"65\">
+<p>
+        <B>$l_contactemail:</B> <INPUT TYPE=\"TEXT\" NAME=\"email\" VALUE=\"$email\" SIZE=\"20\" MAXLENGTH=\"65\">
+<p>
+        <B>$l_screenname:</B><INPUT TYPE=\"TEXT\" NAME=\"screenname\" VALUE=\"$screenname\" SIZE=\"20\" MAXLENGTH=\"65\">
         <P>
         <b>$l_privileges:</b><br>
         <table>";

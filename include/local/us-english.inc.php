@@ -410,6 +410,7 @@ $l_salesemail = "Sales Email";
 $l_salesperson = "Salesperson";
 $l_salesphone = "Sales Phone";
 $l_savechanges = "Save Changes";
+$l_screenname = "Screenname (JID)";
 $l_search = "Search";
 $l_seconds = "Seconds";
 $l_secret_answer = "Secret Answer";

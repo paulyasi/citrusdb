@@ -25,13 +25,13 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
   } else {
     if ($user_services_id) {
     // add ticket to customer_history table
-    $query = "INSERT into customer_history ".
+      $query = "INSERT into customer_history ".
       "(creation_date, created_by, notify, account_number,".
       "status, description, linkurl, linkname, user_services_id) ".
       "VALUES (CURRENT_TIMESTAMP, '$user', '$notify', '$account_number',".
       "'$status', '$description', '$linkurl', '$linkname', '$user_services_id')";
     } else {
-$query = "INSERT into customer_history ".
+      $query = "INSERT into customer_history ".
       "(creation_date, created_by, notify, account_number,".
       "status, description, linkurl, linkname) ".
       "VALUES (CURRENT_TIMESTAMP, '$user', '$notify', '$account_number',".
@@ -40,19 +40,19 @@ $query = "INSERT into customer_history ".
   }
 
   $result = $DB->Execute($query) or die ("create_ticket query failed");
+  $ticketnumber = $DB->Insert_ID();
 
   /*--------------------------------------------------------------------------*/
-  // send xmpp messages about new tickets to a the xmpp screen name
-  // that has been specified as a field in the user table
+  // send notifications about new tickets to a the jabber ID or email address
   /*--------------------------------------------------------------------------*/
 
-  $query = "SELECT screenname FROM user WHERE username = '$user'";
+  $query = "SELECT email,screenname FROM user WHERE username = '$user'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("select screename $l_queryfailed");
   $myresult = $result->fields;	
   $screenname = $myresult['screenname'];
 
-  // if they have specified a screenname then send them a notification
+  // if they have specified a screenname then send them a jabber notification
   if ($screenname) {
     include 'XMPPHP/XMPP.php';
 
@@ -63,15 +63,25 @@ $query = "INSERT into customer_history ".
       $conn->connect();
       $conn->processUntil('session_start');
       $conn->presence();
-      $conn->message("$screenname", "$description");
+      $conn->message("$screenname", "$ticketnumber: $description");
       $conn->disconnect();
     } catch(XMPPHP_Exception $e) {
       die($e->getMessage());
     }
-    
   }
   
-  
+  // if they have specified an email then send them an email notification
+  if ($email) {
+
+    // HTML Email Headers
+    $headers = "From: $billing_email \n";
+    $to = $email;
+    // send the mail
+    $subject = "$l_ticket: $ticketnumber";
+    $message = "ticketnumber: $description";
+    mail ($to, $subject, $message, $headers);
+    
+  }
 }
 
 

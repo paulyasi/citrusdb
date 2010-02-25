@@ -370,13 +370,13 @@ if ($save) {
 echo "</td><tr>".
   "<td bgcolor=\"#ccccdd\"><b>$l_ccnumber</b></td>".
   "<td bgcolor=\"#ddddee\">".
-  "<input size=17 name=\"creditcard_number\" ".
+  "<input size=16 name=\"creditcard_number\" ".
   "type=text value=\"$creditcard_number\" ".
   "onChange=\"if(!cardval(document.forms['form1'].creditcard_number.value)) ".
   "{ alert ('$l_notvalid'); ".
   "document.form1.creditcard_number.style.color='#EE0000';} ".
   "else { document.form1.creditcard_number.style.color='#000000'; }\">".
-  " <a href=\"index.php?load=billing&type=module&asciiarmor=on&billing_id=$id\">$l_ciphertext</a>".
+  "<A HREF=\"\" onClick=\"if(!cardval(document.forms['form1'].creditcard_number.value)) { alert ('$l_notvalid'); } else { alert('$l_valid'); } return false;\" NAME=\"anchor1\" ID=\"anchor1\" style=\"color:blue\"> $l_validate</A><br><a href=\"index.php?load=billing&type=module&asciiarmor=on&billing_id=$id\">$l_ciphertext</a>".
   "</td><tr>".
   "<td bgcolor=\"#ccccdd\"><b>$l_ccexpire</b></td>".
   "<td bgcolor=\"#ddddee\">".
