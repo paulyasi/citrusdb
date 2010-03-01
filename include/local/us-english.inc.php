@@ -49,6 +49,7 @@ $l_applytodefaultbillingid = "Apply to default billing id";
 $l_applytospecificbillingid = "Apply to specific billing id";
 $l_applytospecificinvoice = "Apply to specific invoice";
 $l_areyousureadd = "Are you sure you want to add a new record?";
+$l_areyousureauthorized = "Are you sure you want to set this account to Authorized";
 $l_areyousurecreateinvoice = "Are you sure you want to create an invoice";
 $l_areyousurecancel = "Are you sure you want to cancel customer";
 $l_areyousurecancelwfee = "Are you sure you want to set this account to Cancel w/Fee";

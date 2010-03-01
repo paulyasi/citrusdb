@@ -147,6 +147,10 @@ while ($myresult = $result->FetchRow())
 	{
 	  $acnum = $value;
 	}
+      if ($key == "user_services_id") 
+	{
+	  $serviceid = $value;
+	}
       if ($key == "id") 
 	{
 	  $id = $value;
@@ -154,6 +158,9 @@ while ($myresult = $result->FetchRow())
     }
   
   if ($num_of_results == 1) {
+    // TODO: check if this is a service item and link to the service item
+
+    // else just link the account by account_number
     print "<script language=\"JavaScript\">window.location.href = ".
       "\"index.php?load=viewaccount&type=fs&acnum=$acnum\";</script>";
   } else {

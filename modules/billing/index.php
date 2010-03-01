@@ -25,6 +25,7 @@ if (!isset($base->input['turnoff'])) { $base->input['turnoff'] = ""; }
 if (!isset($base->input['cancelwfee'])) { $base->input['cancelwfee'] = ""; }
 if (!isset($base->input['collections'])) { $base->input['collections'] = ""; }
 if (!isset($base->input['waiting'])) { $base->input['waiting'] = ""; }
+if (!isset($base->input['authorized'])) { $base->input['authorized'] = ""; }
 if (!isset($base->input['asciiarmor'])) { $base->input['asciiarmor'] = ""; }
 
 
@@ -36,6 +37,7 @@ $turnoff = $base->input['turnoff'];
 $cancelwfee = $base->input['cancelwfee'];
 $collections = $base->input['collections'];
 $waiting = $base->input['waiting'];
+$authorized = $base->input['authorized'];
 $asciiarmor = $base->input['asciiarmor'];
 $createinvoice = $base->input['createinvoice'];
 $cancelnotice = $base->input['cancelnotice'];
@@ -106,6 +108,13 @@ else if ($waiting)
 	if ($pallow_modify)    
 	{       
 		include('./modules/billing/waiting.php');    
+	}  else permission_error();
+}
+else if ($authorized) 
+{    
+	if ($pallow_modify)    
+	{       
+		include('./modules/billing/authorized.php');    
 	}  else permission_error();
 }
 else if ($asciiarmor) 
@@ -243,7 +252,8 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 	echo "<br><a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | 
 	<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">$l_refundreport</a> | 
 	<a href=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">$l_turnoff</a> | 
-	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a> | 
+	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a> |
+	<a href=\"index.php?load=billing&type=module&authorized=on&billing_id=$billing_id\">$l_authorized</a> | 
 	<a href=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">$l_cancelwithfee</a> |
 <a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">$l_collections</a> |
 

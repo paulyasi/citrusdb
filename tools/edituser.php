@@ -46,15 +46,17 @@ if ($myresult['admin'] == 'n') {
 }
 
 if ($submit) {
-	// save user information
-      	$query = "UPDATE user 
-        SET real_name = '$realname',
-	username = '$username',
-        admin = '$admin',
-        manager = '$manager' 
-	WHERE id = '$userid'";
-        $result = $DB->Execute($query) or die ("$l_queryfailed");
-        print "<h3>$l_changessaved</h3>";
+  // save user information
+  $query = "UPDATE user ".
+    "SET real_name = '$realname', ".
+    "username = '$username', ".
+    "admin = '$admin', ".
+    "manager = '$manager', ".
+    "email = '$email', ".
+    "screenname = '$screenname' ".
+    "WHERE id = '$userid'";
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  print "<h3>$l_changessaved</h3>";
 
 }
 
