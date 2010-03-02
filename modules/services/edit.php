@@ -163,6 +163,13 @@ if ($save) {
 		  $old_master_service_id, $userserviceid, 
 		  $master_service_id, $new_user_service_id);
 
+  // move the notes from the old service to the new service
+  $query = "UPDATE customer_history ".
+    "SET user_services_id = '$new_user_service_id' ".
+    "WHERE user_services_id = '$userserviceid'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $updateresult = $DB->Execute($query) or die ("$query $l_queryfailed");
+
   // log an entry for a create and delete of the service as part of the change
   log_activity($DB,$user,$account_number,'create','service',$new_user_service_id,'success');
   log_activity($DB,$user,$account_number,'delete','service',$userserviceid,'success');  
