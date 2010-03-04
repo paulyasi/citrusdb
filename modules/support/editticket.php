@@ -80,9 +80,26 @@ if ($savechanges) {
     $result = $DB->Execute($query) or die ("sub_history insert $l_queryfailed");
 
     // TODO: send email/xmpp notification if new note added to notify user
+    $url = "$url_prefix/index.php?load=support&type=module&editticket=on&id=$id";
+    $message = "$notify: $addnote $url";
     
+    // if the notify is a group or a user, if a group, then get all the users and notify each individual
+    $query = "SELECT * FROM groups WHERE groupname = '$notify'";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $result = $DB->Execute($query) or die ("Group Query Failed");
     
-  }
+    if ($result->RowCount() > 0) {
+      // we are notifying a group of users
+      while ($myresult = $result->FetchRow()) {
+	$groupmember = $myresult['groupmember'];
+	enotify($DB, $groupmember, $message);
+      } // end while    
+    } else {
+      // we are notifying an individual user
+      enotify($DB, $notify, $message);
+    } // end if result    
+    
+  } // end if addnote
 
   // redirect back to the account record
   print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";			

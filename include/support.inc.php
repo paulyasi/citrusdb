@@ -47,7 +47,7 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
   $url = "$url_prefix/index.php?load=support&type=module&editticket=on&id=$ticketnumber";
   $message = "$notify: $description $url";
 
-  // TODO figure out if the notify is a group or a user, it a group, then get all the users and notify each individual
+  // if the notify is a group or a user, if a group, then get all the users and notify each individual
   $query = "SELECT * FROM groups WHERE groupname = '$notify'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("Group Query Failed");
