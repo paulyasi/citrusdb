@@ -43,7 +43,7 @@ $query = "SELECT  ch.id, ch.creation_date, ".
   "ms.service_description FROM customer_history ch ".
   "LEFT JOIN user_services us ON us.id = ch.user_services_id ".
   "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-  "WHERE ch.account_number = '$account_number' ORDER BY ch.creation_date DESC";
+  "WHERE ch.account_number = '$account_number' ORDER BY ch.id DESC";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 $linecount = 0;
