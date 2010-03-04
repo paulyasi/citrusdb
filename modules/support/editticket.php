@@ -77,7 +77,11 @@ if ($savechanges) {
   // if there is a new note added, put that into the sub_history
   if ($addnote) {
     $query = "INSERT sub_history SET customer_history_id = '$id', creation_date = CURRENT_TIMESTAMP, created_by = '$user', description = '$addnote'";
-    $result = $DB->Execute($query) or die ("sub_history insert $l_queryfailed");    
+    $result = $DB->Execute($query) or die ("sub_history insert $l_queryfailed");
+
+    // TODO: send email/xmpp notification if new note added to notify user
+    
+    
   }
 
   // redirect back to the account record

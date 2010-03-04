@@ -7,6 +7,8 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
 		       $description, $linkname = NULL, $linkurl = NULL,
 		       $reminderdate = NULL, $user_services_id = NULL)
 {
+  global $url_prefix;
+  
   if ($reminderdate) {
     if ($user_services_id) {
     // add ticket to customer_history table
@@ -42,8 +44,32 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
   $result = $DB->Execute($query) or die ("create_ticket query failed");
   $ticketnumber = $DB->Insert_ID();
 
+  $url = "$url_prefix/index.php?load=support&type=module&editticket=on&id=$ticketnumber";
+  $message = "$notify: $description $url";
+
+  // TODO figure out if the notify is a group or a user, it a group, then get all the users and notify each individual
+  $query = "SELECT * FROM groups WHERE groupname = '$notify'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("Group Query Failed");
+  
+  if ($result->RowCount() > 0) {
+    // we are notifying a group of users
+    while ($myresult = $result->FetchRow()) {
+      $groupmember = $myresult['groupmember'];
+      enotify($DB, $groupmember, $message);
+    } // end while    
+  } else {
+    // we are notifying an individual user
+    enotify($DB, $notify, $message);
+  } // end if result
+
+} // end create_ticket function
+
+
+function enotify($DB, $user, $message)
+{
   /*--------------------------------------------------------------------------*/
-  // send notifications about new tickets to a the jabber ID or email address
+  // send notifications to a the jabber ID or email address
   /*--------------------------------------------------------------------------*/
 
   $query = "SELECT email,screenname FROM user WHERE username = '$user'";
@@ -63,7 +89,7 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
       $conn->connect();
       $conn->processUntil('session_start');
       $conn->presence();
-      $conn->message("$screenname", "$ticketnumber: $description");
+      $conn->message("$screenname", "$message");
       $conn->disconnect();
     } catch(XMPPHP_Exception $e) {
       die($e->getMessage());
@@ -74,16 +100,13 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
   if ($email) {
 
     // HTML Email Headers
-    $headers = "From: $billing_email \n";
     $to = $email;
     // send the mail
     $subject = "$l_ticket: $ticketnumber";
-    $message = "ticketnumber: $description";
-    mail ($to, $subject, $message, $headers);
+    mail ($to, $subject, $message);
     
   }
 }
-
 
 // add a service message ticket for new, modified, or shutoff services
 function service_message($service_notify_type, $account_number,
