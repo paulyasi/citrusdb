@@ -154,6 +154,16 @@ while ($myresult = $result->FetchRow()) {
     if ($key == "id") {
       $id = $value;
     }
+    if ($key == 'removed') {
+      $removed = $value;
+    }
+  }
+
+  // if the row is a removed service, grey it out
+  if ($removed == 'y') {
+    $rowstyle = "background-color: eee; color: aaa;";
+  } else {
+    $rowstyle = "background-color: dde; $color: black;";
   }
   
   if ($num_of_results == 1) {
@@ -169,7 +179,7 @@ while ($myresult = $result->FetchRow()) {
   } else {
     // check if this is a service item and link to the service item
     if ($serviceid) {
-      echo "<tr bgcolor=#ddddee><td><a href=\"index.php?load=viewservice&".
+      echo "<tr style=\"$rowstyle\"><td><a href=\"index.php?load=viewservice&".
 	"type=fs&userserviceid=$serviceid&acnum=$acnum\">$l_view: $l_service</a></td>";
       if ($pagetype == "record") { echo "</table>"; }
     } else {      
