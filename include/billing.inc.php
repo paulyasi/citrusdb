@@ -552,6 +552,12 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
       "WHERE invoice_number = '$invoice_number' ".
       "AND original_invoice_number IS NULL";
     $originalinvoice = $DB->Execute($query) or die ("Query Failed");
+
+    //
+    // Apply Credits
+    // check if they have any credits and apply as payments
+    //
+    apply_credits($DB, $mybilling_id, $invoice_number);            
     
     // get the data for the service charges still pending 
     // and what services they have
@@ -586,9 +592,8 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
     $invoiceresult = $DB->Execute($query) or die ("Query Failed"); 
     // used to show the invoice
 
-    // useless?
-    // $totalresult = $DB->Execute($query) or die ("Query Failed"); 
-    // make a copy used to add up the total charges
+    $totalresult = $DB->Execute($query) or die ("Query Failed"); 
+    // make a copy used to add up the total charges after applying credits
     
     // get the data for the billing dates from the billing table
     $query = "SELECT * FROM billing WHERE id = $mybilling_id";
@@ -620,12 +625,12 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
     //
     // calculate amounts for history
     //
-    
+
     // initialize past amounts
     $pastdue = 0;
     $new_charges = 0;
     $tax_due = 0;
-    
+
     while($myinvresult = $invoiceresult->FetchRow()) {
       $user_services_id = $myinvresult['d_user_services_id'];	
       $currinvoicenumber = $myinvresult['d_invoice_number'];
@@ -653,32 +658,32 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
       } // end if
 
       // add to the running total
-      $invoicetotal = $billed_amount + $invoicetotal;
+      //$invoicetotal = $billed_amount + $invoicetotal;
       
     } // end while
-    
-    //
-    // Apply Credits
-    // check if they have any credits and apply as payments
-    //
-    apply_credits($DB, $mybilling_id);
-    
-    // useless? calculate the invoicetotal
+
+    //calculate the invoicetotal after credits applied
+    //$invoicetotal = 0;
     //while ($myresult = $totalresult->FetchRow()) {
     //  $billed_amount = $myresult['d_billed_amount'] - $myresult['d_paid_amount'];
     //  $invoicetotal = $billed_amount + $invoicetotal;
     //}
     
-    $precisetotal = sprintf("%.2f", $invoicetotal);
+    //$precisetotal = sprintf("%.2f", $invoicetotal);
     
-    // get the absolute value of the total
-    $abstotal = abs($precisetotal);
-    
-    $total_due = $precisetotal;
+    //$total_due = $precisetotal;
+
     $new_charges = sprintf("%.2f",$new_charges);
     $pastdue = sprintf("%.2f",$pastdue);
     $tax_due = sprintf("%.2f",$tax_due);
-    $total_due = sprintf("%.2f",$total_due);
+
+    // calculate total due
+    // if new_charges is negative don't reduce pastdue with it
+    if ($new_charges < 0) {
+      $total_due = sprintf("%.2f",$pastdue);
+    } else {
+      $total_due = sprintf("%.2f",$pastdue+$new_charges);
+    }
     
     // check the pastdue status to see what note to include
     $status = billingstatus($mybilling_id);
@@ -1692,9 +1697,9 @@ function humandate($date, $lang) {
 /*----------------------------------------------------------------------------*/
 // Apply Credits
 /*----------------------------------------------------------------------------*/
-function apply_credits($DB, $billing_id)
+function apply_credits($DB, $billing_id, $invoicenumber)
 {
-  // find the credits, TODO: sort to apply to newest items first
+  // find the credits
   $query = "SELECT * from billing_details ". 
     "WHERE paid_amount > billed_amount ".
     "AND billing_id = '$billing_id'";
@@ -1713,10 +1718,10 @@ function apply_credits($DB, $billing_id)
     // calculate credit amount
     $credit_amount = abs($credit_billed_amount - $credit_paid_amount);
     $amount = $credit_amount;	
-    // find the amounts owed
-    
+
+    // find things to credit, apply only to items on current invoice
     $query = "SELECT * FROM billing_details ".
-      "WHERE paid_amount < billed_amount AND billing_id = $billing_id";
+      "WHERE paid_amount < billed_amount AND invoice_number = $invoicenumber";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $findresult = $DB->Execute($query) or die ("$l_queryfailed");
 
