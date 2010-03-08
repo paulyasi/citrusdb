@@ -42,7 +42,7 @@ if ($submit) {
   // Check if they entered by account number and change to bybillingid
   /*--------------------------------------------------------------------*/
   if ($byacctnum <> NULL) {
-    $query = "SELECT default_billing_id FROM customer".
+    $query = "SELECT default_billing_id FROM customer ".
       "WHERE account_number = '$byacctnum'";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $result = $DB->Execute($query) or die ($l_queryfailed);

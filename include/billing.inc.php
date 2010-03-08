@@ -1694,7 +1694,7 @@ function humandate($date, $lang) {
 /*----------------------------------------------------------------------------*/
 function apply_credits($DB, $billing_id)
 {
-  // find the credits
+  // find the credits, TODO: sort to apply to newest items first
   $query = "SELECT * from billing_details ". 
     "WHERE paid_amount > billed_amount ".
     "AND billing_id = '$billing_id'";
