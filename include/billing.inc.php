@@ -557,7 +557,7 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
     // Apply Credits
     // check if they have any credits and apply as payments
     //
-    apply_credits($DB, $mybilling_id, $invoice_number);            
+    $creditsapplied = apply_credits($DB, $mybilling_id, $invoice_number);            
     
     // get the data for the service charges still pending 
     // and what services they have
@@ -724,6 +724,7 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
       "payment_due_date = '$billing_payment_due_date', ".
       "new_charges = '$new_charges', ".
       "past_due = '$pastdue', ".
+      "credit_applied = '$creditsapplied', ".
       "late_fee = '0', ".
       "tax_due = '$tax_due', ".
       "total_due = '$total_due', ".
@@ -805,7 +806,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
 		h.payment_due_date h_payment_due_date, 
 		h.new_charges h_new_charges, h.past_due h_past_due, 
 		h.late_fee h_late_fee, h.tax_due h_tax_due, 
-		h.total_due h_total_due, h.notes h_notes, 
+		h.total_due h_total_due, h.notes h_notes, h.credit_applied h_credit_applied, 
 		b.id b_id, b.name b_name, b.company b_company, 
 		b.street b_street, b.city b_city, b.state b_state, 
 		b.country b_country, b.zip b_zip, b.po_number b_po_number, 
@@ -835,7 +836,8 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
   $billing_past_due = sprintf("%.2f",$myinvresult['h_past_due']);
   $billing_late_fee = sprintf("%.2f",$myinvresult['h_late_fee']);
   $billing_tax_due = sprintf("%.2f",$myinvresult['h_tax_due']);
-  $billing_total_due = sprintf("%.2f",$myinvresult['h_total_due']);	
+  $billing_total_due = sprintf("%.2f",$myinvresult['h_total_due']);
+  $billing_credit_applied = sprintf("%.2f",$myinvresult['h_credit_applied']);
   $billing_email = $myinvresult['b_contact_email'];
   $billing_po_number = $myinvresult['b_po_number'];
   
@@ -1097,8 +1099,8 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $pdf->SetXY(10,$lineY);
     $pdf->MultiCell(100,5,"$billing_notes");
     $pdf->SetXY(135,$lineY);
-    $pdf->MultiCell(100,5,"$l_newcharges: $billing_new_charges\n$l_pastdue: $billing_past_due\n$l_tax: $billing_tax_due\n");
-    $pdf->SetXY(135,$lineY+15);
+    $pdf->MultiCell(100,5,"$l_credit: $billing_credit_applied\n$l_newcharges: $billing_new_charges\n$l_pastdue: $billing_past_due\n$l_tax: $billing_tax_due\n");
+    $pdf->SetXY(135,$lineY+20);
     $pdf->SetFont('Arial','BU',10);
     $pdf->Cell(100,5,"$l_total: $billing_total_due");
     $lineY = $lineY + 10;
@@ -1107,7 +1109,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
     $pdf->MultiCell(110,4,"$invoice_footer");
   } else {		
     $output .= "$billing_notes\n";
-    
+    $output .= "$l_credit: $billing_credit_applied\n";
     $output .= "$l_newcharges: $billing_new_charges\n";
     $output .= "$l_pastdue: $billing_past_due\n";
     $output .= "$l_tax: $billing_tax_due\n";
@@ -1699,6 +1701,8 @@ function humandate($date, $lang) {
 /*----------------------------------------------------------------------------*/
 function apply_credits($DB, $billing_id, $invoicenumber)
 {
+  $total_credit_applied = 0;
+  
   // find the credits
   $query = "SELECT * from billing_details ". 
     "WHERE paid_amount > billed_amount ".
@@ -1769,7 +1773,10 @@ function apply_credits($DB, $billing_id, $invoicenumber)
       "payment_applied = CURRENT_DATE ".      
       "WHERE id = '$credit_id'";	
     $totalcreditresult = $DB->Execute($query) or die ("$l_queryfailed");
+
+    $total_credit_applied = $total_credit_applied + $credit_applied;
   }
+  return $total_credit_applied;
 }
 
 

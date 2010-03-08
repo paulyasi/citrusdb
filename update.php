@@ -805,7 +805,9 @@ if ($base->input['submit'] == "Update")
 	if ($databaseversion == "2.0.1") {
 	  // add screenname field for xmpp to user table
 	  $query = "ALTER TABLE `user` ADD `screenname` VARCHAR( 254 ) NULL";
-	  
+
+	  // add credit_applied field to billing_history	  
+	  $query = "ALTER TABLE `billing_history` ADD `credit_applied` DECIMAL( 9, 2 ) NOT NULL DEFAULT '0.00'";
 	  
 	  // set the version number in the database to 2.0.2
 	  $query = "UPDATE `settings` SET `version` = '2.0.2' ".

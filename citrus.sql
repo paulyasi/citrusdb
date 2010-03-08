@@ -127,6 +127,7 @@ CREATE TABLE `billing_history` (
   `tax_due` decimal(9,2) NOT NULL default '0',
   `total_due` decimal(9,2) NOT NULL default '0',
   `notes` text,
+  `credit_applied` decimal(9,2) default '0',	
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;
 
