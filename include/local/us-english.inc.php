@@ -291,6 +291,7 @@ $l_notes = "Notes";
 $l_notesforgroups = "Notes for Groups";
 $l_notesforuser = "Notes for User";
 $l_notexempt = "Not Exempt";
+$l_notifications = "Notifications";
 $l_notify = "Notify";
 $l_notrenewed = "Not Renewed";
 $l_notvalid = "Not Valid";

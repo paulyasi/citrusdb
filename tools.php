@@ -38,6 +38,13 @@ echo "
 	<img src=\"images/icons/citrus_version.png\" border=0><br>
 	$l_version</a>
 	</div>
+
+	<div class=icon>
+	<a href=# onclick=\"popupPage('index.php?load=notifications&type=tools'); return false;\">
+	<img src=\"images/icons/citrus_email.png\" border=0><br>
+	$l_notifications</a>
+	</div>
+
 	</div>
 ";
 
