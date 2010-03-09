@@ -667,6 +667,9 @@ CREATE TABLE `user` (
   `manager` enum('y','n') NOT NULL default 'n',
   `email` varchar(100) default NULL,
   `remote_addr` varchar(15) default NULL,
+  `screenname` varchar(254) default NULL,
+  `email_notify` enum('y','n') default 'n',
+  `screenname_notify` enum('y','n') default 'n',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM AUTO_INCREMENT=24 ;
 
@@ -774,7 +777,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- Dumping data for table `settings`
 -- 
 
-INSERT INTO `settings` VALUES (1, '2.0.1', 'users', '/home/pyasi/citrus_project/io','16:00:00','y','n','n','n','n','n','y','http://localhost/cancel', 'billing');
+INSERT INTO `settings` VALUES (1, '2.0.2', 'users', '/home/pyasi/citrus_project/io','16:00:00','y','n','n','n','n','n','y','http://localhost/cancel', 'billing');
 
 
 
