@@ -198,6 +198,8 @@ $l_editservices = "Edit Services";
 $l_edituser = "Edit User";
 $l_einvoice = "Electronic Invoice from";
 $l_email = "email";
+$l_email_support_notification = "Email Support Notification";
+$l_im_support_notification = "IM Support Notification";
 $l_email_heading_thankyou = "Thank you for subscribing to";
 $l_email_heading_presenting = "Your invoice is presented below.  Please send a check or money order for";
 $l_email_heading_include = "Please include your account number with your payment";
@@ -527,4 +529,5 @@ $l_youmusthaveadmin = "You must have admin privileges to use this feature";
 $l_yourpathtocitrusisincorrect = "Your path_to_citrus variable is incorrect";
 $l_yourserviceisactive = "Your service is active and ready for use.  If you have any questions please call";
 $l_zip = "Zip";
+
 

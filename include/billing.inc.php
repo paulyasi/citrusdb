@@ -592,7 +592,7 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
     $invoiceresult = $DB->Execute($query) or die ("Query Failed"); 
     // used to show the invoice
 
-    $totalresult = $DB->Execute($query) or die ("Query Failed"); 
+    //$totalresult = $DB->Execute($query) or die ("Query Failed"); 
     // make a copy used to add up the total charges after applying credits
     
     // get the data for the billing dates from the billing table

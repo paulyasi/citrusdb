@@ -25,6 +25,8 @@ if (!isset($base->input['admin'])) { $base->input['admin'] = ""; }
 if (!isset($base->input['manager'])) { $base->input['manager'] = ""; }
 if (!isset($base->input['email'])) { $base->input['email'] = ""; }
 if (!isset($base->input['screenname'])) { $base->input['screenname'] = ""; }
+if (!isset($base->input['email_notify'])) { $base->input['email_notify'] = ""; }
+if (!isset($base->input['screenname_notify'])) { $base->input['screenname_notify'] = ""; }
 
 $submit = $base->input['submit'];
 $userid = $base->input['userid'];
@@ -34,6 +36,8 @@ $admin = $base->input['admin'];
 $manager = $base->input['manager'];
 $email = $base->input['email'];
 $screenname = $base->input['screenname'];
+$email_notify = $base->input['email_notify'];
+$screenname_notify = $base->input['screenname_notify'];
 
 // check that the user has admin privileges
 $query = "SELECT * FROM user WHERE username='$user'";
@@ -53,7 +57,9 @@ if ($submit) {
     "admin = '$admin', ".
     "manager = '$manager', ".
     "email = '$email', ".
-    "screenname = '$screenname' ".
+    "screenname = '$screenname', ".
+    "email_notify = '$email_notify', ".
+    "screenname_notify = '$screenname_notify' ".
     "WHERE id = '$userid'";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   print "<h3>$l_changessaved</h3>";
@@ -73,6 +79,8 @@ if ($submit) {
         $manager = $myresult['manager'];
         $email = $myresult['email'];
         $screenname = $myresult['screenname'];
+        $email_notify = $myresult['email_notify'];
+        $screenname_notify = $myresult['screenname_notify'];
 
 echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
         <script language=\"JavaScript\" src=\"include/verify.js\"></script>
@@ -87,13 +95,24 @@ echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
         <P>
         <B>$l_username:</B> <INPUT TYPE=\"TEXT\" NAME=\"username\" VALUE=\"$username\" SIZE=\"20\" MAXLENGTH=\"65\">
 <p>
-        <B>$l_contactemail:</B> <INPUT TYPE=\"TEXT\" NAME=\"email\" VALUE=\"$email\" SIZE=\"20\" MAXLENGTH=\"65\">
-<p>
+        <B>$l_contactemail:</B> <INPUT TYPE=\"TEXT\" NAME=\"email\" VALUE=\"$email\" SIZE=\"20\" MAXLENGTH=\"65\"><p>
         <B>$l_screenname:</B><INPUT TYPE=\"TEXT\" NAME=\"screenname\" VALUE=\"$screenname\" SIZE=\"20\" MAXLENGTH=\"65\">
         <P>
         <b>$l_privileges:</b><br>
         <table>";
-	
+
+if ($email_notify == 'y') {
+echo "<td>$l_email_support_notification</td><td><input type=\"radio\" name=email_notify value=\"y\" checked>$l_yes<input type=\"radio\" name=email_notify value=\"n\">$l_no<tr>";
+} else {
+echo "<td>$l_email_support_notification</td><td><input type=\"radio\" name=email_notify value=\"y\">$l_yes<input type=\"radio\" name=email_notify value=\"n\" checked>$l_no<tr>";
+}
+
+if ($screenname_notify == 'y') {
+echo "<td>$l_im_support_notification</td><td><input type=\"radio\" name=screenname_notify value=\"y\" checked>$l_yes<input type=\"radio\" name=screenname_notify value=\"n\">$l_no<tr>";
+} else {
+echo "<td>$l_im_support_notification</td><td><input type=\"radio\" name=screenname_notify value=\"y\">$l_yes<input type=\"radio\" name=screenname_notify value=\"n\" checked>$l_no<tr>";
+}
+
 if ($admin == 'y') {
 echo "<td>$l_admin</td><td><input type=\"radio\" name=admin value=\"y\" checked>$l_yes<input type=\"radio\" name=admin value=\"n\">$l_no<tr>";
 } else {

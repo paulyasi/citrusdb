@@ -72,18 +72,22 @@ function enotify($DB, $user, $message)
   // send notifications to a the jabber ID or email address
   /*--------------------------------------------------------------------------*/
 
-  $query = "SELECT email,screenname FROM user WHERE username = '$user'";
+  $query = "SELECT email,screenname,email_notify,screenname_notify FROM user WHERE username = '$user'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("select screename $l_queryfailed");
-  $myresult = $result->fields;	
+  $myresult = $result->fields;
+  $email = $myresult['email'];
   $screenname = $myresult['screenname'];
+  $email_notify = $myresult['email_notify'];
+  $screenname_notify = $myresult['screenname_notify'];
 
   // if they have specified a screenname then send them a jabber notification
-  if ($screenname) {
+  if (($screenname) && ($screenname_notify == 'y')) {
     include 'XMPPHP/XMPP.php';
+    include 'config.inc.php'; // include this here for jabber server config
 
-    // TODO: edit this to use database jabber user defined in config file
-    $conn = new XMPPHP_XMPP('localhost', 5222, 'citrusdb', 'citrusdb', 'xmpphp', 'localhost', $printlog=false, $loglevel=XMPPHP_Log::LEVEL_INFO);
+    // edit this to use database jabber user defined in config file
+    $conn = new XMPPHP_XMPP("$xmpp_server", 5222, "$xmpp_user", "$xmpp_password", 'xmpphp', "$xmpp_domain", $printlog=false, $loglevel=XMPPHP_Log::LEVEL_INFO);
     
     try {
       $conn->connect();
@@ -97,7 +101,7 @@ function enotify($DB, $user, $message)
   }
   
   // if they have specified an email then send them an email notification
-  if ($email) {
+  if (($email) && ($email_notify == 'y')) {
 
     // HTML Email Headers
     $to = $email;

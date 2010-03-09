@@ -805,9 +805,18 @@ if ($base->input['submit'] == "Update")
 	if ($databaseversion == "2.0.1") {
 	  // add screenname field for xmpp to user table
 	  $query = "ALTER TABLE `user` ADD `screenname` VARCHAR( 254 ) NULL";
-
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
+	  // add notify variables too
+	  $query = "ALTER TABLE `user` ADD `email_notify` ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n', ADD `screenname_notify` ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
 	  // add credit_applied field to billing_history	  
 	  $query = "ALTER TABLE `billing_history` ADD `credit_applied` DECIMAL( 9, 2 ) NOT NULL DEFAULT '0.00'";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
 	  
 	  // set the version number in the database to 2.0.2
 	  $query = "UPDATE `settings` SET `version` = '2.0.2' ".
