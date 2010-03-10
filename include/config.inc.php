@@ -24,7 +24,7 @@ $url_prefix = "http://localhost/~pyasi/citrus_project/citrusdb-gpg/";
 $ssl_url_prefix = "https://localhost/~pyasi/citrus_project/citrusdb-gpg/";
 
 // jabber/xmpp server information
-$xmpp_server = "localhost";
-$xmpp_user = "citrusdb";
-$xmpp_password = "citrusdb";
-$xmpp_domain = "localhost";
+$xmpp_server = "";
+$xmpp_user = "";
+$xmpp_password = "";
+$xmpp_domain = "";

@@ -81,10 +81,11 @@ function enotify($DB, $user, $message)
   $email_notify = $myresult['email_notify'];
   $screenname_notify = $myresult['screenname_notify'];
 
+  include 'config.inc.php'; // include this here for jabber server config vars
+
   // if they have specified a screenname then send them a jabber notification
-  if (($screenname) && ($screenname_notify == 'y')) {
+  if (($xmpp_server) && ($screenname) && ($screenname_notify == 'y')) {
     include 'XMPPHP/XMPP.php';
-    include 'config.inc.php'; // include this here for jabber server config
 
     // edit this to use database jabber user defined in config file
     $conn = new XMPPHP_XMPP("$xmpp_server", 5222, "$xmpp_user", "$xmpp_password", 'xmpphp', "$xmpp_domain", $printlog=false, $loglevel=XMPPHP_Log::LEVEL_INFO);
@@ -96,7 +97,9 @@ function enotify($DB, $user, $message)
       $conn->message("$screenname", "$message");
       $conn->disconnect();
     } catch(XMPPHP_Exception $e) {
-      die($e->getMessage());
+      //die($e->getMessage());
+      $xmppmessage = $e->getMessage();
+      echo "$xmppmessage";
     }
   }
   
