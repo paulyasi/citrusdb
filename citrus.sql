@@ -677,7 +677,7 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 -- 
 
-INSERT INTO `user` VALUES (5, 'admin', '098f6bcd4621d373cade4e832627b4f6', 'Admin User', 'y', 'y', NULL, '');
+INSERT INTO `user` VALUES (5, 'admin', '098f6bcd4621d373cade4e832627b4f6', 'Admin User', 'y', 'y', NULL, '', NULL, 'n','n');
 
 -- --------------------------------------------------------
 
