@@ -52,11 +52,12 @@ if ($savechanges) {
   // save the changes to the customer_history  
   if ($reminderdate <> '') {
     $query = "UPDATE customer_history SET notify = '$notify', ".
-      "status = '$status', ".
+      "status = '$status', description = '$description', ".
       "creation_date = '$reminderdate' $user_services_string".
       "WHERE id = $id";
   } else {
     $query = "UPDATE customer_history SET notify = '$notify', ".
+      "description = '$description', ".
       "status = '$status' $user_services_string".
       "WHERE id = $id";   
   }
@@ -215,8 +216,13 @@ if ($savechanges) {
 	<td bgcolor=\"#ccccdd\"><b>$l_link</b></td><td bgcolor=\"#ddddee\">
 	<a href=\"$linkurl\">$linkname</a></td><tr>
 
-	<td bgcolor=\"#ccccdd\"><b>$l_description</b></td><td colspan=3 bgcolor=\"#ddddee\">
-	<br>$description<br><br></td><tr>";
+	<td bgcolor=\"#ccccdd\"><b>$l_description</b></td><td colspan=3 bgcolor=\"#ddddee\">";
+  if ($user == $created_by) {
+    // let the user edit their own descriptions
+    echo "<textarea name=\"description\" rows=2 cols=70>$description</textarea></td><tr>";
+  } else {
+    echo "<br>$description<br><br></td><tr>";
+  }
   
   // print the current notes attached to this item
   $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
