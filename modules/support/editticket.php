@@ -221,7 +221,7 @@ if ($savechanges) {
     // let the user edit their own descriptions
     echo "<textarea name=\"description\" rows=2 cols=70>$description</textarea></td><tr>";
   } else {
-    echo "<br>$description<br><br></td><tr>";
+    echo "<br>$description<input type=hidden name=\"description\" value=\"$description\"<br><br></td><tr>";
   }
   
   // print the current notes attached to this item
