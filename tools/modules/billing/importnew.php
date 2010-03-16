@@ -63,6 +63,11 @@ if ($submit) {
     //$DB->debug = true;
     
     if ($linecount == 1) {
+      // make the values in the array safe for import
+      foreach ($line as $key  => $value) {
+	$line[$key] = import_safe_value($value);
+      }
+      
       // make the customer record	
       $query = "INSERT into customer (".
 	"source,".
@@ -132,6 +137,11 @@ if ($submit) {
       echo "$l_added $l_accountnumber: $account_number<p>";
     }
     elseif ($linecount == 2) {
+      // make the values in the array safe for import
+      foreach ($line as $key  => $value) {
+	$line[$key] = import_safe_value($value);
+      }
+      
       // make the billing record
       $query = "UPDATE billing ".
 	"SET name = '$line[0]',".
@@ -193,6 +203,7 @@ if ($submit) {
 	// make fieldvalues string with the rest of the items
 	$fieldvalues = ""; // empty it out
 	foreach ($line as $mykey => $myvalue) {
+	  $myvalue = import_safe_value($myvalue);
 	  $fieldvalues .= ',\'' . $myvalue . '\'';
 	}
 	$fieldvalues = substr($fieldvalues, 1);
