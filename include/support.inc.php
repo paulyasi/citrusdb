@@ -56,22 +56,25 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
     // we are notifying a group of users
     while ($myresult = $result->FetchRow()) {
       $groupmember = $myresult['groupmember'];
-      enotify($DB, $groupmember, $message);
+      enotify($DB, $groupmember, $message, $ticketnumber);
     } // end while    
   } else {
     // we are notifying an individual user
-    enotify($DB, $notify, $message);
+    enotify($DB, $notify, $message, $ticketnumber);
   } // end if result
 
 } // end create_ticket function
 
 
-function enotify($DB, $user, $message)
+function enotify($DB, $user, $message, $ticketnumber)
 {
   /*--------------------------------------------------------------------------*/
   // send notifications to a the jabber ID or email address
   /*--------------------------------------------------------------------------*/
 
+  global $lang;
+  include("$lang");
+  
   $query = "SELECT email,screenname,email_notify,screenname_notify FROM user WHERE username = '$user'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("select screename $l_queryfailed");
@@ -109,7 +112,7 @@ function enotify($DB, $user, $message)
     // HTML Email Headers
     $to = $email;
     // send the mail
-    $subject = "$l_ticket: $ticketnumber";
+    $subject = "$l_ticketnumber $ticketnumber";
     mail ($to, $subject, $message);
     
   }
