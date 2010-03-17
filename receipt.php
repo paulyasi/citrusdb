@@ -86,12 +86,14 @@ if ($payment_type == "creditcard") {
 //$DB->debug = true;
 
 $query = "SELECT bd.original_invoice_number, bd.paid_amount,".
+  "bh.from_date, bh.to_date, ".
   "bd.billed_amount, ms.service_description, tr.description FROM ".
   "billing_details bd ".
   "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
   "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
   "LEFT JOIN taxed_services ts ON ts.id = bd.taxed_services_id ".
   "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+  "LEFT JOIN billing_history bh ON bh.id = bd.original_invoice_number ".
   "WHERE bd.payment_history_id = '$paymentid' ORDER BY bd.taxed_services_id";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("Receipt Query Failed");
@@ -103,6 +105,8 @@ while ($myresult = $result->FetchRow()) {
   $invoice = $myresult['original_invoice_number'];
   $description = $myresult['service_description'];
   $tax_description = $myresult['description'];
+  $from_date = humandate($myresult['from_date'],$lang);
+  $to_date = humandate($myresult['to_date'],$lang);
   $paid_amount = sprintf("%.2f",$myresult['paid_amount']);
   $billed_amount = sprintf("%.2f",$myresult['billed_amount']);  
 
@@ -112,7 +116,7 @@ while ($myresult = $result->FetchRow()) {
     // print the tax as description instead
   echo "<td>$invoice</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><tr>";
   } else {
-  echo "<td>$invoice</td><td>$description</td><td>$paid_amount</td><tr>";
+  echo "<td>$invoice</td><td>$description ($from_date $l_to $to_date)</td><td>$paid_amount</td><tr>";
   }
  }
 echo "</table>";
