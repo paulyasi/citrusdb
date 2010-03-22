@@ -63,6 +63,8 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
     enotify($DB, $notify, $message, $ticketnumber);
   } // end if result
 
+  return $ticketnumber;
+
 } // end create_ticket function
 
 

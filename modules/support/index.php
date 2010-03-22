@@ -94,9 +94,18 @@ else if ($create) // add the message to customer history
 {
 	if ($pallow_create)
     	{
-	  create_ticket($DB, $user, $notify, $account_number,
+	  $newticketnumber = create_ticket($DB, $user, $notify, $account_number,
 			$status, $description, NULL, NULL, $reminderdate,
 			$user_services_id);
+
+	  // if the note is marked as completed, insert the completed by data too
+	  if ($status == 'completed') {
+	    $query = "UPDATE customer_history SET ".
+	      "closed_by = '$user', ".
+	      "closed_date = CURRENT_TIMESTAMP ".
+	      "WHERE id = $newticketnumber";
+	    $result = $DB->Execute($query) or die ("closed by $l_queryfailed"); 
+	  }
 
 	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=customer&type=module\";</script>";
 	} else permission_error();
