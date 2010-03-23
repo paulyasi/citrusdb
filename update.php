@@ -824,6 +824,40 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 	}
+
+	if ($databaseversion == "2.0.2") {
+	  // add master_inventory table
+	  $query = "CREATE TABLE `master_inventory` ( ".
+	    "`id` INT NOT NULL AUTO_INCREMENT , ".
+	    "`description` VARCHAR( 128 ) NOT NULL , ".
+	    "`status` ENUM( 'current', 'old' ) NOT NULL DEFAULT 'current', ".
+	    "`weight` FLOAT NULL , ".
+	    "PRIMARY KEY ( `id` ) ".
+	    ") ENGINE = MYISAM  ";
+
+	  $query = "CREATE TABLE `inventory_items` ( ".
+	    "`id` INT NOT NULL , ".
+	    "`master_inventory_id` INT NOT NULL , ".
+	    "`creation_date` DATE NOT NULL , ".
+	    "`serial_number` VARCHAR( 254 ) NULL , ".
+	    "`status` ENUM( 'new', 'used', 'infield', 'returned', 'bad' ) NOT NULL , ".
+	    "`sale_type` ENUM( 'rent', 'purchase' ) NOT NULL , ".
+	    "`user_services_id` INT NULL , ".
+	    "`shipping_tracking_number` VARCHAR( 254 ) NULL , ".
+	    "`shipping_date` DATE NULL , ".
+	    "`return_date` DATE NULL , ".
+	    "`return_notes` VARCHAR( 254 ) NULL , ".
+	    "`bad_date` DATE NULL , ".
+	    "`bad_notes` VARCHAR( 254 ) NULL ".
+	    ") ENGINE = MYISAM ";
+
+	  // set the version number in the database to 2.1
+	  $query = "UPDATE `settings` SET `version` = '2.1' ".
+	    "WHERE `id` =1 LIMIT 1";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";	  
+
+	}
 	
 	echo "<center><h2>Database Updated</h2></center>";
 }

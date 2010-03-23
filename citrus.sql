@@ -852,3 +852,27 @@ CREATE TABLE IF NOT EXISTS `sub_history` (
   `description` text NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+CREATE TABLE `master_inventory` ( 
+    `id` INT NOT NULL AUTO_INCREMENT , 
+    `description` VARCHAR( 128 ) NOT NULL , 
+    `status` ENUM( 'current', 'old' ) NOT NULL DEFAULT 'current', 
+    `weight` FLOAT NULL , 
+    PRIMARY KEY ( `id` ) 
+    ) ENGINE = MYISAM;  
+
+CREATE TABLE `inventory_items` (
+    `id` INT NOT NULL , 
+    `master_inventory_id` INT NOT NULL , 
+    `creation_date` DATE NOT NULL , 
+    `serial_number` VARCHAR( 254 ) NULL , 
+    `status` ENUM( 'new', 'used', 'infield', 'returned', 'bad' ) NOT NULL , 
+    `sale_type` ENUM( 'rent', 'purchase' ) NOT NULL , 
+    `user_services_id` INT NULL , 
+    `shipping_tracking_number` VARCHAR( 254 ) NULL , 
+    `shipping_date` DATE NULL , 
+    `return_date` DATE NULL , 
+    `return_notes` VARCHAR( 254 ) NULL , 
+    `bad_date` DATE NULL , 
+    `bad_notes` VARCHAR( 254 ) NULL 
+    ) ENGINE = MYISAM ;
