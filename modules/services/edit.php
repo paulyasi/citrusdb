@@ -641,15 +641,17 @@ if ($save) {
   print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description";
   
   // get the sub_history printed here
-  $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
+  $query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
+    "hour(creation_date) as hour, LPAD(minute(creation_date),2,'00') as minute, ".
+    "created_by, description FROM sub_history WHERE customer_history_id = $id";  
   $subresult = $DB->Execute($query) or die ("sub_history $l_queryfailed");
   
   while ($mysubresult = $subresult->FetchRow()) {
-    $sub_creation_date = $mysubresult['creation_date'];
+    $mydatetime = $mysubresult['month']."/".$mysubresult['day']." ".$mysubresult['hour'].":".$mysubresult['minute'];    
     $sub_created_by = $mysubresult['created_by'];
     $sub_description = $mysubresult['description'];
     
-    print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: $sub_description</p>\n";
+    print "<br>$mydatetime $sub_created_by: $sub_description\n";
   }
   
   echo "</td>";
