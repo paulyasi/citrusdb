@@ -60,7 +60,6 @@ $saveexempt = $base->input['saveexempt'];
 $customer_tax_id = $base->input['customer_tax_id'];
 $expdate = $base->input['expdate'];
 
-
 if ($save) {
   $fieldlist = substr($fieldlist, 1); 
   // loop through post_vars associative/hash to get field values
@@ -440,19 +439,20 @@ if ($save) {
 
   // only show choices if inventory items are compatible with the service category
   if ($result->RowCount() > 0) {
-    print "<form action=\"index.php\"><table width=720 cellpadding=5 cellspacing=1 border=0>";
+
+    print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+      "<table width=720 cellpadding=5 cellspacing=1 border=0>".
+      "<input type=hidden name=optionstable value=$optionstable>";
+    print "<input type=hidden name=userserviceid value=$userserviceid>";
     print "<input type=hidden name=load value=services>";
     print "<input type=hidden name=type value=module>";
-    print "<input type=hidden name=edit value=on>";
-    print "<input type=hidden name=servicedescription ".
-      "value=\"$servicedescription\">";
-    print "<input type=hidden name=optionstable value=$optionstable>";
-    print "<input type=hidden name=userserviceid value=$userserviceid>";
+    print "<input type=hidden name=ship value=on>";
+    print "<input type=hidden name=inventory value=on>";
     
-    print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$l_assigninventory</b></td>";
+    print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$l_shipinventory</b></td>";
     
     // TODO: print drop down menu to pick new field assets from master_inventory
-    print "<td bgcolor=\"#ddddee\"><select name=master_service_id><option selected>".
+    print "<td bgcolor=\"#ddddee\"><select name=master_inventory_id><option selected>".
       "$l_choose</option>\n";
     
     while ($myresult = $result->FetchRow()) {
@@ -461,13 +461,11 @@ if ($save) {
       print "<option value=$master_inventory_id>$description</option>\n";
     }
     
-    echo "</select></td><tr>\n";
-    
-    
+    echo "</select></td><tr>\n";    
     
     // print submit button
-    print "<td></td><td><input name=usage type=submit value=\"$l_assign\" ".
-      "class=smallbutton></td></table></form>";
+    print "<td></td><td><input name=inventory type=submit value=\"$l_ship\" ".
+      "class=smallbutton></td></table></form><p>";
   }
 
   /*----------------------------------------------------------------------*/
