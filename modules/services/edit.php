@@ -392,7 +392,86 @@ if ($save) {
   print "<input type=hidden name=serviceid value=\"$userserviceid\">";
   print "<input name=openticket type=submit value=\"$l_openticket\" ".
     "class=smallbutton></form></td></table><p></blockquote>";     
+
+  /*----------------------------------------------------------------------*/
+  // TODO: print the field assets assigned to this service with ability to
+  // edit the shipping info and return info
+  /*----------------------------------------------------------------------*/
+  /*
+  $query = "SELECT ii.id, mi.description, ii.creation_date, ii.serial_number, ".
+      "ii.status, ii.sale_type, ii.shipping_tracking_number, ii.shipping_date, ".
+      "ii.return_date, ii.return_notes ".
+      "FROM inventory_items ii ".
+      "LEFT JOIN master_inventory mi ON mi.id = ii.master_inventory_id ".
+      "LEFT JOIN user_services us ON us.id = ii.user_services_id ".
+      "WHERE us.id = '$user_services_id'";
   
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+  
+  while ($taxresult = $result->FetchRow()) {
+    $item_id = $myresult['id'];
+    $description = $myresult['description'];
+    $creation_date = $myresult['creation_date'];
+    $serial_number = $myresult['serial_number'];
+    $status = $myresult['status'];
+    $sale_type = $myresult['sale_type'];
+    $tracking_number = $myresult['shipping_tracking_number'];
+    $shipping_date = $myresult['shipping_date'];
+    $return_date = $myresult['return_date'];
+    $return_notes = $myresult['return_notes'];
+  */
+
+  
+  /*----------------------------------------------------------------------*/
+  // print the add field assets form section
+
+  $query = "SELECT m.category FROM master_services m ".
+    "LEFT JOIN user_services u ON u.master_service_id = m.id ".
+    "WHERE u.id = '$userserviceid'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $myresult = $result->fields;
+  $category = $myresult['category'];
+
+  $query = "SELECT * FROM master_inventory WHERE status = 'current' AND category = '$category'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+
+  // only show choices if inventory items are compatible with the service category
+  if ($result->RowCount() > 0) {
+    print "<form action=\"index.php\"><table width=720 cellpadding=5 cellspacing=1 border=0>";
+    print "<input type=hidden name=load value=services>";
+    print "<input type=hidden name=type value=module>";
+    print "<input type=hidden name=edit value=on>";
+    print "<input type=hidden name=servicedescription ".
+      "value=\"$servicedescription\">";
+    print "<input type=hidden name=optionstable value=$optionstable>";
+    print "<input type=hidden name=userserviceid value=$userserviceid>";
+    
+    print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$l_assigninventory</b></td>";
+    
+    // TODO: print drop down menu to pick new field assets from master_inventory
+    print "<td bgcolor=\"#ddddee\"><select name=master_service_id><option selected>".
+      "$l_choose</option>\n";
+    
+    while ($myresult = $result->FetchRow()) {
+      $master_inventory_id = $myresult['id'];
+      $description = $myresult['description'];
+      print "<option value=$master_inventory_id>$description</option>\n";
+    }
+    
+    echo "</select></td><tr>\n";
+    
+    
+    
+    // print submit button
+    print "<td></td><td><input name=usage type=submit value=\"$l_assign\" ".
+      "class=smallbutton></td></table></form>";
+  }
+
+  /*----------------------------------------------------------------------*/
+  // print the usage multiple form section
   print "<form action=\"index.php\"><table width=720 cellpadding=5 cellspacing=1 border=0>";
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
@@ -401,8 +480,7 @@ if ($save) {
     "value=\"$servicedescription\">";
   print "<input type=hidden name=optionstable value=$optionstable>";
   print "<input type=hidden name=userserviceid value=$userserviceid>";
-        
-
+  
   $query = "SELECT * FROM user_services u ".
     "LEFT JOIN master_services m ON u.master_service_id = m.id ".
     "WHERE u.id = '$userserviceid'";
@@ -425,8 +503,8 @@ if ($save) {
   print "<td></td><td><input name=usage type=submit value=\"$l_change\" ".
     "class=smallbutton></td></table></form>";
 
-  // change the billing ID
-	
+  /*----------------------------------------------------------------------*/
+  // change the billing ID	
   print "<form action=\"index.php\"><table width=720 cellpadding=5 ".
     "cellspacing=1 border=0>";
   print "<input type=hidden name=load value=services>";
@@ -473,6 +551,7 @@ if ($save) {
   print "<td></td><td><input name=billing type=submit value=\"$l_change\" ".
     "class=smallbutton></td></table></form>";
 
+  /*----------------------------------------------------------------------*/
   // print the change service type change function only if there is an
   // options table to keep the same attributes with a service
   

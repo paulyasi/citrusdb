@@ -1,5 +1,5 @@
 <?php   
-// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2002-2010  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -206,6 +206,10 @@ if ($edit) {
      // check for taxes for this service
      $mytaxoutput = checktaxes($DB, $id);
      echo $mytaxoutput;
+
+     // check for field assets assigned to this service
+     $myfieldassets = checkfieldassets($DB, $id);
+     echo "$myfieldassets";
    }
    
    print "</table></td></table></form>";
@@ -215,7 +219,6 @@ if ($edit) {
 
 
 // query the taxes and fees that this customer has
-
 function checktaxes($DB, $user_services_id) {
   global $lang;
   include ("$lang");  
@@ -340,4 +343,54 @@ function checktaxes($DB, $user_services_id) {
   } // end while
 
 } // end checktaxes function
+
+
+// query the field assets assigned to this service
+function checkfieldassets($DB, $user_services_id) {
+  global $lang;
+  include ("$lang");
+
+    $query = "SELECT ii.id, mi.description, ii.creation_date, ii.serial_number, ".
+      "ii.status, ii.sale_type, ii.shipping_tracking_number, ii.shipping_date, ".
+      "ii.return_date, ii.return_notes ".
+      "FROM inventory_items ii ".
+      "LEFT JOIN master_inventory mi ON mi.id = ii.master_inventory_id ".
+      "LEFT JOIN user_services us ON us.id = ii.user_services_id ".
+      "WHERE us.id = '$user_services_id'";
+  
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+  
+  while ($taxresult = $result->FetchRow()) {
+    $item_id = $myresult['id'];
+    $description = $myresult['description'];
+    $creation_date = $myresult['creation_date'];
+    $serial_number = $myresult['serial_number'];
+    $status = $myresult['status'];
+    $sale_type = $myresult['sale_type'];
+    $tracking_number = $myresult['shipping_tracking_number'];
+    $shipping_date = $myresult['shipping_date'];
+    $return_date = $myresult['return_date'];
+    $return_notes = $myresult['return_notes'];
+ 
+    print "<tr><td></td>".
+      "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+      "colspan=3>$description</td>".
+      "<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
+      "colspan=4>$serial_number</td>".
+      "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
+      "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+      "<input type=hidden name=load value=services>".
+      "<input type=hidden name=type value=module>".
+      "<input type=hidden name=edit value=on>".
+      "<input type=hidden name=itemid value=\"$item__id\">".
+      "<input name=exempt type=submit value=\"$l_inventory\" ".
+      "class=smallbutton></form></td></tr>";
+
+  } // end while
+
+} // end checktaxes function
+
+
+
 ?>

@@ -436,7 +436,6 @@ INSERT INTO `module_permissions` VALUES (5, 'customer', 'f', 'users');
 INSERT INTO `module_permissions` VALUES (12, 'services', 'f', 'users');
 INSERT INTO `module_permissions` VALUES (14, 'billing', 'f', 'users');
 INSERT INTO `module_permissions` VALUES (8, 'support', 'f', 'users');
-INSERT INTO `module_permissions` VALUES (21, 'inventory', 'f', 'users');
 
 -- --------------------------------------------------------
 
@@ -461,7 +460,6 @@ INSERT INTO `modules` VALUES (1, 'Customer', 'customer', 0);
 INSERT INTO `modules` VALUES (2, 'Services', 'services', 1);
 INSERT INTO `modules` VALUES (3, 'Billing', 'billing', 2);
 INSERT INTO `modules` VALUES (4, 'Support', 'support', 3);
-INSERT INTO `modules` VALUES (5, 'Inventory', 'inventory', 4);
 
 -- --------------------------------------------------------
 
