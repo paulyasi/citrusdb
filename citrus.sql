@@ -867,7 +867,7 @@ CREATE TABLE `inventory_items` (
     `creation_date` DATE NOT NULL , 
     `serial_number` VARCHAR( 254 ) NULL , 
     `status` ENUM( 'new', 'used', 'infield', 'returned', 'bad' ) NOT NULL , 
-    `sale_type` ENUM( 'rent', 'purchase' ) NOT NULL , 
+    `sale_type` ENUM( 'unprovisioned','included','rent', 'purchase' ) NOT NULL , 
     `user_services_id` INT NULL , 
     `shipping_tracking_number` VARCHAR( 254 ) NULL , 
     `shipping_date` DATE NULL , 
