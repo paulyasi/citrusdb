@@ -235,7 +235,8 @@ if ($save) {
   
   // get the organization_id and options_table and name for this service
   $query = "SELECT ms.organization_id, ms.options_table, ".
-    "ms.service_description, g.org_name, ".
+    "ms.service_description, g.org_name, us.removed, ".
+    "date(us.end_datetime) AS end_datetime, ".
     "date(us.start_datetime) AS start_datetime ".
     "FROM user_services us ".
     "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
@@ -249,6 +250,8 @@ if ($save) {
   $optionstable = $myorgresult['options_table'];
   $servicedescription = $myorgresult['service_description'];
   $creationdate = humandate($myorgresult['start_datetime'], $lang);
+  $enddate = humandate($myorgresult['end_datetime'], $lang);
+  $removed = $myorgresult['removed'];
 
   /*
    http://localhost/~pyasi/citrus_project/citrusdb/index.php?
@@ -270,11 +273,16 @@ if ($save) {
     $myresult = $result->fields;
   }
 	
-  // edit the things in the options table
+  // print form to edit the things in the options table
   print "<h4>$l_edit: $userserviceid $servicedescription ($service_org_name)".
-    "&nbsp;&nbsp;&nbsp; $l_createdon: $creationdate</h4>".
-    "<form action=\"index.php\" method=post><table width=720 cellpadding=5 cellspacing=1 ".
-    "border=0>";
+    "&nbsp;&nbsp;&nbsp; $l_createdon: $creationdate, ";
+  if ($removed == 'y') {
+    print "$l_removed: $enddate</h4>";
+  } else {
+    print "$l_active</h4>";
+  }
+  print "<form action=\"index.php\" method=post><table width=720 ".
+    "cellpadding=5 cellspacing=1 border=0>";
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=edit value=on>";

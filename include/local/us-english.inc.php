@@ -22,6 +22,7 @@ $l_accountnumber = "Account Number";
 $l_acctmngrpasswd = "Acct Mngr Passwd";
 $l_activatenotify = "Activate Notify";
 $l_activationstring = "Activation String";
+$l_active = "Active";
 $l_add ="Add";
 $l_addcreditfor = "Add Credit for";
 $l_addaltbilling = "Add Alternate Billing";
