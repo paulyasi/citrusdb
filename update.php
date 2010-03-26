@@ -828,7 +828,7 @@ if ($base->input['submit'] == "Update")
 	if ($databaseversion == "2.0.2") {
 	  // add master_inventory table
 	  $query = "CREATE TABLE `master_inventory` ( ".
-	    "`id` INT NOT NULL AUTO_INCREMENT , ".
+	    "`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , ".
 	    "`description` VARCHAR( 128 ) NOT NULL , ".
 	    "`status` ENUM( 'current', 'old' ) NOT NULL DEFAULT 'current', ".
 	    "`weight` FLOAT NULL , ".
@@ -836,7 +836,7 @@ if ($base->input['submit'] == "Update")
 	    ") ENGINE = MYISAM  ";
 
 	  $query = "CREATE TABLE `inventory_items` ( ".
-	    "`id` INT NOT NULL , ".
+	    "`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , ".
 	    "`master_inventory_id` INT NOT NULL , ".
 	    "`creation_date` DATE NOT NULL , ".
 	    "`serial_number` VARCHAR( 254 ) NULL , ".

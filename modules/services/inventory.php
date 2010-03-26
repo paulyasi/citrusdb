@@ -26,7 +26,21 @@ $return = $base->input['inventory'];
 if ($ship) {
   echo "<h3>$l_shipinventory</h3>";
   
-  // TODO: show the count of how many of that inventory item type are avaialable (new, and used)
+  // get the count of items in new inventory
+  $query = "SELECT count(*) AS newcount WHERE status = 'new'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $myresult = $result->fields;
+  $newcount = $myresult['newcount'];
+
+  // get the count of items in used inventory
+  $query = "SELECT count(*) AS usedcount WHERE status = 'used'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $myresult = $result->fields;
+  $usedcount = $myresult['usedcount'];
+
+  echo "$newinventory: $newcount, $usedinventory: $usedcount";
 
   // TODO: print a form that asks for info about what they want to ship
 
