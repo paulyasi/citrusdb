@@ -404,19 +404,21 @@ if ($save) {
   // TODO: print the field assets assigned to this service with ability to
   // edit the shipping info and return info
   /*----------------------------------------------------------------------*/
-  /*
+
+  print "<table width=720 cellpadding=5 cellspacing=1 border=0>";
+  
   $query = "SELECT ii.id, mi.description, ii.creation_date, ii.serial_number, ".
       "ii.status, ii.sale_type, ii.shipping_tracking_number, ii.shipping_date, ".
       "ii.return_date, ii.return_notes ".
       "FROM inventory_items ii ".
       "LEFT JOIN master_inventory mi ON mi.id = ii.master_inventory_id ".
       "LEFT JOIN user_services us ON us.id = ii.user_services_id ".
-      "WHERE us.id = '$user_services_id'";
+      "WHERE us.id = '$userserviceid'";
   
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
   
-  while ($taxresult = $result->FetchRow()) {
+  while ($myresult = $result->FetchRow()) {
     $item_id = $myresult['id'];
     $description = $myresult['description'];
     $creation_date = $myresult['creation_date'];
@@ -427,7 +429,15 @@ if ($save) {
     $shipping_date = $myresult['shipping_date'];
     $return_date = $myresult['return_date'];
     $return_notes = $myresult['return_notes'];
-  */
+
+    //$status = ucfirst($status);
+
+    print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$description $status</b></td>";
+    print "<td bgcolor=\"#ddddee\">$serial_number $sale_type $tracking_number $shipping_date</td>";
+    
+  }
+
+  print "</table>";
 
   
   /*----------------------------------------------------------------------*/

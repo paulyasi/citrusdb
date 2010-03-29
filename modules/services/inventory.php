@@ -15,15 +15,28 @@ if (!defined("INDEX_CITRUS")) {
   exit;
 }
 
+if (!isset($base->input['userserviceid'])) { $base->input['userserviceid'] = ""; }
 
-if (!isset($base->input['ship'])) { $base->input['ship'] = ""; }
+if (!isset($base->input['neworused'])) { $base->input['neworused'] = ""; }
+if (!isset($base->input['serial_number'])) { $base->input['serial_number'] = ""; }
+if (!isset($base->input['sale_type'])) { $base->input['sale_type'] = ""; }
+if (!isset($base->input['tracking_number'])) { $base->input['tracking_number'] = ""; }
+if (!isset($base->input['shipping_date'])) { $base->input['shipping_date'] = ""; }
+
 if (!isset($base->input['assign'])) { $base->input['assign'] = ""; }  
+if (!isset($base->input['ship'])) { $base->input['ship'] = ""; }
 if (!isset($base->input['return'])) { $base->input['return'] = ""; }
 if (!isset($base->input['master_inventory_id'])) { $base->input['master_inventory_id'] = ""; }
 
 // GET Variables
-$ship = $base->input['ship'];
+$userserviceid = $base->input['userserviceid'];
+$neworused = $base->input['neworused'];
+$serial_number = $base->input['serial_number'];
+$sale_type = $base->input['sale_type'];
+$tracking_number = $base->input['tracking_number'];
+$shipping_date = $base->input['shipping_date'];
 $assign = $base->input['assign'];
+$ship = $base->input['ship'];
 $return = $base->input['return'];
 $master_inventory_id = $base->input['master_inventory_id'];
 
@@ -53,18 +66,18 @@ if ($ship) {
   if ($newcount < 1) { $newcount = 0; }
   if ($usedcount < 1) { $usedcount = 0; } 
 
-  echo "<p>$description, $l_newinventory: $newcount, $l_usedinventory: $usedcount</p>";
+  echo "<p><b>$description: $newcount $l_new, $usedcount $l_used</b></p>";
 
   // TODO: print a form that asks for info about what they want to ship
 
   print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
-    "<table width=720 cellpadding=5 cellspacing=1 border=0>".
-    "<input type=hidden name=optionstable value=$optionstable>";
+    "<table width=720 cellpadding=5 cellspacing=1 border=0>";
   print "<input type=hidden name=userserviceid value=$userserviceid>";
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=assign value=on>";
   print "<input type=hidden name=inventory value=on>";
+  print "<input type=hidden name=master_inventory_id value=\"$master_inventory_id\">";
 
   //from new or used inventory
   echo "<table>";
@@ -85,8 +98,9 @@ if ($ship) {
   //shipping tracking number
   echo "<td><label>Tracking Number: </td><td><input type=text name=tracking_number></label></td><tr>";  
 
-  //shipping date  
-  echo "<td><label>Shipping Date: </td><td><input type=text name=shipping_date></label></td><tr>";  
+  //shipping date  (TODO: pre-enter today's date in here )
+  $mydate = date("Y-m-d");
+  echo "<td><label>Shipping Date: </td><td><input type=text name=shipping_date value=\"$mydate\"></label></td><tr>";  
 
   // print submit button
   print "<td></td><td><input name=inventory type=submit value=\"$l_assign\" ".
@@ -101,7 +115,29 @@ if ($ship) {
   
  } else if ($assign) {
 
-  // TODO: assign the item from inventory to this service 
+  // assign the item from inventory to this service
+  /*
+   $neworused = $base->input['neworused'];
+   $serial_number = $base->input['serial_number'];
+   $sale_type = $base->input['sale_type'];
+   $tracking_number = $base->input['tracking_number'];
+   $shipping_date = $base->input['shipping_date'];
+  */
+
+  $query = "UPDATE inventory_items SET ".
+    "serial_number = '$serial_number', ".
+    "status = 'infield', ".
+    "sale_type = '$sale_type', ".
+    "shipping_tracking_number = '$tracking_number', ".
+    "shipping_date = '$shipping_date', ".
+    "user_services_id = '$userserviceid' ".
+    "WHERE master_inventory_id = '$master_inventory_id' AND status = '$neworused' LIMIT 1";
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+  
+  // redirect back to the service edit screen, now showing the assigned inventory listed there
+  echo "assigned";
+  print "<script language=\"JavaScript\">window.location.href = ".
+    "\"index.php?load=services&type=module\";</script>";
 
  }
 

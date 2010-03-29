@@ -368,7 +368,7 @@ function checkfieldassets($DB, $user_services_id) {
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
   
-  while ($taxresult = $result->FetchRow()) {
+  while ($myresult = $result->FetchRow()) {
     $item_id = $myresult['id'];
     $description = $myresult['description'];
     $creation_date = $myresult['creation_date'];
