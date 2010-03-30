@@ -22,10 +22,12 @@ if (!isset($base->input['serial_number'])) { $base->input['serial_number'] = "";
 if (!isset($base->input['sale_type'])) { $base->input['sale_type'] = ""; }
 if (!isset($base->input['tracking_number'])) { $base->input['tracking_number'] = ""; }
 if (!isset($base->input['shipping_date'])) { $base->input['shipping_date'] = ""; }
-
+if (!isset($base->input['return_date'])) { $base->input['return_date'] = ""; }
+if (!isset($base->input['return_notes'])) { $base->input['return_notes'] = ""; }
 if (!isset($base->input['assign'])) { $base->input['assign'] = ""; }  
 if (!isset($base->input['ship'])) { $base->input['ship'] = ""; }
 if (!isset($base->input['return'])) { $base->input['return'] = ""; }
+if (!isset($base->input['item_id'])) { $base->input['item_id'] = ""; }
 if (!isset($base->input['master_inventory_id'])) { $base->input['master_inventory_id'] = ""; }
 
 // GET Variables
@@ -38,6 +40,9 @@ $shipping_date = $base->input['shipping_date'];
 $assign = $base->input['assign'];
 $ship = $base->input['ship'];
 $return = $base->input['return'];
+$return = $base->input['return_date'];
+$return = $base->input['return_notes'];
+$item_id = $base->input['item_id'];
 $master_inventory_id = $base->input['master_inventory_id'];
 
 if ($ship) {
@@ -81,14 +86,14 @@ if ($ship) {
 
   //from new or used inventory
   echo "<table>";
-  echo "<td>Choose From:</td><td><label><input type=radio name=neworused value=new>New</label>";
+  echo "<td>$l_choosefrom:</td><td><label><input type=radio name=neworused value=new>New</label>";
   echo "<label><input type=radio name=neworused value=used>Used</label></td><tr>";
 
   //serial_number
-  echo "<td><label>Serial Number: </td><td><input type=text name=serial_number></label></td><tr>";  
+  echo "<td><label>$l_serialnumber: </td><td><input type=text name=serial_number></label></td><tr>";  
 
   //sale type
-  echo "<td>Sale Type: </td><td><select name=sale_type>".
+  echo "<td>$l_saletype: </td><td><select name=sale_type>".
     "<option value=\"\">$l_choose</option>".
     "<option value=included>included</option>".
     "<option value=purchase>purchase</option>".
@@ -96,11 +101,11 @@ if ($ship) {
     "</select></td><tr>";    
 
   //shipping tracking number
-  echo "<td><label>Tracking Number: </td><td><input type=text name=tracking_number></label></td><tr>";  
+  echo "<td><label>$l_trackingnumber: </td><td><input type=text name=tracking_number></label></td><tr>";  
 
   //shipping date  (TODO: pre-enter today's date in here )
   $mydate = date("Y-m-d");
-  echo "<td><label>Shipping Date: </td><td><input type=text name=shipping_date value=\"$mydate\"></label></td><tr>";  
+  echo "<td><label>$l_shippingdate: </td><td><input type=text name=shipping_date value=\"$mydate\"></label></td><tr>";  
 
   // print submit button
   print "<td></td><td><input name=inventory type=submit value=\"$l_assign\" ".
@@ -108,8 +113,10 @@ if ($ship) {
   
  } else if ($return) {
 
-  // TODO: put this inventory into a return status
+  // TODO: ask for return date and return notes
   
+
+  // TODO: put this inventory item into a return status
 
   // TODO: make an new entry in inventory to put this item in under a used status
   
