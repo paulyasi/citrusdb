@@ -113,12 +113,41 @@ if ($ship) {
   
  } else if ($return) {
 
-  // TODO: ask for return date and return notes
+  // TODO: ask for return date and return notes and send to returned
   
 
-  // TODO: put this inventory item into a return status
 
-  // TODO: make an new entry in inventory to put this item in under a used status
+
+
+
+ } else if (returned) {
+  // TODO: put this inventory item into a return status  
+  $query = "UPDATE inventory_items SET ".
+    "status = 'returned', ".
+    "return_date = '$return_date', ".
+    "return_notes = '$return_notes', ".    
+    "WHERE id = '$item_id' LIMIT 1";
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+
+  // TODO: make an new entry in inventory to putting this item in under a used status
+  // get the master inventory id and serial number from the returned device
+  // put that into a new unprovisioned inventory item record
+  $query = "SELECT master_inventory_id,serial_number FROM inventory_items WHERE id = '$item_id' LIMIT 1";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $myresult = $result->fields;
+  $master_inventory_id = $myresult['master_inventory_id'];
+  $serial_number = $myresult['serial_number'];  
+  
+  $query = "INSERT INTO inventory_items (master_inventory_id,creation_date,".
+    "serial_number,status,sale_type) VALUES ('$master_inventory_id',CURRENT_DATE,".
+    "'$serial_number','used','unprovisioned')";
+  $result = $DB->Execute($query) or die ("$l_queryfailed");  
+  
+  // redirect back to the service edit screen, now showing the returned inventory listed there
+  echo "returned";
+  print "<script language=\"JavaScript\">window.location.href = ".
+    "\"index.php?load=services&type=module\";</script>";  
   
  } else if ($assign) {
 
