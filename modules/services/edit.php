@@ -436,7 +436,7 @@ if ($save) {
     print "<td bgcolor=\"#ddddee\"><table><td><b>$l_status:</b> $status</td><td><b>$l_serialnumber:</b></td><td> $serial_number</td>".
       "<td><b>$l_saletype:</b></td> <td>$sale_type</td> <tr>";
     if ($status == 'returned') {
-      print "<td>$l_returndate: $return_date, $return_notes</td>";
+      print "<td>$l_returndate: $return_date, $return_notes</td></table>";
     } else {
       print "<td><b>$l_trackingnumber</b></td><td>$tracking_number</td> ".
 	"<td><b>$l_shippingdate:</b></td> <td>$shipping_date</td><td><a href=\"http://localhost/~pyasi/citrus_project/citrusdb-gpg/index.php?optionstable=example_options&userserviceid=122&load=services&type=module&return=on&inventory=on&item_id=$item_id&inventory=return\">$l_returndevice</a></td></table>";

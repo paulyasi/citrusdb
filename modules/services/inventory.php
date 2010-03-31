@@ -15,8 +15,9 @@ if (!defined("INDEX_CITRUS")) {
   exit;
 }
 
-if (!isset($base->input['userserviceid'])) { $base->input['userserviceid'] = ""; }
 
+
+if (!isset($base->input['userserviceid'])) { $base->input['userserviceid'] = ""; }
 if (!isset($base->input['neworused'])) { $base->input['neworused'] = ""; }
 if (!isset($base->input['serial_number'])) { $base->input['serial_number'] = ""; }
 if (!isset($base->input['sale_type'])) { $base->input['sale_type'] = ""; }
@@ -40,8 +41,9 @@ $shipping_date = $base->input['shipping_date'];
 $assign = $base->input['assign'];
 $ship = $base->input['ship'];
 $return = $base->input['return'];
-$return = $base->input['return_date'];
-$return = $base->input['return_notes'];
+$returned = $base->input['returned'];
+$return_date = $base->input['return_date'];
+$return_notes = $base->input['return_notes'];
 $item_id = $base->input['item_id'];
 $master_inventory_id = $base->input['master_inventory_id'];
 
@@ -73,7 +75,7 @@ if ($ship) {
 
   echo "<p><b>$description: $newcount $l_new, $usedcount $l_used</b></p>";
 
-  // TODO: print a form that asks for info about what they want to ship
+  // print a form that asks for info about what they want to ship
 
   print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
     "<table width=720 cellpadding=5 cellspacing=1 border=0>";
@@ -113,23 +115,41 @@ if ($ship) {
   
  } else if ($return) {
 
-  // TODO: ask for return date and return notes and send to returned
-  
+  // ask for return date and return notes and send to returned  
+  print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+    "<table width=720 cellpadding=5 cellspacing=1 border=0>";
+  print "<input type=hidden name=userserviceid value=$userserviceid>";
+  print "<input type=hidden name=load value=services>";
+  print "<input type=hidden name=type value=module>";
+  print "<input type=hidden name=returned value=on>";
+  print "<input type=hidden name=inventory value=on>";
+  print "<input type=hidden name=item_id value=\"$item_id\">";
 
+  //from new or used inventory
+  echo "<table>";
 
+  //return_date
+  //shipping date  (TODO: pre-enter today's date in here )
+  $mydate = date("Y-m-d");
+  echo "<td><label>$l_returndate: </td><td><input type=text name=return_date value=\"$mydate\"></label></td><tr>";  
 
+  //return_notes
+  echo "<td><label>$l_returnnotes: </td><td><input type=text name=return_notes></label></td><tr>";  
 
+  // print submit button
+  print "<td></td><td><input name=inventory type=submit value=\"$l_returndevice\" ".
+    "class=smallbutton></td></table></form><p>";
 
- } else if (returned) {
-  // TODO: put this inventory item into a return status  
+ } else if ($returned) {
+  // put this inventory item into a return status  
   $query = "UPDATE inventory_items SET ".
     "status = 'returned', ".
     "return_date = '$return_date', ".
-    "return_notes = '$return_notes', ".    
+    "return_notes = '$return_notes' ".    
     "WHERE id = '$item_id' LIMIT 1";
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
 
-  // TODO: make an new entry in inventory to putting this item in under a used status
+  // make an new entry in inventory to putting this item in under a used status
   // get the master inventory id and serial number from the returned device
   // put that into a new unprovisioned inventory item record
   $query = "SELECT master_inventory_id,serial_number FROM inventory_items WHERE id = '$item_id' LIMIT 1";
