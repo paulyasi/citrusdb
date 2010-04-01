@@ -289,6 +289,7 @@ $l_next = "Next";
 $l_nextbillingdate = "Next Billing Date";
 $l_no = "No";
 $l_nobody = "Nobody";
+$l_noinventory = "No Inventory";
 $l_notdone = "Not Done";
 $l_notes = "Notes";
 $l_notesforgroups = "Notes for Groups";

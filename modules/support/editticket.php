@@ -219,7 +219,7 @@ if ($savechanges) {
 	<td bgcolor=\"#ccccdd\"><b>$l_description</b></td><td colspan=3 bgcolor=\"#ddddee\">";
   if (($user == $created_by) && ($status != 'completed') && ($status != 'pending')) {
     // let the user edit their own descriptions if not yet completed or pending
-    echo "<textarea name=\"description\" rows=2 cols=70>$description</textarea></td><tr>";
+    echo "<textarea name=\"description\" rows=4 cols=70>$description</textarea></td><tr>";
   } else {
     echo "<br>$description<input type=hidden name=\"description\" value=\"$description\"<br><br></td><tr>";
   }

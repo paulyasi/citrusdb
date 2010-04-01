@@ -68,6 +68,10 @@ if ($ship) {
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   $myresult = $result->fields;
   $usedcount = $myresult['usedcount'];
+
+  // set the description field if not already set or to no inventory if nothing returned
+  if (!$description) { $description = $myresult['description']; }  
+  if (!$description) { $description = "$l_noinventory"; }  
   
   // put zero into count if nothing returned
   if ($newcount < 1) { $newcount = 0; }
@@ -96,7 +100,6 @@ if ($ship) {
 
   //sale type
   echo "<td>$l_saletype: </td><td><select name=sale_type>".
-    "<option value=\"\">$l_choose</option>".
     "<option value=included>included</option>".
     "<option value=purchase>purchase</option>".
     "<option value=rent>rent</option>".
