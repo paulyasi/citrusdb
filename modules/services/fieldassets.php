@@ -122,7 +122,7 @@ if ($ship) {
 
  } else if ($returned) {
   // put this inventory item into a return status  
-  $query = "UPDATE assigned_field_assets SET ".
+  $query = "UPDATE field_asset_items SET ".
     "status = 'returned', ".
     "return_date = '$return_date', ".
     "return_notes = '$return_notes' ".    
@@ -144,7 +144,7 @@ if ($ship) {
    $shipping_date = $base->input['shipping_date'];
   */
 
-  $query = "INSERT into assigned_field_assets ".
+  $query = "INSERT into field_asset_items ".
     "(master_field_assets_id, creation_date, serial_number, status, sale_type, shipping_tracking_number, shipping_date, user_services_id ) VALUES ".
     "('$master_field_assets_id', CURRENT_DATE, '$serial_number', 'infield', '$sale_type', '$tracking_number', '$shipping_date', '$userserviceid')";
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");

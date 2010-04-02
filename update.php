@@ -835,7 +835,7 @@ if ($base->input['submit'] == "Update")
 	    "PRIMARY KEY ( `id` ) ".
 	    ") ENGINE = MYISAM  ";
 
-	  $query = "CREATE TABLE `assigned_field_assets` ( ".
+	  $query = "CREATE TABLE `field_asset_items` ( ".
 	    "`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , ".
 	    "`master_field_assets_id` INT NOT NULL , ".
 	    "`creation_date` DATE NOT NULL , ".

@@ -410,7 +410,7 @@ if ($save) {
   $query = "SELECT afa.id, mfa.description, afa.creation_date, afa.serial_number, ".
       "afa.status, afa.sale_type, afa.shipping_tracking_number, afa.shipping_date, ".
       "afa.return_date, afa.return_notes ".
-      "FROM assigned_field_assets afa ".
+      "FROM field_asset_items afa ".
       "LEFT JOIN master_field_assets mfa ON mfa.id = afa.master_field_assets_id ".
       "LEFT JOIN user_services us ON us.id = afa.user_services_id ".
       "WHERE us.id = '$userserviceid'";

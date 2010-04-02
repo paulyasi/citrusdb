@@ -861,7 +861,7 @@ CREATE TABLE `master_field_assets` (
     PRIMARY KEY ( `id` ) 
     ) ENGINE = MYISAM;  
 
-CREATE TABLE `assigned_field_assets` (
+CREATE TABLE `field_asset_items` (
     `id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , 
     `master_field_assets_id` INT NOT NULL , 
     `creation_date` DATE NOT NULL , 
