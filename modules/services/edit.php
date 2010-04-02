@@ -407,12 +407,12 @@ if ($save) {
 
   print "<table width=720 cellpadding=5 cellspacing=1 border=0>";
   
-  $query = "SELECT ii.id, mi.description, ii.creation_date, ii.serial_number, ".
-      "ii.status, ii.sale_type, ii.shipping_tracking_number, ii.shipping_date, ".
-      "ii.return_date, ii.return_notes ".
-      "FROM inventory_items ii ".
-      "LEFT JOIN master_inventory mi ON mi.id = ii.master_inventory_id ".
-      "LEFT JOIN user_services us ON us.id = ii.user_services_id ".
+  $query = "SELECT afa.id, mfa.description, afa.creation_date, afa.serial_number, ".
+      "afa.status, afa.sale_type, afa.shipping_tracking_number, afa.shipping_date, ".
+      "afa.return_date, afa.return_notes ".
+      "FROM assigned_field_assets afa ".
+      "LEFT JOIN master_field_assets mfa ON mfa.id = afa.master_field_assets_id ".
+      "LEFT JOIN user_services us ON us.id = afa.user_services_id ".
       "WHERE us.id = '$userserviceid'";
   
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -430,16 +430,25 @@ if ($save) {
     $return_date = $myresult['return_date'];
     $return_notes = $myresult['return_notes'];
 
-    //$status = ucfirst($status);
-
-    print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$description</b></td>";
-    print "<td bgcolor=\"#ddddee\"><table><td><b>$l_status:</b> $status</td><td><b>$l_serialnumber:</b></td><td> $serial_number</td>".
-      "<td><b>$l_saletype:</b></td> <td>$sale_type</td> <tr>";
+    // grey out the returned items
     if ($status == 'returned') {
-      print "<td>$l_returndate: $return_date, $return_notes</td></table>";
+      $labelcolor = "#dddddd";
+      $valuecolor = "#eeeeee";
+      $textcolor = "#888888";
+    } else {
+      $labelcolor = "#ccccdd";
+      $valuecolor = "#ddddee";
+      $textcolor = "#000000";
+    }
+
+    print "<tr><td bgcolor=\"$labelcolor\" width=180><b style=\"color:$textcolor;\">$description</b></td>";
+    print "<td bgcolor=\"$valuecolor\"><table><td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">$l_status:</b> $status</td><td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">$l_serialnumber:</b></td><td style=\"color:$textcolor;\"> $serial_number</td>".
+      "<td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">$l_saletype:</b></td> <td style=\"color:$textcolor;\">$sale_type</td> <tr>";
+    if ($status == 'returned') {
+      print "<td style=\"color:$textcolor;\">$l_returndate: $return_date, $return_notes</td></table>";
     } else {
       print "<td><b>$l_trackingnumber</b></td><td>$tracking_number</td> ".
-	"<td><b>$l_shippingdate:</b></td> <td>$shipping_date</td><td><a href=\"http://localhost/~pyasi/citrus_project/citrusdb-gpg/index.php?optionstable=example_options&userserviceid=122&load=services&type=module&return=on&inventory=on&item_id=$item_id&inventory=return\">$l_returndevice</a></td></table>";
+	"<td><b>$l_shippingdate:</b></td> <td>$shipping_date</td><td><a href=\"http://localhost/~pyasi/citrus_project/citrusdb-gpg/index.php?optionstable=example_options&userserviceid=122&load=services&type=module&return=on&fieldassets=on&item_id=$item_id&fieldassets=return\">$l_returndevice</a></td></table>";
     }
   }
 
@@ -457,11 +466,11 @@ if ($save) {
   $myresult = $result->fields;
   $category = $myresult['category'];
 
-  $query = "SELECT * FROM master_inventory WHERE status = 'current' AND category = '$category'";
+  $query = "SELECT * FROM master_field_assets WHERE status = 'current' AND category = '$category'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
 
-  // only show choices if inventory items are compatible with the service category
+  // only show choices if field asset items are compatible with the service category
   if ($result->RowCount() > 0) {
 
     print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
@@ -471,24 +480,24 @@ if ($save) {
     print "<input type=hidden name=load value=services>";
     print "<input type=hidden name=type value=module>";
     print "<input type=hidden name=ship value=on>";
-    print "<input type=hidden name=inventory value=on>";
+    print "<input type=hidden name=fieldassets value=on>";
     
-    print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$l_shipinventory</b></td>";
+    print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$l_shipfieldasset</b></td>";
     
-    // TODO: print drop down menu to pick new field assets from master_inventory
-    print "<td bgcolor=\"#ddddee\"><select name=master_inventory_id><option selected>".
+    // TODO: print drop down menu to pick new field assets from master_field_assets
+    print "<td bgcolor=\"#ddddee\"><select name=master_field_assets_id><option selected>".
       "$l_choose</option>\n";
     
     while ($myresult = $result->FetchRow()) {
-      $master_inventory_id = $myresult['id'];
+      $master_field_assets_id = $myresult['id'];
       $description = $myresult['description'];
-      print "<option value=$master_inventory_id>$description</option>\n";
+      print "<option value=$master_field_assets_id>$description</option>\n";
     }
     
     echo "</select></td><tr>\n";    
     
     // print submit button
-    print "<td></td><td><input name=inventory type=submit value=\"$l_ship\" ".
+    print "<td></td><td><input name=fieldassets type=submit value=\"$l_ship\" ".
       "class=smallbutton></td></table></form><p>";
   }
 

@@ -29,7 +29,7 @@ if (!isset($base->input['assign'])) { $base->input['assign'] = ""; }
 if (!isset($base->input['ship'])) { $base->input['ship'] = ""; }
 if (!isset($base->input['return'])) { $base->input['return'] = ""; }
 if (!isset($base->input['item_id'])) { $base->input['item_id'] = ""; }
-if (!isset($base->input['master_inventory_id'])) { $base->input['master_inventory_id'] = ""; }
+if (!isset($base->input['master_field_assets_id'])) { $base->input['master_field_assets_id'] = ""; }
 
 // GET Variables
 $userserviceid = $base->input['userserviceid'];
@@ -45,41 +45,22 @@ $returned = $base->input['returned'];
 $return_date = $base->input['return_date'];
 $return_notes = $base->input['return_notes'];
 $item_id = $base->input['item_id'];
-$master_inventory_id = $base->input['master_inventory_id'];
+$master_field_assets_id = $base->input['master_field_assets_id'];
 
 if ($ship) {
-  echo "<h3>$l_shipinventory</h3>";
-  
-  // get the count of items in new inventory
-  $query = "SELECT count(*) AS newcount, mi.description FROM inventory_items ii ".
-    "LEFT JOIN master_inventory mi ON mi.id = ii.master_inventory_id ".
-    "WHERE ii.status = 'new' AND ii.master_inventory_id = '$master_inventory_id' GROUP BY mi.id";
+  echo "<h3>$l_shipfieldassets</h3>";
+
+  // get the name of the item being assigned from master_field_assets
+  $query = "SELECT description FROM master_field_assets ".
+    "WHERE id = '$master_field_assets_id'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
   $myresult = $result->fields;
-  $newcount = $myresult['newcount'];
   $description = $myresult['description'];
   
-  // get the count of items in used inventory
-  $query = "SELECT count(*) AS usedcount, mi.description FROM inventory_items ii ".
-    "LEFT JOIN master_inventory mi ON mi.id = ii.master_inventory_id ".
-    "WHERE ii.status = 'used' AND ii.master_inventory_id = '$master_inventory_id' GROUP BY mi.id";  
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
-  $myresult = $result->fields;
-  $usedcount = $myresult['usedcount'];
+  echo "<p><b>$description:</b></p>";
 
-  // set the description field if not already set or to no inventory if nothing returned
-  if (!$description) { $description = $myresult['description']; }  
-  if (!$description) { $description = "$l_noinventory"; }  
-  
-  // put zero into count if nothing returned
-  if ($newcount < 1) { $newcount = 0; }
-  if ($usedcount < 1) { $usedcount = 0; } 
-
-  echo "<p><b>$description: $newcount $l_new, $usedcount $l_used</b></p>";
-
-  // print a form that asks for info about what they want to ship
+  // print a form that asks for info about what the asset they are assigning
 
   print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
     "<table width=720 cellpadding=5 cellspacing=1 border=0>";
@@ -88,12 +69,10 @@ if ($ship) {
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=assign value=on>";
   print "<input type=hidden name=inventory value=on>";
-  print "<input type=hidden name=master_inventory_id value=\"$master_inventory_id\">";
+  print "<input type=hidden name=master_field_assets_id value=\"$master_field_assets_id\">";
 
   //from new or used inventory
   echo "<table>";
-  echo "<td>$l_choosefrom:</td><td><label><input type=radio name=neworused value=new>New</label>";
-  echo "<label><input type=radio name=neworused value=used>Used</label></td><tr>";
 
   //serial_number
   echo "<td><label>$l_serialnumber: </td><td><input type=text name=serial_number></label></td><tr>";  
@@ -108,12 +87,12 @@ if ($ship) {
   //shipping tracking number
   echo "<td><label>$l_trackingnumber: </td><td><input type=text name=tracking_number></label></td><tr>";  
 
-  //shipping date  (TODO: pre-enter today's date in here )
+  //shipping date
   $mydate = date("Y-m-d");
   echo "<td><label>$l_shippingdate: </td><td><input type=text name=shipping_date value=\"$mydate\"></label></td><tr>";  
 
   // print submit button
-  print "<td></td><td><input name=inventory type=submit value=\"$l_assign\" ".
+  print "<td></td><td><input name=fieldassets type=submit value=\"$l_assign\" ".
     "class=smallbutton></td></table></form><p>";
   
  } else if ($return) {
@@ -125,14 +104,12 @@ if ($ship) {
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=returned value=on>";
-  print "<input type=hidden name=inventory value=on>";
+  print "<input type=hidden name=fieldassets value=on>";
   print "<input type=hidden name=item_id value=\"$item_id\">";
 
-  //from new or used inventory
   echo "<table>";
 
   //return_date
-  //shipping date  (TODO: pre-enter today's date in here )
   $mydate = date("Y-m-d");
   echo "<td><label>$l_returndate: </td><td><input type=text name=return_date value=\"$mydate\"></label></td><tr>";  
 
@@ -140,33 +117,18 @@ if ($ship) {
   echo "<td><label>$l_returnnotes: </td><td><input type=text name=return_notes></label></td><tr>";  
 
   // print submit button
-  print "<td></td><td><input name=inventory type=submit value=\"$l_returndevice\" ".
+  print "<td></td><td><input name=fieldassets type=submit value=\"$l_returndevice\" ".
     "class=smallbutton></td></table></form><p>";
 
  } else if ($returned) {
   // put this inventory item into a return status  
-  $query = "UPDATE inventory_items SET ".
+  $query = "UPDATE assigned_field_assets SET ".
     "status = 'returned', ".
     "return_date = '$return_date', ".
     "return_notes = '$return_notes' ".    
     "WHERE id = '$item_id' LIMIT 1";
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
 
-  // make an new entry in inventory to putting this item in under a used status
-  // get the master inventory id and serial number from the returned device
-  // put that into a new unprovisioned inventory item record
-  $query = "SELECT master_inventory_id,serial_number FROM inventory_items WHERE id = '$item_id' LIMIT 1";
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
-  $myresult = $result->fields;
-  $master_inventory_id = $myresult['master_inventory_id'];
-  $serial_number = $myresult['serial_number'];  
-  
-  $query = "INSERT INTO inventory_items (master_inventory_id,creation_date,".
-    "serial_number,status,sale_type) VALUES ('$master_inventory_id',CURRENT_DATE,".
-    "'$serial_number','used','unprovisioned')";
-  $result = $DB->Execute($query) or die ("$l_queryfailed");  
-  
   // redirect back to the service edit screen, now showing the returned inventory listed there
   echo "returned";
   print "<script language=\"JavaScript\">window.location.href = ".
@@ -174,24 +136,32 @@ if ($ship) {
   
  } else if ($assign) {
 
-  // assign the item from inventory to this service
+  // assign the field_asset to this service
   /*
-   $neworused = $base->input['neworused'];
    $serial_number = $base->input['serial_number'];
    $sale_type = $base->input['sale_type'];
    $tracking_number = $base->input['tracking_number'];
    $shipping_date = $base->input['shipping_date'];
   */
 
-  $query = "UPDATE inventory_items SET ".
-    "serial_number = '$serial_number', ".
-    "status = 'infield', ".
-    "sale_type = '$sale_type', ".
-    "shipping_tracking_number = '$tracking_number', ".
-    "shipping_date = '$shipping_date', ".
-    "user_services_id = '$userserviceid' ".
-    "WHERE master_inventory_id = '$master_inventory_id' AND status = '$neworused' LIMIT 1";
+  $query = "INSERT into assigned_field_assets ".
+    "(master_field_assets_id, creation_date, serial_number, status, sale_type, shipping_tracking_number, shipping_date, user_services_id ) VALUES ".
+    "('$master_field_assets_id', CURRENT_DATE, '$serial_number', 'infield', '$sale_type', '$tracking_number', '$shipping_date', '$userserviceid')";
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+
+  // get the name of the item being assigned from master_field_assets
+  $query = "SELECT description FROM master_field_assets ".
+    "WHERE id = '$master_field_assets_id'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+  $myresult = $result->fields;
+  $description = $myresult['description'];
+  
+  // leave a note that the item was assigned
+  $notify = "Nobody";
+  $status = "completed";
+  $description = "$l_shipped $description, $l_trackingnumber: $tracking_number";
+  create_ticket($DB, $user, $notify, $account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
   
   // redirect back to the service edit screen, now showing the assigned inventory listed there
   echo "assigned";

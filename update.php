@@ -826,8 +826,8 @@ if ($base->input['submit'] == "Update")
 	}
 
 	if ($databaseversion == "2.0.2") {
-	  // add master_inventory table
-	  $query = "CREATE TABLE `master_inventory` ( ".
+	  // add master_field_assets table
+	  $query = "CREATE TABLE `master_field_assets` ( ".
 	    "`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , ".
 	    "`description` VARCHAR( 128 ) NOT NULL , ".
 	    "`status` ENUM( 'current', 'old' ) NOT NULL DEFAULT 'current', ".
@@ -835,20 +835,18 @@ if ($base->input['submit'] == "Update")
 	    "PRIMARY KEY ( `id` ) ".
 	    ") ENGINE = MYISAM  ";
 
-	  $query = "CREATE TABLE `inventory_items` ( ".
+	  $query = "CREATE TABLE `assigned_field_assets` ( ".
 	    "`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , ".
-	    "`master_inventory_id` INT NOT NULL , ".
+	    "`master_field_assets_id` INT NOT NULL , ".
 	    "`creation_date` DATE NOT NULL , ".
 	    "`serial_number` VARCHAR( 254 ) NULL , ".
-	    "`status` ENUM( 'new', 'used', 'infield', 'returned', 'bad' ) NOT NULL , ".
-	    "`sale_type` ENUM( 'unprovisioned','included','rent', 'purchase' ) NOT NULL , ".
+	    "`status` ENUM( 'infield', 'returned' ) NOT NULL , ".
+	    "`sale_type` ENUM( 'included','rent', 'purchase' ) NOT NULL , ".
 	    "`user_services_id` INT NULL , ".
 	    "`shipping_tracking_number` VARCHAR( 254 ) NULL , ".
 	    "`shipping_date` DATE NULL , ".
 	    "`return_date` DATE NULL , ".
-	    "`return_notes` VARCHAR( 254 ) NULL , ".
-	    "`bad_date` DATE NULL , ".
-	    "`bad_notes` VARCHAR( 254 ) NULL ".
+	    "`return_notes` VARCHAR( 254 ) NULL ".
 	    ") ENGINE = MYISAM ";
 
 	  // set the version number in the database to 2.1

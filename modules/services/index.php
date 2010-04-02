@@ -16,12 +16,12 @@ if (!defined("INDEX_CITRUS")) {
 }
 
 if (!isset($base->input['history'])) { $base->input['history'] = ""; }
-if (!isset($base->input['inventory'])) { $base->input['inventory'] = ""; }
+if (!isset($base->input['fieldassets'])) { $base->input['fieldassets'] = ""; }
 if (!isset($base->input['category'])) { $base->input['category'] = ""; }
 
 // GET Variables
 $history = $base->input['history'];
-$inventory = $base->input['inventory'];
+$fieldassets = $base->input['fieldassets'];
 $category = $base->input['category'];
 
 //session_start();
@@ -42,9 +42,9 @@ if ($edit) {
      include('./modules/services/delete.php');
    } else permission_error();
  }
- else if ($inventory) {
+ else if ($fieldassets) {
    if ($pallow_create) {
-     include('./modules/services/inventory.php');
+     include('./modules/services/fieldassets.php');
    } else permission_error();
  }
  else if ($history) {
