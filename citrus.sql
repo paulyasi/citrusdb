@@ -857,7 +857,8 @@ CREATE TABLE `master_field_assets` (
     `id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , 
     `description` VARCHAR( 128 ) NOT NULL , 
     `status` ENUM( 'current', 'old' ) NOT NULL DEFAULT 'current', 
-    `weight` FLOAT NULL 
+    `weight` FLOAT NULL, 
+    `category` VARCHAR( 128 ) NOT NULL 
     ) ENGINE = MYISAM;  
 
 CREATE TABLE `field_asset_items` (

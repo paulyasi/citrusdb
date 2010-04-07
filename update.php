@@ -831,7 +831,8 @@ if ($base->input['submit'] == "Update")
 	    "`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , ".
 	    "`description` VARCHAR( 128 ) NOT NULL , ".
 	    "`status` ENUM( 'current', 'old' ) NOT NULL DEFAULT 'current', ".
-	    "`weight` FLOAT NULL ".
+	    "`weight` FLOAT NULL, ".
+	    "`category` VARCHAR( 128) NOT NULL ".
 	    ") ENGINE = MYISAM  ";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
