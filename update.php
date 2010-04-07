@@ -834,7 +834,9 @@ if ($base->input['submit'] == "Update")
 	    "`weight` FLOAT NULL , ".
 	    "PRIMARY KEY ( `id` ) ".
 	    ") ENGINE = MYISAM  ";
-
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
 	  $query = "CREATE TABLE `field_asset_items` ( ".
 	    "`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , ".
 	    "`master_field_assets_id` INT NOT NULL , ".
@@ -848,7 +850,9 @@ if ($base->input['submit'] == "Update")
 	    "`return_date` DATE NULL , ".
 	    "`return_notes` VARCHAR( 254 ) NULL ".
 	    ") ENGINE = MYISAM ";
-
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
 	  // set the version number in the database to 2.1
 	  $query = "UPDATE `settings` SET `version` = '2.1' ".
 	    "WHERE `id` =1 LIMIT 1";
@@ -883,7 +887,7 @@ else
 	<p>
 	Your database version: <b>$databaseversion</b><p>
 
-	This script will update it to version: <b>2.0.2</b></h3>";
+	This script will update it to version: <b>2.1</b></h3>";
 
 	echo "<p style=\"font-weight: bold;\">Upgrading version 1.3.0 or ".
 	  "older will reset the rerun dates ".
@@ -891,7 +895,7 @@ else
 	  "check for pending reruns before running this script on an active ".
 	  "system.</p>";
 
-	if ($databaseversion == "2.0.2") {
+	if ($databaseversion == "2.1") {
 		echo "<p><b>Nothing to update</b>";
 	} else {
 		echo "
