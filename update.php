@@ -836,7 +836,8 @@ if ($base->input['submit'] == "Update")
 	    ") ENGINE = MYISAM  ";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
-	  
+
+	  // add field_asset_items table
 	  $query = "CREATE TABLE `field_asset_items` ( ".
 	    "`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY , ".
 	    "`master_field_assets_id` INT NOT NULL , ".
@@ -850,6 +851,11 @@ if ($base->input['submit'] == "Update")
 	    "`return_date` DATE NULL , ".
 	    "`return_notes` VARCHAR( 254 ) NULL ".
 	    ") ENGINE = MYISAM ";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+
+	  // add default shipping group field
+	  $query = "ALTER TABLE `settings` ADD `default_shipping_group` VARCHAR( 32 ) NOT NULL DEFAULT 'shipping';";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 	  

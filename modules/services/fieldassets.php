@@ -129,6 +129,15 @@ if ($ship) {
     "WHERE id = '$item_id' LIMIT 1";
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
 
+  // get the name of the item being updated from master_field_assets
+  $query = "SELECT ma.description FROM field_asset_items fa ".
+    "LEFT JOIN master_field_assets ma ON ma.id = fa.master_field_assets_id ".
+    "WHERE fa.id = '$item_id'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+  $myresult = $result->fields;
+  $description = $myresult['description'];
+
   // get the default billing group
   $query = "SELECT default_billing_group FROM settings WHERE id = '1'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -138,7 +147,7 @@ if ($ship) {
   
   // leave a note to the billing group that the item was returned
   $status = "not done";
-  $description = "$l_returned $description, $l_trackingnumber: $tracking_number";
+  $description = "$l_returned $description $return_date $return_notes";
   create_ticket($DB, $user, $default_billing_group, $account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
   
 
@@ -169,12 +178,18 @@ if ($ship) {
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
   $myresult = $result->fields;
   $description = $myresult['description'];
+
+  // get the default shipping group
+  $query = "SELECT default_shipping_group FROM settings WHERE id = '1'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+  $myresult = $result->fields;
+  $default_shipping_group = $myresult['default_shipping_group'];  
   
   // leave a note that the item was assigned
-  $notify = "Nobody";
-  $status = "completed";
+  $status = "not done";
   $description = "$l_shipped $description, $l_trackingnumber: $tracking_number";
-  create_ticket($DB, $user, $notify, $account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
+  create_ticket($DB, $user, $default_shipping_group, $account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
   
   // redirect back to the service edit screen, now showing the assigned inventory listed there
   echo "assigned";

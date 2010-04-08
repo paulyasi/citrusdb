@@ -177,6 +177,7 @@ $l_defaultbillingid = "Default Billing ID";
 $l_defaultbillinggroup = "Default Billing Group";
 $l_defaultgroup = "Default Group";
 $l_defaultinvoicenote = "Default Invoice Note";
+$l_defaultshippinggroup = "Default Shipping Group";
 $l_delete = "Delete";
 $l_deleted = "Deleted";
 $l_deletegroup = "Delete Group";

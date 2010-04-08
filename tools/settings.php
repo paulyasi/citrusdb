@@ -21,6 +21,7 @@ if (!defined("INDEX_CITRUS")) {
 if (!isset($base->input['path_to_ccfile'])) { $base->input['path_to_ccfile'] = ""; }
 if (!isset($base->input['default_group'])) { $base->input['default_group'] = ""; }
 if (!isset($base->input['default_billing_group'])) { $base->input['default_billing_group'] = ""; }
+if (!isset($base->input['default_shipping_group'])) { $base->input['default_shipping_group'] = ""; }
 if (!isset($base->input['billingdate_rollover_time'])) { $base->input['billingdate_rollover_time'] = ""; } 
 if (!isset($base->input['billingweekend_sunday'])) { $base->input['billingweekend_sunday'] = ""; }
 if (!isset($base->input['billingweekend_monday'])) { $base->input['billingweekend_monday'] = ""; }
@@ -36,6 +37,7 @@ $submit = $base->input['submit'];
 $path_to_ccfile = $base->input['path_to_ccfile'];
 $default_group = $base->input['default_group'];
 $default_billing_group = $base->input['default_billing_group'];
+$default_shipping_group = $base->input['default_shipping_group'];
 $billingdate_rollover_time = $base->input['billingdate_rollover_time'];
 $billingweekend_sunday = $base->input['billingweekend_sunday'];
 $billingweekend_monday = $base->input['billingweekend_monday'];
@@ -64,6 +66,7 @@ if ($submit) {
     "SET path_to_ccfile = '$path_to_ccfile', ".
     "default_group = '$default_group', ".
     "default_billing_group = '$default_billing_group', ".
+    "default_shipping_group = '$default_shipping_group', ".
     "billingdate_rollover_time = '$billingdate_rollover_time', ".
     "billingweekend_sunday = '$billingweekend_sunday', ".
     "billingweekend_monday = '$billingweekend_monday', ".
@@ -91,6 +94,7 @@ $databaseversion = $myresult['version'];
 $path_to_ccfile = $myresult['path_to_ccfile'];
 $default_group = $myresult['default_group'];
 $default_billing_group = $myresult['default_billing_group'];
+$default_shipping_group = $myresult['default_shipping_group'];
 $billingdate_rollover_time = $myresult['billingdate_rollover_time'];
 $billingweekend_sunday = $myresult['billingweekend_sunday'];
 $billingweekend_monday = $myresult['billingweekend_monday'];
@@ -117,6 +121,9 @@ $l_softwareversion: $softwareversion<br>
         </td><tr><td>
 	<B>$l_defaultbillinggroup</B></td><td>
         <INPUT TYPE=\"TEXT\" NAME=\"default_billing_group\" VALUE=\"$default_billing_group\" SIZE=\"20\" MAXLENGTH=\"32\">
+        </td><tr><td>
+	<B>$l_defaultshippinggroup</B></td><td>
+        <INPUT TYPE=\"TEXT\" NAME=\"default_shipping_group\" VALUE=\"$default_shipping_group\" SIZE=\"20\" MAXLENGTH=\"32\">
         </td><tr><td>
 	<B>$l_carrierdependentcancelurl</B></td><td>
         <INPUT TYPE=\"TEXT\" NAME=\"dependent_cancel_url\" VALUE=\"$dependent_cancel_url\" SIZE=\"20\" MAXLENGTH=\"32\">

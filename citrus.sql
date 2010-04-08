@@ -770,6 +770,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `billingweekend_saturday` enum('y','n') NOT NULL default 'y',
   `dependent_cancel_url` VARCHAR( 255 ) NULL,
   `default_billing_group` VARCHAR( 32 ) NOT NULL DEFAULT 'billing',
+  `default_shipping_group` VARCHAR( 32 ) NOT NULL DEFAULT 'shipping',	
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
