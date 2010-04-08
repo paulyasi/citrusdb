@@ -22,6 +22,7 @@ if (!isset($base->input['link'])) { $base->input['link'] = ""; }
 if (!isset($base->input['tax'])) { $base->input['tax'] = ""; }
 if (!isset($base->input['options'])) { $base->input['options'] = ""; }
 if (!isset($base->input['editoptions'])) { $base->input['editoptions'] = ""; }
+if (!isset($base->input['fieldassets'])) { $base->input['fieldassets'] = ""; }
 
 $new = $base->input['new'];
 $link = $base->input['link'];
@@ -29,15 +30,16 @@ $edit = $base->input['edit'];
 $tax = $base->input['tax'];
 $options = $base->input['options'];
 $editoptions = $base->input['editoptions'];
+$fieldassets = $base->input['fieldassets'];
 
 
 // print links to all service functions
-echo "[ <a href=\"index.php?load=services&tooltype=module&type=tools\">$l_editservices</a> ]";
-echo "&nbsp;&nbsp;[ <a href=\"index.php?load=services&tooltype=module&new=on&type=tools\">$l_addnewservice</a> ]";
-echo "&nbsp; &nbsp; [ <a href=\"index.php?load=services&tooltype=module&link=on&type=tools\">$l_linkservices</a> ]";
-echo "&nbsp; &nbsp; [ <a href=\"index.php?load=services&tooltype=module&options=on&type=tools\">$l_optionstables</a> ]";
-echo "&nbsp; &nbsp; [ <a href=\"index.php?load=services&tooltype=module&tax=on&type=tools\">$l_taxes</a> ]";
-
+echo "<a href=\"index.php?load=services&tooltype=module&type=tools\">$l_editservices</a> | ";
+echo "<a href=\"index.php?load=services&tooltype=module&new=on&type=tools\">$l_addnewservice</a> | ";
+echo "<a href=\"index.php?load=services&tooltype=module&link=on&type=tools\">$l_linkservices</a> | ";
+echo "<a href=\"index.php?load=services&tooltype=module&options=on&type=tools\">$l_optionstables</a> | ";
+echo "<a href=\"index.php?load=services&tooltype=module&tax=on&type=tools\">$l_taxes</a> | ";
+echo "<a href=\"index.php?load=services&tooltype=module&fieldassets=on&type=tools\">$l_editfieldassets</a>";
 
 if ($new)
 {
@@ -62,6 +64,10 @@ else if ($options)
 else if ($editoptions)
 {
         include('editoptions.php');
+}
+else if ($fieldassets)
+{
+        include('fieldassets.php');
 }
 else
 {
