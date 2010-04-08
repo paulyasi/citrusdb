@@ -417,6 +417,7 @@ $l_response = "Response";
 $l_results_per_page = "Results Per Page";
 $l_returndate = "Return Date";
 $l_returndevice = "Return Device";
+$l_returned = "Returned";
 $l_returnnotes = "Return Notes";
 $l_returninventory = "Return Inventory";
 $l_revenuereport = "Revenue Report";

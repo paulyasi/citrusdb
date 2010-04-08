@@ -129,6 +129,19 @@ if ($ship) {
     "WHERE id = '$item_id' LIMIT 1";
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
 
+  // get the default billing group
+  $query = "SELECT default_billing_group FROM settings WHERE id = '1'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");
+  $myresult = $result->fields;
+  $default_billing_group = $myresult['default_billing_group'];  
+  
+  // leave a note to the billing group that the item was returned
+  $status = "not done";
+  $description = "$l_returned $description, $l_trackingnumber: $tracking_number";
+  create_ticket($DB, $user, $default_billing_group, $account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
+  
+
   // redirect back to the service edit screen, now showing the returned inventory listed there
   echo "returned";
   print "<script language=\"JavaScript\">window.location.href = ".
