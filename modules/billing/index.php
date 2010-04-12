@@ -330,13 +330,31 @@ while ($myresult = $result->FetchRow())
 	print "<td><b>$billing_orgname</b> &nbsp;<a
 href=\"$alternate_billing_id_url\">$billing_id</a></td><td>$billing_type</td><td>$mystatus</td>";
 
-if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) 
-{
-	echo "<td>
-	<a href=\"index.php?load=billing&type=module&rerun=on&billing_id=$billing_id\">[ $l_rerun ]</a> &nbsp;&nbsp;&nbsp; 
-	<a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">[
-	$l_invoicemaintenance ]</a> &nbsp;&nbsp;&nbsp; 
-	<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">[ $l_refundreport ]</a></td>";
+if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
+  echo "<td>".
+    "<a href=\"index.php?load=billing&type=module&rerun=on&billing_id=$billing_id\">$l_rerun</a> | ".
+    "<a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | ".
+    "<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">$l_refund</a>".
+    "</td><td>".
+    "<form name=status style=\"margin-bottom:0;\">".
+    "<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.status.menu.options[document.status.menu.selectedIndex].value;\" value=GO>".
+    "<option value=\"\">$l_changestatus</option>".
+    "<option value=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">- $l_turnoff</option>".
+    "<option value=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">- $l_waiting</optoin>".
+    "<option value=\"index.php?load=billing&type=module&authorized=on&billing_id=$billing_id\">- $l_authorized</option>".
+    "<option value=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">- $l_cancelwithfee</option>".
+    "<option value=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">- $l_collections</option>".    
+    "</select></form>".
+    "</td><td>".
+    "<form name=notice style=\"margin-bottom:0;\">".
+    "<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.notice.menu.options[document.notice.menu.selectedIndex].value;\" value=GO>".
+    "<option value=\"\">$l_invoiceornotice</option>".
+    "<option value=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">- $l_createinvoice</option> | ".
+    "<option value=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">- $l_cancel_notice</option> | ".
+    "<option value=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">- $l_shutoff_notice</option> | ".
+    "<option value=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">- $l_collections_notice</option>".
+    "</select></form>".
+    "</td>";
 }
 
 echo "<tr bgcolor=\"#ddddee\">";
