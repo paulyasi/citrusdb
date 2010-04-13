@@ -24,6 +24,7 @@ if (!isset($base->input['description'])) { $base->input['description'] = ""; }
 if (!isset($base->input['status'])) { $base->input['status'] = ""; }
 if (!isset($base->input['weight'])) { $base->input['weight'] = ""; }
 if (!isset($base->input['category'])) { $base->input['category'] = ""; }
+if (!isset($base->input['changestatus'])) { $base->input['changestatus'] = ""; }
 
 $submit = $base->input['submit'];
 $id = $base->input['id'];
@@ -31,6 +32,7 @@ $description = $base->input['description'];
 $status = $base->input['status'];
 $weight = $base->input['weight'];
 $category = $base->input['category'];
+$changestatus = $base->input['changestatus'];
 
 // check that the user has admin privileges
 $query = "SELECT * FROM user WHERE username='$user'";
@@ -55,12 +57,19 @@ if ($submit) {
 	[<a href=\"index.php?load=services&tooltype=module&type=tools\">$l_done</a>]";
 }
 
+if ($changestatus) {
+  // then we update the status of that id
+  $query = "UPDATE master_field_assets SET status = '$changestatus' WHERE id = '$id'";
+    
+  $result = $DB->Execute($query) or die ("$query $l_queryfailed");  
+}
+
 $query = "SELECT * FROM master_field_assets";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 
 echo '<table cellpadding=5 cellspacing=1><tr bgcolor="#eeeeee">';
-echo "<td><b>$l_id</b></td> <td><b>$l_description</b></td> <td><b>$l_status</b></td> <td><b>$l_weight</b></td><td><b>$l_category</b></td></tr>";
+echo "<td><b>$l_id</b></td> <td><b>$l_description</b></td> <td><b>$l_status</b></td> <td><b>$l_weight</b></td><td><b>$l_category</b></td><td><b>$l_changestatus</b></td></tr>";
 
 while ($myresult = $result->FetchRow()) {
   $id = $myresult['id'];
@@ -68,8 +77,9 @@ while ($myresult = $result->FetchRow()) {
   $status = $myresult['status'];
   $weight = $myresult['weight'];
   $category = $myresult['category'];
-  print "<tr bgcolor=\"#eeeeee\"><td>$id</td><td>$desc</td><td>$status</td><td>$weight</td><td>$category</td></tr>";
-  //  print "<td><a href=\"index.php?load=services&tooltype=module&type=tools&tax=on&delete=on&id=$id&delete=Delete\">$l_delete</a></td></tr>\n";
+  print "<tr bgcolor=\"#eeeeee\"><td>$id</td><td>$desc</td><td>$status</td><td>$weight</td><td>$category</td>";
+  print "<td><a href=\"index.php?load=services&tooltype=module&type=tools&fieldassets=on&changestatus=old&id=$id\">old</a> | ".
+    "<a href=\"index.php?load=services&tooltype=module&type=tools&fieldassets=on&changestatus=current&id=$id\">current</a></td></tr>\n";
  }
 
 echo "</table><p>
