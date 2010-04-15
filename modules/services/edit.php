@@ -177,6 +177,20 @@ if ($save) {
     "\"index.php?load=services&type=module\";</script>";
 
 } else if ($delete) {
+  // figure out the signup anniversary removal date
+  $query = "SELECT signup_date FROM customer 
+		WHERE account_number = '$account_number'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $result = $DB->Execute($query) or die ("$l_queryfailed");
+  $myresult = $result->fields;
+  $signup_date = $myresult['signup_date'];
+  list($myyear, $mymonth, $myday) = split('-', $signup_date);
+  $removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
+  $today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
+  if ($removal_date <= $today) {
+    $removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
+  }
+	
   // prompt them to ask if they are sure they want to delete the service
   print "<br><br>";
   print "<h4>$l_areyousuredelete: $servicedescription</h4>";
@@ -192,7 +206,7 @@ if ($save) {
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=delete value=on>";
-  print "<input name=deletenow type=submit value=\" $l_yes, automatic removal\" ".
+  print "<input name=deletenow type=submit value=\" $l_deleteservice_removeuser $removal_date\" ".
     "class=smallbutton></form></td>";
 
   // if they hit yes without automatic removal, this will sent them into the delete.php file
@@ -205,7 +219,7 @@ if ($save) {
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=delete value=on>";
-  print "<input name=deletenoauto type=submit value=\" $l_yes, no removal \" ".
+  print "<input name=deletenoauto type=submit value=\" $l_deleteservice_activeuser \" ".
     "class=smallbutton></form></td>"; 
   
   // if they hit no, send them back to the service edit screen
