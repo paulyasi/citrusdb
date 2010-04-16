@@ -256,7 +256,7 @@ while ($myresult = $result->FetchRow()) {
 	// CREATE TICKET TO the activate_notify user if there is one
 	if ($activate_notify) {
 	  $notify = "$activate_notify";
-	  $description = "$newline";
+	  $description = "ENABLE $category $customer_name $service_description";
 	  $status = "not done";
 	  create_ticket($DB, $user, $notify, $account_number, $status,
 			$description, NULL, NULL, NULL, $user_services_id);
