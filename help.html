@@ -74,9 +74,10 @@ lang="en" xml:lang="en">
 <li><a href="#sec-3.10.1">3.10.1 Linking taxes</a></li>
 </ul>
 </li>
-<li><a href="#sec-3.11">3.11 Searches</a></li>
-<li><a href="#sec-3.12">3.12 Attribute/Option URL Links</a></li>
-<li><a href="#sec-3.13">3.13 Setup Finished</a></li>
+<li><a href="#sec-3.11">3.11 Field Assets</a></li>
+<li><a href="#sec-3.12">3.12 Searches</a></li>
+<li><a href="#sec-3.13">3.13 Attribute/Option URL Links</a></li>
+<li><a href="#sec-3.14">3.14 Setup Finished</a></li>
 </ul>
 </li>
 
@@ -671,6 +672,13 @@ dependent service is in a bad billing status, like past due, turned
 off, or canceled with fees owed.
 </p>
 <p>
+The Shipping Group is a group that you will need to create if you
+are going to use the Ship Field Asset feature.  Ship Field Assets
+lets you associate a field asset like a CPE or other device with
+that customer's service.  The shipping group will get a note when a
+field asset is setup to be shipped.
+</p>
+<p>
 The carrier dependent cancel url is for third party carrier
 dependent services.  This can link to an internal web form or other
 form when a carrier dependent service is canceled to notify the
@@ -1100,9 +1108,48 @@ tax exempt for that tax type.
 
 </div>
 
+
 <div id="outline-container-3.11" class="outline-3">
-<h3 id="sec-3.11">3.11 Searches</h3>
+<h3 id="sec-3.11">3.11 Field Assets</h3>
 <div id="text-3.11">
+
+<p>Field assets refer to devices out in the field like customer
+premises equipment (CPE) or other devices you want to track that
+are associated with a service.
+</p>
+<p>
+To add Field Assets to a service first you must setup what Field
+Assets types are available for each category of service.  Open the
+edit services tool and click on Edit Field Asset Types.  Here you
+can enter the device description, choose the status of current for
+devices that
+you are currently shipping to your customers.  If you have devices
+in the field but do not ship them to customers anymore you can
+change the device to the old status using this same edit screen.
+You can enter the weight of the device here which is not used yet,
+but may  be used some day to calculate a shipping fee.  Finally
+choose what service category that this device belongs to.  
+</p>
+<p>
+Now that you have added your Field Assets when you edit a
+customers' service you will see a choice called Ship Field Asset
+under the service attributes.  If you want to track a field asset
+shipment you can then choose the type of field asset you are
+shipping and then enter the device details and shipping
+information.  This will now associate this device with that service
+record and will show you that device on the service edit screen.
+</p>
+<p>
+If one returns the field asset device you can edit the customer's
+service record and click on Return Device and enter information
+about why the device has been returned.
+</p></div>
+
+</div>
+
+<div id="outline-container-3.12" class="outline-3">
+<h3 id="sec-3.12">3.12 Searches</h3>
+<div id="text-3.12">
 
 <p>CitrusDB comes with a number of searches pre-installed in the
 searches table.  Search fields are edited in each module's
@@ -1143,9 +1190,9 @@ s2, s3, s4, or s5.
 
 </div>
 
-<div id="outline-container-3.12" class="outline-3">
-<h3 id="sec-3.12">3.12 Attribute/Option URL Links</h3>
-<div id="text-3.12">
+<div id="outline-container-3.13" class="outline-3">
+<h3 id="sec-3.13">3.13 Attribute/Option URL Links</h3>
+<div id="text-3.13">
 
 <p>You can add a link to the right of the service attribute field that
 will allow users to query a web address with that service
@@ -1173,9 +1220,9 @@ put into the URL.
 
 </div>
 
-<div id="outline-container-3.13" class="outline-3">
-<h3 id="sec-3.13">3.13 Setup Finished</h3>
-<div id="text-3.13">
+<div id="outline-container-3.14" class="outline-3">
+<h3 id="sec-3.14">3.14 Setup Finished</h3>
+<div id="text-3.14">
 
 <p>You have now completed the setup of CitrusDB to work with your
 organization.  You can now begin adding customers and billing them
@@ -1184,6 +1231,7 @@ for services!
 </div>
 
 </div>
+
 
 <hr>
 
