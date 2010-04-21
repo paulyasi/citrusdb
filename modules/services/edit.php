@@ -354,7 +354,7 @@ if ($save) {
 	    // replace the s1 and s2 place holders with the actual variables
 	    $s1 = $myresult[$i];
 	    $s2 = $myresult[$j];
-	    $d1 = $myresult[3]; // the primary service detail/first attribute
+	    $d1 = $myresult[2]; // the primary service detail/first attribute
 	    $url = $urlmyresult['url'];
 	    $urlname = $urlmyresult['urlname'];
 	    $url = str_replace("%s1%", $s1, $url);
