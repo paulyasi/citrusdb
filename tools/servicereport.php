@@ -2,7 +2,7 @@
 <body bgcolor="#ffffff">
 <?php
 echo "<h3>$l_servicereport: ";
-// Copyright (C) 2008  Paul Yasi (paul at citrusdb dot org)
+// Copyright (C) 2008-2010  Paul Yasi (paul at citrusdb dot org)
 // Read the README file for more information
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
@@ -223,7 +223,7 @@ echo "<FORM ACTION=\"index.php\" METHOD=\"GET\"><table>
 <select name=\"service_id\">";
 
 // get the list of services from the table
-$query = "SELECT * FROM master_services WHERE frequency > 0 ORDER BY service_description";
+$query = "SELECT * FROM master_services ORDER BY service_description";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 
