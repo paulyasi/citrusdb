@@ -29,7 +29,7 @@ if (!isset($base->input['showall'])) { $base->input['showall'] = ""; }
 if (!isset($base->input['billing_id'])) { $base->input['billing_id'] = ""; }
 if (!isset($base->input['create_billing'])) {
   $base->input['create_billing'] = ""; }
-
+if (!isset($base->input['detail1'])) { $base->input['detail1'] = ""; }
 
 // GET Variables
 $addnow = $base->input['addnow'];
@@ -41,6 +41,7 @@ $fieldlist = $base->input['fieldlist'];
 $showall = $base->input['showall'];
 $billing_id = $base->input['billing_id'];
 $create_billing = $base->input['create_billing'];
+$detail1 = $base->input['detail1'];
 
 //$DB->debug = true;
 
@@ -142,6 +143,10 @@ if ($addnow) {
       // Added the default value from the database schema
       // so we can use it when needed - by RTC
       $default_value = $v->default_value;
+      if ($detail1 <> '' AND $i == 2) {
+	// if the first attbibute has a prefilled in value, use that as default value
+	$default_value = $detail1;
+      }
 
       //echo "Default: $default_value<br>";
       
@@ -156,6 +161,7 @@ if ($addnow) {
 	  echo "</select></td><tr>\n";
 
 	} else {
+	  // print fields for each attributes
 	  echo "<td bgcolor=\"ccccdd\"width=180>".
 	    "<b>$fieldname</b></td>".
 	    "<td bgcolor=\"#ddddee\">".
