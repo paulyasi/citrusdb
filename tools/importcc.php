@@ -85,7 +85,7 @@ if ($submit) {
 			billing_amount, status, payment_type, avs_response)
 			VALUES(CURRENT_DATE,'$transaction_code','$billing_id',
 			'$cardnumber','$cardexp','$response_code','$amount',
-			'credit','$billingmethod','$avs_response')";
+			'credit','creditcard','$avs_response')";
 	$result = $DB->Execute($query) or die ("authorized payment history insert $l_queryfailed $query");
       } else { 
 	// else it's a declined transaction
@@ -95,7 +95,7 @@ if ($submit) {
 			billing_amount, status, payment_type, avs_response)
 			VALUES(CURRENT_DATE,'$transaction_code','$billing_id',
 			'$cardnumber','$cardexp','$response_code','$amount',
-			'declined','$billingmethod','$avs_response')";
+			'declined','creditcard','$avs_response')";
 	$result = $DB->Execute($query) 
 	  or die ("declined payment history insert $l_queryfailed $query");
 	
@@ -133,7 +133,7 @@ if ($submit) {
 			status, payment_type,avs_response) 
 			VALUES(CURRENT_DATE,'$transaction_code','$billing_id',
 			'$cardnumber','$cardexp','$response_code','$amount',
-			'authorized','$billingmethod','$avs_response')";
+			'authorized','creditcard','$avs_response')";
       $result = $DB->Execute($query) or die ("insert payment history $l_queryfailed $query");
 
       // get the payment_history_id that is associated with the billing_details
