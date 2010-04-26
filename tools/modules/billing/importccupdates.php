@@ -82,7 +82,7 @@ if ($submit) {
 	      $asciiarmor = TRUE;
 
 	      // read in the line of asciiarmored data
-	      $armordate .= "$line[0]\n";
+	      $armordata .= "$line[0]\n";
 
 	      // when we reach the end of the PGP message insert the data into the billing table
 	      if ($line[0] == "-----END PGP MESSAGE-----") {
