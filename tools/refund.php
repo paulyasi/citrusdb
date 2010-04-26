@@ -5,7 +5,8 @@ echo "<h3>$l_refundreport</h3>
 
 [ <a href=\"index.php?load=billing&type=module\">$l_back</a> ]";
 
-// Copyright (C) 2007  Paul Yasi <paul@citrusdb.org>
+// Copyright (C) 2007-2010  Paul Yasi (paul at citrusdb.org)
+// Includes code contributed by Eric Cho
 // read the README file for more information
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
@@ -43,24 +44,34 @@ $method = $base->input['method'];
 
 
 if ($refundnow) {
-	$query = "UPDATE billing_details SET 
+  // reset the refund if amount entered is zero
+  if ($refundamount == 0) {
+    $query = "UPDATE billing_details SET
+        refund_amount = 0.00,
+        refund_date = null
+        WHERE id = $detailid";
+    $result = $DB->Execute($query) or die ("$query Query Failed");  
+  } else {
+    $query = "UPDATE billing_details SET 
 	refund_amount = '$refundamount',
 	refund_date = CURRENT_DATE 
 	WHERE id = $detailid";
-	$result = $DB->Execute($query) or die ("$query Query Failed");
-
-	// mark the refunds as refunded
-	if ($method <> 'creditcard') {
-	$query ="UPDATE billing_details SET refunded = 'y' ".
-	  "WHERE refunded <> 'y' AND refund_amount > 0 ". 
-	  "AND id = $detailid";		
-	$detailresult = $DB->Execute($query) or die ("$query $l_queryfailed");	
-	
-	print "<h2>$l_method_warning</h2>";
-
-	}
-
-        print "<h3>$l_changessaved<h3>";
+    $result = $DB->Execute($query) or die ("$query Query Failed");
+  }
+  
+  // if billing method is not credit card they must be done manually
+  // just mark the amount as refunded in the database
+  if ($method <> 'creditcard') {
+    $query ="UPDATE billing_details SET refunded = 'y' ".
+      "WHERE refunded <> 'y' AND refund_amount > 0 ". 
+      "AND id = $detailid";		
+    $detailresult = $DB->Execute($query) or die ("$query $l_queryfailed");	
+    
+    print "<h2 style=\"color: red;\">$l_method_warning</h2>";
+    
+  }
+  
+  print "<h3>$l_changessaved<h3>";
 }
 else if ($refund) {
 	$query = "SELECT d.id d_id, d.billing_id d_billing_id, 
