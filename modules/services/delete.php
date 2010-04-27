@@ -53,7 +53,7 @@ if ($deletetoday) {
   // delete the service today, not on billing anniversary
   $today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
   
-  delete_service($userserviceid, 'removed', '$today');
+  delete_service($userserviceid, 'removed', $today);
 
   // add to log that the service was removed
   log_activity($DB,$user,$account_number,'delete','service',$userserviceid,'success');	  

@@ -6,7 +6,7 @@ echo "<h3>$l_refundreport</h3>
 [ <a href=\"index.php?load=billing&type=module\">$l_back</a> ]";
 
 // Copyright (C) 2007-2010  Paul Yasi (paul at citrusdb.org)
-// Includes code contributed by Eric Cho
+// Includes code contributed by Eric Cho (twitter.com/myfoxfree)
 // read the README file for more information
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
