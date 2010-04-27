@@ -195,7 +195,7 @@ if ($save) {
   print "<br><br>";
   print "<h4>$l_areyousuredelete: $servicedescription</h4>";
   print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
-    "<td align=right width=360>";
+    "<td align=right>";
 
   // if they hit yes, this will sent them into the delete.php file
   // and remove the service
@@ -209,11 +209,20 @@ if ($save) {
   print "<input name=deletenow type=submit value=\" $l_deleteservice_removeuser $removal_date\" ".
     "class=smallbutton></form></td>";
 
+  print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\">".
+    "<input type=hidden name=optionstable value=$optionstable>";
+  print "<input type=hidden name=userserviceid value=$userserviceid>";
+  print "<input type=hidden name=load value=services>";
+  print "<input type=hidden name=type value=module>";
+  print "<input type=hidden name=delete value=on>";
+  print "<input name=deletetoday type=submit value=\" $l_deleteservice_removetoday \" ".
+    "class=smallbutton></form></td>";   
+  
   // if they hit yes without automatic removal, this will sent them into the delete.php file
   // and remove the service
 
   
-  print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\">".
+  print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\">".
     "<input type=hidden name=optionstable value=$optionstable>";
   print "<input type=hidden name=userserviceid value=$userserviceid>";
   print "<input type=hidden name=load value=services>";
@@ -224,7 +233,7 @@ if ($save) {
   
   // if they hit no, send them back to the service edit screen
 
-  print "<td align=left width=360><form style=\"margin-bottom:0;\" ".
+  print "<td align=left><form style=\"margin-bottom:0;\" ".
     "action=\"index.php\">";
   print "<input name=done type=submit value=\" $l_no \" class=smallbutton>";
   print "<input type=hidden name=load value=services>";        

@@ -21,6 +21,7 @@ $account_number = $_SESSION['account_number'];
 $userserviceid = $base->input['userserviceid'];
 $deletenow = $base->input['deletenow'];
 $deletenoauto = $base->input['deletenoauto'];
+$deletetoday = $base->input['deletetoday'];
 $undeletenow = $base->input['undeletenow'];
 
 if ($deletenow) {
@@ -45,6 +46,19 @@ if ($deletenow) {
 	log_activity($DB,$user,$account_number,'delete','service',$userserviceid,'success');	
 	
 	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
+}
+
+
+if ($deletetoday) {
+  // delete the service today, not on billing anniversary
+  $today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
+  
+  delete_service($userserviceid, 'removed', '$today');
+
+  // add to log that the service was removed
+  log_activity($DB,$user,$account_number,'delete','service',$userserviceid,'success');	  
+  
+  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
 }
 
 if ($deletenoauto) {

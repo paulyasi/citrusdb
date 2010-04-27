@@ -184,6 +184,7 @@ $l_deleted = "Deleted";
 $l_deletegroup = "Delete Group";
 $l_deleteservice = "Delete Service";
 $l_deleteservice_removeuser = "Delete service, remove user on";
+$l_deleteservice_removetoday = "Delete service, remove user today";
 $l_deleteservice_activeuser = "Delete service, user stays active";
 $l_deleteuser = "Delete User";
 $l_description = "Description";
