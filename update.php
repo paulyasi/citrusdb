@@ -873,6 +873,24 @@ if ($base->input['submit'] == "Update")
 	    ") ENGINE = MYISAM ";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
+
+	  $query = "CREATE TABLE `citrus-gpg`.`vendor_history` ( ".
+	    "`id` INT NOT NULL AUTO_INCREMENT ,".
+	    "`datetime` DATETIME NOT NULL ,".
+	    "`entry_type` VARCHAR( 32 ) NOT NULL ,".
+	    "`entry_date` DATE NOT NULL ,".
+	    "`vendor_name` VARCHAR( 64 ) NOT NULL ,".
+	    "`vendor_bill_id` VARCHAR( 128 ) NULL ,".
+	    "`vendor_cost` DECIMAL( 9, 2 ) NULL ,".
+	    "`vendor_tax` DECIMAL( 9, 2 ) NULL ,".
+	    "`vendor_item_id` VARCHAR( 128 ) NULL ,".
+	    "`user_services_id` INT NOT NULL ,".
+	    "`account_status` VARCHAR( 64 ) NULL ,".
+	    "`billed_amount` DECIMAL( 9, 2 ) NULL ,".
+	    "PRIMARY KEY ( `id` )".
+	    ") ENGINE = MYISAM ";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
 	  
 	  // set the version number in the database to 2.1.1
 	  $query = "UPDATE `settings` SET `version` = '2.1.1' ".
