@@ -875,3 +875,7 @@ CREATE TABLE `field_asset_items` (
     `return_date` DATE NULL , 
     `return_notes` VARCHAR( 254 ) NULL
     ) ENGINE = MYISAM ;
+
+CREATE TABLE `vendor_names` (
+    `name` VARCHAR( 64 ) NOT NULL
+    ) ENGINE = MYISAM; 

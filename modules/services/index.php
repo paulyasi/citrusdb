@@ -16,11 +16,13 @@ if (!defined("INDEX_CITRUS")) {
 }
 
 if (!isset($base->input['history'])) { $base->input['history'] = ""; }
+if (!isset($base->input['vendor'])) { $base->input['vendor'] = ""; }
 if (!isset($base->input['fieldassets'])) { $base->input['fieldassets'] = ""; }
 if (!isset($base->input['category'])) { $base->input['category'] = ""; }
 
 // GET Variables
 $history = $base->input['history'];
+$vendor = $base->input['vendor'];
 $fieldassets = $base->input['fieldassets'];
 $category = $base->input['category'];
 
@@ -50,6 +52,11 @@ if ($edit) {
  else if ($history) {
    if ($pallow_view) {
      include('./modules/services/history.php');
+   }
+ }
+ else if ($vendor) {
+   if ($pallow_view) {
+     include('./modules/services/vendor_history.php');
    }
  }
  else if ($pallow_view) {

@@ -254,7 +254,16 @@ if ($save) {
   
   
   print "<a href=\"index.php?load=services&type=module\">".
-    "[ $l_undochanges ]</a>";
+    "$l_undochanges</a>";
+
+  // print the link to vendor history if user is a manager/admin
+  $query = "SELECT * FROM user WHERE username='$user'";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $userresult = $DB->Execute($query) or die ("$l_queryfailed");
+  $myuserresult = $userresult->fields;
+  if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
+    echo " | <a href=\"index.php?load=services&type=module&vendor=on&userserviceid=$userserviceid\">$l_vendor_history</a>";
+  }      
   
   // get the organization_id and options_table and name for this service
   $query = "SELECT ms.organization_id, ms.options_table, ".
