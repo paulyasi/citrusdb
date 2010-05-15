@@ -43,7 +43,7 @@ $num_rows = $supportresult->RowCount();
 
 $nummessages = 0;
 
-$nummessages = $nummessaes + $num_rows;
+$nummessages = $nummessages + $num_rows;
 
 // query the customer_history for messages sent to 
 // groups the user belongs to

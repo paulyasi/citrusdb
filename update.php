@@ -877,18 +877,26 @@ if ($base->input['submit'] == "Update")
 	  $query = "CREATE TABLE `citrus-gpg`.`vendor_history` ( ".
 	    "`id` INT NOT NULL AUTO_INCREMENT ,".
 	    "`datetime` DATETIME NOT NULL ,".
-	    "`entry_type` VARCHAR( 32 ) NOT NULL ,".
+	    "`entry_type` ENUM( 'order','change','recurring bill','onetime bill','disconnect' ) NOT NULL ,".
 	    "`entry_date` DATE NOT NULL ,".
 	    "`vendor_name` VARCHAR( 64 ) NOT NULL ,".
 	    "`vendor_bill_id` VARCHAR( 128 ) NULL ,".
 	    "`vendor_cost` DECIMAL( 9, 2 ) NULL ,".
 	    "`vendor_tax` DECIMAL( 9, 2 ) NULL ,".
 	    "`vendor_item_id` VARCHAR( 128 ) NULL ,".
+	    "`vendor_invoice_number` VARCHAR( 64 ) NULL ,".
+	    "`vendor_from_date` VARCHAR( 32 ) NULL ,".
+	    "`vendor_to_date` VARCHAR( 32 ) NULL ,".
 	    "`user_services_id` INT NOT NULL ,".
 	    "`account_status` VARCHAR( 64 ) NULL ,".
 	    "`billed_amount` DECIMAL( 9, 2 ) NULL ,".
 	    "PRIMARY KEY ( `id` )".
 	    ") ENGINE = MYISAM ";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+
+	  // index the notify column of customer_history for speed up
+	  $query = " ALTER TABLE `customer_history` ADD INDEX ( `notify` )  ";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 	  
