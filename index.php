@@ -30,6 +30,8 @@ include('./include/billing.inc.php');
 include('./include/support.inc.php');
 include('./include/services.inc.php');
 
+//$DB->debug = true;
+
 // Get our user class
 include('./include/user.class.php');
 $u = new user();

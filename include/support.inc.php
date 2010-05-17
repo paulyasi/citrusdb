@@ -152,7 +152,6 @@ function service_message($service_notify_type, $account_number,
   $activate_notify = $myresult['activate_notify']; // added
   $modify_notify = $myresult['modify_notify'];     // change,undelete
   $shutoff_notify = $myresult['shutoff_notify'];   // turnoff, removed, canceled
-  $billing_notify = $myresult['billing_notify'];   // turnoff, removed, canceled
   
   // set a different notify and description depending on service_notify_type
 

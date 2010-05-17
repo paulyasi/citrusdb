@@ -409,6 +409,8 @@ function getPagerData($numHits, $limit, $page)
 function log_activity($DB,$user,$account_number,$activity_type,$record_type,
 		      $record_id,$result)
 {
+  global $sys_dbtype;
+  
   // make an entry into the activity_log table regarding the activity passed
   // to this function
   $datetime = date("Y-m-d H:i:s");

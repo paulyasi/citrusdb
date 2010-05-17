@@ -1,5 +1,12 @@
 <?php
 
+// define variables used in notices if undefined
+if (!isset($payment_due_date)) { $payment_due_date = ""; }
+if (!isset($total_owed)) { $total_owed = ""; }
+if (!isset($cancel_date)) { $cancel_date = ""; }
+if (!isset($turnoff_date)) { $turnoff_date = ""; }
+if (!isset($phone_billing)) { $phone_billing = ""; }
+
 // US-English translation
 
 

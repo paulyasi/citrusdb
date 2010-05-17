@@ -77,6 +77,8 @@ if ($edit) {
     $result = $DB->Execute($query) or die ("$l_queryfailed");
     $myresult = $result->fields;
     $cancel_reason = $myresult['reason'];
+  } else {
+    $cancel_reason = "";
   }
   
   /*************************************

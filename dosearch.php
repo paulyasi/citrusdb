@@ -1,5 +1,5 @@
 <?php
-// Copyright (C) 2002-2008  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2002-2010  Paul Yasi (paul at citrusdb.org)
 // Read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -139,9 +139,11 @@ echo "&nbsp;&nbsp;&nbsp;&nbsp; <a href=\"index.php?load=dosearch&type=fs&id=$id&
 echo "<a href=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=20&pagetype=list\">$l_listview</a><br>";
 
 while ($myresult = $result->FetchRow()) {
-  // initialize the acnum and serviceid
+  // initialize variables;
   $acnum = 0;
   $serviceid = 0;
+  $id = 0;
+  $removed = 0;
   
   // get the account_number or service id in the search result
   foreach ($myresult as $key => $value) {
@@ -163,7 +165,7 @@ while ($myresult = $result->FetchRow()) {
   if ($removed == 'y') {
     $rowstyle = "background-color: eee; color: aaa;";
   } else {
-    $rowstyle = "background-color: dde; $color: black;";
+    $rowstyle = "background-color: dde; color: black;";
   }
   
   if ($num_of_results == 1) {

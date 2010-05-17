@@ -101,6 +101,7 @@ if ($pending) {
       }
 
       // print the heading for each group listing
+      if (!isset($previousnotify)) { $previousnotify = ""; }
       if ($previousnotify <> $notify) {
 	print "<p><td bgcolor=\"#ffffff\" width=100% colspan=8> ".
 	  "<b style=\"font-size: 14pt;\">$l_notesforgroups: $notify</b></td>";

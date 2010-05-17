@@ -899,6 +899,11 @@ if ($base->input['submit'] == "Update")
 	  $query = " ALTER TABLE `customer_history` ADD INDEX ( `notify` )  ";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
+
+	  // allow the next_billing_date to be set NULL
+	  $query = " ALTER TABLE `billing` CHANGE `next_billing_date` `next_billing_date` DATE NULL  ";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
 	  
 	  // set the version number in the database to 2.1.1
 	  $query = "UPDATE `settings` SET `version` = '2.1.1' ".

@@ -28,6 +28,14 @@ if (!isset($base->input['waiting'])) { $base->input['waiting'] = ""; }
 if (!isset($base->input['authorized'])) { $base->input['authorized'] = ""; }
 if (!isset($base->input['asciiarmor'])) { $base->input['asciiarmor'] = ""; }
 
+if (!isset($base->input['createinvoice'])) { $base->input['createinvoice'] = ""; }
+if (!isset($base->input['cancelnotice'])) { $base->input['cancelnotice'] = ""; }
+if (!isset($base->input['shutoffnotice'])) { $base->input['shutoffnotice'] = ""; }
+if (!isset($base->input['collectionsnotice'])) { $base->input['collectionsnotice'] = ""; }
+if (!isset($base->input['nsf'])) { $base->input['nsf'] = ""; }
+if (!isset($base->input['receipt'])) { $base->input['receipt'] = ""; }
+if (!isset($base->input['deletepayment'])) { $base->input['deletepayment'] = ""; }
+
 
 // GET Variables
 $save = $base->input['save'];
@@ -39,6 +47,7 @@ $collections = $base->input['collections'];
 $waiting = $base->input['waiting'];
 $authorized = $base->input['authorized'];
 $asciiarmor = $base->input['asciiarmor'];
+
 $createinvoice = $base->input['createinvoice'];
 $cancelnotice = $base->input['cancelnotice'];
 $shutoffnotice = $base->input['shutoffnotice'];

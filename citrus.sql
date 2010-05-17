@@ -50,7 +50,7 @@ CREATE TABLE `billing` (
   `creditcard_expire` smallint(4) unsigned zerofill default NULL,
   `billing_status` int(11) NOT NULL default '0',
   `disable_billing` enum('y','n') default NULL,
-  `next_billing_date` date NOT NULL default '0000-00-00',
+  `next_billing_date` date default NULL,
   `prev_billing_date` date default NULL,
   `from_date` date default NULL,
   `to_date` date default NULL,
