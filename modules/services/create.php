@@ -142,10 +142,13 @@ if ($addnow) {
 
       // Added the default value from the database schema
       // so we can use it when needed - by RTC
-      $default_value = $v->default_value;
+      //$default_value = $v->default_value;
+      // removed the above line since it appears default_value is not returned
       if ($detail1 <> '' AND $i == 2) {
 	// if the first attbibute has a prefilled in value, use that as default value
 	$default_value = $detail1;
+      } else {
+	$default_value = '';
       }
 
       //echo "Default: $default_value<br>";

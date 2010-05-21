@@ -16,6 +16,7 @@ if (!defined("INDEX_CITRUS")) {
 }
 
 if (!isset($base->input['save'])) { $base->input['save'] = ""; }
+if (!isset($base->input['billingaddress'])) { $base->input['billingaddress'] = ""; }
 
 if ($base->input['billingaddress']) {
 	
