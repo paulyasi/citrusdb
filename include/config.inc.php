@@ -10,7 +10,7 @@ $sys_dbuser = 'citrus';
 $sys_dbpasswd = 'citrus';
 $sys_dbname = 'citrus';
 $sys_dbtype = 'mysql';
-$path_to_citrus = '/xampp/htdocs/citrusdb/trunk';
+$path_to_citrus = '/home/pyasi/Projects/citrus_project/citrusdb/';
 $hidden_hash_var='youmustchangethis';
 $lang = './include/local/us-english.inc.php';
 
@@ -20,8 +20,8 @@ $gpg_decrypt = "/usr/bin/gpg --homedir /home/www-data/.gnupg --passphrase-fd 0 -
 $gpg_sign = "/usr/bin/gpg --homedir /home/www-data/.gnupg --passphrase-fd 0 --yes --no-tty --clearsign -u 'CitrusDB'";
 
 // use these url prefixes to redirect between the ssl carddata and regular pages
-$url_prefix = "http://localhost/citrusdb/trunk/";
-$ssl_url_prefix = "https://localhost/citrusdb/trunk/";
+$url_prefix = "http://localhost/~pyasi/citrus_project/citrusdb/";
+$ssl_url_prefix = "https://localhost/~pyasi/citrus_project/citrusdb/";
 
 // jabber/xmpp server information
 $xmpp_server = "";
