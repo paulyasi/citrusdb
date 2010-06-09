@@ -154,7 +154,7 @@ while ($myresult = $result->FetchRow())
 
 // print each item in the price and count arrays
 foreach($price_array as $master_service_id_value => $total_billed) {
-  $query = "SELECT ms.service_description, ms.pricerate, ms.category FROM master_services ms ".
+  $query = "SELECT ms.service_description, ms.pricerate, ms.category, ms.frequency FROM master_services ms ".
     "WHERE ms.id = '$master_service_id_value'";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $serviceresult = $DB->Execute($query) or die ("Services Query Failed");
@@ -165,7 +165,13 @@ foreach($price_array as $master_service_id_value => $total_billed) {
   while ($myserviceresult = $serviceresult->FetchRow()) {
     $service_description = $myserviceresult['service_description'];
     $rate = $myserviceresult['pricerate'];
+    $frequency = $myserviceresult['frequency'];
     $category = $myserviceresult['category'];
+
+    // add to the displayed paid subscription count total, do not count free or on time services as a subscription
+    if (($rate > 0) AND ($frequency > 0)) {
+      $paidsubscriptions = $paidsubscriptions + $count;
+    }       
 
     echo "<td>$service_description</td><td>$category</td><td>$count</td><td>$rate</td><td>$total_billed</td><tr>";
     $newline = "$service_description,$category,$count,$rate,$total_billed\n";
