@@ -1,8 +1,8 @@
 <?php   
 /*----------------------------------------------------------------------------*/
 // Copyright (C) 2009  Paul Yasi (citrusdb.org)
-// This script will email a receipt to customers who have the automatic receipt
-// field marked Yes in their billing record
+// This script will send einvoices to customers who have the einvoice
+// as their chosen billing type
 //
 // This script should be put into the cron to be run nightly
 //
