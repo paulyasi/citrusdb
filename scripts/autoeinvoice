@@ -1,10 +1,14 @@
+#!/usr/bin/php
 <?php   
 /*----------------------------------------------------------------------------*/
 // Copyright (C) 2009  Paul Yasi (citrusdb.org)
 // This script will send einvoices to customers who have the einvoice
-// as their chosen billing type
+// as their chosen billing type on the current date.  It is set to
+// only send to those in the first organization specified.  If you have multiple
+// brand organizations in your configuration you will need to duplicate this
+// script and set the organization_id variable for those also.
 //
-// This script should be put into the cron to be run nightly
+// This script should be copied to your citrusdb root folder and put into the cron to be run nightly
 //
 /*----------------------------------------------------------------------------*/
 
@@ -39,6 +43,7 @@ $numservices = add_servicedetails($DB, $billingdate, NULL,'einvoice', $batchid, 
 echo "taxes: $numtaxes, services: $numservices<p>";
 
 // create billinghistory
+$user = "autoeinvoice";
 create_billinghistory($DB, $batchid, 'einvoice', $user);	
 
 /*-------------------------------------------------------------------*/	
