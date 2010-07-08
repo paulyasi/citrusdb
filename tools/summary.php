@@ -79,6 +79,9 @@ $count_invoice = 0;
 $count_einvoice = 0;
 $count_prepay = 0;
 $count_prepaycc = 0;
+$total_customers = 0;
+$total_service_cost = 0;
+$total_monthly = 0;
 
 /*--------------------------------------------------------------------*/
 // Add services to the bill
@@ -175,7 +178,12 @@ foreach($price_array as $master_service_id_value => $total_billed) {
 
     echo "<td>$service_description</td><td>$category</td><td>$count</td><td>$rate</td><td>$total_billed</td><tr>";
     $newline = "$service_description,$category,$count,$rate,$total_billed\n";
-    fwrite($handle, $newline); // write to the file    
+    fwrite($handle, $newline); // write to the file
+
+    // add totals
+    $total_customers = $total_customers + $count;
+    $total_service_cost = $total_service_cost + $rate;
+    $total_monthly = $total_monthly + $total_billed;
   }
 }
 
@@ -310,15 +318,31 @@ foreach($tax_array as $taxed_services_id_value => $total_taxed) {
 
     echo "<td>$description for $service_description</td><td>$category</td><td>$count</td><td>$rate</td><td>$total_taxed</td><tr>";
     $newline = "$description for $service_description,$category,$count,$rate,$total_taxed\n";
-    fwrite($handle, $newline); // write to the file    
+    fwrite($handle, $newline); // write to the file
+
+    // add totals
+    $total_customers = $total_customers + $count;
+    $total_service_cost = $total_service_cost + $rate;
+    $total_monthly = $total_monthly + $total_taxed;
+    
   }
 }
 
 
 fclose($handle);
+
+// print the table footer
+echo "<td style=\"border-top: 1px solid black; font-weight: bold;\">$l_total:</td>
+<td style=\"border-top: 1px solid black; font-weight: bold;\">&nbsp;</td>
+<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_customers</td>
+<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_service_cost</td>
+<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_monthly</td><tr>";
+
+$newline = ",,$total_customers,$total_service_cost,$total_monthly\n";
+  fwrite($handle, $newline); // write to the file
+
 // print link to download the summary file
 echo "<a href=\"index.php?load=tools/downloadfile&type=dl&filename=summary.csv\"><u class=\"bluelink\">$l_download summary.csv</u></a><p>";
-
 
 echo "</table><p>
 
