@@ -64,12 +64,13 @@ echo "</select><input type=\"SUBMIT\" NAME=\"submit\" value=\"$l_submit\"><p>";
 
 
 echo "<table cellpadding=2><td><b>$l_services</b></td>
+<td><b>Frequency</b></td>
 <td><b>Category</b></td>
 <td><b>Customers</b></td>
 <td><b>Service Cost</b></td>
 		<td><b>Monthly $l_total</b></td><tr>";
 
-$newline = "$l_services,Category,Customers,Service Cost,Monthly Total\n";
+$newline = "$l_services,Frequency,Category,Customers,Service Cost,Monthly Total\n";
   fwrite($handle, $newline); // write to the file	
 
 // initialize the count of paid monthly services
@@ -176,14 +177,19 @@ foreach($price_array as $master_service_id_value => $total_billed) {
       $paidsubscriptions = $paidsubscriptions + $count;
     }       
 
-    echo "<td>$service_description</td><td>$category</td><td>$count</td><td>$rate</td><td>$total_billed</td><tr>";
-    $newline = "$service_description,$category,$count,$rate,$total_billed\n";
+    // if frequency is greater than 1 divide the total amount by the frequency
+    if ($frequency > 1) {
+	$total_billed = $total_billed/$frequency;
+    }
+
+    echo "<td>$service_description</td><td>$frequency</td><td>$category</td><td>$count</td><td>$rate</td><td>$total_billed</td><tr>";
+    $newline = "$service_description,$frequency,$category,$count,$rate,$total_billed\n";
     fwrite($handle, $newline); // write to the file
 
     // add totals
-    $total_customers = $total_customers + $count;
-    $total_service_cost = $total_service_cost + $rate;
-    $total_monthly = $total_monthly + $total_billed;
+    $total_customers = sprintf("%.2f",$total_customers + $count);
+    $total_service_cost = sprintf("%.2f",$total_service_cost + $rate);
+    $total_monthly = sprintf("%.2f",$total_monthly + $total_billed);
   }
 }
 
@@ -316,30 +322,31 @@ foreach($tax_array as $taxed_services_id_value => $total_taxed) {
     $rate = $mytaxresult['rate'];
     $category = $mytaxresult['category'];
 
-    echo "<td>$description for $service_description</td><td>$category</td><td>$count</td><td>$rate</td><td>$total_taxed</td><tr>";
-    $newline = "$description for $service_description,$category,$count,$rate,$total_taxed\n";
+    echo "<td>$description for $service_description</td><td></td><td>$category</td><td>$count</td><td>$rate</td><td>$total_taxed</td><tr>";
+    $newline = "$description for $service_description,,$category,$count,$rate,$total_taxed\n";
     fwrite($handle, $newline); // write to the file
 
     // add totals
-    $total_customers = $total_customers + $count;
-    $total_service_cost = $total_service_cost + $rate;
-    $total_monthly = $total_monthly + $total_taxed;
+    $total_customers = sprintf("%.2f",$total_customers + $count);
+    $total_service_cost = sprintf("%.2f",$total_service_cost + $rate);
+    $total_monthly = sprintf("%.2f",$total_monthly + $total_taxed);
     
   }
 }
 
 
-fclose($handle);
-
 // print the table footer
 echo "<td style=\"border-top: 1px solid black; font-weight: bold;\">$l_total:</td>
+<td style=\"border-top: 1px solid black; font-weight: bold;\">&nbsp;</td>
 <td style=\"border-top: 1px solid black; font-weight: bold;\">&nbsp;</td>
 <td style=\"border-top: 1px solid black; font-weight: bold;\">$total_customers</td>
 <td style=\"border-top: 1px solid black; font-weight: bold;\">$total_service_cost</td>
 <td style=\"border-top: 1px solid black; font-weight: bold;\">$total_monthly</td><tr>";
 
-$newline = ",,$total_customers,$total_service_cost,$total_monthly\n";
-  fwrite($handle, $newline); // write to the file
+$newline = ",,,$total_customers,$total_service_cost,$total_monthly\n";
+fwrite($handle, $newline); // write to the file
+
+fclose($handle);
 
 // print link to download the summary file
 echo "<a href=\"index.php?load=tools/downloadfile&type=dl&filename=summary.csv\"><u class=\"bluelink\">$l_download summary.csv</u></a><p>";
