@@ -778,7 +778,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- Dumping data for table `settings`
 -- 
 
-INSERT INTO `settings` VALUES (1, '2.1', 'users', '/home/pyasi/citrus_project/io','16:00:00','y','n','n','n','n','n','y','http://localhost/cancel', 'billing', 'shipping');
+INSERT INTO `settings` VALUES (1, '2.1.1', 'users', '/home/pyasi/citrus_project/io','16:00:00','y','n','n','n','n','n','y','http://localhost/cancel', 'billing', 'shipping');
 
 
 

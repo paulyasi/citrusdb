@@ -868,13 +868,13 @@ if ($base->input['submit'] == "Update")
 	}
 
 	if ($databaseversion == "2.1.1") {
-	  $query = "CREATE TABLE `citrus-gpg`.`vendor_names` (".
+	  $query = "CREATE TABLE `vendor_names` (".
 	    "`name` VARCHAR( 64 ) NOT NULL ".
 	    ") ENGINE = MYISAM ";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 
-	  $query = "CREATE TABLE `citrus-gpg`.`vendor_history` ( ".
+	  $query = "CREATE TABLE `vendor_history` ( ".
 	    "`id` INT NOT NULL AUTO_INCREMENT ,".
 	    "`datetime` DATETIME NOT NULL ,".
 	    "`entry_type` ENUM( 'order','change','recurring bill','onetime bill','disconnect' ) NOT NULL ,".
