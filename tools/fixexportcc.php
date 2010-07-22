@@ -15,7 +15,7 @@ if (!defined("INDEX_CITRUS")) {
   exit;
 }
 
-echo "<h3>fix broken batch id</h3>
+echo "<h3>$l_exportpreviousbatchid</h3>
 <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/CalendarPopup.js\"></SCRIPT>
 	<SCRIPT LANGUAGE=\"JavaScript\">
 	var cal = new CalendarPopup();

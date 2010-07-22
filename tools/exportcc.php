@@ -367,6 +367,9 @@ echo "</select></td><tr>
 	</form>
 	</table><p>";
 
+// print the link to the fixexportcc
+ echo "<a href=\"index.php?load=fixexportcc&type=tools\">$l_exportpreviousbatchid</a><p>";
+
 	// print the WaitingMessage
 	echo "<div id=\"WaitingMessage\" style=\"border: 0px double black; ".
 	  "background-color: #fff; position: absolute; text-align: center; ".

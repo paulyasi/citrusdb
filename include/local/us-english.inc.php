@@ -237,6 +237,7 @@ $l_exp = "Exp";
 $l_expirationdate = "Expiration Date";
 $l_exportcreditcards = "Export Credit Cards";
 $l_exportfileprefix = "Export File Prefix";
+$l_exportpreviousbatchid = "Export Previous Batch ID";
 $l_extended = "extended";
 $l_fax = "Fax";
 $l_fileuploaded = "File Uploaded";
