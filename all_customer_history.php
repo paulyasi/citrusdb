@@ -129,7 +129,27 @@ while ($myresult = $result->FetchRow()) {
     print "<tr bgcolor=\"#ffffdd\">";
   }
 
-  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description</td>";
+  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description<br>";
+
+  // get the sub_history printed here
+  $query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
+    "hour(creation_date) as hour, LPAD(minute(creation_date),2,'00') as minute, ".
+    "created_by, description FROM sub_history WHERE customer_history_id = $id";
+  $subresult = $DB->Execute($query) or die ("sub_history $l_queryfailed");
+  
+  while ($mysubresult = $subresult->FetchRow()) {
+    $mydatetime = $mysubresult['month']."/".$mysubresult['day']." ".$mysubresult['hour'].":".$mysubresult['minute'];
+    $sub_created_by = $mysubresult['created_by'];
+    $sub_description = $mysubresult['description'];
+
+    // if today, show time
+    // if creation date not today, show date/time
+    
+    print "$mydatetime $sub_created_by: $sub_description<br>\n";
+    }
+
+  // end this table block
+  echo "</td>";  
   
   // increment line count to make even/odd coloring
   $linecount++;
