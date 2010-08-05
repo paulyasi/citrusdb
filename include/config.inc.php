@@ -21,7 +21,7 @@ $gpg_sign = "/usr/bin/gpg --homedir /home/www-data/.gnupg --passphrase-fd 0 --ye
 
 // use these url prefixes to redirect between the ssl carddata and regular pages
 $url_prefix = "http://localhost/~pyasi/citrus/citrusdb/";
-$ssl_url_prefix = "http://localhost/~pyasi/citrus/citrusdb/";
+$ssl_url_prefix = "https://localhost/~pyasi/citrus/citrusdb/";
 
 // jabber/xmpp server information
 $xmpp_server = "";
