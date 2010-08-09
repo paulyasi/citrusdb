@@ -867,7 +867,7 @@ if ($base->input['submit'] == "Update")
 
 	}
 
-	if ($databaseversion == "2.1.1") {
+	if ($databaseversion == "2.1") {
 	  $query = "CREATE TABLE `vendor_names` (".
 	    "`name` VARCHAR( 64 ) NOT NULL ".
 	    ") ENGINE = MYISAM ";
