@@ -264,7 +264,7 @@ b.encrypted_creditcard_number b_enc_ccnum
 
 		// if there is a gpg error, stop here
 		if (substr($decrypted,0,5) == "error") {
-		  die ("Credit Card Encryption Error: $decrypted");
+		  die ("Credit Card Encryption Error: $decrypted $l_billingid: $mybilling_id");
 		}
  		 
  		// set the billing_ccnum to the decrypted_creditcard_number
