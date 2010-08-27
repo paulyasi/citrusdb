@@ -93,11 +93,11 @@ if ($savechanges) {
       // we are notifying a group of users
       while ($myresult = $result->FetchRow()) {
 	$groupmember = $myresult['groupmember'];
-	enotify($DB, $groupmember, $message, $id);
+	enotify($DB, $groupmember, $message, $id, $user, $addnote);
       } // end while    
     } else {
       // we are notifying an individual user
-      enotify($DB, $notify, $message, $id);
+      enotify($DB, $notify, $message, $id, $user, $addnote);
     } // end if result    
     
   } // end if addnote
