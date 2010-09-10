@@ -56,11 +56,11 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
     // we are notifying a group of users
     while ($myresult = $result->FetchRow()) {
       $groupmember = $myresult['groupmember'];
-      enotify($DB, $groupmember, $message, $ticketnumber, $user, $description);
+      enotify($DB, $groupmember, $message, $ticketnumber, $user, $notify, $description);
     } // end while    
   } else {
     // we are notifying an individual user
-    enotify($DB, $notify, $message, $ticketnumber, $user, $description);
+    enotify($DB, $notify, $message, $ticketnumber, $user, $notify, $description);
   } // end if result
 
   return $ticketnumber;
@@ -68,7 +68,7 @@ function create_ticket($DB, $user, $notify, $account_number, $status,
 } // end create_ticket function
 
 
-function enotify($DB, $user, $message, $ticketnumber, $fromuser, $description)
+function enotify($DB, $user, $message, $ticketnumber, $fromuser, $tousergroup, $description)
 {
   /*--------------------------------------------------------------------------*/
   // send notifications to a the jabber ID or email address
@@ -115,7 +115,7 @@ function enotify($DB, $user, $message, $ticketnumber, $fromuser, $description)
     $to = $email;
     // truncate the description to fit in the subject
     $description = substr($description, 0, 40);    
-    $subject = "$l_ticketnumber $ticketnumber $fromuser: $description";
+    $subject = "$l_ticketnumber$ticketnumber $l_to:$tousergroup $l_from:$fromuser $description";
     mail ($to, $subject, $message);
     
   }
