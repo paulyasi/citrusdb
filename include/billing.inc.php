@@ -1723,9 +1723,9 @@ function apply_credits($DB, $billing_id, $invoicenumber)
     $credit_amount = abs($credit_billed_amount - $credit_paid_amount);
     $amount = $credit_amount;	
 
-    // find things to credit, apply only to items on current invoice
+    // find things to credit, apply only to items on current invoice with largest billed amount first
     $query = "SELECT * FROM billing_details ".
-      "WHERE paid_amount < billed_amount AND invoice_number = $invoicenumber";
+      "WHERE paid_amount < billed_amount AND invoice_number = $invoicenumber ORDER BY billed_amount DESC";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
     $findresult = $DB->Execute($query) or die ("$l_queryfailed");
 

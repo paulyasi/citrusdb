@@ -115,7 +115,7 @@ function enotify($DB, $user, $message, $ticketnumber, $fromuser, $tousergroup, $
     $to = $email;
     // truncate the description to fit in the subject
     $description = substr($description, 0, 40);    
-    $subject = "$l_ticketnumber$ticketnumber $l_to:$tousergroup $l_from:$fromuser $description";
+    $subject = "$l_ticketnumber$ticketnumber $l_to: $tousergroup $l_from: $fromuser $description";
     mail ($to, $subject, $message);
     
   }
