@@ -1,5 +1,5 @@
 <?php   
-// Copyright (C) 2009  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2009-2010  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
 /*----------------------------------------------------------------------------*/
@@ -86,7 +86,7 @@ if ($payment_type == "creditcard") {
 //$DB->debug = true;
 
 $query = "SELECT bd.original_invoice_number, bd.paid_amount,".
-  "bh.from_date, bh.to_date, ".
+  "bh.from_date, bh.to_date, bd.user_services_id, ".
   "bd.billed_amount, ms.service_description, tr.description FROM ".
   "billing_details bd ".
   "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
@@ -99,9 +99,10 @@ $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("Receipt Query Failed");
 
 echo "<table>";
-echo "<td>$l_invoice</td><td>$l_description</td><td>$l_paid</td><tr>";
+echo "<td>$l_invoice</td><td>$l_id</td><td>$l_description</td><td>$l_paid</td><tr>";
 
 while ($myresult = $result->FetchRow()) {
+  $user_services_id = $myresult['user_services_id'];
   $invoice = $myresult['original_invoice_number'];
   $description = $myresult['service_description'];
   $tax_description = $myresult['description'];
@@ -114,9 +115,9 @@ while ($myresult = $result->FetchRow()) {
 
   if ($tax_description) {
     // print the tax as description instead
-  echo "<td>$invoice</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><tr>";
+  echo "<td>$invoice</td><td>$user_services_id</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><tr>";
   } else {
-  echo "<td>$invoice</td><td>$description ($from_date $l_to $to_date)</td><td>$paid_amount</td><tr>";
+  echo "<td>$invoice</td><td>$user_services_id</td><td>$description ($from_date $l_to $to_date)</td><td>$paid_amount</td><tr>";
   }
  }
 echo "</table>";
