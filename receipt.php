@@ -87,8 +87,9 @@ if ($payment_type == "creditcard") {
 
 $query = "SELECT bd.original_invoice_number, bd.paid_amount,".
   "bh.from_date, bh.to_date, bd.user_services_id, ".
-  "bd.billed_amount, ms.service_description, tr.description FROM ".
-  "billing_details bd ".
+  "bd.billed_amount, ms.options_table, ms.service_description, ".
+  "tr.description ".
+  "FROM billing_details bd ".
   "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
   "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
   "LEFT JOIN taxed_services ts ON ts.id = bd.taxed_services_id ".
@@ -109,15 +110,32 @@ while ($myresult = $result->FetchRow()) {
   $from_date = humandate($myresult['from_date'],$lang);
   $to_date = humandate($myresult['to_date'],$lang);
   $paid_amount = sprintf("%.2f",$myresult['paid_amount']);
-  $billed_amount = sprintf("%.2f",$myresult['billed_amount']);  
-
+  $billed_amount = sprintf("%.2f",$myresult['billed_amount']);
+  $options_table = $myresult['options_table'];
+  
   $owed_amount = sprintf("%.2f",$billed_amount - $paid_amount);
+
+  // check if it's a tax with a tax id or service with
+  // no tax idfirst to set detail items
+  if ($options_table <> '') {
+    // get the data from the options table 
+    // and put into variables
+    $query = "SELECT * FROM $options_table ". 
+      "WHERE user_services = '$user_services_id'";
+    $DB->SetFetchMode(ADODB_FETCH_NUM);
+    $optionsresult = $DB->Execute($query)
+      or die ("$l_queryfailed");
+    $myoptions = $optionsresult->fields;
+    $optiondetails = $myoptions[2];
+  } else {
+    $optiondetails = '';	
+  }
 
   if ($tax_description) {
     // print the tax as description instead
-  echo "<td>$invoice</td><td>$user_services_id</td><td>&nbsp;&nbsp;&nbsp;$tax_description</td><td>$paid_amount</td><tr>";
+  echo "<td>$invoice</td><td>$user_services_id</td><td>&nbsp;&nbsp;&nbsp;$tax_description &nbsp;&nbsp; $optiondetails <td>$paid_amount</td><tr>";
   } else {
-  echo "<td>$invoice</td><td>$user_services_id</td><td>$description ($from_date $l_to $to_date)</td><td>$paid_amount</td><tr>";
+  echo "<td>$invoice</td><td>$user_services_id</td><td>$description &nbsp;&nbsp; $optiondetails ($from_date $l_to $to_date)</td><td>$paid_amount</td><tr>";
   }
  }
 echo "</table>";
