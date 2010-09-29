@@ -34,6 +34,9 @@ echo "</td></table></p>";
 
 // Print Number of New Support Messages
 
+// make an empty array to hold the message count
+$messagearray = array();
+
 // query the customer_history for the number of 
 // waiting messages sent to that user
 $supportquery = "SELECT * FROM customer_history WHERE notify = '$user' ".
@@ -44,6 +47,9 @@ $num_rows = $supportresult->RowCount();
 $nummessages = 0;
 
 $nummessages = $nummessages + $num_rows;
+
+// assign the count of messages to the user message associative array
+$messagearray[$user] = $num_rows;
 
 // query the customer_history for messages sent to 
 // groups the user belongs to
@@ -64,13 +70,26 @@ while ($mygroupresult = $supportresult->FetchRow()) {
   $num_rows = $gpresult->RowCount();
 
   $nummessages = $nummessages + $num_rows;
+
+  // assign the count of messages to the user message associative array
+  $messagearray[$groupname] = $num_rows;  
   
  }
 
 // put the num messages link inside of tabnav
-
+echo "<hr size=2 style=\"color:#eee;\">";
 echo "<div id=\"tabnav\">";
+echo "<div>\n";
+foreach ($messagearray as $recipient => $messagecount) {
+  if ($messagecount == 0) {
+    echo "<a href=\"index.php?load=tickets&type=base#$recipient\"><b style=\"font-weight:normal;\">$recipient($messagecount)</b></a>\n";
+  } else {
+    echo "<a href=\"index.php?load=tickets&type=base#$recipient\">$recipient($messagecount)</a>\n";    
+  }
+}
+echo "</div>";
 
+/* commented out for testing a new idea, printing new message count for each group
 if ($nummessages > 0) {
   if ($nummessages > 1) {
     // plural messages
@@ -94,6 +113,7 @@ if ($nummessages > 0) {
     echo "<div><a href=\"index.php?load=tickets&type=base\">No New Messages</a></div>";
   }
  }
+*/
 
 echo "</div>";
 

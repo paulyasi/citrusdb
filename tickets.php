@@ -103,8 +103,8 @@ if ($pending) {
       // print the heading for each group listing
       if (!isset($previousnotify)) { $previousnotify = ""; }
       if ($previousnotify <> $notify) {
-	print "<p><td bgcolor=\"#ffffff\" width=100% colspan=8> ".
-	  "<b style=\"font-size: 14pt;\">$l_notesforgroups: $notify</b></td>";
+	print "<a name=\"$notify\"><p><td bgcolor=\"#ffffff\" width=100% colspan=8> ".
+	  "<b style=\"font-size: 14pt;\">$l_notesforgroups: $notify</b></td></a>";
 	$previousnotify = $notify;
       }
       
@@ -157,8 +157,8 @@ if ($pending) {
   
   // find notes for that user
   
-  print "<tr><td bgcolor=\"#ffffff\" width=100% colspan=8><br>".
-    "<b style=\"font-size: 14pt;\">$l_notesforuser $user</td>";
+  print "<a name=\"$user\"><tr><td bgcolor=\"#ffffff\" width=100% colspan=8><br>".
+    "<b style=\"font-size: 14pt;\">$l_notesforuser $user</td></a>";
     //echo "<tr><td bgcolor=\"#ccccdd\" width=10%><b>$l_ticketnumber</b></td>".
     //"<td bgcolor=\"#ccccdd\" width=20%><b>$l_datetime</b></td>".
     //"<td bgcolor=\"#ccccdd\" width=10%><b>$l_from</b></td>".

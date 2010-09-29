@@ -69,37 +69,62 @@ while ($myresult = $result->FetchRow())
     	
 	if ($modulename == "support")
 	{
-		// query the customer_history for the number of 
-		// waiting messages sent to that user
-		$supportquery = "SELECT * FROM customer_history 
+	  echo "<hr size=2 style=\"color:#eee;\">";
+	  
+	  // initialize the messagearray
+	  $messagearray = array();
+	  
+	  // query the customer_history for the number of 
+	  // waiting messages sent to that user
+	  $supportquery = "SELECT * FROM customer_history 
 				WHERE notify = '$user' 
 				AND status = \"not done\" ";
-		$supportresult = $DB->Execute($supportquery) or die ("$l_queryfailed");
-		$num_rows = $supportresult->RowCount();
+	  $supportresult = $DB->Execute($supportquery) or die ("$l_queryfailed");
+	  $num_rows = $supportresult->RowCount();
 
-		// query the customer_history for messages sent to 
-		// groups the user belongs to
-	        $query = "SELECT * FROM groups WHERE groupmember = '$user' ";
-	        $supportresult = $DB->Execute($query) 
-			or die ("$l_queryfailed");
-
-	        while ($mygroupresult = $supportresult->FetchRow())
-	        {
-			if (!isset($mygroupresult['groupname'])) 
-			{ 
-				$mygroupresult['groupname'] = ""; 
-			}
-
-	                $groupname = $mygroupresult['groupname'];
-			$query = "SELECT * FROM customer_history 
+	  // assign the number of messages for the user to the message associative array
+	  $messagearray[$user] = $num_rows;
+	  
+	  // query the customer_history for messages sent to 
+	  // groups the user belongs to
+	  $query = "SELECT * FROM groups WHERE groupmember = '$user' ";
+	  $supportresult = $DB->Execute($query) 
+	    or die ("$l_queryfailed");
+	  
+	  while ($mygroupresult = $supportresult->FetchRow())
+	    {
+	      if (!isset($mygroupresult['groupname'])) 
+		{ 
+		  $mygroupresult['groupname'] = ""; 
+		}
+	      
+	      $groupname = $mygroupresult['groupname'];
+	      $query = "SELECT * FROM customer_history 
 				WHERE notify = '$groupname' 
 				AND status = \"not done\" ";
-	                $gpresult = $DB->Execute($query) 
-				or die ("$l_queryfailed");
-			$num_rows = $gpresult->RowCount() + $num_rows;
-		}
+	      $gpresult = $DB->Execute($query) 
+		or die ("$l_queryfailed");
+	      $num_rows = $gpresult->RowCount(); // + $num_rows;
 
-		print "<div><a href=\"index.php?load=tickets&type=base\" class=smalltext>$num_rows $l_newmessage</a></div>";
+	      // assign the number of messages for the group to the message associative array
+	      $messagearray[$groupname] = $num_rows;
+	      
+	    }
+	  
+	  // put the num messages link inside of their own tabnav
+	  echo "<div id=\"tabnav\">";
+	  echo "<div>\n";
+	  foreach ($messagearray as $recipient => $messagecount) {
+	    if ($messagecount == 0) {
+	      echo "<a href=\"index.php?load=tickets&type=base#$recipient\"><b style=\"font-weight:normal;\">".
+		"$recipient($messagecount)</b></a>\n";
+	    } else {
+	      echo "<a href=\"index.php?load=tickets&type=base#$recipient\">$recipient($messagecount)</a>\n";    
+	    }
+	  }
+	  echo "</div>";
+	  
+	  //print "<div><a href=\"index.php?load=tickets&type=base\" class=smalltext>$num_rows $l_newmessage</a></div>";
 	}
 	
 }
