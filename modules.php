@@ -112,8 +112,7 @@ while ($myresult = $result->FetchRow())
 	    }
 	  
 	  // put the num messages link inside of their own tabnav
-	  echo "<div id=\"tabnav\">";
-	  echo "<div>\n";
+	  echo "<div id=\"tabnav\">";	  
 	  foreach ($messagearray as $recipient => $messagecount) {
 	    if ($messagecount == 0) {
 	      echo "<a href=\"index.php?load=tickets&type=base#$recipient\"><b style=\"font-weight:normal;\">".

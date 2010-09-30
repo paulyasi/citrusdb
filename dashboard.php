@@ -79,7 +79,6 @@ while ($mygroupresult = $supportresult->FetchRow()) {
 // put the num messages link inside of tabnav
 echo "<hr size=2 style=\"color:#eee;\">";
 echo "<div id=\"tabnav\">";
-echo "<div>\n";
 foreach ($messagearray as $recipient => $messagecount) {
   if ($messagecount == 0) {
     echo "<a href=\"index.php?load=tickets&type=base#$recipient\"><b style=\"font-weight:normal;\">$recipient($messagecount)</b></a>\n";
