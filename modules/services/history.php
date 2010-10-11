@@ -40,7 +40,8 @@ if ($editremovaldate) {
     "value=\"$l_submitrequest\"></td>".
     "</form>";
  } else if ($saveremovaldate) {
-  // TODO: check that the new date entered is today or in the future, not the past
+  // TODO: check that the new date entered is blank or today or in the future, not the past
+  // allow blank to be inserted that will make it so there is no removal, eg NULL?
   
    $query = "UPDATE user_services SET removal_date = '$removaldate' ".
      "WHERE id = '$serviceid'";
@@ -65,6 +66,7 @@ echo "
 	<td bgcolor=\"#ccccdd\"><b>$l_removaldate</b></td>
 	<td bgcolor=\"#ccccdd\"><b>$l_billingid</b></td>
 	<td bgcolor=\"#ccccdd\"><b>$l_price</b></td>
+        <td></td>
 	<td></td>
 "; // end
 
@@ -121,14 +123,24 @@ while ($myresult = $result->FetchRow())
 	//print "\n<tr onMouseOver='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";' bgcolor=\"#ddddee\">";
 	
 	print "<tr bgcolor=\"#ddddee\">\n
-	<td onMouseOver='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";'>$id</td>
-	<td onMouseOver='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";'>$service_description</td>
-	<td onMouseOver='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";'>$optiondetails</td>
-	<td onMouseOver='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";'>$start_datetime</td>
-	<td onMouseOver='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";'>$end_datetime</td>
+	<td>$id</td>
+	<td>$service_description</td>
+	<td>$optiondetails</td>
+	<td>$start_datetime</td>
+	<td>$end_datetime</td>
 	<td><a href=\"index.php?load=services&type=module&history=on&serviceid=$id&editremovaldate=on&removaldate=$removal_date\">$removal_date</a></td>
-	<td onMouseOver='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";'>$billing_id</td>
-	<td onMouseOver='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&edit=on&userserviceid=$id&servicedescription=$service_description&optionstable=$options_table&editbutton=Edit\";'>$totalprice</td>
+	<td>$billing_id</td>
+	<td>$totalprice</td>
+<td>
+<form style=\"margin-bottom:0;\" action=\"index.php\">
+<input type=hidden name=load value=services>
+<input type=hidden name=type value=module>
+<input type=hidden name=edit value=on>
+<input type=hidden name=userserviceid value=\"$id\">
+   <input type=hidden name=servicedescription value=\"$service_description\">
+<input type=hidden name=optionstable value=\"$options_table\">
+<input name=editbutton type=submit value=\"$l_edit\" class=smallbutton></form>
+</td>
 	</td></tr>";
 } 
 print <<<END
