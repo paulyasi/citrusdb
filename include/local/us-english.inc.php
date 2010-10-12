@@ -520,6 +520,7 @@ $l_totalcustomers = "Total number of customers";
 $l_totalpayingcustomers = "Total paying customers";
 $l_totaxrate = "To Tax Rate";
 $l_trackingnumber = "Tracking Number";
+$l_trackpackage = "Track Package";
 $l_turnoff = "Turnoff";
 $l_turnoff_notice = "Turnoff Notice";
 $l_turnoff_subject = "Your Account is Turned Off";

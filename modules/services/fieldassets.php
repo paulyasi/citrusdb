@@ -190,7 +190,7 @@ if ($ship) {
   $status = "not done";
   $description = "$l_shipped $description, $l_trackingnumber: $tracking_number";
   $trackinglink = "$tracking_url"."$tracking_number";
-  create_ticket($DB, $user, $default_shipping_group, $account_number, $status, $description, $tracking_name, $trackinglink, NULL, $userserviceid);
+  create_ticket($DB, $user, $default_shipping_group, $account_number, $status, $description, $l_trackpackage, $trackinglink, NULL, $userserviceid);
   
   // redirect back to the service edit screen, now showing the assigned inventory listed there
   echo "assigned";
