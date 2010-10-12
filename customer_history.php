@@ -117,11 +117,11 @@ while ($myresult = $result->FetchRow()) {
 
   // if they have a valid service id that is greater than zero, print the link to it here
   if ($serviceid > 0) {
-    print "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a>";
+    print "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a>&nbsp;";
   }
   
   if ($linkurl) {
-    print "<a href=\"$linkurl\">$linkname</a>";
+    print "<a href=\"$linkurl\" target=\"_new\">$linkname</a>";
   }
   
   print "&nbsp;</td>";

@@ -28,3 +28,7 @@ $xmpp_server = "";
 $xmpp_user = "";
 $xmpp_password = "";
 $xmpp_domain = "";
+
+// shipping tracking url
+$tracking_name = "Track Package";
+$tracking_url = "http://trkcnfrm1.smi.usps.com/PTSInternetWeb/InterLabelInquiry.do?origTrackNum=";
