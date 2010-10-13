@@ -118,8 +118,8 @@ if ($base->input['save']) {
         <td bgcolor=\"#ccccdd\"><b>$l_street</b></td><td bgcolor=\"#ddddee\"><input name=\"street\" type=text></td><tr>
         <td bgcolor=\"#ccccdd\"><b>$l_city</b></td><td bgcolor=\"#ddddee\"><input name=\"city\" type=text></td><tr>
         <td bgcolor=\"#ccccdd\"><b>$l_state</b></td><td bgcolor=\"#ddddee\"><input name=\"state\" type=text size=2></td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_country</b></td><td bgcolor=\"#ddddee\"><input name=\"country\" type=text></td><tr>
         <td bgcolor=\"#ccccdd\"><b>$l_zip</b></td><td bgcolor=\"#ddddee\"><input name=\"zip\" size=5 type=text></td><tr>
+	<td bgcolor=\"#ccccdd\"><b>$l_country</b></td><td bgcolor=\"#ddddee\"><input name=\"country\" type=text></td><tr>
         <td bgcolor=\"#ccccdd\"><b>$l_phone</b></td><td bgcolor=\"#ddddee\"><input name=\"phone\" type=text></td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_fax</b></td><td bgcolor=\"#ddddee\"><input name=\"fax\" type=text></td><tr>
         <td bgcolor=\"#ccccdd\"><b>$l_contactemail</b></td><td bgcolor=\"#ddddee\"><input name=\"contact_email\" type=text></td><tr>
