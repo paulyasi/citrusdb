@@ -397,7 +397,7 @@ function dehnew(oR) {
 	<B>$l_password</B><BR>
 	<INPUT TYPE=\"password\" NAME=\"password\" VALUE=\"\" SIZE=\"15\" MAXLENGTH=\"32\">
 	<P>
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_login\"  onclick=\"password.value = calcMD5(password.value)\" class=smallbutton>
+	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_login\"  ".($ldap_enable?"":"onclick=\"password.value = calcMD5(password.value)\" ")."class=smallbutton>
 	</FORM>
 	<P></td></table></div></div></body></html>";
 }

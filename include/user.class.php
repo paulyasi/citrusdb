@@ -15,6 +15,8 @@ class user {
   function __construct() {
     //clear it out in case someone sets it in the URL or something
     unset($LOGGED_IN);
+
+
   }
 
   /*--------------------------------------------------------------------*/
@@ -53,6 +55,13 @@ class user {
     
     global $feedback, $DB;
 
+    global $ldap_enable;
+    global $ldap_host;
+    global $ldap_dn;
+    global $ldap_protocol_version;
+    global $ldap_uid_field;
+
+
     if (!$user_name || !$password) {
       $feedback .=  ' ERROR - Missing user name or password ';
       return false;
@@ -60,22 +69,76 @@ class user {
     } else {
 
       $user_name=strtolower($user_name);
+/* start of ldap mod */
+      if( $ldap_enable ) {
+        $con = ldap_connect($ldap_host); 
+        if( $con ) { 
+          ldap_set_option($con, LDAP_OPT_PROTOCOL_VERSION, $ldap_protocol_version); 
+          $findWhat = array ($ldap_uid_field); 
+          $findFilter = "(".$ldap_uid_field."=".$user_name.")"; 
+          $sr = ldap_search($con, $ldap_dn, $findFilter, $findWhat); 
+          if( $sr ) { 
+            $records = ldap_get_entries($con, $sr); 
+            if ($records["count"] != "1") { 
+              // user not found 
+              $feedback .= " ERROR - User not found ";
+              $this->loginfailure($user_name);
+              return false; 
+            } 
+            else {
+              if (ldap_bind($con, $records[0]["dn"], $password) === false) { 
+                // LDAP password match failed 
+                $feedback .= "ERROR - Invalid user password ";
+                $this->loginfailure($user_name);
+                return false; 
+              } 
+              else {
+                // LDAP login successful, now get user info
+                $sql="SELECT * FROM user WHERE username='$user_name' ";
+                $result = $DB->Execute($sql);
 
-      $sql="SELECT * FROM user WHERE username='$user_name' ".
-	"AND password='$password'";
-      $result = $DB->Execute($sql);
+                if (!$result ||  $result->RowCount() < 1){
 
-      if (!$result ||  $result->RowCount() < 1){
+                  $feedback .=  " ERROR - User not found ";
+        
+                  // keep track of login failures to stop them trying forever
+                  $this->loginfailure($user_name);
 
-	$feedback .=  " ERROR - User not found or password ".
-	  "incorrect $user_name $password ";
+                  return false;
+                }
+              } 
+            } 
+          } 
+          else { 
+            // LDAP search failed 
+            $feedback .= "LDAP User Search Failed!"; 
+            return false; 
+          } 
+        } 
+        else { 
+          $feedback .= "LDAP Connect Failed!"; 
+          return false; 
+        }
+      }
+      else {
+        // standard authentication method
+        $sql="SELECT * FROM user WHERE username='$user_name' ".
+          "AND password='$password'";
+        $result = $DB->Execute($sql);
+
+        if (!$result ||  $result->RowCount() < 1){
+
+          $feedback .=  " ERROR - User not found or password ".
+            "incorrect $user_name $password ";
 	
-	// keep track of login failures to stop them trying forever
-	$this->loginfailure($user_name);
+          // keep track of login failures to stop them trying forever
+          $this->loginfailure($user_name);
 	
-	return false;
-
-      } else {
+          return false;
+        }
+      }
+/* end of ldap mod */
+      {
 
 	$this->user_set_tokens($user_name);
 
@@ -195,8 +258,15 @@ class user {
   /*--------------------------------------------------------------------*/
   function user_register($user_name,$password1,$password2,$real_name,$admin,$manager) {
     global $feedback,$hidden_hash_var,$DB;
+
+    global $ldap_enable;
+    global $ldap_host;
+    global $ldap_dn;
+    global $ldap_protocol_version;
+    global $ldap_uid_field;
+
     //all vars present and passwords match?
-    if ($user_name && $password1 && $password1==$password2) {
+    if ($user_name && ($ldap_enable || ($password1 && $password1==$password2))) {
       //name is valid?
       if ($this->account_namevalid($user_name)) {
 	$user_name=strtolower($user_name);

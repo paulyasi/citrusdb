@@ -83,9 +83,10 @@ if ($submit) {
         $screenname_notify = $myresult['screenname_notify'];
 
 echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
-        <script language=\"JavaScript\" src=\"include/verify.js\"></script>
+        <script language=\"JavaScript\" src=\"include/verify.js\"></script>".
+        ($ldap_enable?"":"
 	[<a href=\"index.php?load=adminchangepass&type=tools&userid=$userid\">
-	$l_changepassword</a>]
+	$l_changepassword</a>]")."
 	<p>
 	<FORM ACTION=\"index.php\" METHOD=\"GET\">
 	<input type=hidden name=load value=edituser>

@@ -23,7 +23,14 @@ $gpg_sign = "/usr/bin/gpg --homedir /home/www-data/.gnupg --passphrase-fd 0 --ye
 $url_prefix = "http://localhost/~pyasi/citrus_project/citrusdb/";
 $ssl_url_prefix = "https://localhost/~pyasi/citrus_project/citrusdb/";
 
-// jabber/xmpp server information
+// ldap server settings (optional for authentication)
+$ldap_enable = FALSE;
+$ldap_host = 'ldaps://localhost';
+$ldap_dn = 'ou=webapps,dc=localhost';
+$ldap_protocol_version = 3;
+$ldap_uid_field = 'uid';
+
+// jabber/xmpp server information (optional for ticket notification)
 $xmpp_server = "";
 $xmpp_user = "";
 $xmpp_password = "";

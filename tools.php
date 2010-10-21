@@ -26,14 +26,14 @@ $myresult = $result->fields;
 /*----------------------------------------------------------------------------*/
 echo "<div class=toolblock><b>$l_user: $user</b><br>";
 
-echo "
-	<div class=icon>
+echo ($ldap_enable?"":
+	"<div class=icon>
 	<a href=# onclick=\"popupPage('index.php?load=changepass&type=tools'); return false;\">
 	<img src=\"images/icons/citrus_changepass.png\" border=0><br>
 	$l_changeyourpassword</a>
 	</div>
-	
-	<div class=icon>
+	").
+	"<div class=icon>
 	<a href=# onclick=\"popupPage('index.php?load=version&type=tools'); return false;\">
 	<img src=\"images/icons/citrus_version.png\" border=0><br>
 	$l_version</a>

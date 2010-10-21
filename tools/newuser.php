@@ -79,14 +79,16 @@ echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
 	<INPUT TYPE=\"TEXT\" NAME=\"real_name\" VALUE=\"\" SIZE=\"20\" MAXLENGTH=\"65\">
 	<P>
 	<B>$l_username:</B><BR>
-	<INPUT TYPE=\"TEXT\" NAME=\"new_user_name\" VALUE=\"\" SIZE=\"10\" MAXLENGTH=\"32\">
-	<P>
+	<INPUT TYPE=\"TEXT\" NAME=\"new_user_name\" VALUE=\"\" SIZE=\"10\" MAXLENGTH=\"32\">".
+        ($ldap_enable?"":
+	"<P>
 	<B>$l_password:</B><BR>
 	<INPUT TYPE=\"password\" NAME=\"password1\" VALUE=\"\" SIZE=\"10\" MAXLENGTH=\"32\">
 	<P>
 	<B>$l_password ($l_again):</B><BR>
-	<INPUT TYPE=\"password\" NAME=\"password2\" VALUE=\"\" SIZE=\"10\" MAXLENGTH=\"32\">
-	<P>
+	<INPUT TYPE=\"password\" NAME=\"password2\" VALUE=\"\" SIZE=\"10\" MAXLENGTH=\"32\">"
+        ).
+	"<P>
 	<b>$l_privileges:</b><br>
 	<table>
 	<td>$l_admin</td><td><input type=\"radio\" name=admin value=\"y\">$l_yes<input type=\"radio\" name=admin value=\"n\" checked>$l_no<tr>
@@ -95,7 +97,7 @@ echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
 	<p>
 	<input type=hidden name=load value=newuser>
 	<input type=hidden name=type value=tools>
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_submit\" onclick=\"if (validatePassword(password1.value) == 0) { return false; }; password1.value = calcMD5(password1.value); password2.value = calcMD5(password2.value);\">
+	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_submit\" ".($ldap_enable?"":"onclick=\"if (validatePassword(password1.value) == 0) { return false; }; password1.value = calcMD5(password1.value); password2.value = calcMD5(password2.value);\"").">
 	</FORM>";
 
 
