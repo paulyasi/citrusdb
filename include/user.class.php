@@ -1,6 +1,6 @@
 <?php
 /*----------------------------------------------------------------------------*/
-// Includes Code Contributed by Matthew Veno
+// Includes Code Contributed by Matthew Veno and Bryan Nielsen
 // Copyright (C) 2005-2008  Paul Yasi (paul at citrusdb.org)
 // Read the README file for more information
 /*----------------------------------------------------------------------------*/
