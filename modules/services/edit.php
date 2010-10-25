@@ -481,7 +481,7 @@ if ($save) {
     if ($status == 'returned') {
       print "<td style=\"color:$textcolor;\">$l_returndate: $return_date, $return_notes</td></table>";
     } else {
-      print "<td><b>$l_trackingnumber</b></td><td>$tracking_number</td> ".
+      print "<td><b>$l_trackingnumber</b></td><td><a href=\"$tracking_url$tracking_number\">$tracking_number</a></td> ".
 	"<td><b>$l_shippingdate:</b></td> <td>$shipping_date</td><td><a href=\"index.php?optionstable=example_options&userserviceid=$userserviceid&load=services&type=module&return=on&fieldassets=on&item_id=$item_id&fieldassets=return\">$l_returndevice</a></td></table>";
     }
   }
