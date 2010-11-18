@@ -1066,7 +1066,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
       $pagenumber = $pdf->PageNo();
       
       if ($pagenumber - $invoicestartpage > 0) {
-	$linetotal = 46;
+	$linetotal = 44;
       } else {
 	$linetotal = 27;
       }
