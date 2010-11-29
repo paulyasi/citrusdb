@@ -122,7 +122,7 @@ if ($edit) {
      //echo "<tr><td colspan=9 bgcolor=\"#ccccdd\"><b style=\"font-size: 14pt;\">$l_category: $category</b></td><tr>";
      
      $query = "SELECT user.*, master.service_description, master.options_table, ".
-       "master.pricerate, master.frequency, ".
+       "master.pricerate, master.frequency, master.support_notify, ".
        "master.organization_id master_organization_id ".
        "FROM user_services AS user, master_services AS master ".
        "WHERE user.master_service_id = master.id ".
@@ -131,7 +131,7 @@ if ($edit) {
        "ORDER BY user.usage_multiple DESC, master.pricerate DESC";
    } else {
      $query = "SELECT user.*, master.service_description, master.options_table, ".
-       "master.pricerate, master.frequency, ".
+       "master.pricerate, master.frequency, master.support_notify, ".
        "master.organization_id master_organization_id ".
        "FROM user_services AS user, master_services AS master ".
        "WHERE user.master_service_id = master.id ".
@@ -169,6 +169,7 @@ if ($edit) {
      $frequency = $myresult['frequency'];
      $salesperson = $myresult['salesperson'];
      $service_description = $myresult['service_description']; // from the LEFT JOINED master_services table
+     $support_notify = $myresult['support_notify']; // from the LEFT JOINED master_services table
 
      // get the data from the billing tables to compare service and billing frequency
      $query = "SELECT * FROM billing b ".
@@ -213,9 +214,14 @@ if ($edit) {
      print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
      print "<input type=hidden name=load value=support>";
      print "<input type=hidden name=type value=module>";
-     print "<input type=hidden name=serviceid value=\"$id\">";
-     print "<input name=openticket type=submit value=\"$l_openticket\" ".
-       "class=smallbutton></form></td></tr>";     
+     print "<input type=hidden name=serviceid value=\"$id\">";     
+     if ($support_notify) {
+       print "<input name=openticket type=submit value=\"$l_notify $support_notify\" ".
+	 "class=smallbutton></form></td></tr>";  	
+     } else {
+       print "<input name=openticket type=submit value=\"$l_openticket\" ".
+	 "class=smallbutton></form></td></tr>";     
+     }
 
      // check for taxes for this service
      $mytaxoutput = checktaxes($DB, $id);

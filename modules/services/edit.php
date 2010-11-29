@@ -265,9 +265,9 @@ if ($save) {
     echo " | <a href=\"index.php?load=services&type=module&vendor=on&userserviceid=$userserviceid\">$l_vendor_history</a>";
   }      
   
-  // get the organization_id and options_table and name for this service
+  // get the organization_id and options_table and name and details for this service
   $query = "SELECT ms.organization_id, ms.options_table, ".
-    "ms.service_description, g.org_name, us.removed, ".
+    "ms.service_description, ms.support_notify, g.org_name, us.removed, ".
     "date(us.end_datetime) AS end_datetime, ".
     "date(us.start_datetime) AS start_datetime ".
     "FROM user_services us ".
@@ -284,6 +284,7 @@ if ($save) {
   $creationdate = humandate($myorgresult['start_datetime'], $lang);
   $enddate = humandate($myorgresult['end_datetime'], $lang);
   $removed = $myorgresult['removed'];
+  $support_notify = $myorgresult['support_notify'];
 
   /*
    http://localhost/~pyasi/citrus_project/citrusdb/index.php?
@@ -431,8 +432,13 @@ if ($save) {
   print "<input type=hidden name=load value=support>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=serviceid value=\"$userserviceid\">";
+  if ($support_notify) {
+  print "<input name=openticket type=submit value=\"$l_notify $support_notify\" ".
+    "class=smallbutton></form></td></table><p></blockquote>";  	
+  } else {
   print "<input name=openticket type=submit value=\"$l_openticket\" ".
     "class=smallbutton></form></td></table><p></blockquote>";     
+  }
 
   /*----------------------------------------------------------------------*/
   // print the field inventory assigned to this service with ability to
