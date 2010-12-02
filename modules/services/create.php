@@ -162,7 +162,11 @@ if ($addnow) {
 	  enum_select($options_table_name, $fieldname, $default_value);
 
 	  echo "</select></td><tr>\n";
-
+	} elseif ($fieldname == "description"){
+	  echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
+	    "<td bgcolor=\"#ddddee\"><input size=40 maxlength=44 type=text name=\"$fieldname\" ".
+	    "value=\"$myresult[$i]\">";
+	  echo "</td><tr>";
 	} else {
 	  // print fields for each attributes
 	  echo "<td bgcolor=\"ccccdd\"width=180>".
