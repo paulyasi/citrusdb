@@ -28,11 +28,11 @@ echo "<input type=submit name=submit value=\"$l_search\" class=smallbutton>";
 </td><tr><td valign=top>
 <form ACTION="index.php?load=dosearch&type=fs" METHOD="POST" name="phonesearch">
 <?php echo "$l_phonenumber"; ?> </td><td>
-<input type=text name=s1 onblur="phoneformat();">
+<input type=text name=s1>
 <input type=hidden name=s2>   
 <input type=hidden name=id value=3> <!-- the id of this search in the searches table -->
 <?php
-echo "<input type=submit name=submit value=\"$l_search\" class=smallbutton>";
+echo "<input type=submit name=submit value=\"$l_search\" class=smallbutton onclick=\"phoneformat();\">";
 ?>
 </form>
 
