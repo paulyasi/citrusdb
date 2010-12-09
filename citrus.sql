@@ -550,7 +550,7 @@ CREATE TABLE `searches` (
 INSERT INTO `searches` (`id`, `query`, `owner`, `outputform`) VALUES
 (1, 'SELECT * FROM customer WHERE account_number = %s1%', NULL, ''),
 (2, '(SELECT * FROM customer WHERE name LIKE ''%%s1%%'') UNION (SELECT * FROM customer WHERE company LIKE ''%%s1%%'')', NULL, NULL),
-(3, 'SELECT name,company,street,phone,account_number FROM customer WHERE phone LIKE ''%%s1%%''', NULL, NULL),
+(3, 'SELECT name,company,street,phone,account_number FROM customer WHERE phone LIKE ''%%s1%%'' OR WHERE phone LIKE ''%%s2%%''', NULL, NULL),
 (4, 'SELECT * FROM customer c LEFT JOIN billing b on b.id = c.default_billing_id WHERE c.signup_date BETWEEN ''%s1%'' AND ''%s2%'' ORDER BY c.signup_date', NULL, NULL),
 (5, 'SELECT * FROM billing WHERE id = %s1%', NULL, NULL),
 (6, 'SELECT * FROM billing WHERE company LIKE ''%%s1%%''', NULL, NULL),
