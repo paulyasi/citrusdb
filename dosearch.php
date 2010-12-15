@@ -147,7 +147,6 @@ while ($myresult = $result->FetchRow()) {
   $acnum = 0;
   $serviceid = 0;
   $id = 0;
-  $removed = 0;
   
   // get the account_number or service id in the search result
   foreach ($myresult as $key => $value) {
