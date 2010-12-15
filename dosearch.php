@@ -110,6 +110,10 @@ href=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5
       . ($page + 1) . "&perpage=$perpage&pagetype=$pagetype\">$l_next</a>";
   }
 
+  echo " | <a href=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&".
+          "s3=$s3&s4=$s4&s5=$s5&page="
+    . $numpages . "&perpage=$perpage&pagetype=$pagetype\">$l_last</a>";
+
   if ($pagetype == "list") {
   
     echo " | $l_results_per_page: <form name=\"resultsper\">

@@ -274,6 +274,7 @@ $l_invoicenum = "Invoice Num";
 $l_invoicenumber = "Invoice Number";
 $l_invoiceornotice = "Invoice or Notice";
 $l_itshouldbesetto = "it should be set to";
+$l_last = "Last";
 $l_latefee = "Late Fee";
 $l_leftover = "Left over";
 $l_link = "Link";
