@@ -30,7 +30,7 @@ if ($myresult['admin'] == 'n') {
 echo "[ <a href=\"index.php?load=newuser&type=tools\">$l_addnewuser</a> ]";
 
 
-print "<p><table cellpadding=5 cellspacing=1><tr bgcolor=\"#eeeeee\"><td><b>$l_username</b></td><td><b>$l_name</b></td><td></td><tr bgcolor=\"#eeeeee\">";
+print "<p><table cellpadding=5 cellspacing=1><tr bgcolor=\"#eeeeee\"><td><b>$l_username</b></td><td><b>$l_name</b></td><td>$l_admin</td><td>$l_manager</td><td>$l_email</td><td>$l_screenname</td><td></td><tr bgcolor=\"#eeeeee\">";
 
         // get the list of users from the table
         $query = "SELECT * FROM user ORDER BY username";
@@ -41,8 +41,13 @@ print "<p><table cellpadding=5 cellspacing=1><tr bgcolor=\"#eeeeee\"><td><b>$l_u
 	$myid = $myresult['id'];
         $myusername = $myresult['username'];
         $myrealname = $myresult['real_name'];
+	$myadmin = $myresult['admin'];
+	$mymanager = $myresult['manager'];
+	$myemail = $myresult['email'];
+	$myscreenname = $myresult['screenname'];
 
-	print "<td>$myusername</td><td>$myrealname</td>
+	print "<td>$myusername</td><td>$myrealname</td><td>$myadmin</td>".
+	  "<td>$mymanager</td><td>$myemail</td><td>$myscreenname</td>
 	<td><a href=\"index.php?load=edituser&type=tools&userid=$myid\">$l_edit</a></td>
 	<td><a href=\"index.php?load=deleteuser&type=tools&uid=$myid\">$l_delete</a></td>
 	<tr bgcolor=\"#eeeeee\">\n";
