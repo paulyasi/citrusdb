@@ -145,7 +145,7 @@ $l_servicegrowth</a>
 /*----------------------------------------------------------------------------*/
 if ($myresult['admin'] == 'y')
 {
-echo "<div class=toolblock>
+echo "<div class=toolblock style=\"height: 180px;\">
 <b>$l_admin</b>
 <br>
 <div class=icon>
@@ -188,6 +188,12 @@ $l_editbillingtypes</a>
 <a href=# onclick = \"popupPage('index.php?load=services&tooltype=module&type=tools'); return false;\">
 <img border=0 src=\"images/icons/citrus_edit.png\"><br>
 $l_editservices</a>
+</div>
+
+<div class=icon>
+<a href=# onclick=\"popupPage('index.php?load=mergeaccounts&type=tools'); return false;\">
+<img border=0 src=\"images/icons/citrus_modules.png\"><br>
+$l_mergeaccounts</a>
 </div>
 
 </div>
