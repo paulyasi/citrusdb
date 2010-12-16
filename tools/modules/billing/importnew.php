@@ -64,8 +64,16 @@ if ($submit) {
     
     if ($linecount == 1) {
       // make the values in the array safe for import
+
+      $i = 0;
       foreach ($line as $key  => $value) {
 	$line[$key] = import_safe_value($value);
+	$i++;
+      }
+
+      // also check that there are 17 inputs to help check file format
+      if ($i != 17) {
+	die ("File Format Error: Wrong number of inputs");
       }
       
       // make the customer record	
