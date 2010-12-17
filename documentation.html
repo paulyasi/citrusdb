@@ -1,0 +1,4263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+lang="en" xml:lang="en">
+<head>
+<title>CitrusDB 2.2 Manual</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2010-12-17 05:13:52 EST"/>
+<meta name="author" content="Paul Yasi"/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color:lightblue; font-weight:normal }
+  .target { }
+  .timestamp { color: grey }
+  .timestamp-kwd { color: CadetBlue }
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*/-->
+</script>
+</head><body>
+<h1 class="title">CitrusDB 2.2 Manual</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Introduction </a></li>
+<li><a href="#sec-2">2 Chapter 1: Installation </a>
+<ul>
+<li><a href="#sec-2.1">2.1 Installing the Main Internal Application </a></li>
+<li><a href="#sec-2.2">2.2 Installing the Public System for Customer Self-Service </a></li>
+<li><a href="#sec-2.3">2.3 Upgrading CitrusDB </a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Chapter 2: Setup </a>
+<ul>
+<li><a href="#sec-3.1">3.1 Login </a></li>
+<li><a href="#sec-3.2">3.2 Organization Configuration </a></li>
+<li><a href="#sec-3.3">3.3 Settings </a></li>
+<li><a href="#sec-3.4">3.4 Users </a></li>
+<li><a href="#sec-3.5">3.5 Groups </a></li>
+<li><a href="#sec-3.6">3.6 Billing Types </a></li>
+<li><a href="#sec-3.7">3.7 Holidays </a></li>
+<li><a href="#sec-3.8">3.8 Services </a>
+<ul>
+<li><a href="#sec-3.8.1">3.8.1 Adding Your Services </a></li>
+</ul>
+</li>
+<li><a href="#sec-3.9">3.9 Linking Services with Setup Fees, and Bundled Services </a></li>
+<li><a href="#sec-3.10">3.10 Taxes and Fees </a>
+<ul>
+<li><a href="#sec-3.10.1">3.10.1 Linking taxes </a></li>
+</ul>
+</li>
+<li><a href="#sec-3.11">3.11 Field Assets </a></li>
+<li><a href="#sec-3.12">3.12 Searches </a></li>
+<li><a href="#sec-3.13">3.13 Attribute/Option URL Links </a></li>
+<li><a href="#sec-3.14">3.14 Setup Finished </a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4 Chapter 3: Customer Service </a>
+<ul>
+<li><a href="#sec-4.1">4.1 Searching for Customers </a></li>
+<li><a href="#sec-4.2">4.2 Customer Records </a></li>
+<li><a href="#sec-4.3">4.3 Billing Records </a></li>
+<li><a href="#sec-4.4">4.4 Editing Billing Records </a></li>
+<li><a href="#sec-4.5">4.5 Invoice Maintenance </a></li>
+<li><a href="#sec-4.6">4.6 Individual Billing Record Refund Report </a></li>
+<li><a href="#sec-4.7">4.7 Prorate Services </a></li>
+<li><a href="#sec-4.8">4.8 Service Records </a>
+<ul>
+<li><a href="#sec-4.8.1">4.8.1 Example Billing Combinations </a></li>
+<li><a href="#sec-4.8.2">4.8.2 Edit Service Records </a></li>
+<li><a href="#sec-4.8.3">4.8.3 Service History </a></li>
+</ul>
+</li>
+<li><a href="#sec-4.9">4.9 Customer Notes </a>
+<ul>
+<li><a href="#sec-4.9.1">4.9.1 View notes sent to you </a></li>
+<li><a href="#sec-4.9.2">4.9.2 Editing a customer support note </a></li>
+</ul>
+</li>
+<li><a href="#sec-4.10">4.10 Billing Status </a></li>
+<li><a href="#sec-4.11">4.11 Billing History </a></li>
+<li><a href="#sec-4.12">4.12 Payment History </a></li>
+<li><a href="#sec-4.13">4.13 Billing Details </a></li>
+<li><a href="#sec-4.14">4.14 Re-Running Declined Credit Cards </a></li>
+<li><a href="#sec-4.15">4.15 Welcome Letters </a></li>
+</ul>
+</li>
+<li><a href="#sec-5">5 Chapter 4: Billing and Payments </a>
+<ul>
+<li><a href="#sec-5.1">5.1 Billing Tools </a>
+<ul>
+<li><a href="#sec-5.1.1">5.1.1 Credit card batches </a></li>
+<li><a href="#sec-5.1.2">5.1.2 Invoice printing </a></li>
+<li><a href="#sec-5.1.3">5.1.3 E-Invoice emailing </a></li>
+<li><a href="#sec-5.1.4">5.1.4 Entering Payments </a></li>
+<li><a href="#sec-5.1.5">5.1.5 Processing Refund </a></li>
+<li><a href="#sec-5.1.6">5.1.6 Importing New Accounts </a></li>
+<li><a href="#sec-5.1.7">5.1.7 Importing Service Usage </a></li>
+<li><a href="#sec-5.1.8">5.1.8 Importing Credit Card Changes </a></li>
+</ul>
+</li>
+<li><a href="#sec-5.2">5.2 Reports </a>
+<ul>
+<li><a href="#sec-5.2.1">5.2.1 Customer Summary </a></li>
+<li><a href="#sec-5.2.2">5.2.2 Revenue Report </a></li>
+<li><a href="#sec-5.2.3">5.2.3 Refund Report </a></li>
+<li><a href="#sec-5.2.4">5.2.4 Past Due Report </a></li>
+<li><a href="#sec-5.2.5">5.2.5 Payment Status Report </a></li>
+<li><a href="#sec-5.2.6">5.2.6 Service Report </a></li>
+<li><a href="#sec-5.2.7">5.2.7 Source Report </a></li>
+<li><a href="#sec-5.2.8">5.2.8 Exempt Report </a></li>
+<li><a href="#sec-5.2.9">5.2.9 Print Notices </a></li>
+<li><a href="#sec-5.2.10">5.2.10 Service Growth </a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-6">6 Chapter 5: Server Administration and Integration </a>
+<ul>
+<li><a href="#sec-6.1">6.1 Backups </a></li>
+<li><a href="#sec-6.2">6.2 Custom Modules </a></li>
+<li><a href="#sec-6.3">6.3 Account Activation and Deactivation </a></li>
+<li><a href="#sec-6.4">6.4 Credit Card Batch Exports Format </a></li>
+<li><a href="#sec-6.5">6.5 Credit Card Batch Imports Format </a></li>
+<li><a href="#sec-6.6">6.6 New Accounts Data Format </a></li>
+<li><a href="#sec-6.7">6.7 Service Usage Data </a></li>
+<li><a href="#sec-6.8">6.8 Credit Card Change Format </a></li>
+<li><a href="#sec-6.9">6.9 Automation </a>
+<ul>
+<li><a href="#sec-6.9.1">6.9.1 Automatic Credit Card Billing </a></li>
+<li><a href="#sec-6.9.2">6.9.2 Automatic Invoice Printing </a></li>
+<li><a href="#sec-6.9.3">6.9.3 Automatic Invoice Emailing </a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-7">7 Chapter 6: Data Security Implementation Guide </a>
+<ul>
+<li><a href="#sec-7.1">7.1 CitrusDB Configuration </a></li>
+<li><a href="#sec-7.2">7.2 Physical Data Center </a></li>
+<li><a href="#sec-7.3">7.3 Passwords </a></li>
+<li><a href="#sec-7.4">7.4 Encrypting and Decrypting card data </a>
+<ul>
+<li><a href="#sec-7.4.1">7.4.1 Encrypting existing card data </a></li>
+<li><a href="#sec-7.4.2">7.4.2 Changing encryption keys for card data </a></li>
+</ul>
+</li>
+<li><a href="#sec-7.5">7.5 Purge old cardholder data </a>
+<ul>
+<li><a href="#sec-7.5.1">7.5.1 Remove Exported Batch files </a></li>
+<li><a href="#sec-7.5.2">7.5.2 Remove Canceled Customer Records </a></li>
+</ul>
+</li>
+<li><a href="#sec-7.6">7.6 Logging of user activity </a></li>
+<li><a href="#sec-7.7">7.7 Keeping Up-to-Date </a></li>
+</ul>
+</li>
+<li><a href="#sec-8">8 Online Resources </a></li>
+<li><a href="#sec-9">9 Appendix A: GPG Commands </a>
+<ul>
+<li><a href="#sec-9.1">9.1 Creating A Key </a></li>
+<li><a href="#sec-9.2">9.2 Listing Public Keys </a></li>
+<li><a href="#sec-9.3">9.3 Listing Private Keys </a></li>
+<li><a href="#sec-9.4">9.4 Export Public Key </a></li>
+<li><a href="#sec-9.5">9.5 Export Private Key </a></li>
+<li><a href="#sec-9.6">9.6 Importing Public Key </a></li>
+<li><a href="#sec-9.7">9.7 Import Private Key </a></li>
+<li><a href="#sec-9.8">9.8 Delete a Public Key </a></li>
+<li><a href="#sec-9.9">9.9 Delete a Private Key </a></li>
+<li><a href="#sec-9.10">9.10 Encrypt Data with Ascii Armor </a></li>
+<li><a href="#sec-9.11">9.11 Decrypt Data </a></li>
+<li><a href="#sec-9.12">9.12 Edit a Key </a></li>
+<li><a href="#sec-9.13">9.13 Key Signing </a></li>
+<li><a href="#sec-9.14">9.14 Key Trust </a></li>
+<li><a href="#sec-9.15">9.15 Revoke a key </a></li>
+<li><a href="#sec-9.16">9.16 Command Options </a></li>
+</ul>
+</li>
+<li><a href="#sec-10">10 Appendix B: OpenSSL Certificate </a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1">1 Introduction </h2>
+<div id="text-1">
+
+<p>CitrusDB is an open source customer service and billing
+database. It can be used by customer service personnel to provide
+sales and support to customers, and by billing staff to bill
+customers for their services via invoices and credit card batches.
+Customers may access the Online customer account manager to view
+their services, billing history, and make service and support
+requests online.
+</p>
+<p>
+CitrusDB has similar requirements to other open source PHP
+projects.  Specifically it requires PHP 5.0.4 or greater, MySQL 4.x
+or greater database, and a modern web browser such as Firefox,
+Chrome, Safari, or Internet Explorer with support for cookies, and
+Javascript turned on.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2">2 Chapter 1: Installation </h2>
+<div id="text-2">
+
+<p>Before you install CitrusDB you should check whether the Apache web
+server, PHP module, and MySQL database are installed on your
+server.  To check whether Apache, MySQL, and PHP are installed in
+your server correctly you can upload a simple PHP file to your
+server that contains the following code:
+</p>
+
+
+
+<pre class="example">
+   &lt;?php
+   phpinfo();
+   ?&gt;
+</pre>
+
+
+
+
+<p>
+View your uploaded file in a web browser by going to your site, eg:
+www.yourname.com/file.php  This will show you what version of PHP
+you are running and a lot of information about your PHP
+installation.  Further down the screen there will be a section
+about your MySQL installation that will confirm whether MySQL is
+supported by your PHP installation.  If the file you uploaded does
+not load, give an error, or does not show anything about MySQL,
+your server is not configured correctly.  You will need to fix this
+before you continue.
+</p>
+<p>
+There are many methods to install Apache, MySQL and PHP on your
+server.  On Linux you will  usually be able to find a package
+available for your distro that you can install via a package
+manager like synaptic, apt-get, or yum.  Mac OS X already has
+Apache installed by default, all you'll need to do is enable PHP
+and install MySQL or you can use a pre-built package like XAMPP.
+If you are using Windows you can find there pre-built packages like
+XAMPP that include all the pieces you need for Apache, MySQL, and PHP.
+</p>
+<p>
+After you have installed your server software you can begin
+installing CitrusDB.  The main internal application is the largest
+part of CitrusDB.  It is built for use by customer service
+representatives to handle customer service queries and sales,
+billing staff to send bills and process payments, and by
+administrators to activate new services, deactivate services, and
+monitor customer service operations.
+</p>
+<p>
+If you are simply trying out CitrusDB it can be installed on any
+server you like.  When using CitrusDB with real production data it
+should be installed on a private LAN or on a well protected web
+server with limited access by using firewalls and SSL, or other
+comparable security measures to protect your customer data and
+limit access to only you and your staff.  Follow the steps below to
+begin your installation.
+</p>
+</div>
+
+<div id="outline-container-2.1" class="outline-3">
+<h3 id="sec-2.1">2.1 Installing the Main Internal Application </h3>
+<div id="text-2.1">
+
+<ul>
+<li>
+Un-tar and un-gzip the citrus file wherever you want the
+CitrusDB program to be located on your web server. 
+
+</li>
+<li>
+Create a MySQL database called "citrus" using the citrus.sql
+file. You can do this using a utility like phpMyAdmin or the
+command line like the one shown here:
+
+
+
+
+<pre class="example">
+      mysqladmin create citrus
+      mysql citrus &lt; /path/to/citrusdb/citrus.sql 
+</pre>
+
+
+
+
+</li>
+<li>
+Create a MySQL database user with access to the citrus database
+you just created.
+
+</li>
+<li>
+Edit the configuration file: /citrusdb/include/config.inc.php
+
+</li>
+<li>
+Change the database host, to your server name, often this will
+be the localhost it is all on one server.  Enter your database
+username and password that you just created before.
+
+
+
+
+<pre class="example">
+      $sys_dbhost='localhost';
+      $sys_dbuser='username';
+      $sys_dbpasswd='password';
+</pre>
+
+
+
+
+</li>
+<li>
+Change the path to citrus variable to the filesystem path of your 
+installation:
+
+<p>
+On a unix installation it may be something like these depending on
+where you installed your citrus files:
+</p>
+
+
+
+<pre class="example">
+      $path_to_citrus='/home/username/citrusdb';
+
+      or
+
+      $path_to_citrus='/var/www/citrusdb';
+</pre>
+
+
+
+
+<p>
+On a windows installation it may be something like:
+</p>
+
+
+
+<pre class="example">
+      $path_to_citrus='C:\apache\htdocs\citrusdb';
+</pre>
+
+
+
+
+</li>
+<li>
+Change the hidden hash var to your own secret hashphrase.  You
+will never need to remember this hashphrase so you can make it
+as complicated as you want.
+
+
+
+
+<pre class="example">
+      $hidden_hash_var='youmustchangethis';
+</pre>
+
+
+
+
+</li>
+<li>
+Edit the $lang variable to point to your local language
+file. This localization file holds the values for all the text in
+CitrusDB as well as the currency symbol used.  Please note that
+CitrusDB can only work with one currency.
+
+
+
+
+<pre class="example">
+      $lang = './include/local/us-english.inc.php';
+</pre>
+
+
+
+
+</li>
+<li>
+Set the gpg command that will be used for encryption
+of stored credit card data.  In order to use gpg you must
+generate a public and private keypair.  It is probably a good
+idea to generate a gpg keypair just for citrusdb to use.  This
+public key can then be used on the order side to store credit card
+numbers before they are imported as well as storing cards
+entered directly into citrusdb.
+
+<p>
+To generate a keypair run the command: gpg &ndash;gen-key
+</p>
+<p>
+I recommend using the shortest recommended key length of 1024
+bits since this key will be used over and over again, using the
+shorter key length will make decryption faster.  This is a trade
+off of speed vs. strength.  One could also use gpg with the
+symmetric encryption option or any other encryption system that can
+output an OpenPGP ascii armor message format.  Symmetric
+encryption could be significantly faster, however it will
+require protection of the passphrase that is used when
+encrypting the card data.
+</p>
+<p>
+The example shown below stores the gpg key as the www-data user
+in their home directory.  This home directory was created for
+the user that the web server is running as.  This is the easiest way
+to make sure that the web server running citrusdb has access to the keys
+that it will use to encrypt and decrypt the card data.  If the web
+server where you run citrusdb is inside your network and
+dedicated to your internal use this should not be
+an issue.  If you are unable
+to do this, then you will need to modify the permissions of your
+.gnupg folder and the keyrings inside of it to be readable by
+everyone.  This is less desireable as it may expose them to other
+users of that system as well as cause permission problems in the
+future if you edit keys.
+</p>
+
+
+
+<pre class="example">
+      $gpg_command = "/usr/bin/gpg --homedir /home/www-data/.gnupg
+      --armor --batch -e -r 'CitrusDB'";
+</pre>
+
+
+
+
+</li>
+<li>
+Set the gpg decrypt command that is used when decrypting the
+cards for batch exports or when re-keying the data.  The decrypt
+command must include the &ndash;passphrase-fd 0 command because the
+passphrase will be passed to gpg by citrus's decryption
+function.  
+
+
+
+
+<pre class="example">
+      $gpg_decrypt = "/usr/bin/gpg --homedir /home/www-data/.gnupg
+      --passphrase-fd 0 --yes --no-tty --skip-verify --decrypt";
+</pre>
+
+
+
+
+</li>
+<li>
+Set the gpg sign command will be used by citrus to verify
+the passphrase entered before creating a batch file.  
+
+
+
+
+<pre class="example">
+      $gpg_sign = "/usr/bin/gpg --homedir /home/www-data/.gnupg
+      --passphrase-fd 0 --yes --no-tty --clearsign -u 'CitrusDB'";
+</pre>
+
+
+
+
+</li>
+<li>
+Set the regular url and ssl url prefixes for your database url.
+The ssl url is required for entering billing data or when
+exporting credit card data.  You may use a self-signed
+certificate for this function as long as all the users of the
+database have that SSL certificate installed into their browsers.
+If you have other compensating controls or do not want to use
+ssl, you can enter the same http url in both variables.
+
+
+
+
+<pre class="example">
+      $url_prefix = "http://server.example.com/citrusdb/";
+      $ssl_url_prefix = "https://server.example.com/citrusdb/";
+</pre>
+
+
+
+
+</li>
+<li>
+If you would like to use an LDAP server to authenticate users 
+you can setup the ldap variables.  Set the ldap<sub>enable</sub> variable
+to TRUE and the other variables to correspond to your LDAP configuration.
+You should make sure you have configured your ldap server to work
+with ssl so that the data passed between the web server and the ldap 
+server is not able to be intercepted by using the ldaps protocol.
+
+</li>
+<li>
+You will need to have the user configured inside of the citrus user
+utilities to allow them to login with LDAP, but you can manage their 
+password using your LDAP system.
+
+
+
+
+<pre class="example">
+     $ldap_enable = FALSE;
+     $ldap_host = 'ldaps://localhost';
+     $ldap_dn = 'ou=webapps,dc=localhost';
+     $ldap_protocol_version = 3;
+     $ldap_uid_field = 'uid'; 
+</pre>
+
+
+
+
+</li>
+<li>
+If you have an xmpp or jabber server for ticket notifications you can setup
+those xmpp account variables to allow citrus to send ticket notifications
+via xmpp instant messages.
+
+
+
+
+<pre class="example">
+$xmpp_server = "";
+$xmpp_user = "";
+$xmpp_password = "";
+$xmpp_domain = "";
+</pre>
+
+
+
+
+</li>
+<li>
+A shipment tracking website URL like the one for US Postal, FedEx, or 
+UPS can be entered if you want to use the field asset
+tracking number field when shipping field assets to customers.
+
+
+
+
+<pre class="example">
+$tracking_url = "http://trkcnfrm1.smi.usps.com/PTSInternetWeb/InterLabelInquiry.do?origTrackNum=";
+</pre>
+
+
+
+
+</li>
+<li>
+add a cron job to run the statusupdate script (available in the
+citrusdb folder) every night or after billing is done for the
+day. This script will update the customer's account status and
+create a file that can be used to activate and deactivate
+customer services automatically. 
+
+</li>
+<li>
+Go to your web site address /citrusdb/index.php, you can log in
+with username "admin", password "test" to start.
+
+</li>
+</ul>
+
+<p>You have now finished the main installation of CitrusDB.  It's a
+good idea to login and change your admin password first.  If you
+are not going to install the customer account manager can skip to
+Chapter 2 - Setup, to continue to setup of the internal CitrusDB 
+application.    
+</p></div>
+
+</div>
+
+<div id="outline-container-2.2" class="outline-3">
+<h3 id="sec-2.2">2.2 Installing the Public System for Customer Self-Service </h3>
+<div id="text-2.2">
+
+<p>CitrusDB also includes an online customer component for customers
+to view information about their own account,  request changes, and
+make updates.  The online customer account manager is stored in
+the /online folder of the CitrusDB download.  It is a simple
+interface for customers to login using their customer number and
+password of their choice.
+</p>
+<p>
+The online folder is meant to be installed on a separate web
+server.  If you have a firewall,
+you'll want to configure it to allow access to the database server
+from this web server, so that the online component can query the
+customer information.  It is also recommended to make a new login
+name and password for use by the online customer component that
+has more restrictions than your normal database user from the main
+system.  This new database login name should restrict the access
+to your citrus database to SELECT only, allowing INSERT for only
+the customer_history table and SELECT, INSERT, UPDATE, and DELETE
+for the session2 table. 
+</p>
+<p>
+The online customer system is configured similarly to the main
+system by editing the config.inc.php file inside the 
+citrusdb/online/include folder.  There are some additional
+variables to configure for the online customer system.
+</p>
+<p>
+The $payment_url variable should be set to whatever online
+form or payment system you have such as authorize.net, paypal,
+your own custom form etc. 
+</p>
+<p>
+The $notify_user variable holds a username from the internal
+system that will be notified of new requests that customers make online. 
+</p></div>
+
+</div>
+
+<div id="outline-container-2.3" class="outline-3">
+<h3 id="sec-2.3">2.3 Upgrading CitrusDB </h3>
+<div id="text-2.3">
+
+<p>When a there is a new installation or critical security update,
+you will want to be able to upgrade your installation to the
+latest release.  To update from an older version to a newer one:
+</p>
+<ul>
+<li>
+Backup the php files by copying them to another location and
+backup your citrus database by using a utility like mysqldump.
+
+
+
+
+<pre class="example">
+      mysqldump –user &lt;username&gt; –password &lt;passwd&gt; db_name &gt; backup.sql
+</pre>
+
+
+
+
+</li>
+<li>
+After you have backed up your current installation, replace the
+old citrusdb files with the new ones from the package you downloaded
+
+</li>
+<li>
+Edit the config.inc.php in /citrusdb/include with the database
+and path information from your old config file.
+
+</li>
+<li>
+To update your database schema from the old to the new, open the
+update.php file in your web browser 
+(www.example.com/citrusdb/update.php) and click the Update button.
+
+</li>
+<li>
+Your database has now been updated, and you are ready to use
+your new version of CitrusDB.    
+
+</li>
+<li>
+If you are upgrading from version 1.x to 2.x you will need to
+make sure you have setup the new gpg commands in the config file
+and then run the encryptcards script to encrypt the cards in the database.
+
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3">3 Chapter 2: Setup </h2>
+<div id="text-3">
+
+
+</div>
+
+<div id="outline-container-3.1" class="outline-3">
+<h3 id="sec-3.1">3.1 Login </h3>
+<div id="text-3.1">
+
+<p>After you have installed CitrusDB the first thing you should do is
+login with the default username (admin) and password (test) and
+then go update the password to something new.  To update the
+password, click on the Tools icon, and then click on Change
+Password. Enter a new password for the default admin user.  
+</p>
+<p>
+The login system will stop your login attempts from your IP
+address  if you fail to login with the correct username and
+password after 5 tries in the last 24 hours.  If this happens, your
+IP address must be removed from the login_failures table by the
+database administrator.    
+</p></div>
+
+</div>
+
+<div id="outline-container-3.2" class="outline-3">
+<h3 id="sec-3.2">3.2 Organization Configuration </h3>
+<div id="text-3.2">
+
+
+<p>
+The Organization Configuration section holds information about the
+company or organization using CitrusDB.  This should be the first
+thing you configure when setting up CitrusDB.   The information is
+used in many places for invoices, billing, and customer messages. 
+</p>
+<p>
+The Billed By field holds the organization's brand name.  If you
+have more than one organization brand name you can add multiple
+organization brands using the Add link to create more than one
+organization listing.  This is used to create bills under different
+brand names and different credit card batches for those brands.  If
+your organization does not need multiple brands you can simply edit
+the default configuration.
+</p>
+<p>
+Enter the organization's name that will
+appear on the bill in the Billed By field.  Then the street, city,
+state, zip, phone, and email information.  The billing phone and
+billing email will appear on the printed and emailed invoices.  
+</p>
+<p>
+Credit Card Export Variable Order is the order of the variables
+that are exported in the credit card batch file for processing by
+your credit card processing system.  You can export a number
+of different variables.  All the available variables are listed at
+the bottom of the organization screen.  Please note that you need to
+put the $ in front of the variable name so that they are evaluated
+correctly.  CitrusDB will insert the words "CREDIT" or "CHARGE" in quotes at the
+beginning of the variables, depending on what kind of credit card 
+transaction this is.  The recommended export format uses comma and quote
+delimited items.  You must keep the commas between the items and
+quotes around them to make sure other systems can import the
+information correctly.
+</p>
+
+
+
+<pre class="example">
+"$mybilling_id","$invoice_number,"$billing_ccnum","$billing_ccexp","$abstotal"...
+</pre>
+
+
+
+
+<p>
+Export File Prefix is is appended to the beginning of all credit
+card batch files exported by citrus.  If you have multiple
+organizations exporting from the same citrus system, you can use
+this file prefix name to identify which exported batches belong to
+which organization.
+</p>
+<p>
+Past Due Days are the number of days an account is past due before
+the status is updated by the statusupdate script to one of the
+three different past due status types: Past Due, Turned Off, or
+Canceled.  
+Past Due accounts will be noted as past due and will be notified in
+email by 
+the statusupdate script about their status.  A Turned Off status will
+cause the account to send a disable message to the account
+activation system, which can then disable access to the account.
+An account in a Turned Off status should be disabled and
+non-working.  The Canceled status is for accounts that have
+been through the first two phases of being past due and have not
+yet paid for services.  Canceled will send a delete message to
+the  account activation system.  The account should be removed
+from your systems, and if you have a collections department or
+processing system, can be forwarded to them for past due amount
+recovery.
+</p>
+<p>
+Carrier Dependent Past Due Days are for third party services that
+have special requirements when they are turned off.  They act the
+same as normal Past Due Days however they have a Shutoff Notice
+period in between being Past Due and having their service being
+Turned Off.  This shutoff notice is to notify the customer that
+their service will be turned off and also to notify the billing
+group that the service is in jeopardy of being shutoff.  The
+billing group will receive notifications when this service is to be
+turned off or canceled, since they will need to be able to contact
+the third party service carrier to handle type of cancel request.
+</p>
+<p>
+The next fields are the four different kinds of invoice
+notes that are printed at the bottom of the invoices according to
+the account status.  The Default Invoice Note is printed on an
+account in good standing, usually this is a note thanking them for
+using your services.  The Past Due Invoice Note is printed on
+invoices while an account is in the Past Due status.  The Turned
+Off Invoice Note is printed on invoices while an account is in the
+Turned Off status.  The Collections Invoice Note is printed on
+invoices for accounts in the collections status.  These messages
+can be overridden by entering a custom message in the Notes field
+on the customer's billing record.
+</p>
+<p>
+The declined subject and message field hold the data used in the
+email that is sent to customers when their credit card has been
+declined.  Here you should enter a message that will prompt them to
+contact you and get their billing information up to date.
+</p>
+<p>
+The last field is an invoice footer field that holds text that will be
+placed at the bottom of every invoice.
+</p>
+<p>
+After you have setup the organization information you are ready to save
+your changes and continue setting up your CitrusDB system.
+</p></div>
+
+</div>
+
+<div id="outline-container-3.3" class="outline-3">
+<h3 id="sec-3.3">3.3 Settings </h3>
+<div id="text-3.3">
+
+
+<p>
+The settings tool holds system wide settings for citrus.
+</p>
+<p>
+At the top of the Settings screen you will see a
+Citrus Database Version and Citrus Software Version.  The database
+version is the version of the SQL Schema that is being used.  The
+software version indicates the version of the software application
+files.  These two versions should be the same.  If they are
+different it may mean that you have not run the update script to
+update your database to the correct version or that you are
+running a Pre-release version of CitrusDB.
+</p>
+<p>
+The Path to Credit Card File should be set to a file path on the
+server to a folder that is outside the path of the web server and
+other network processes.  When credit card and account activation
+data is created it will be saved to a new file inside this folder.
+You can then write scripts that will automatically process new
+files left in that folder, or download those files to process them
+manually.  You should make a new folder to store this data in, for
+example, on a Unix system you can set this to something like
+</p>
+
+
+
+<pre class="example">
+   /var/billing 
+</pre>
+
+
+
+
+<p>
+and on a Windows system it can be set to a path such
+as 
+</p>
+
+
+
+<pre class="example">
+   C:\billing
+</pre>
+
+
+
+
+<p>
+This will keep this data outside of the web server
+path, but will still allow it to be accessed by 3rd party scripts
+running on the server that can process this data automatically.
+</p>
+<p>
+The Default Group is used by the support notes and privileges
+system to allow notifications to certain users.  Normally leaving
+this as the default of "users" is recommended.
+</p>
+<p>
+The Billing Group is a group that you will need to create if you
+are using the carrier dependent services functions or if you are
+using the Field Asset feature.  The status
+update script will send the billing group notes if a carrier
+dependent service is in a bad billing status, like past due, turned
+off, or canceled with fees owed.  The field asset feature will send
+a note to billing whenever a device is returned so that the billing
+group knows the customer has returned a device and can take
+measures necessary to adjust their bill.
+</p>
+<p>
+The Shipping Group is a group that you will need to create if you
+are going to use the Ship Field Asset feature.  Ship Field Assets
+lets you associate a field asset like a CPE or other device with
+that customer's service.  The shipping group will get a note when a
+field asset is setup to be shipped.
+</p>
+<p>
+The carrier dependent cancel url is for third party carrier
+dependent services.  This can link to an internal web form or other
+form when a carrier dependent service is canceled to notify the
+third party carrier that this service is to be canceled.
+</p>
+<p>
+The Billing Date Rollover time should be set to the time of day
+when new accounts created after this time will not be billed until
+the next billing day.  This is used to prevent new accounts from
+being given the current billing date after the batch has already
+been processed for the day.  This time field is in 24 hour time format.  
+</p>
+<p>
+The Weekend indicators allow the billing system to automatically
+skip certain days when assigning new billing dates to new
+customers.  This is especially usefull for billing around
+weekends, so that a new customer's billing date does not fall on a
+weekend.  You can choose what days of the week you want to assign
+as weekends here.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3.4" class="outline-3">
+<h3 id="sec-3.4">3.4 Users </h3>
+<div id="text-3.4">
+
+
+<p>
+The Users Tool will allow you to add CitrusDB database users.
+This is used to add your staff personnel that will be using the
+database to access customer information and billing.  The user
+tool will show you a list of current users.  In the default
+installation there will be two users present.  An admin user that
+has all privileges to edit everything about the database, and an
+online user that is used to demonstrate the online customer
+account manager's message notification.  If you have not yet done
+so, you should change the password for both the Admin user and
+Online Request user to something new.  
+</p>
+<p>
+To add a new user click Add New Database User.  You will then be
+presented with a form to fill out, including the user's real name,
+their username, and their password.  You will also choose their
+tool privileges here.  Admin privileges will allow access to add
+new users, edit billing types, add new services, and add new
+modules. The Manager privilege will allow access to the credit
+card import/export features, invoices, payments,  reports, and
+account activation.  All other users should have No selected for
+both Admin and Manager privileges.
+</p>
+<p>
+You can edit existing users by clicking the Edit link next to
+their name.  This will allow you to change their tool privileges,
+their username, and their password.  You can also delete a user by
+clicking the Delete link next to their name.  When you delete a
+user or change their username, any notes they have made will
+stay in the database under their old username.  You will also need
+to update any groups they are a part of to include their new username.
+</p></div>
+
+</div>
+
+<div id="outline-container-3.5" class="outline-3">
+<h3 id="sec-3.5">3.5 Groups </h3>
+<div id="text-3.5">
+
+<p>The Groups tool is used to assign users to different groups for 
+notification and permission purposes.  By default all the users
+who are added to the database are put in the "users" group.  This
+should probably not be changed, since it affects access to many
+pieces of the system.  You can add as many other groups as
+necessary. For instance, if you have a group of people who perform
+shipping duties, you might make a shipping group and assign them
+to this group.  When a particular piece of equipment is needed you
+can send a note to the shipping group, which will notify all the
+individuals in that group about your message.  When someone in the
+group marks the message finished, it will dissapear from view of
+all the people in the group.
+</p>
+<p>
+This is also where you will add the billing group you specified
+in the settings tool if you are using the carrier dependent
+service functions.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3.6" class="outline-3">
+<h3 id="sec-3.6">3.6 Billing Types </h3>
+<div id="text-3.6">
+
+<p>The Edit Billing Types tool will allow you to edit what billing
+types are available in the customer's billing record.  CitrusDB
+comes with a number of billing types already created, so you may
+not need to create more.  In fact, it may be better to delete
+those that you do not need, so they don't get in the way.  There
+are 6 methods of billing:
+</p>
+<ul>
+<li>
+creditcard: For billing via a credit card batch export.
+
+</li>
+<li>
+einvoice: For emailing invoices.  The invoice is in text format,
+and will be sent to the email address indicated on the billing record.
+
+</li>
+<li>
+invoice: For printed invoices.
+
+</li>
+<li>
+prepaycc: For prepayments done with a creditcard.  A prepaid
+account will not have it's payment dates updated until payment is
+made, it will not go into a Past Due status, it will become Not
+Renewed, and should be turned off if left un-renewed.
+
+</li>
+<li>
+prepay: For prepayments done via checks, cash, or electronic funds
+transfer.  A prepaid account will not have it's payment dates
+updated until payment is made, it will not go into a Past Due
+status, it will become Not Renewed, and should be turned off if
+left un-renewed.
+
+</li>
+<li>
+free: For free accounts.  These accounts will never be billed and
+will never be past due.  The free billing type can be used for
+items like demo accounts or temporary free items.
+
+</li>
+</ul>
+
+<p>If you need to add new billing types, they can be added using the
+form at the bottom of the Edit Billing Types tool window.  You
+will need to provide the name of the new billing type.  This will
+show up in the list in the billing record.  The frequency of the
+billing type.  This frequency is used to determine how often (in
+months) that billing type is processed.  For example a Monthly
+billing type would use a frequency of 1, a Yearly billing type
+would use a frequency of 12 (for the 12 months between bills).  There
+is also a special case frequency of 0 (zero) for a free or one
+time billing type.  Lastly, select what billing method this new billing
+type will use, creditcard, prepay, invoice, einvoice, etc.
+</p>
+<p>
+You can remove billing types from the database, however before
+doing so you will want to make sure that none of your current
+billing records are using that billing type, otherwise they may
+not get billed properly.
+</p></div>
+
+</div>
+
+<div id="outline-container-3.7" class="outline-3">
+<h3 id="sec-3.7">3.7 Holidays </h3>
+<div id="text-3.7">
+
+<p>CitrusDB has a table in the database called "holiday".  This table
+consists of just one date field called "holiday_date" that holds
+dates that are billing holidays when billing is not preformed.  If
+a new customer's billing date should fall on one of these days it
+will be moved up a day until it does not fall on a holiday.  You
+should determine what holidays there are during the year that are
+not already covered by the weekends setting when 
+billing will not be performed and add those dates to the table.  This
+table can only be edited by using a database editor such as
+phpMyAdmin or SQL insert queries.
+</p></div>
+
+</div>
+
+<div id="outline-container-3.8" class="outline-3">
+<h3 id="sec-3.8">3.8 Services </h3>
+<div id="text-3.8">
+
+
+<p>
+CitrusDB comes with a default example service, credit, and prorate
+services.  To make CitrusDB work for your organization you will
+have to add your services using the Edit Services tool.  CitrusDB
+can support many different kinds of services, one time services
+and fees, recurring services, taxes and fees, linked or bundled
+services, and services with measured usage or hourly cost. 
+</p>
+<p>
+Open the Edit Services tool to see all your current services.
+Click Add New Service to begin adding the services that you
+provide.  
+</p>
+
+</div>
+
+<div id="outline-container-3.8.1" class="outline-4">
+<h4 id="sec-3.8.1">3.8.1 Adding Your Services </h4>
+<div id="text-3.8.1">
+
+
+<p>
+The Billed By menu lets you choose which organization this service
+is billed by.  This would only change if you have more than one
+brand organization inside of your citrusdb installation.
+</p>
+<p>
+The Description field holds the service name that will appear in
+the service listing and on invoices.   
+</p>
+<p>
+Price holds the unit price of the service.  For example if you
+have a service that is 9.95 per month, enter 9.95, if you have a
+service that is 39.95 per year, enter 39.95, a service that is
+70.00 per hour, enter 70.00. 
+</p>
+<p>
+The Frequency indicates the service's monthly billing cycle.  A
+service that is billed monthly would have a frequency of 1 (for
+every month), a service that is billed yearly would have a
+frequency of 12 (for every 12 months), a service that is only
+billed one time would have the special frequency of 0 (zero) for a
+one time service.  One time services are automatically removed
+from the customer's service record listing and put into the
+service history after they are billed. 
+</p>
+<p>
+The Options/Attributes Table field holds the name of the table
+that holds the attributes for that service.  When you make a
+service, you can also name a table in the database that holds the
+attributes that are associated with that service, such as
+location, equipment, usernames, special contact info, anything
+that may be associated with that service itself.  This options table name
+is not required, so if your service has no attributes you can
+leave this blank, however if you add an attributes table at a
+later time the services that were already added will not be associated
+with the new attributes.
+</p>
+<p>
+The attributes tables allow CitrusDB to support any
+kind of service at all, so it is not limited to one industry.  If
+you are making a new attributes table, choose a table name and
+enter it in the Options/Attributes Table field.  After you have
+added the service, go to the Options/Attributes Table link at the
+top and click Create next to the table name in the listing.  This
+will create an empty table with the correct fields to link it with
+your new service.  You can then add any attribute fields you want
+after the first two relationship fields, using SQL alter table
+commands or a tool like phpMyAdmin. 
+</p>
+<p>
+Most of the attribute fields will be shown as simple text fields,
+however if you want to make a menu of choices, or a Yes/No choice,
+you can use an enum field type that will show all the items in the
+enum within a drop down selection on the web page. You can also
+add text or blob fields that will be shown as textarea entry fields.
+</p>
+<p>
+The Category field is a case sensitive name of a category to group
+the service under when choosing services to add to the customer's
+service record.  This can be left blank if you only have a few
+services, but when you have many services it will be helpful to
+organize them into categories so you can jump to the type of
+service you are looking for.
+</p>
+<p>
+Selling Active is on by default.  It indicates whether this
+service is currently being sold.  If set to Yes, it will show up
+in the list of services that can be added to an account.  If set
+to No, it will not show up in the list of services that can be
+added to an account, however it can still be billed to customers
+who still have the service.  This can be used to deactivate
+services that were only available for a limited time and are still
+being billed, but are no longer available for new sales.     
+</p>
+<p>
+The Hide Online field is set to No by default.  This indicates
+whether you want to show or hide this service in the customer
+account manager and in the default view when adding services. 
+You will probably will want to hide services such as setup fees,
+install fees, and sometimes bundled services.  The services are
+hidden to regular internal CitrusDB users, and are only
+visible to manager and admin users using the Show All link when
+adding services to a customer. 
+</p>
+<p>
+The Activate Notify field holds the username or group name of the
+CitrusDB user who will be sent a support ticket note when this
+kind of service is added to an account.  This can be used to
+notify order coordinators or a service activation department about
+services being added to an account if further manual processing is
+required. 
+</p>
+<p>
+The Shutoff Notify field holds the username or group name of the
+CitrusDB user who will be sent a support ticket note when this
+service is removed from an account.  This can be used to notify
+order coordinators or a service activation department about
+services being removed from an account if further manual
+processing is required. 
+</p>
+<p>
+The Modification Notify field holds the username or group name of the
+CitrusDB user who will be sent a support ticket for services are
+are to be enabled, that were previously disabled, but not totally shutoff.
+</p>
+<p>
+The Support Notify field holds the username or group name of the
+CitrusDB user who will be entered by default in new support
+tickets that are opened for this service.
+</p>
+<p>
+Activation String is used to hold the field names that are passed
+to the statusupdate tool with this service.  For example,
+when you add a new Internet account service you will probably want
+to provide the username and password from the options_table to the
+account activation system.  To do that enter the string
+“username,password” in the Activation String field.  The field
+names must be entered in matching case and be comma seperated with
+no spaces or other characters between the field name. 
+</p>
+<p>
+The Usage Label is used to label the Measured Usage field when
+adding measured usage services.  For example if you have a service
+that is 70.00 per hour, you would put “hours” in this field, or if
+you have a service that is 5.00 per gigabytes, you would put
+“gigabytes” in this field. 
+</p>
+<p>
+Carrier Dependent services are those that are provided by a third
+party that needs a seperate notification of service activation and
+deactivation that is not part of your own account activation
+system.  A Carrier Dependent service has additional steps when
+they are being deactivated that will send a shutoff notice to the
+customer to make sure they are aware the service is being
+shutoff.  It will also send simultaneous notifications to the
+default billing group that is indicated in the Settings so
+that group can take care of communication to the third party carrier
+about what to do with a past due, turned off, or canceled
+service.
+</p>
+<p>
+A carrier dependent service that owes money when their account
+is canceled will be marked as the status cancelwfee instead of
+canceled so that the billing group can find those customers and go
+after them for the money they owe.  This is usually necessary
+since as a provider you will owe money for those services to the third
+party that was providing them and will have more incentive to collect
+on those charges rather than just cancel that service and be
+done with their account.
+</p>
+<p>
+After you have filled in all the relevant service information you can click
+the Add button to add your new service to the database.  You
+can now assign this service to your customers. 
+</p>
+<p>
+If you have many many services to add it may be easier to make a
+spreadsheet with all their attributes and import them into the
+master_services table directly using SQL insert queries or a database
+editor such as phpMyAdmin.    
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-3.9" class="outline-3">
+<h3 id="sec-3.9">3.9 Linking Services with Setup Fees, and Bundled Services </h3>
+<div id="text-3.9">
+
+<p>Setup Fees and Bundled services are added like any other service
+using the Add New Service function.  After you have added the
+setup fee or bundle service, choose the Link Services item to
+connect them to the service it goes with.  For example, you may
+make a link From a Monthly Service Account to a Service Account
+Setup Fee.  Now whenever a Monthly Service Account is added, the
+Setup Fee is automatically added to the service record also.
+</p></div>
+
+</div>
+
+<div id="outline-container-3.10" class="outline-3">
+<h3 id="sec-3.10">3.10 Taxes and Fees </h3>
+<div id="text-3.10">
+
+<p>CitrusDB comes with some default tax rates for certain locations.
+This data may be incorrect or out of date, please consult your
+local tax code to make sure you are billing for the correct tax amounts.
+</p>
+<p>
+To add a new tax rate click the Taxes link in the Service
+Editor. and then click on Tax Rates.  At the bottom of the Tax
+Rates screen is a form to add new Tax Rates.  The Description
+holds the name of the tax, for example “Massachusetts Sales Tax”.
+The Rate holds the percentage of the tax, for a 5% tax enter
+“0.05”.  The If-Field holds the name of the field in the customer
+record that is checked to see if this tax applies to the customer.
+For example, if the tax is based on what state a customer is in,
+enter “state”.  The field names are the names according to the SQL
+database names for matching customer table columns, and will
+usually be in all lower case.  The last field is the If Value, if
+this tax is for customers who are only in the state of
+Massachusetts, enter “MA” in the Value field.  You can leave the
+If Field and If Value fields blank if the tax is applied
+regardless of the customer attributes.
+</p>
+<p>
+You can remove tax rates by clicking on the Delete link.  Make
+sure you do not have any services associated with that tax rate
+before removing it, or you may not bill them correctly.
+</p>
+
+</div>
+
+<div id="outline-container-3.10.1" class="outline-4">
+<h4 id="sec-3.10.1">3.10.1 Linking taxes </h4>
+<div id="text-3.10.1">
+
+
+<p>
+After you have added your applicable tax rates you need to link
+those taxes to the services that are being taxed.  Click on the
+Taxed Services item.  Here you can link a service with a tax.  The
+tax will be added to customers with that service if the customer
+record meets the If Field/Value checks, and if the customer is not
+tax exempt for that tax type.                       
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-3.11" class="outline-3">
+<h3 id="sec-3.11">3.11 Field Assets </h3>
+<div id="text-3.11">
+
+<p>Field assets refer to devices out in the field like customer
+premises equipment (CPE) or other devices you want to track that
+are associated with a service.
+</p>
+<p>
+To add Field Assets to a service first you must setup what Field
+Assets types are available for each category of service.  Open the
+edit services tool and click on Edit Field Asset Types.  Here you
+can enter the device description, choose the status of current for
+devices that
+you are currently shipping to your customers.  If you have devices
+in the field but do not ship them to customers anymore you can
+change the device to the old status using this same edit screen.
+You can enter the weight of the device here which is not used yet,
+but may  be used some day to calculate a shipping fee.  Finally
+choose what service category that this device belongs to.  
+</p>
+<p>
+Now that you have added your Field Assets when you edit a
+customers' service you will see a choice called Ship Field Asset
+under the service attributes.  If you want to track a field asset
+shipment you can then choose the type of field asset you are
+shipping and then enter the device details and shipping
+information.  This will now associate this device with that service
+record and will show you that device on the service edit screen.
+</p>
+<p>
+If one returns the field asset device you can edit the customer's
+service record and click on Return Device and enter information
+about why the device has been returned.
+</p></div>
+
+</div>
+
+<div id="outline-container-3.12" class="outline-3">
+<h3 id="sec-3.12">3.12 Searches </h3>
+<div id="text-3.12">
+
+<p>CitrusDB comes with a number of searches pre-installed in the
+searches table.  Search fields are edited in each module's
+search.php file and show up on the search page.  You will probably
+want to create search queries for your new service attributes, so
+you can find services by the specific attributes that have been
+specified in their options/attributes table.    You can add new
+searches by adding a new row to the searches table. For example in
+the query field: 
+</p>
+
+
+
+<pre class="example">
+   SELECT * FROM customer WHERE phone LIKE '%%s1%%' 
+</pre>
+
+
+
+
+<p>
+This will allow you to search the customer table for a phone
+number. The %%s1%% will be replaced with the information filled
+out in the search form. Then link to the search row id using a
+small input form in the corresponding module search.php page. In
+this case you would edit the /modules/customer/search.php file and
+add new html for a form:
+</p>
+
+
+
+<pre class="example">
+   &lt;form ACTION="index.php?load=dosearch&amp;type=fs" METHOD="POST"&gt;
+   Find Phone Number: &lt;input type=text name=s1&gt;
+   &lt;input type=hidden name=id value=4&gt; 
+   &lt;-- "4" is the id of the row in the searches table --&gt;
+   &lt;input type=submit name=submit value="search" class=smallbutton&gt;
+   &lt;form&gt;
+</pre>
+
+
+
+
+<p>
+You can search with multiple field inputs by naming each field s1,
+s2, s3, s4, or s5.    
+</p></div>
+
+</div>
+
+<div id="outline-container-3.13" class="outline-3">
+<h3 id="sec-3.13">3.13 Attribute/Option URL Links </h3>
+<div id="text-3.13">
+
+<p>You can add a link to the right of the service attribute field that
+will allow users to query a web address with that service
+attribute. This can be used for things like checking the finger
+results on a Unix server or checking other account status through a
+website. The URL Options Links are stored in a table called
+options_urls. You can add new links or edit existing ones using SQL
+queries or a utility like phpMyAdmin. The URL link is matched by
+the name of the attributes table field, so any attributes table
+with a matching name will get a link next to it. For example if you
+have a username field and you want people to be able to run a
+finger.cgi on any attribute table field with a name of username you
+would make a new entry into the options_url table with the
+fieldname of username and a url such as
+</p>
+
+
+
+<pre class="example">
+   http://www.example.com/finger.cgi?%s1%
+</pre>
+
+
+
+
+<p>
+the %s1% is a place holder where the value of the attribute will be
+put into the URL.
+</p></div>
+
+</div>
+
+<div id="outline-container-3.14" class="outline-3">
+<h3 id="sec-3.14">3.14 Setup Finished </h3>
+<div id="text-3.14">
+
+<p>You have now completed the setup of CitrusDB to work with your
+organization.  You can now begin adding customers and billing them
+for services!
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4">4 Chapter 3: Customer Service </h2>
+<div id="text-4">
+
+<p>CitrusDB helps make customer service easier by putting all the
+customer information, billing records, service information, and
+payments in one easy to access location. 
+</p>
+</div>
+
+<div id="outline-container-4.1" class="outline-3">
+<h3 id="sec-4.1">4.1 Searching for Customers </h3>
+<div id="text-4.1">
+
+<p>After CitrusDB has been setup and customers have been entered into
+the database, the most common thing one will do when first dealing
+with a customer is search for their record in the database.  To
+search for a customer record, click the Search icon at the top of
+the screen.  This will show you the available searches you can
+perform.  You can find customers by their account number, their
+name, their company, and many other bits of customer information.
+Additional searches can be added by the server administrator by
+editing the searches table and search.php files, detailed in
+chapter two. 
+</p></div>
+
+</div>
+
+<div id="outline-container-4.2" class="outline-3">
+<h3 id="sec-4.2">4.2 Customer Records </h3>
+<div id="text-4.2">
+
+
+<p>
+When you have a new customer to add to the database click the New
+icon at the top of the screen.  This will prompt you to fill in
+some standard customer information, such as their name, address,
+and phone number.  After you have filled in their information,
+click the Add button.  This will make a new customer record, and
+take you to the customer record where you can begin adding their
+new service and billing records by clicking on the service and
+billing tabs on the left.  Adding new service and billing records
+is detailed below.  After you have added service and billing
+records for the customer, that record is considered complete and
+ready for billing and service provisioning. 
+</p>
+<p>
+To edit the customer's record click the Edit Customer link
+at the top of the customer record screen.  This will allow you to
+edit the information about the customer, such as their address,
+phone number, or email address.  When you edit the customer
+record, this does not automaticaly affect their billing record.
+After you have saved your changes to the customer record you will
+be promted to update the billing record with the matching
+information.  Click Yes if the customer's billing information
+should match.  Otherwise you will need to edit the billing record
+seperately. 
+</p>
+<p>
+If a customer wishes to cancel their services and will no longer
+have any customer relationship with your organization, you can
+cancel a customer using the Cancel link at the top of the customer
+record.  You will then be asked if you are sure you want to cancel
+this customer.  When you cancel a customer it will deactivate all
+the services on their account and the account will no longer
+generate new bills for services.  If you want to un-cancel the
+customer's record you can click the Uncancel customer link that
+will show up on a canceled customer record.  Add their services
+back onto the account, and edit their billing so that it begins
+billing them as before.
+</p></div>
+
+</div>
+
+<div id="outline-container-4.3" class="outline-3">
+<h3 id="sec-4.3">4.3 Billing Records </h3>
+<div id="text-4.3">
+
+
+<p>
+After you have added a customer record you'll want to edit their
+billing record.  Click the Billing tab on the left side.  If this
+is a new customer, the billing record will have copied the customer
+address from the custsomer record, but will have empty billing
+method and may have ivalid billing dates.  If the customer's
+contact information will not match their billing contact
+information, you must edit the record to add their billing address
+information to the billing record.  You are then ready to edit
+their rest of their billing record. 
+</p>
+<p>
+Most customers will have just one default billing record.
+Alternate billing records can be associated with services when
+those services require billing that differs from the customer's
+default.  To edit the default billing record click the Edit
+Default Billing link at the top.  If you need to edit an alternate
+billing record, click the alternate billing record's ID number in
+the alternate billing list.  This will bring up the billing record
+editor. 
+</p></div>
+
+</div>
+
+<div id="outline-container-4.4" class="outline-3">
+<h3 id="sec-4.4">4.4 Editing Billing Records </h3>
+<div id="text-4.4">
+
+<p>In the billing record editor you can update their billing address,
+phone, email and billing type.  When you add a new customer
+billing record much of the address information will be copied from the
+customer information so that billing can be processed.  If you
+didn't copy the customer information into the billing record when
+editing the customer record, you'll need to start by filling in
+the customer's billing contact information.  This will hold the
+address that an invoice is mailed to, the email address an
+e-invoice is emailed to, and the address that a credit card is
+verified against.   
+</p>
+<p>
+You will also choose the billing type here.  There are many
+billing types to choose from.  Depending on what kind of services
+the customer has, it may restrict what billing types are
+compatible with that service.  A service cannot have a billing
+type that has a billing cycle frequency that is smaller than the
+service frequency.  For example, if the customer has a service on
+their record that is a Quarterly Subscription Service that is
+billed every 3 months, they must have a billing type that is also
+billed every 3 months or a greater multiple of 3 months, such as
+yearly (which will multiply that service cost * 4 when billed
+yearly).  This is one of the reasons you may need to add alternate
+billing types to an account, if the customer has services that are
+billed at many different intervals. 
+</p>
+<p>
+When you add a new billing record the next billing date is filled
+in with today's date, or if it is a holiday or after the billing
+rollover time setup by the server administrator, the next
+available billing date.  A From date of today, and a To date that
+is automatically set according to the length of the billing cycle
+specified by the chosen billing type.  The payment due date is
+also entered as today's date on a new billing record.  A payment
+due date of today may be fine when billing is done by daily credit
+card batches, however if the service is invoiced or billed
+differently, this date may need to be edited.  The payment due date
+is very important to get right if you are using the statusupdate
+script to automatically update customer status information.  That
+script relies on the payment due date to determine what status the
+account should be in, whether to turn it off or back on etc.
+</p>
+<p>
+When accounts are billed by credit card, invoice, or einvoice, the
+billing dates are moved forward automatically according to the
+billing type's cycle.  Accounts with a prepaid billing type will
+have their billing dates automatically moved forward after the
+currently due payment has been made. 
+</p></div>
+
+</div>
+
+<div id="outline-container-4.5" class="outline-3">
+<h3 id="sec-4.5">4.5 Invoice Maintenance </h3>
+<div id="text-4.5">
+
+
+<p>
+The Invoice Maintenance link is available for each billing record.
+This allows you to view all the invoices or bills ever generated
+for this account.  Here you can reprint the invoice in pdf or html
+format, or re-email the invoice to the customer by clicking the
+email link.  Invoices that have not been associated with payments
+yet may be removed by clicking the Remove link.  When an invoice
+is removed, the billing history record, and details of the items
+on that invoice is also removed.  Invoices will usually only be
+removed when a billing issue requires making a new replacement
+invoice. You may also use the Enter Payment link to open a payment
+screen with the invoice information already filled in.
+</p></div>
+
+</div>
+
+<div id="outline-container-4.6" class="outline-3">
+<h3 id="sec-4.6">4.6 Individual Billing Record Refund Report </h3>
+<div id="text-4.6">
+
+<p>The Refund Report link available on each billing record allows you
+to indicate which services to refund on that billing record.
+Credit card billing type refunds will be added to the refund batch
+run from the refund batch tool.  Invoice or E-Invoiced billing type
+refunds will need to be processed manually.  It will show you a
+list of all services billed to that billing record and allow you to
+indicate a refund amount for those services that have already been
+paid for.  
+</p></div>
+
+</div>
+
+<div id="outline-container-4.7" class="outline-3">
+<h3 id="sec-4.7">4.7 Prorate Services </h3>
+<div id="text-4.7">
+
+<p>If billing is not performed daily, the next billing date field may
+need to be edited to conform to your billing cycles, and prorate
+service types will need to be added to the account to make up the
+difference in price. 
+</p>
+<p>
+Most installations of citrusdb include a pre-made Prorate service.
+This service may be hidden from view of regular users, an admin or
+manager may need to add the Prorate type using Show All. If you do
+not have a pre-made Prorate service you will need to add one. A
+Prorate service is simply a service with a frequency of zero, a
+Price rate of 1, and a Usage Label of whatever currency you are
+using.  
+</p>
+<p>
+First add the service they are getting to their account and then
+add a onetime prorate service to the customer's account. When
+adding the prorate service set the Measured Usage Multiple to the
+amount you want to prorate the account for to get it into the
+right billing cycle. You need to do a little math here on your
+own. For example, if you add a 19.95 service, in a 30 day month
+each day is 0.665 cents. If you want to bill them on July 1st, and
+today is June 8th, then there are 22 days of prorated service,
+which is 14.63. So put 14.63 in the Multiple field. Their first
+bill will then equal 34.58 with the service item plus the prorate
+item.  
+</p>
+<p>
+In the billing section for that customer you would set their next
+billing date to be July 1st, set the from date to July 1st also,
+and then it will fill in the to date equal to whatever number of
+months the billing type covers starting July 1st, so if you had a
+monthly invoice service the to date would be August 1st. This will
+make the billing dates at the top of the invoice not exactly match
+the prorate time period since there is a prorate item in there and
+they really started service on the 8th. In the prorate description
+one could put the date of the prorate period.  
+</p></div>
+
+</div>
+
+<div id="outline-container-4.8" class="outline-3">
+<h3 id="sec-4.8">4.8 Service Records </h3>
+<div id="text-4.8">
+
+<p>The service record tab will show you a list of the current
+services that are on the account.  To add new services to an
+account click Add Service on the Services tab.  This will bring you
+to a list of all the services available for sale.  Scroll down the
+list, or choose the service category to jump to a category of
+services to choose from.  Click the Add button to begin adding the service. 
+</p>
+<p>
+When you are adding a service, it will then bring up the service
+editor which will allow you to fill in fields for any service
+attributes and the measured usage amount, if the service is billed
+via measured usage, such as per hour, per minute, or per megabyte.
+After you have filled in any attribute information necessary,
+click the Add button.  You will then be returned to the list of
+services on the account, and will see the new service listed
+there.  The service will be added with the default billing type.
+If there are other services linked with the one you added, or if
+the service has taxes associated with it, those will be shown
+also.  If the service has others linked to it, those will also have
+been added to the record, such as setup fees or bundled services.
+</p>
+<p>
+If you add a service that requires a different billing frequency,
+you will get a message that says “Fix Billing Frequency”.  If you
+have not setup the customer's billing record yet, you can ignore
+this message for now.   This error will appear if their billing
+type has a billing cycle that is less than the service frequency.
+For example, you will receive this error when the account has a
+billing type with a  monthly cycle such as a monthly credit card
+bill, but a service that should be billed yearly, such as a yearly
+Internet service subscription.  If the customer has alternate
+billing types that should be used for that service, click the Edit
+button and choose the alternate billing ID from the menu to assign
+this service to that billing record.  You may want to add a
+different, but comparable service that is billed monthly so they
+can keep their billing simple, or make a new alternate billing
+type and assign this service to that new billing type.    
+</p>
+</div>
+
+<div id="outline-container-4.8.1" class="outline-4">
+<h4 id="sec-4.8.1">4.8.1 Example Billing Combinations </h4>
+<div id="text-4.8.1">
+
+<p>Some example service and billing type combinations:
+</p><ul>
+<li>
+One bill
+<ul>
+<li>
+Bill 1
+Yearly Service and a Monthly Services assigned to one Yearly
+Billing type for both means that the monthly service rate will be
+multiplied by 12 to give the total amount for the one yearly
+bill.    
+</li>
+</ul>
+</li>
+<li>
+Two bills:
+<ul>
+<li>
+Bill 1
+Yearly Service assigned to a Yearly Billing type for just the
+yearly service 
+</li>
+<li>
+Bill 2
+Monthly Services assigned to a Monthly Billing for just the
+monthly service 
+</li>
+</ul>
+</li>
+<li>
+Two bills:
+<ul>
+<li>
+Bill 1
+Yearly Services assigned to a yearly billing type for just the
+yearly service 
+</li>
+<li>
+Bill 2
+Quarterly Services and Monthly Services assigned to a quarterly
+billing type, the monthly service will be multiplied by 3 to give
+it's total amount for the quarter.   
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-4.8.2" class="outline-4">
+<h4 id="sec-4.8.2">4.8.2 Edit Service Records </h4>
+<div id="text-4.8.2">
+
+
+<p>
+After you have added a service you can edit it by going back to
+the service record and click Edit.  This will bring you to the
+attributes for that service as well as allow you to enter usage
+and alternate billing id choices.  The service can also be changed
+to another service that shares the same attributes.  When a
+service is changed, the old service is moved to the history and a
+new service is created with the same attribute information.  A
+notification will also be sent to the modify notification user indicated
+in the service settings.
+</p></div>
+
+</div>
+
+<div id="outline-container-4.8.3" class="outline-4">
+<h4 id="sec-4.8.3">4.8.3 Service History </h4>
+<div id="text-4.8.3">
+
+<p>In the service record screen you can also view a history of
+services that have been assigned to this account in the past.
+Click the History link at the top to view this listing.  This will
+show you services that have been removed, as well as one time
+services, such as setup and install fees.  One time services are
+automatically moved to the service history after they have been
+billed. 
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-4.9" class="outline-3">
+<h3 id="sec-4.9">4.9 Customer Notes </h3>
+<div id="text-4.9">
+
+
+<p>
+Customer notes show support tickets that are associated with this
+customer.  They are visible in the Notes tab at the bottom of the screen.
+To add a new support note to this customer click the Support module
+tab on the left and enter the note you want to leave on this
+record. 
+</p>
+<p>
+You can choose to notify a certain CitrusDB user, a group of users, or
+nobody at all if you just want the note to be on the record, but
+no action needs to be taken.<br/>
+</p>
+
+</div>
+
+<div id="outline-container-4.9.1" class="outline-4">
+<h4 id="sec-4.9.1">4.9.1 View notes sent to you </h4>
+<div id="text-4.9.1">
+
+
+<p>
+When someone has sent a message to your attention, or a service
+has been added that you are notified about, you will see the
+number of new message in the tab under Support.  Click on this
+tab, or click the Check Notes link in the support tab to view your
+waiting message.  You can then perform whatever action is needed
+to fulfill the request.  You can update the status of the ticket
+to pending while you are working on it by clicking the Pending
+link.  When you are finished with the request click Finished and
+the support note will disappear from your list of new messages.<br/>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4.9.2" class="outline-4">
+<h4 id="sec-4.9.2">4.9.2 Editing a customer support note </h4>
+<div id="text-4.9.2">
+
+
+<p>
+You can edit a support ticket by clicking on the ticket number in
+your list of support tickets.  Using the support ticket editor you
+can add a new message on the ticket, send the ticket to someone
+else by choosing to notify them, or change the status of the
+ticket back to not done or pending.  
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-4.10" class="outline-3">
+<h3 id="sec-4.10">4.10 Billing Status </h3>
+<div id="text-4.10">
+
+<p>Each Customer Record has a Billing Status field that will show the
+current status of the customer.  The following status types may be
+shown depending on the customer's situation: 
+</p><ul>
+<li>
+New: 
+account has no billing history
+</li>
+<li>
+Free: 
+account has a billing type of free
+</li>
+<li>
+Not Renewed: 
+a prepaid account that has not been renewed before it's bill to date.    
+</li>
+<li>
+Authorized: 
+a credit card or invoice account that is paid up to date
+</li>
+<li>
+Declined: 
+a credit card account whose most recent charge was declined
+</li>
+<li>
+Declined 2X:
+a credit card account whose two most recent charges were declined 
+</li>
+<li>
+Pending:
+an account with no next billing date, this usually means the
+account is pending an account change. 
+</li>
+<li>
+Past Due: 
+an account that has amounts past due, but not yet turned off or
+sent to collections status.    
+</li>
+<li>
+Turned off: 
+an account that has been put in the Turned Off status, due to
+being past due with no payment made for a specific amount of days. 
+</li>
+<li>
+Collections: 
+an account that has been put in the Collections status by the
+billing group, due to being turned off with no payment for a
+specific amount of days. 
+</li>
+<li>
+Canceled: 
+an account that has been canceled, this is indicated by a cancel
+date on the customer record 
+</li>
+<li>
+Cancel w/Fee: 
+an account that has been canceled, but still has amounts past due.    
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-4.11" class="outline-3">
+<h3 id="sec-4.11">4.11 Billing History </h3>
+<div id="text-4.11">
+
+
+<p>
+The Billing history tab is shown at the bottom of each screen.
+Click this tab to view the billing history for that customer.  You
+will see all bills generated for this account, no matter what
+payment type they are.  It will show you the date the bill was
+generated, what the date range of the bill was, what the new
+charges on the bill were, and the total charges on the bill.  You
+can click the Invoice Number link to view a snapshot of an invoice
+for that billing history record. 
+</p></div>
+
+</div>
+
+<div id="outline-container-4.12" class="outline-3">
+<h3 id="sec-4.12">4.12 Payment History </h3>
+<div id="text-4.12">
+
+
+<p>
+The Payment History tab is shown at the bottom of each screen.
+Here you can view all the payments made to this account, when the
+payment was made, the payment status, what type of payment it was,
+the AVS or Address Verification status for credit card payments,
+and how much the payment was for. 
+</p></div>
+
+</div>
+
+<div id="outline-container-4.13" class="outline-3">
+<h3 id="sec-4.13">4.13 Billing Details </h3>
+<div id="text-4.13">
+
+
+<p>
+The Billing Details tab is at the bottom of each screen.  It will
+show you the details of each item ever billed.  It shows the date
+it was billed, the name of the service, the invoice number the
+service was on, the amount the service was billed for, and how
+much of the service has been paid for.  You can click the Invoice
+Number link to view a snapshot of the invoice that service was
+listed on. 
+</p></div>
+
+</div>
+
+<div id="outline-container-4.14" class="outline-3">
+<h3 id="sec-4.14">4.14 Re-Running Declined Credit Cards </h3>
+<div id="text-4.14">
+
+<p>If a credit card gets declined and the customer wishes to try
+running the credit card billing again, you can click the Rerun
+link in the Billing record.  This will cause the credit card on
+the billing record to be billed for any past due amounts on the
+date specified in the Rerun Date field.  It will not charge the
+credit card any new service charges, only those that are past due.
+If the next available billing date to rerun the card matches
+the customer's Next Billing Date you will get an error that the
+card will be run normally on the next billing date.  This will
+bill the customer for their past due amounts and any recurring
+service charges.     
+</p></div>
+
+</div>
+
+<div id="outline-container-4.15" class="outline-3">
+<h3 id="sec-4.15">4.15 Welcome Letters </h3>
+<div id="text-4.15">
+
+<p>Welcome letters may be printed by users with manager privileges.
+To view the welcome letters go to the Tools section and click on
+the Welcome Letters icon.  This will create a web page on your
+screen with welcome letters for each new service activated today.
+Simply print this page from your browser and mail these letters to
+your customers to welcome them to their new service.  The welcome
+letter can be changed by editing the text near the end of your
+printwelcome.php file in the citrusdb/tools folder. 
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5">5 Chapter 4: Billing and Payments </h2>
+<div id="text-5">
+
+<p>CitrusDB can handle a large daily billing workload.  Daily billing
+is especially important for credit card billing, since one will
+inevitably need to re-bill cards that have been declined or bill
+those customers that have ordered service today.  If you are only
+mailing or emailing invoices, daily billing may not be as
+important.  You can use holidays and the pro-rate service type to
+move billing into a different billing day cycle, such as the 1st or
+15th of each month. 
+</p>
+</div>
+
+<div id="outline-container-5.1" class="outline-3">
+<h3 id="sec-5.1">5.1 Billing Tools </h3>
+<div id="text-5.1">
+
+
+</div>
+
+<div id="outline-container-5.1.1" class="outline-4">
+<h4 id="sec-5.1.1">5.1.1 Credit card batches </h4>
+<div id="text-5.1.1">
+
+
+<p>
+CitrusDB's credit card system is built to export a credit card
+batch that would be processed via upload to a credit card batch
+processor.  Most credit card billing systems such as
+authorize.net, paypal, and regular merchant banks have a batch
+processing option.  This allows you to upload a text file in a
+specific format for credit card processing.  The format of this
+file can be specified by the Credit Card Variable export order in
+the General configuration. 
+</p>
+<p>
+Exporting Credit Cards
+</p>
+<p>
+To export a credit card batch click on the Tools icon and select
+the Export Credit Cards icon. This tool is used to export the
+credit cards into a batch format. This will prompt you for what
+date you want bill and the secret passphrase that will decrypt the
+card data. It will then show you a summary of the
+services it found to bill and saves the card data to a
+file. This file will be stored in the folder you specified using
+the Path To Credit Card File in the general configuration. This
+can be used in conjunction with cron jobs or scripts that check
+for new billing files and process them automatically. The
+interface also gives you the option to download the file to
+process it on your local PC. This file can then be formatted and
+transmitted to your credit card billing provider via a batch
+upload.  Your server administrator will be able to inform
+you of any additional steps necessary. 
+</p>
+<p>
+Importing Credit Cards
+</p>
+<p>
+After a credit card batch has been processed the results need to
+be imported back into CitrusDB for crediting to accounts.  To
+import the batch go to the Tools and select the Import Credit
+Cards icon.  This will prompt you to browse your hard drive for
+the batch results file from your credit card processing
+system. The format for each line of this file is 
+</p>
+
+
+
+<pre class="example">
+
+   "trxcode","ccnum","ccexpire","amount","billingid","Y/N","avs"
+
+</pre>
+
+
+
+
+<ul>
+<li>
+trxcode: this is the transaction code associated with this unique
+transaction
+
+</li>
+<li>
+ccnum: this it the credit card number, it should probably come
+back with most of it starred out, eg, 4*********111
+
+</li>
+<li>
+ccexpire: this is the expiration date of the card that was run
+
+</li>
+<li>
+amount: this is the amount the card was run for
+
+</li>
+<li>
+billingid: this is the billing id that identifies the customer
+billing record that was run.  This is required to connect it to
+the right customer.
+
+</li>
+<li>
+Y/N: this is the letter Y or N that should indicate whether the
+card was authorized with a Y or declined with an N
+
+</li>
+<li>
+avs: this is the status of the AVS processing that will show
+whether the address matched or not.
+
+</li>
+</ul>
+
+<p>The server administrator may need to make a script that converts
+the results from the bank into the format that CitrusDB imports.
+Upon importing this file, account records will have their billing
+status updated accordingly and an email message will be mailed to
+those customers who have had their credit card declined.  You can
+specify what the message says by editing the Declined Subject and
+Declined Message fields in the Organization settings. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.1.2" class="outline-4">
+<h4 id="sec-5.1.2">5.1.2 Invoice printing </h4>
+<div id="text-5.1.2">
+
+
+<p>
+Invoice printing can be done daily, or if you have used the
+prorate service item and edited their next billing date to prorate
+a customer's billing record, you can print invoices on the days
+you have chosen.  Click on Tools and select the Print New Invoices
+icon. This tool can print batches of invoices based on their Next
+Billing Date, or individual invoices based on their Billing ID
+number, or Account Number. After you enter this information it
+will then provide you with a summary of what it found and prompt
+you to print the invoices. Then it will render the invoice page as
+a PDF file that can be opened with a PDF reader.  You can then
+print the PDF from within the PDF application.  It may also be a
+good idea to save this pdf to your hard drive to make an archive
+of all the invoices you have ever printed for auditing purposes.
+Invoices are formatted to be put into #10 windowed envelopes and
+have the recipient's address show through the window. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.1.3" class="outline-4">
+<h4 id="sec-5.1.3">5.1.3 E-Invoice emailing </h4>
+<div id="text-5.1.3">
+
+<p>E-Invoice emailing can be done daily, or if you have used the
+prorate service item and edited their next billing date to prorate
+a customer's billing record, you can email invoices on the days
+you have chosen. 
+</p>
+<p>
+Click on Tools and select the Email New Invoices icon. This tool
+can email batches of invoices based on their Next Billing Date, or
+individual invoices based on their Billing ID number, or Account
+Number. After you enter this information it will then provide you
+with a summary of what it found and prompt you to email the
+invoices. The invoice will be sent in an text formatted email to
+the billing_email specified in their billing record.  The web
+server that is running CitrusDB server must be properly configured
+to send email.  This tool is a prime candidate to be automated by
+running a modified copy of it using the php command line program
+in a CRON job. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.1.4" class="outline-4">
+<h4 id="sec-5.1.4">5.1.4 Entering Payments </h4>
+<div id="text-5.1.4">
+
+
+<p>
+When there is a cash or check payment, or an electronic funds
+transfer (eft) is made, you can use the Enter Payments tool to
+enter the payments made to the account.  You can apply a payment
+in three different ways.  By Account Number, which will apply the
+payment to the oldest fees still due on that account's default
+billing record.  By Billing ID, which will apply the payment to
+the oldest fees still due for services under that billing id.  By
+Invoice Number, which will apply the payment to the oldest fees
+still due on that one invoice.  You must also enter the payment
+amount, and the payment type, and if necessary the check number. 
+</p>
+<p>
+If an over-payment is made, the payment utility will tell you that
+there is an amount left over.  You can then apply this amount as
+necessary to the account, either by applying that payment to a
+different invoice, billing id, or making a credit in the account
+service record. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.1.5" class="outline-4">
+<h4 id="sec-5.1.5">5.1.5 Processing Refund </h4>
+<div id="text-5.1.5">
+
+<p>The refund tool is used to create a credit card batch for refunds
+that have been marked on customer records.  Any refunds that have
+not been processed yet will be processed by clicking the Yes
+button and a credit card batch file will be created to upload to
+your credit card processor for processing.  You can then import
+the results from the refund batch and it will show a credit in the
+payments on those accounts. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.1.6" class="outline-4">
+<h4 id="sec-5.1.6">5.1.6 Importing New Accounts </h4>
+<div id="text-5.1.6">
+
+<p>If you have an online order form for new customers, you can import
+their information into CitrusDB using the Import New Accounts
+tool.  Your server administrator will tell you the steps necessary
+to get the data to import into this new accounts tool.  This tool
+is a prime candidate to be automated by running a modified copy of
+it using the php command line program in a CRON job. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.1.7" class="outline-4">
+<h4 id="sec-5.1.7">5.1.7 Importing Service Usage </h4>
+<div id="text-5.1.7">
+
+<p>Some services have a usage associated with them.  The server
+administrator will need to make a script that imports the usage
+directly into new services for each customer.  See your server
+administrator for the steps necessary.  
+</p></div>
+
+</div>
+
+<div id="outline-container-5.1.8" class="outline-4">
+<h4 id="sec-5.1.8">5.1.8 Importing Credit Card Changes </h4>
+<div id="text-5.1.8">
+
+<p>If you have a form on your website for customers to update their
+credit card information, you can use this tool to import their new
+information into their default billing record.  Click the Tools
+icon and select the Credit Card Changes icon. This tool is used to
+import credit card changes that have been sent in via external
+methods such as online forms or order systems, usually done after
+a card has declined and a notice has been sent to the
+customer.
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-5.2" class="outline-3">
+<h3 id="sec-5.2">5.2 Reports </h3>
+<div id="text-5.2">
+
+
+</div>
+
+<div id="outline-container-5.2.1" class="outline-4">
+<h4 id="sec-5.2.1">5.2.1 Customer Summary </h4>
+<div id="text-5.2.1">
+
+
+<p>
+The Customer Summary tool will produce a report that shows the
+total number of paying customers you have for each service type that has
+not been removed.  The total number of Paid Subscriptions, which
+counts the total number of non-free recurring services that
+customers have.  The Total Number of Customers is the total number
+of customers that have not been canceled.  Tht Total paying
+customers is the the same as the Total Number of Customers minus
+the customers that have a free billing type. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.2.2" class="outline-4">
+<h4 id="sec-5.2.2">5.2.2 Revenue Report </h4>
+<div id="text-5.2.2">
+
+
+<p>
+This report shows the total amount of revenue for services that
+were billed during the date period shown.  It also shows the tax revenue
+during that period, the credit service types given during that
+period, and the refunds processed during that period.   
+</p>
+<p>
+If payment has not yet been made to a service billed during the
+date period, it will not show up as revenue during the period
+until it has been paid.
+</p></div>
+
+</div>
+
+<div id="outline-container-5.2.3" class="outline-4">
+<h4 id="sec-5.2.3">5.2.3 Refund Report </h4>
+<div id="text-5.2.3">
+
+<p>The refund report tool will show you the credit card information,
+amount refunded, and the account the refund was given to for
+refunds that were processed during a given time period. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.2.4" class="outline-4">
+<h4 id="sec-5.2.4">5.2.4 Past Due Report </h4>
+<div id="text-5.2.4">
+
+
+<p>
+The past due report will show customers with some type of unpaid
+status. It will allow you to find  Past Due, Turned Off,
+and accounts in the Collections or Cancel with Fee status.  You
+can use this report to determine which customers need to be
+contacted about their billing issues. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.2.5" class="outline-4">
+<h4 id="sec-5.2.5">5.2.5 Payment Status Report </h4>
+<div id="text-5.2.5">
+
+
+<p>
+This report shows you customer payment information.  For example,
+here you can find out if they have had had their credit card
+declined in the past few days. You will be prompted for what days
+from the previous week you want to find declined cards for. It
+will then produce a report of the credit card declines from that
+day. You can use this report to contact customers about their
+billing issues. 
+</p></div>
+
+</div>
+
+<div id="outline-container-5.2.6" class="outline-4">
+<h4 id="sec-5.2.6">5.2.6 Service Report </h4>
+<div id="text-5.2.6">
+
+<p>The service report will show you total customers for a chosen
+service.  It will show you total numbers of who has active service
+and total number of deactivated services, and what status they
+have had.  It will also show you a break down of reasons that were
+chosen when accounts with that service were canceled.
+</p></div>
+
+</div>
+
+<div id="outline-container-5.2.7" class="outline-4">
+<h4 id="sec-5.2.7">5.2.7 Source Report </h4>
+<div id="text-5.2.7">
+
+<p>This report will show totals for the customer source chosen when
+the customer was activated.  This will let you see where customers
+have said they heard about your services.
+</p></div>
+
+</div>
+
+<div id="outline-container-5.2.8" class="outline-4">
+<h4 id="sec-5.2.8">5.2.8 Exempt Report </h4>
+<div id="text-5.2.8">
+
+<p>The exempt report will show a list of customers who have been
+marked as past due exempt, bad debt, or have tax exempt status for
+certain tax rates.
+</p></div>
+
+</div>
+
+<div id="outline-container-5.2.9" class="outline-4">
+<h4 id="sec-5.2.9">5.2.9 Print Notices </h4>
+<div id="text-5.2.9">
+
+<p>This tool can print pdf notices that have been created by the
+nightly statusupdate script.
+</p></div>
+
+</div>
+
+<div id="outline-container-5.2.10" class="outline-4">
+<h4 id="sec-5.2.10">5.2.10 Service Growth </h4>
+<div id="text-5.2.10">
+
+<p>A simple graph that compares the number of services in that
+category that were stared and ended in a month for a chosen year.
+For services that were changed from one type to another they will
+have one start and one end, so the old one shows up as an ended
+service and the new one shows up as a started service. 
+</p></div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6">6 Chapter 5: Server Administration and Integration </h2>
+<div id="text-6">
+
+<p>CitrusDB requires operating system and database administration
+skills to maintain an installation in a production setting.  There
+are a few things that are a unique requirement of a billing system
+that I will cover in this chapter, such as security requirements,
+backing up the data, customization, and automation of billing tasks. 
+</p>
+
+</div>
+
+<div id="outline-container-6.1" class="outline-3">
+<h3 id="sec-6.1">6.1 Backups </h3>
+<div id="text-6.1">
+
+<p>Having up to date backups are very important for a billing system,
+since your whole business will rely on it for their day-to-day
+work.  You should implement a backup policy that takes into
+account your uptime requirements.  Backups can be performed
+nightly or as needed using the standard MySQL backup utility
+mysqldump: 
+</p>
+
+
+
+<pre class="example">
+   mysqldump –user &lt;username&gt; –password &lt;passwd&gt; db_name &gt; backup.sql 
+</pre>
+
+
+
+
+<p>
+This command can be added to a nightly cron script on a Unix
+server, or a windows batch script.
+</p></div>
+
+</div>
+
+<div id="outline-container-6.2" class="outline-3">
+<h3 id="sec-6.2">6.2 Custom Modules </h3>
+<div id="text-6.2">
+
+<p>All the tabs on the left side, such as the default ones of
+Customer, Services, Billing, and Support are called modules.  You
+can add new tabs here that hold your own information by adding a
+new custom module with your own php code that does whatever you
+need it to do, such as querying database tables, or storing
+additional customer information that is unique to your operation.
+A module is simply a folder inside the modules folder with an
+index.php file and other files that make up  the functions of the
+module.  Some modules may or may not need all these functions.  If
+they don't need the function, please make an empty file for that
+function. 
+</p>
+<p>
+If you are making a new module, it should conform to a few
+functions to make sure one can use the major functions of any
+module without knowing all of it's details. 
+</p>
+<p>
+The following files are required, index.php, create.php, edit.php,
+delete.php, and search.php file.  When making a new custom module
+you may want to start with one that is already there.  I recommend
+copying the Support module and renaming it.  The Support module is
+one of the smaller modules and a good starting place to edit it
+and make your own modules. 
+</p>
+<ul>
+<li>
+index.php
+
+</li>
+</ul>
+
+<p>This is the default file.  It has code to include the other files
+when called with edit=on or similar it will also provide the view
+of the data by default
+</p>
+<p>
+example of index.php:
+</p>
+
+
+
+<pre class="example">
+   if(constant("INDEX_CITRUS") &lt;&gt; 1){
+    echo "You must be logged in to run this.  Goodbye.";
+    exit;
+   }
+   
+   if (!defined("INDEX_CITRUS")) {
+    echo "You must be logged in to run this.  Goodbye.";
+    exit;
+   }
+
+   include('include/permissions.inc');
+
+   if ($edit) {
+     if ($pallow_modify) {
+       include('edit.php'); 
+     } else permission_error();
+   } else if ($create) {
+     if ($pallow_create) { 
+       include('create.php');
+     } else permission_error();
+   } else if ($delete) {
+      if ($pallow_remove) {
+        include('delete.php');
+      } else permission_error();
+   } else if ($pallow_view) {
+      //
+      // YOUR DEFAULT CODE GOES HERE
+      //
+   } else permission_error();
+
+</pre>
+
+
+
+
+<ul>
+<li>
+create.php
+this will be used to create a new record for that module function.  
+for example, with the services module, this would create a new service for 
+that customer, called with create=on
+
+</li>
+<li>
+edit.php
+this will be used to edit a record for that module function.  
+for example, with the billing module, this would edit the billing for 
+the specified billing id, called with edit=on, often called with an id 
+value to specify a billing_id, or user_service_id etc.
+
+</li>
+<li>
+delete.php
+this will be used to delete a record for that modules function.  
+for example, with the services module, this would remove the service
+from that customer, called with delete=on
+
+</li>
+<li>
+search.php
+this will be included in the main search page.  it will not be
+called through the index.php file it will either be empty if your
+modules doesn't need search ability, or have form html for
+searching the data that your module deals with
+
+</li>
+</ul>
+
+<p>example of search.php:
+</p>
+
+
+<pre class="example">
+   &lt;form ACTION="index.php?load=dosearch&amp;type=fs" METHOD="POST"&gt;
+   Company Name: &lt;input type=text name=s1&gt;
+   &lt;input type=hidden name=id value=2&gt; &lt;!-- the id of this search in
+   the searches table --&gt; 
+   &lt;input type=submit name=submit value="Search" class=smallbutton&gt;
+   &lt;/form&gt;
+</pre>
+
+
+
+
+<p>
+After you have created your module, you'll need to install it into
+the system.  Copy your module folder into the modules folder of
+CitrusDB.  Open the Edit Modules tool and click Add Module.  This
+will ask you for the Common Name of the module, this is the name
+you want it to be called in the Tab on the left that users will
+see.  The Module Name is the name of the folder that the module is
+stored in, this field is case sensitive.  The Sort Order field is
+a number that determines what order the tabs are sorted in. 
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6.3" class="outline-3">
+<h3 id="sec-6.3">6.3 Account Activation and Deactivation </h3>
+<div id="text-6.3">
+
+<p>There is a script included in the citrusdb folder named
+statusupdate.  This script can be run nightly in a unix cron job
+or windows task scheduler.  It will create a file in the path you specified
+in the general configuration (the same path as credit card data)
+with a list of accounts to ADD, DELETE, ENABLE and DISABLE today. 
+</p>
+<p>
+The statusupdate script will also email messages to customers and
+make a pdf file for printed messages to be mailed by the billing
+adminstrator regarding their past due accounts.  These messages can
+be edited in the language files using the $l_notice_text_ variables.
+</p>
+<p>
+This file can be used in conjunction with other cron jobs or
+scripts that check for new account files and process them
+automatically.   You may want to make a shell script that
+calls the statusupdate script and then calls your own account
+activation script that works on the file created by statusupdate.
+</p>
+<p>
+It will print an ADD line for new services added today. A DELETE line
+for services that have a removal date of today. An ENABLE entry for
+services that should be turned back on today that were previously
+disabled. A DISABLE line for services that should be shut off today
+such as accounts with declined credit cards or past due. It prints
+them in a standard text format that could be processed by an
+activation script at a later time. 
+</p>
+<p>
+Example:
+</p>
+
+
+<pre class="example">
+   "ACTION","category","Customer Name","Service Description","field1",...
+</pre>
+
+
+
+
+<ul>
+<li>
+The ACTION will hold the value ADD, DELETE, ENABLE, or DISABLE to
+indicate what should be done to the account
+
+</li>
+<li>
+The category field holds the category you assigned to that
+service.  This will allow your custom activation script to check
+this field and do things to specific categories of service,
+without having to parse the whole service description.
+
+</li>
+<li>
+This is the customer's name, often entered into the data with
+their account
+
+</li>
+<li>
+This is the description of the service being added from the
+database
+
+</li>
+<li>
+The last fields are holding data from whatever fields have been specified
+for that service in the Activation String field in the service
+editor.  It will print them all for that service, so it will be a
+variable number of fields.  You will probably want to specify the
+same fields for each category of service so you will know what
+fields you are looking at when you read the category name earlier
+in the line.
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-6.4" class="outline-3">
+<h3 id="sec-6.4">6.4 Credit Card Batch Exports Format </h3>
+<div id="text-6.4">
+
+<p>The credit card batch format is in a quote and comma separated
+format that can be edited by changing the Credit Card Export
+Variable field in the General Configuration.  
+</p>
+<p>
+Each transaction will look something like this example:
+</p>
+
+
+
+<pre class="example">
+   "CHARGE","111","4353","4111111111111111","0810","19.95","01234","5 Example St."
+</pre>
+
+
+
+
+<p>
+The first field in the first line of a card record will be the
+words CHARGE or CREDIT to indicate whether the transaction is a
+charge or a credit, after the first field you can use any of the
+following variables: 
+</p>
+<ul>
+<li>
+$user: this is the database user that ran the export tool
+</li>
+<li>
+$batchid: this is the id of the batch, there is a unique batch id
+for each export created 
+</li>
+<li>
+$mybilling_id: this is the billing record id that is being billed
+</li>
+<li>
+$invoice_number: this is the invoice number for this bill, it is
+unique to this one bill 
+</li>
+<li>
+$billing_name: this is the name in the billing record
+</li>
+<li>
+$billing_company: the company in the billing record
+</li>
+<li>
+$billing_street: the street on the billing record
+</li>
+<li>
+$billing_city: the city on the billing record
+</li>
+<li>
+$billing_state: the state on the billing record
+</li>
+<li>
+$billing_zip: the zip code on the billing record
+</li>
+<li>
+$billing_acctnum: the customer's account number
+</li>
+<li>
+$billing_ccnum: the customer's credit card number
+</li>
+<li>
+$billing_ccexp: the customer's credit card expirationdate
+</li>
+<li>
+$billing_fromdate: the billing from date on the billing record
+</li>
+<li>
+$billing_todate: the billing to date on the billing record
+</li>
+<li>
+$billing_payment_due_date: the payment due date on the billing record
+</li>
+<li>
+$mydate: the date in Y-m-d date format (eg: 2007-04-19)
+</li>
+<li>
+$abstotal: the absolute value of total, if the bill total is
+negative it will not be exported with the credit card batch.  The
+refund tool must be used to refund an account's credit card. 
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-6.5" class="outline-3">
+<h3 id="sec-6.5">6.5 Credit Card Batch Imports Format </h3>
+<div id="text-6.5">
+
+<p>The results of the credit card batch will need to be imported into
+CitrusDB.  The format for this is a comma separated file with the
+following fields (all on one line):
+</p>
+
+
+
+<pre class="example">
+
+   "trx code","cc number","cc expire","amount","billing id",
+   "approved(Y) or declined(N)", "avs"
+
+</pre>
+
+
+
+
+<ul>
+<li>
+trx code: the unique transaction code assigned to this one
+transaction by the bank or by you
+
+</li>
+<li>
+cc number: holds the credit card number, should probably be
+imported in a format with most of the information hidden like 
+
+
+
+
+<pre class="example">
+     4***********1111
+</pre>
+
+
+
+
+</li>
+<li>
+cc expire: the expiration date of the card that was run.
+
+</li>
+<li>
+amount: the amount of the transaction
+
+</li>
+<li>
+the billing id that connects this transaction to a citrusdb
+billing record.
+
+</li>
+<li>
+The uppercase letter "Y" or "N" that indicates whether the
+transaction was successfully approved (Y) or declined (N).  You
+can place other text after the Y or N if you want to indicate
+other transaction codes or things like whether the transaction
+was live or in a batch.
+
+</li>
+<li>
+avs: this field can hold address verification result codes if those
+are available to you.
+
+</li>
+</ul>
+
+<p>You may need to create a script that converts your bank output into
+the format above that CitrusDB will import.  The only required data
+are the transaction code, billing id, and approved or declined, the
+other fields can be left blank if they are unavailable.  Upon
+importing this file accounts will have their billing status updated
+accordingly.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6.6" class="outline-3">
+<h3 id="sec-6.6">6.6 New Accounts Data Format </h3>
+<div id="text-6.6">
+
+
+<p>
+Online order forms can save the order data and you can use Import
+New Accounts tool to import the orders into CitrusDB.   The New
+Accounts tool can also be used when migrating to CitrusDB, by
+importing existing customer records into citrus with all their
+customer, billing, and service information.  Here is an example of
+what each line in order data file should look like (normally each
+line is on one line and does not have blank lins between each, it is
+printed this way to show up in the instructions more clearly.)
+</p>
+
+
+
+<pre class="example">
+   Online, Test User, Test Company, 523 Test Ave., Testcity, CA, USA,
+   95113, 408-555-5555, 408-555-6666, 408-555-7777, user@example.com,
+   , What is your favorite color, red, testpassword, 1
+    
+   Test User, Test Company, 1 Test Street, Testcity, MA, USA, 01234,
+   555-555-1234, 555-555-1235, test@example.com, 1, 4***********1111,
+   0406
+    
+   3, usernm, passwd, Linux, 1 Test Street, Cisco Thing     
+   
+   3, nameuser, wordpass, Windows, 123 Test Street, USB Thing    
+   
+   -----BEGIN PGP MESSAGE-----
+   aSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tA
+   aSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tA
+   aSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tA     
+   aSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tA
+   -----END PGP MESSAGE-----
+</pre>
+
+
+
+
+<p>
+The first line of the import record is the customer data, the
+second line is the billing data.  The credit card number here
+should be masked with ****'s in it so that one cannot view it.  The
+real card number will be stored in the encrypted PGP text
+below. The third section of lines are for
+services to add to the account upon import.
+The final lines are for the PGP ascii armored credit card data so
+that you can encrypt the data with your public key before importing
+it into the database, preferably
+directly in the order system that is saving these new customers. If
+the customer does not use a credit card
+you will need to include the &ndash;&mdash;BEGIN PGP MESSAGE&ndash;&mdash; and
+&mdash;&mdash;END PGP MESSAGE&ndash;&mdash; lines with nothing in between them.
+This denotes the end of that customer record.
+(normally each line is on one line and does not have spaces
+between lines, but is printed this way to show up in the
+instructions correctly.)
+</p>
+<p>
+Field definitions:
+</p>
+
+
+<pre class="example">
+   source, name, company, street, city, state, country, zip, phone,
+   alt_phone, fax, contact_email, tax_exempt_id, secret_question,
+   secret_answer, account_manager_password, organization_id
+     
+   Name, Company, Street, City, State, Country, Zip, Phone, Fax,
+   Email, Billing Type ID, Masked Creditcard Number, Creditcard
+   Expiration
+   
+   Service ID, (any fields that make up the services options_table) in
+   this case, Username, Password, OS, Street, Device     
+   
+   -----BEGIN PGP MESSAGE-----
+   aSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tA
+   aSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tA
+   aSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tA     
+   aSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tAaSC14RMoRD3tA
+   -----END PGP MESSAGE-----
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6.7" class="outline-3">
+<h3 id="sec-6.7">6.7 Service Usage Data </h3>
+<div id="text-6.7">
+
+
+<p>
+You can create bills for service usage manually by adding the
+service using the service record for that customer and typing in
+their measured usage for that service.  If you have many many
+services that have usage tracked automatically, for example minutes
+of a phone call or megabytes transferred you can create a custom
+import script to input this usage data in to a new one time service
+charge for the customer every month, or whatever period you are
+billing them by.
+</p>
+<p>
+To input service usage data you will first need to create some
+place holder services that have a pricerate that is equal to the
+service's unit cost.  For example, if you have a service that costs
+$1.00 per megabyte, you can make a new one time service called
+“Megabyte Use” with a price of $1.00 and a frequency of 0 (zero) so
+it is a one time fee.  This is a one time service because a new
+service with that month's usage  will be entered every month or
+billing period.  When you add this service to a customer you would
+fill in the measured usage field with the number of megabytes they
+have used, say they used 100 megabytes, then it will multiply their
+usage by the price and give you a total of $100 for that service.
+</p>
+<p>
+To automate this service usage input you will need to make a script
+that inputs new service records into your MySQL database.  Adding
+new services to a customer is done by making entries into the
+user_services table.  In order to insert this information you'll
+need know the customer's account number, the id of the service that
+you are adding, and the amount of usage units.  PHP code to do this
+query with the ADODB layer that CitrusDB uses will look something
+like this:
+</p>
+
+
+
+<pre class="example">
+   // make the creation date YYYY-MM-DD HOUR:MIN:SEC
+   $mydate = date("Y-m-d H:i:s");
+
+   // get the default billing id for the customer's record
+   $query = "SELECT * FROM customer 
+   WHERE account_number = $account_number";
+   $DB-&gt;SetFetchMode(ADODB_FETCH_ASSOC);
+   $result = $DB-&gt;Execute($query) or die ("$l_queryfailed");
+   $myresult = $result-&gt;fields; 
+   $default_billing_id = $myresult['default_billing_id'];
+   
+   // insert the new service into the user_services table
+   $query = "INSERT into user_services (account_number,
+   master_service_id, billing_id, start_datetime, salesperson, 
+   usage_multiple) 
+   VALUES ('$account_number', '$serviceid', '$default_billing_id',
+   '$mydate', '$user', '$usage')";
+   $result = $DB-&gt;Execute($query) or die ("$l_queryfailed");
+</pre>
+
+
+
+
+<p>
+If there is an options table that you want to put attributes into
+you'll also need to insert that information:
+</p>
+
+
+
+<pre class="example">
+   // use the mysql_insert_id command to get the ID of the row the
+   // user_services insert you just did was set to.
+   $myinsertid = $DB-&gt;Insert_ID();
+
+   $query = "INSERT into options_table_name
+   (user_services,field1,field2,field3...) 
+   VALUES ($myinsertid,$field1, $field2, $field3...)";
+   $result = $DB-&gt;Execute($query) or die ("$l_queryfailed");
+</pre>
+
+
+
+
+<p>
+This code will usually be put inside a loop that is reading the
+input file that stores the usage data and inputs it into the database.
+</p></div>
+
+</div>
+
+<div id="outline-container-6.8" class="outline-3">
+<h3 id="sec-6.8">6.8 Credit Card Change Format </h3>
+<div id="text-6.8">
+
+<p>If you have a form on your website for customers to update their
+credit card information, you can use this tool to import their new
+information into their default billing record.  Click the Tools
+icon and select the Credit Card Changes icon. This tool is used to
+import credit card changes that have been sent in via external
+methods such as online forms or email messages, usually done after
+a card has declined and a notice has been sent to the customer. The
+format for this file is:
+</p>
+<p>
+The format for this file is:  
+</p>
+
+
+
+<pre class="example">
+account_number, name, street, city, state,zip,card_number (masked), card_expiration_date
+-----BEGIN PGP MESSAGE-----
+ASCiiARM0R3DD4TAASCiiARM0R3DD4TAASCiiARM0R3DD4TA
+-----END PGP MESSAGE-----
+</pre>
+
+
+
+
+<ul>
+<li>
+account number: account number for the customer's record
+
+</li>
+<li>
+name: the customer's name
+
+</li>
+<li>
+street: the customer's street address
+
+</li>
+<li>
+city: the customer's city
+
+</li>
+<li>
+state: the customer's state
+
+</li>
+<li>
+zip: the customer's zip code
+
+</li>
+<li>
+ccnumber: the customer's new credit card number in masked form
+with ****'s
+
+</li>
+<li>
+ccexpire: the customer's new card expiration date
+
+</li>
+<li>
+PGP MESSAGE BLOCK will hold the card number encrypted with the
+public key
+
+</li>
+</ul>
+
+<p>This will update the credit card number on all billing id's
+assigned to that customer. 
+</p>
+<p>
+You'll need to create a form cgi that saves data in this format and
+download this file from your web server's periodically.  You'll
+probably want to download and empty this file every day to check if
+new updates have been made.  This will update the credit card
+number on all billing id's assigned to that customer.    
+</p></div>
+
+</div>
+
+<div id="outline-container-6.9" class="outline-3">
+<h3 id="sec-6.9">6.9 Automation </h3>
+<div id="text-6.9">
+
+<p>Most of the pieces of CitrusDB, such as invoicing, e-invoicing,
+importing new accounts, exporting credit cards, importing credit
+cards, and activating accounts, can be automatically run at
+specific times.  It relies on the server's cron scheduling services
+on unix servers to run the commands at a specified time, or on a
+windows server you could do something similar with the Task Scheduler.
+</p>
+<p>
+There is one part of citrusdb that should be run every day and take
+advantage of a cron or task schedule.  That is the statusupdate
+script.  This must be run every day to update the billing status of
+accounts and also creates a file that contains account information
+that can be used to process account changes, new accounts, and
+removed accounts.
+</p>
+<p>
+PHP has a command line interpreter that can be used to execute the
+citrusdb files.  On a unix server this can be used much like the
+perl or shell interpreter is used, so you can put the path to your
+php executable like: 
+</p>
+
+
+
+<pre class="example">
+   #!/usr/local/bin/php 
+</pre>
+
+
+
+
+<p>
+at the top of the script you want to run.  On windows servers you
+would run it with a command that is something like: 
+</p>
+
+
+
+<pre class="example">
+   C:\path\to\php\php.exe &lt;filename.php&gt;
+</pre>
+
+
+
+
+<p>
+To run a CitrusDB script from the command line you'll need to make
+a copy of the script to edit, in this case the einvoice.php file
+which is inside of the tools/modules/billing folder.  It may be
+best to move it up a few levels to the citrusdb folder itself so
+your include path's are easier to figure out. With the new copy,
+you'll need to edit it to include the stuff from the includes
+files, just like it's included in the index.php file normally, so
+you'll need to put these near the top of the script:
+</p>
+
+
+
+<pre class="example">
+   // Includes
+   include('./include/config.inc.php');
+   include("$lang");
+   include('./include/database.inc.php');
+   include('./include/billing.inc.php');
+   require './include/citrus_base.php';
+</pre>
+
+
+
+
+<p>
+Then you'll need to write some php code in the new script to
+generate the input you want, such as today's date in the
+billing_date that is being processed, since the form isn't being
+accessed by the web, all the input and output needs to be handled
+there. You can also remove some things from your new script like
+the code that prints the form interface and since this is all going
+to be accessed by the computer with pre-programmed input.    
+</p>
+</div>
+
+<div id="outline-container-6.9.1" class="outline-4">
+<h4 id="sec-6.9.1">6.9.1 Automatic Credit Card Billing </h4>
+<div id="text-6.9.1">
+
+<p>You can automatically bill a credit card batch every day by using
+the Export Credit Card tool, or modify the exportcc.php to be
+used as a php command line script.
+</p>
+<p>
+Replace the YYYY-MM-DD with the date you want to bill.  This will
+cause CitrusDB to save the credit card batch into a file named
+exportXX.csv, where XX is the batch number.  Your script can read
+this file and send it to your credit card processor in the format
+they require.
+</p>
+<p>
+After the credit cards are run you will get a results file from
+your credit card processor.  You can import this manually using
+the Import Credit Card Batch tool, or you can make a script that
+will input the results automatically by inserting data into your
+MySQL database.  Here is some example PHP code using the ADODB
+layer that CitrusDB uses.  In order to import this data you will
+need to know the customer's transaction code, amount they were
+billed, their billing id, and the response code from the credit
+card company.  This code would usually run in a loop while it
+reads the results file and does the necessary processing.
+</p>
+
+
+
+<pre class="example">
+    // determine if they are a prepaycc or creditcard type
+    // if they are prepaycc then update the billing dates
+    $query = "SELECT b.id b_id, b.billing_type b_billing_type, 
+    b.next_billing_date b_next_billing_date, 
+    b.from_date b_from_date, b.to_date b_to_date,
+    t.frequency t_frequency,
+    t.id t_id, t.method t_method FROM billing b 
+    LEFT JOIN billing_types t ON b.billing_type = t.id
+    WHERE b.id = '$billing_id'";
+
+    $typeresult = $DB-&gt;Execute($query) 
+    or die ("$l_queryfailed");
+
+    $mytyperesult = $typeresult-&gt;fields;
+    $billingmethod = $mytyperesult['t_method'];
+    $mybillingdate = $mytyperesult['b_next_billing_date'];
+    $myfromdate = $mytyperesult['b_from_date'];
+    $mytodate = $mytyperesult['b_to_date'];
+    $mybillingfreq = $mytyperesult['t_frequency'];
+    
+    if ($response_id == 'N') {
+     // declined or credit (first letter of response code is an 'N')
+     
+     $query = "INSERT INTO payment_history              
+     (creation_date, transaction_code, billing_id, 
+     creditcard_number,creditcard_expire, response_code, 
+     billing_amount, status, payment_type, avs_response)
+     VALUES(CURRENT_DATE,'$transaction_code','$billing_id',
+     '$cardnumber','$cardexp','$response_code','$amount',
+     'declined','$billingmethod','$avs_response')";
+     
+     $result = $DB-&gt;Execute($query) or die ("query failed");   
+
+    } else {
+     // authorized (first letter of response code is a 'Y')
+
+     $query = "INSERT INTO payment_history (creation_date, 
+     transaction_code, billing_id, creditcard_number, 
+     creditcard_expire, response_code, billing_amount, 
+     status, payment_type,avs_response) 
+     VALUES(CURRENT_DATE,'$transaction_code','$billing_id',
+     '$cardnumber','$cardexp','$response_code','$amount',
+     'authorized','$billingmethod','$avs_response')";
+
+     $result = $DB-&gt;Execute($query) or die ("query failed");
+
+     // update the next_billing_date, to_date, 
+     // from_date, and payment_due_date for prepay/prepaycc 
+     if ($billingmethod == 'prepaycc' OR  $billingmethod == 'prepay') {
+      // to get the to_date, double the frequency
+      $doublefreq = $mybillingfreq * 2;
+    
+      // insert the new dates
+      $query = "UPDATE billing SET 
+      next_billing_date = DATE_ADD('$mybillingdate', 
+      INTERVAL '$mybillingfreq' MONTH),
+      from_date = DATE_ADD('$myfromdate', 
+      INTERVAL '$mybillingfreq' MONTH),
+      to_date = DATE_ADD('$myfromdate', 
+      INTERVAL '$doublefreq' MONTH),
+      payment_due_date = DATE_ADD('$myfromdate', 
+      INTERVAL '$mybillingfreq' MONTH)
+      WHERE id = '$billing_id'";
+      $updateresult = $DB-&gt;Execute($query) or die ("query failed");
+     }
+    
+     // update the billing_details for things that still 
+     // need to be paid up
+     $query = "SELECT * FROM billing_details 
+     WHERE paid_amount &lt; billed_amount 
+     AND billing_id = $billing_id";
+     $DB-&gt;SetFetchMode(ADODB_FETCH_ASSOC);
+     $result = $DB-&gt;Execute($query) or die ("query failed");
+     
+     while (($myresult = $result-&gt;FetchRow()) and ($amount &gt; 0)) {
+      $id = $myresult['id'];
+      $paid_amount = $myresult['paid_amount'];
+      $billed_amount = $myresult['billed_amount'];
+     
+      // calculate owed 
+      $owed = $billed_amount - $paid_amount;
+     
+      if ($amount &gt;= $owed) {
+       $amount = $amount - $owed;
+       $fillamount = $owed + $paid_amount;
+       $query = "UPDATE billing_details 
+       SET paid_amount = '$fillamount' WHERE id = $id";
+       $greaterthanresult = $DB-&gt;Execute($query) 
+       or die ("query failed");
+      } else { 
+       // amount is  less than owed
+       $available = $amount;
+       $amount = 0;
+       $fillamount = $available + $paid_amount;
+       $query = "UPDATE billing_details 
+       SET paid_amount = '$fillamount' WHERE id = $id";
+       $lessthanresult = $DB-&gt;Execute($query) 
+       or die ("query failed");
+      } //end if
+     } // end while
+    } // end if
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6.9.2" class="outline-4">
+<h4 id="sec-6.9.2">6.9.2 Automatic Invoice Printing </h4>
+<div id="text-6.9.2">
+
+<p>The Invoice Printing tool can be run daily, you can modify the
+invoice.php to be used as a php command line script.
+</p>
+<p>
+This will cause CitrusDB to output a PDF file back to the browser
+for all the invoices for the data specified in YYYY-MM-DD format.
+Your script can then get this file and send it to a printer or
+save it to a hard drive for printing later.
+</p></div>
+
+</div>
+
+<div id="outline-container-6.9.3" class="outline-4">
+<h4 id="sec-6.9.3">6.9.3 Automatic Invoice Emailing </h4>
+<div id="text-6.9.3">
+
+<p>The Invoice Emailing tool can be run daily, or you can modify the
+einvoice.php to be used as a php command line script.
+</p>
+<p>
+This will cause CitrusDB to begin emailing invoices to the
+customers who have billing on YYYY-MM-DD. 
+</p></div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7">7 Chapter 6: Data Security Implementation Guide </h2>
+<div id="text-7">
+
+<p>CitrusDB is believed to fall under the PA-DSS category of a
+Back-office system that stores credit card data and is not currently
+subject to PA-DSS certification. While CitrusDB itself is not
+required to be certified since it does not connect directly with a
+merchant bank, it must still be be installed and implemented in a
+way that meets the information security requirements that each
+merchant is subject to prevent attacks and comply with credit card
+regulations and local privacy laws.
+</p>
+<p>
+The PCI Data Security Standards are a good starting point when
+implementing  security for any billing
+system.  The standards outline the following requirements: 
+</p>
+<ul>
+<li>
+Build and Maintain a Secure Network: Update passwords regularly
+and maintain a firewall. 
+
+</li>
+<li>
+Protect Cardholder Data: Protect stored cardholder data, encrypt
+the transmission of cardholder data on public networks like the
+Internet. 
+
+</li>
+<li>
+Maintain a Vulnerability Management Program: Use anti-virus
+software, and maintain secure system and applications by keeping
+them up-to-date. 
+
+</li>
+<li>
+Implement Strong Access Control Measures: Require unique ID and
+passwords for those with computer access to cardholder data.
+Restrict access to only those who need it. 
+
+</li>
+<li>
+Regularly Monitor and Test Networks: Track access to the network,
+and regularly test the security systems. 
+
+</li>
+<li>
+Maintain an Information Security Policy: Develop a security policy
+that your staff follow when dealing with this information. 
+
+</li>
+</ul>
+
+<p>This is a simple overview of these security standards.  You can
+find the complete documentation online at 
+<a href="https://www.pcisecuritystandards.org/">https://www.pcisecuritystandards.org/</a> 
+</p>
+
+</div>
+
+<div id="outline-container-7.1" class="outline-3">
+<h3 id="sec-7.1">7.1 CitrusDB Configuration </h3>
+<div id="text-7.1">
+
+<p>Besides the GPG and SSL configuration CitrusDB has a few
+places where you will want to pay special
+attention to your settings to make sure that your security is
+maintained.  The username and password used in the configuration
+to open the database should have the minimal permissions necessary
+to access your citrus database and perform the operations.  For
+the internal main system this means giving the user access
+privileges to just the citrus database and the MySQL Data
+and Structure privileges.  For the online public system you must
+restrict the access much more.  Make a different database user
+with access to the citrus database, but this new database login
+name should restrict the access to your citrus database to SELECT
+only, and use table specific privileges that allows only SELECT
+and INSERT to the customer_history table and SELECT, INSERT,
+UPDATE, and DELETE in the session2 table.  
+</p>
+<p>
+In the configuration you should set the $hidden_hash_var to
+something hard to guess.  This passphrase is used to create a
+unique cookie value for your CitrusDB login.  You should use a
+different passphrase for the internal and online public system.
+You do not need to remember this passphrase, so I encourage you to
+make it as complicated as you want. 
+</p>
+<p>
+In the general configuration there is a place for the Path To
+Credit Card variable.  This should be set to the path to the
+folder you wish to store imported and exported credit card data
+inside. The path should be outside of your web server's file path,
+and if possible outside of PHP's include path to keep it away from
+http queries.    
+</p></div>
+
+</div>
+
+<div id="outline-container-7.2" class="outline-3">
+<h3 id="sec-7.2">7.2 Physical Data Center </h3>
+<div id="text-7.2">
+
+<p>Your citrusdb server should be installed in your secure data center
+on a segment of the network that is only accessible from your
+internal LAN.  Cardholder data should not be stored on a server
+connected to the internet.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-7.3" class="outline-3">
+<h3 id="sec-7.3">7.3 Passwords </h3>
+<div id="text-7.3">
+
+<p>Passwords to access the server, database, and web interface should
+be strong to help prevent password guessing.  Strong passwords
+avoid the use of dictionary words or all numbers, they include
+upper and lower case letters, numbers, and punctuation
+symbols.  Longer passwords are stronger than short ones, even just
+a few letters can make it significantly harder to brute force.
+</p>
+<p>
+Passwords in CitrusDB are stored in an MD5 hash to make them
+harder to recover from the database or view as they travel over
+the network.  If a user forgets their password the administrator
+will need to set a new one using the User editing tool.  If the
+administrator forgets their password, they will need direct access
+to the database via SQL queries or a utility like phpMyAdmin to
+put a new password on their user record.  You will need to hash
+your password using the md5 message digest algorithm (RFC 1321)
+before you paste it into the database record. 
+</p></div>
+
+</div>
+
+<div id="outline-container-7.4" class="outline-3">
+<h3 id="sec-7.4">7.4 Encrypting and Decrypting card data </h3>
+<div id="text-7.4">
+
+<p>New cards entered into the system are encrypted by the
+configured GPG command, however if you have a previous version of
+citrusdb with card data already in it you will need to encrypt the
+cards that are already heald in the system.
+</p>
+</div>
+
+<div id="outline-container-7.4.1" class="outline-4">
+<h4 id="sec-7.4.1">7.4.1 Encrypting existing card data </h4>
+<div id="text-7.4.1">
+
+<p>To encrypt the card data make sure you have setup a working gpg
+command in the config file.  Be sure to have a backup of your
+database before you run this command.  If the gpg command does
+not work or encrypts the cards using a key you are not able to
+decrypt then you have lost data.  Run the encryptcards script from
+the main citrusdb folder.  This will begin going through the
+database looking for unencrypted cards and encrypt them.  This can
+take a long time depending on how fast the server is and how much
+card data there is.   
+</p></div>
+
+</div>
+
+<div id="outline-container-7.4.2" class="outline-4">
+<h4 id="sec-7.4.2">7.4.2 Changing encryption keys for card data </h4>
+<div id="text-7.4.2">
+
+<p>It is a good idea to periodically change the encryption key being
+used.  You may want to change to a larger key every few years to
+make sure you are ahead of the curve for cryptanalysis attacks on
+the smaller key size.  
+</p>
+<p>
+To change they key you will need to first decrypt all the card
+data in the database.  This will need to be done when the database
+is not being accessed by any users or other processes.  Run the
+decryptcards command from the main citrusdb folder.  This will go
+through and decyrpt all the cards in the database using the gpg
+decrypt command from your config file.  The decryptcards command
+takes the passphrase input on the command line, so you may want to run
+this command from the console in single user mode if you want to
+ensure nobody else may log in while doing this.  This can take
+a long time depending on how fast the server is and how much
+card data there is.  After you have decrypted the card data you can
+create your new gpg key and setup the gpg encryption command to
+use this new key.  Then run the encryptcards script to encrypt all
+the cards in the database with the new key.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7.5" class="outline-3">
+<h3 id="sec-7.5">7.5 Purge old cardholder data </h3>
+<div id="text-7.5">
+
+<p>You will want to pick a time period to keep this data.  After that
+period has passed, then remove that data from your system.
+</p>
+</div>
+
+<div id="outline-container-7.5.1" class="outline-4">
+<h4 id="sec-7.5.1">7.5.1 Remove Exported Batch files </h4>
+<div id="text-7.5.1">
+
+<p>These batch files are created by the Export Cards tool and can be
+removed after they have been used.  Adding a cron job to get rid
+of these files nightly is recommended.
+</p></div>
+
+</div>
+
+<div id="outline-container-7.5.2" class="outline-4">
+<h4 id="sec-7.5.2">7.5.2 Remove Canceled Customer Records </h4>
+<div id="text-7.5.2">
+
+<p>Canceled customer records in the database will not be necessary after a
+certain number of years have passed and that customer data is no
+longer necessary for business operations and auditing purposes.
+</p>
+<p>
+You will likely need to make a custom script that can remove this for
+you since you will need to be deleting data from multiple tables
+depending on different criteria.  The first criteria would be to
+find the customer records with a cancel_date that is so old you
+want to remove all their information.  Once you have a list of
+those customers you will then want to remove their information
+from a number of tables including billing, billing_details that is
+related to their billing table id,
+billing_history also related to their billing table id, any
+optional tables you've created containing service
+attributes that are related to their user_services id,
+payment_history related to the billing id , and user_services
+which can be related to the account<sub>number</sub> or billing id. Before you run
+your customer script you will want to make sure that you have a backup of
+the database in case something more than you expected is removed.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7.6" class="outline-3">
+<h3 id="sec-7.6">7.6 Logging of user activity </h3>
+<div id="text-7.6">
+
+<p>You will want to keep logs of the activity that occurs on the
+server holding citrusdb and periodically review those logs.
+</p>
+<p>
+CitrusDB logs it's activity via the sql database in the activity<sub>log</sub> table.
+</p>
+<p>
+This table keeps track of the following:
+</p>
+<ul>
+<li>
+The Date and Time of the activity
+</li>
+<li>
+The CitrusDB user who generated the request if they are logged in
+</li>
+<li>
+IP Address the request came from
+</li>
+<li>
+The account number of the record the activity occured on
+</li>
+<li>
+The type of activity, login, logout, view, edit, create, delete,
+undelete, export, import, cancel, or uncancel
+</li>
+<li>
+The type of record, either the tools dashboard screen, customer
+record, billing record, service record, or creditcard record
+</li>
+<li>
+The record id number if the activity occured on an specific
+record
+</li>
+<li>
+The result of the request, either a success which most queries 
+will be, or a failure, such as a login failure.
+
+</li>
+</ul>
+
+<p>This table of data should be exported out of the database by a seperate
+log watching script as often as necessary to satisfy your reporting needs.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-7.7" class="outline-3">
+<h3 id="sec-7.7">7.7 Keeping Up-to-Date </h3>
+<div id="text-7.7">
+
+<p>Keeping your CitrusDB installation up-to-date is also important
+when there are critical security fixes.  You can sign up for the
+CitrusDB announce mailing list to be kept up to date on any
+updates to CitrusDB, including critical security updates.  Visit
+<a href="https://lists.sourceforge.net/lists/listinfo/citrusdb-announce">https://lists.sourceforge.net/lists/listinfo/citrusdb-announce</a> to
+join for the mailing list. 
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8">8 Online Resources </h2>
+<div id="text-8">
+
+<p>Thank you for reading the CitrusDB Usage Manual.  I hope this will
+allow you to take CitrusDB and use it with your organization to meet
+your billing and customer service needs.  For additional information
+please join our mailing lists and visit the website.
+</p>
+<ul>
+<li>
+citrusdb-announce mailing list:
+
+<p>
+<a href="https://lists.sourceforge.net/lists/listinfo/citrusdb-announce">https://lists.sourceforge.net/lists/listinfo/citrusdb-announce</a>
+</p>
+<p>
+This mailing list is for announcements of new versions and critical
+updates to CitrusDB.  All users of CitrusDB are encouraged to
+subscribe to this list to make sure they have the latest updates.
+</p>
+</li>
+<li>
+citrusdb-users mailing list:
+
+<p>
+<a href="https://lists.sourceforge.net/lists/listinfo/citrusdb-users">https://lists.sourceforge.net/lists/listinfo/citrusdb-users</a>
+</p>
+<p>
+This mailing list is where users can discuss issues with other users
+and find solutions.
+</p>
+</li>
+<li>
+Home Page:
+
+<p>
+<a href="http://www.citrusdb.org">http://www.citrusdb.org</a>
+</p>
+<p>
+This is the home page for CitrusDB, this will connect you to all the
+information about CitrusDB .  The latest release is always available
+for download on the home page.
+</p>
+</li>
+<li>
+Bug reports and development:
+
+<p>
+<a href="http://www.launchpad.net/citrusdb">http://www.launchpad.net/citrusdb</a>
+</p>
+<p>
+The launchpad site hosts the bug report list, source code in bzr
+version control, and has some blueprints that show future ideas for citrusdb.
+</p></li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9">9 Appendix A: GPG Commands </h2>
+<div id="text-9">
+
+
+</div>
+
+<div id="outline-container-9.1" class="outline-3">
+<h3 id="sec-9.1">9.1 Creating A Key </h3>
+<div id="text-9.1">
+
+
+
+
+
+<pre class="example">
+   gpg --gen-key
+</pre>
+
+
+
+
+
+<pre class="example">
+Please select what kind of key you want:
+   (1) DSA and Elgamal (default)
+   (2) DSA (sign only)
+   (5) RSA (sign only)
+Your selection? 1
+DSA keypair will have 1024 bits.
+ELG-E keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048) 1024
+</pre>
+
+
+
+
+
+
+<pre class="example">
+Please specify how long the key should be valid.
+         0 = key does not expire
+      &lt;n&gt;  = key expires in n days
+      &lt;n&gt;w = key expires in n weeks
+      &lt;n&gt;m = key expires in n months
+      &lt;n&gt;y = key expires in n years
+Key is valid for? (0) 0
+Key does not expire at all
+</pre>
+
+
+
+
+
+<pre class="example">
+Real name: MyName
+Email address: MyEmail@example.com
+Comment: 
+You selected this USER-ID:
+    "MyName &lt;MyEmail@example.com&gt;"
+</pre>
+
+
+
+
+
+<pre class="example">
+You need a Passphrase to protect your secret key.
+
+enter passphrase
+re-enter passphrase
+</pre>
+
+
+
+
+
+<pre class="example">
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.
+gpg: key 3F9D1764 marked as ultimately trusted
+public and secret key created and signed.
+</pre>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-9.2" class="outline-3">
+<h3 id="sec-9.2">9.2 Listing Public Keys </h3>
+<div id="text-9.2">
+
+<p>gpg &ndash;list-keys
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.3" class="outline-3">
+<h3 id="sec-9.3">9.3 Listing Private Keys </h3>
+<div id="text-9.3">
+
+<p>gpg &ndash;list-secret-keys
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.4" class="outline-3">
+<h3 id="sec-9.4">9.4 Export Public Key </h3>
+<div id="text-9.4">
+
+<p>gpg &ndash;export -a "User Name" &gt; public.key
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.5" class="outline-3">
+<h3 id="sec-9.5">9.5 Export Private Key </h3>
+<div id="text-9.5">
+
+<p>gpg &ndash;export-secret-key -a "User Name" &gt; private.key
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.6" class="outline-3">
+<h3 id="sec-9.6">9.6 Importing Public Key </h3>
+<div id="text-9.6">
+
+<p>gpg &ndash;import public.key
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.7" class="outline-3">
+<h3 id="sec-9.7">9.7 Import Private Key </h3>
+<div id="text-9.7">
+
+<p>gpg &ndash;allow-secret-key-import &ndash;import private.key
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.8" class="outline-3">
+<h3 id="sec-9.8">9.8 Delete a Public Key </h3>
+<div id="text-9.8">
+
+<p>gpg &ndash;delete-key "User Name"
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.9" class="outline-3">
+<h3 id="sec-9.9">9.9 Delete a Private Key </h3>
+<div id="text-9.9">
+
+<p>gpg &ndash;delete-secret-key "User Name"
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.10" class="outline-3">
+<h3 id="sec-9.10">9.10 Encrypt Data with Ascii Armor </h3>
+<div id="text-9.10">
+
+<p>gpg -e -u "Sender User Name" -r "Recipient User Name" &ndash;armor filename
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.11" class="outline-3">
+<h3 id="sec-9.11">9.11 Decrypt Data </h3>
+<div id="text-9.11">
+
+<p>gpg -d filename.gpg
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.12" class="outline-3">
+<h3 id="sec-9.12">9.12 Edit a Key </h3>
+<div id="text-9.12">
+
+<p>gpg &ndash;edit-key
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.13" class="outline-3">
+<h3 id="sec-9.13">9.13 Key Signing </h3>
+<div id="text-9.13">
+
+<p>You should only sign keys that you know are authentic.
+</p>
+<p>
+run: gpg &ndash;edit-key "username"
+at the prompt enter: sign
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.14" class="outline-3">
+<h3 id="sec-9.14">9.14 Key Trust </h3>
+<div id="text-9.14">
+
+<p>Run gpg &ndash;edit-key "username"
+at the prompt enter: trust
+</p>
+<p>
+1 = I don't know or won't say
+2 = I do NOT trust
+3 = I trust marginally
+4 = I trust fully
+5 = I trust ultimately
+m = back to the main menu
+</p>
+<p>
+The keys you created for citrus can be set to trusted ultimately.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.15" class="outline-3">
+<h3 id="sec-9.15">9.15 Revoke a key </h3>
+<div id="text-9.15">
+
+<p>gpg &ndash;gen-revoke
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-9.16" class="outline-3">
+<h3 id="sec-9.16">9.16 Command Options </h3>
+<div id="text-9.16">
+
+
+<p>
+&shy;-homedir
+This will specify the path to the .gnupg folder that contains the
+key files to be used
+</p>
+<p>
+&shy;-armor
+This will encode the output in ASCII Armor format.
+</p>
+<p>
+&shy;-batch
+This will tell gpg that it to run in batch mode.
+</p>
+<p>
+&shy;-no-secmem-warning
+Some Operating systems may give a warning about secure memory.
+This will supress that warning.
+</p>
+<p>
+&shy;-passphrase-fd 0
+This will take a passphrase from stdin instead of interactively.
+</p>
+<p>
+&shy;-passphrase-file filename
+This will read the passphrase from the file specified instead of interactively.
+</p>
+<p>
+&shy;-yes
+answer yes to any prompts
+</p>
+<p>
+&shy;-symmetric
+use symmetric encryption instead of asymmetric  Using a symmetric
+encryption is usually faster than the regular asymmetric encryption
+of gpg, however it requires a way to maintain the security of the
+passphrase when encrypting the data since there is no keyfile and
+the same passphrase is used both for encryption and decryption.
+</p>
+<p>
+&shy;-personal-cipher-preferences string
+Set the list of personal cipher preferences to string. Use gpg
+</p>
+<p>
+&shy;-version 
+to get a list of available algorithms, and use none to
+set no preference at all. This allows the user to factor in their
+own preferred algorithms when algorithms are chosen via recipient
+key preferences. The most highly ranked cipher in this list is also
+used for the &ndash;symmetric encryption command. 
+</p>
+<p>
+&shy;-no-tty
+This will tell gpg not to expect any TTY input
+</p>
+<p>
+&shy;-skip-verify
+This will tell gpg to skip the verification of signatures.  It can
+make gpg faster when one does not need to verify signatures.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10">10 Appendix B: OpenSSL Certificate </h2>
+<div id="text-10">
+
+
+<p>
+To create a SSL certificate you will first need to create a private
+key and the certificate signing request.
+</p>
+
+
+
+<pre class="example">
+   openssl genrsa -out webserver.key 2048
+</pre>
+
+
+
+
+<p>
+This will create the 2048bit RSA private key.  You can add -des3 to
+this command if you want to password protect the key, however that
+will require you enter the password whenever the web server starts
+up.
+</p>
+
+
+
+<pre class="example">
+   openssl req -new -key webserver.key -out webserver.csr
+</pre>
+
+
+
+
+<p>
+This command will create a certificate signing request from the
+private key.
+</p>
+<p>
+If you are going to send the key to a certificate authority (CA) for
+signing then you can send the csr file to the CA instead of
+self-signing it.  If you want to run your web server with a self-signed certificate then
+you will need to run the signkey command below.  If you are using a
+self-signed certificate your web browser may warn you to confirm
+and accept the certificate.  If you know the self-signed
+certificate is legitimate this offers the same encryption as
+any other certificate, however the browser is being cautious
+since it does not have an authority record for self-signed
+certificates.
+</p>
+
+
+
+<pre class="example">
+   openssl x509 -req -days 365 -in webserver.csr -signkey
+   webserver.key -out webserver.crt
+</pre>
+
+
+
+
+<p>
+This command will sign request and create a certificate file.
+</p>
+<p>
+After you have a signed certificate you will need to install that
+certificate into your web server.
+</p>
+
+</div>
+</div>
+<div id="postamble"><p class="author"> Author: Paul Yasi
+<a href="mailto:pyasi@citrusdb.org">&lt;pyasi@citrusdb.org&gt;</a>
+</p>
+<p class="date"> Date: 2010-12-17 05:13:52 EST</p>
+<p>HTML generated by org-mode 6.21b in emacs 23</p>
+</div></body>
+</html>

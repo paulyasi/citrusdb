@@ -37,7 +37,7 @@ if ($tooltype == "module")
 		if (file_exists($filepath)) {
 			include('./tools/modules/'.$loadname.'/index.php');
 			echo "<center><b><a target=\"_blank\"
-		       	href=\"help.html#tools_$loadname\"
+		       	href=\"documentation.html#tools_$loadname\"
 			style=\"color: red; font-size: 10pt;\">?</a></b>
 			</center>";
 		}
@@ -48,7 +48,7 @@ else 	{
 		if (file_exists($filepath)) {
 			include('./tools/'.$loadname.'.php');
 			echo "<center><b><a  target=\"_blank\" 
-			href=\"help.html#tools_$loadname\"
+			href=\"documentation.html#tools_$loadname\"
 			style=\"color: red; font-size: 10pt;\">?</a></b>
 			</center>";
 		}	

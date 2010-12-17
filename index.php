@@ -211,7 +211,7 @@ if ($u->user_isloggedin()) {
 		print "<br>";
 		$time_end = getmicrotime();
 		$time = round(($time_end - $time_start),4);
-		echo "<center><b><a target=\"_blank\" href=\"help.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
+		echo "<center><b><a target=\"_blank\" href=\"documentation.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
 	
 		print "</div></body></html>";
 	break; // end module
@@ -300,7 +300,7 @@ if ($u->user_isloggedin()) {
 		$time_end = getmicrotime();
 		$time = round(($time_end - $time_start),4);
                 
-		echo "<center><b><a target=\"_blank\" href=\"help.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
+		echo "<center><b><a target=\"_blank\" href=\"documentation.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
 	
 		print "</div></body></html>";
 	break; // end base
