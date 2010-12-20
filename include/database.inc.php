@@ -1,7 +1,7 @@
 <?php
 /*----------------------------------------------------------------------------*/
 // CitrusDB - The Open Source Customer Database
-// Copyright (C) 2005 Paul Yasi
+// Copyright (C) 2005-2010 Paul Yasi
 //
 // This program is free software; you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software 
@@ -21,11 +21,11 @@
 
 // indicate the release version of citrusdb
 
-$softwareversion = "2.2";
+$softwareversion = "2.2.1";
 
-// check that we are running php version 5 or greater
-if (version_compare(phpversion(), "5.0.0", "<")) {
-  echo "<b>You Need PHP5 or greater to run this application</b>";
+// check that we are running php version 5.2 or greater
+if (version_compare(phpversion(), "5.2.0", "<")) {
+  echo "<b>You Need PHP 5.2 or greater to run this application</b>";
 }
 
 // Connect to the database using ADOdb

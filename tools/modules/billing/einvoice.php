@@ -98,6 +98,10 @@ if ($submit) {
 	// Email the invoice
 	/*-------------------------------------------------------------------*/
 
+	// include fpdf and swiftmailer
+	require_once './include/fpdf.php';
+	require_once './include/swift/lib/swift_required.php';
+
 	// query the batch for the invoices to do
         $query = "SELECT DISTINCT d.invoice_number, b.contact_email, b.id, b.account_number  
 	FROM billing_details d 
@@ -107,13 +111,26 @@ if ($submit) {
         $result = $DB->Execute($query)
                 or die ("$l_queryfailed");
 
+	// TODO add a PDF invoice option to billing and check for it in the SELECT above
+	
+	// create a new pdf invoice
+	$pdf = new FPDF();
+
 	while ($myresult = $result->FetchRow()) {
 		// get the invoice data to process now
 		$invoice_number = $myresult['invoice_number'];
 		$contact_email = $myresult['contact_email'];
 		$invoice_account_number = $myresult['account_number'];
 		$invoice_billing_id = $myresult['id'];
-		$message = outputinvoice($DB, $invoice_number, $lang, "html", NULL);		
+
+		// TODO check for
+		//if (doing pdf) {
+		$pdf = outputinvoice($DB, $invoice_number, $lang, "pdf", $pdf);
+		$pdfdata = $pdf->Output("invoice.pdf",S);
+		//} else {
+		//$message = outputinvoice($DB, $invoice_number, $lang, "html", NULL);		
+		//}
+
 
 		// get the org billing email address for from address		
 		$query = "SELECT g.org_name, g.org_street, g.org_city, ".
@@ -139,7 +156,7 @@ if ($submit) {
 		$iv_result = $DB->Execute($query) or die ("iv $l_queryfailed");
 		$myinvoiceresult = $iv_result->fields;
 		$total_due = sprintf("%.2f",$myinvoiceresult['total_due']);
-
+		
 		// build email message above invoice
 		$email_message = "$l_email_heading_thankyou $org_name.\n\n".
 		  "$l_email_heading_presenting ".
@@ -150,16 +167,52 @@ if ($submit) {
 		  "$phone_billing\n\n".
 		  "$l_email_heading_include.\n\n";
 
-		// HTML Email Headers
-		$headers = "From: $billing_email \n";
-		//$headers .= "Mime-Version: 1.0 \n";
-		//$headers .= "Content-type: text/html; charset=iso-8859-1 \n";
-		$to = $contact_email;
-		$subject = "$l_einvoice $org_name";
-		$message = "$email_message$message";
-		// send the mail
-		mail ($to, $subject, $message, $headers);
-		echo "sent invoice to $to<br>\n";
+		// TODO make this work with swiftmailer
+		//if (pdfmessage) {
+		  // send as a pdf attachment
+		  //Create the attachment with your data
+
+		//Create the message
+		$message = Swift_Message::newInstance();
+		
+		//Give the message a subject
+		$message->setSubject("$l_einvoice $org_name");
+		
+		//Set the From address with an associative array
+		$message->setFrom("$billing_email");
+		
+		//Set the To addresses with an associative array
+		$message->setTo("$contact_email");
+		
+		//Give it a body
+		$message->setBody("$email_message");
+		
+		$attachment = Swift_Attachment::newInstance($pdfdata, 'my-file.pdf', 'application/pdf');  
+		
+		//Attach it to the message
+		$message->attach($attachment);
+
+		//Create the Transport
+		$transport = Swift_MailTransport::newInstance();
+		
+		//Create the Mailer using your created Transport
+		$mailer = Swift_Mailer::newInstance($transport);
+
+		//Send the message
+		$mailresult = $mailer->send($message);
+		//} else {
+		  
+		  // HTML Email Headers
+		  // $headers = "From: $billing_email \n";
+		  //$headers .= "Mime-Version: 1.0 \n";
+		  //$headers .= "Content-type: text/html; charset=iso-8859-1 \n";
+		  //$to = $contact_email;
+		  //$subject = "$l_einvoice $org_name";
+		  //$message = "$email_message$message";
+		  // send the mail
+		  //mail ($to, $subject, $message, $headers);
+		  //echo "sent invoice to $to<br>\n";
+		  //}
 	}
 	
 } else {
