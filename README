@@ -23,7 +23,7 @@
 
   Requirements: 
 
-	PHP 5.0.4 or greater, and MySQL 4 or greater
+	PHP 5.2.0 or greater, and MySQL 4 or greater
 	register_globals turned off in your php.ini
 
 
@@ -49,6 +49,7 @@
 		NO-Norwegian: Terje Nauf
 		ES-Spanish: Rodolfo Pilas
 		TR-Turkish: Mehmet Bedii Kaya
+	
 
   Download:
 	

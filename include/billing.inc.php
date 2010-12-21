@@ -4,6 +4,89 @@
 // read the README file for more information
 
 
+function emailinvoice ($invoice_number,$contact_email,$invoice_billing_id) {  
+  /*--------------------------------------------------------------------------*/
+  // Create and send email invoice with pdf attached using swiftmailer
+  /*--------------------------------------------------------------------------*/  
+
+  global $DB, $lang;
+  include ("$lang");
+  
+  // include fpdf and swiftmailer
+  require_once './include/fpdf.php';
+  require_once './include/swift/lib/swift_required.php';
+  
+  // create a new pdf invoice
+  $pdf = new FPDF();
+  
+  $pdf = outputinvoice($DB, $invoice_number, $lang, "pdf", $pdf);
+  $pdfdata = $pdf->Output("invoice.pdf",S);
+  
+  // get the org billing email address for from address		
+  $query = "SELECT g.org_name, g.org_street, g.org_city, ".
+    "g.org_state, g.org_zip, g.phone_billing, g.email_billing ".
+    "FROM billing b ".
+    "LEFT JOIN general g ON g.id = b.organization_id  ".
+    "WHERE b.id = $invoice_billing_id";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $ib_result = $DB->Execute($query) or die ("$query ib $l_queryfailed");
+  $mybillingresult = $ib_result->fields;
+  $billing_email = $mybillingresult['email_billing'];
+  $org_name = $mybillingresult['org_name'];
+  $org_street = $mybillingresult['org_street'];
+  $org_city = $mybillingresult['org_city'];
+  $org_state = $mybillingresult['org_state'];
+  $org_zip = $mybillingresult['org_zip'];
+  $phone_billing = $mybillingresult['phone_billing'];
+  
+  // get the total due from the billing_history
+  $query = "SELECT total_due FROM billing_history ".
+    "WHERE id = '$invoice_number'";
+  $iv_result = $DB->Execute($query) or die ("iv $l_queryfailed");
+  $myinvoiceresult = $iv_result->fields;
+  $total_due = sprintf("%.2f",$myinvoiceresult['total_due']);
+  
+  // build email message above invoice
+  $email_message = "$l_email_heading_thankyou $org_name.\n\n".
+    "$l_email_heading_presenting ".
+    "$total_due $l_to_lc \n\n".
+    "$org_name\n".
+    "$org_street\n".
+    "$org_city $org_state $org_zip\n".
+    "$phone_billing\n\n".
+    "$l_email_heading_include.\n\n";
+  
+  //Create the message
+  $message = Swift_Message::newInstance();
+  
+  //Give the message a subject
+  $message->setSubject("$l_einvoice $org_name");
+  
+  //Set the From address with an associative array
+  $message->setFrom("$billing_email");
+  
+  //Set the To addresses with an associative array
+  $message->setTo("$contact_email");
+  
+  //Give it a body
+  $message->setBody("$email_message");
+  
+  $filename = "invoice$invoice_number.pdf";
+  $attachment = Swift_Attachment::newInstance($pdfdata, "$filename", 'application/pdf');  
+  
+  //Attach it to the message
+  $message->attach($attachment);
+  
+  //Create the Transport
+  $transport = Swift_MailTransport::newInstance();
+  
+  //Create the Mailer using your created Transport
+  $mailer = Swift_Mailer::newInstance($transport);
+  
+  //Send the message
+  $mailresult = $mailer->send($message);
+}
+
 function automatic_to_date ($DB, $from_date, $billing_type, $billing_id) {
   /*--------------------------------------------------------------------*/
   // set the to_date automatically according 
