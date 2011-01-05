@@ -12,7 +12,7 @@
    requests online.
    
    CitrusDB has similar requirements to other open source PHP
-   projects.  Specifically it requires PHP 5.0.4 or greater, MySQL 4.x
+   projects.  Specifically it requires PHP 5.2.0 or greater, MySQL 4.x
    or greater database, and a modern web browser such as Firefox,
    Chrome, Safari, or Internet Explorer with support for cookies, and
    Javascript turned on.

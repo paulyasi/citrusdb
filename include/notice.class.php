@@ -17,7 +17,8 @@ class notice
   
   /*---------------------------------------------------------------------------*/
   // construct notice message
-  /*---------------------------------------------------------------------------*/  
+  /*---------------------------------------------------------------------------*/
+   
   function __construct($notice_type, $billing_id, $method, $payment_due_date, $turnoff_date, $cancel_date) {
 
     $this->notice_type = $notice_type;
