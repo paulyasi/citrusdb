@@ -129,6 +129,19 @@
       $lang = './include/local/us-english.inc.php';
 #+END_EXAMPLE
 
+    + Set the regular url and ssl url prefixes for your database url.
+      The ssl url is required for entering billing data or when
+      exporting credit card data.  You may use a self-signed
+      certificate for this function as long as all the users of the
+      database have that SSL certificate installed into their browsers.
+      If you have other compensating controls or do not want to use
+      ssl, you can enter the same http url in both variables.
+
+#+BEGIN_EXAMPLE
+      $url_prefix = "http://server.example.com/citrusdb/";
+      $ssl_url_prefix = "https://server.example.com/citrusdb/";
+#+END_EXAMPLE
+
     + Set the gpg command that will be used for encryption
       of stored credit card data.  In order to use gpg you must
       generate a public and private keypair.  It is probably a good
@@ -187,19 +200,6 @@
       --passphrase-fd 0 --yes --no-tty --clearsign -u 'CitrusDB'";
 #+END_EXAMPLE
            
-    + Set the regular url and ssl url prefixes for your database url.
-      The ssl url is required for entering billing data or when
-      exporting credit card data.  You may use a self-signed
-      certificate for this function as long as all the users of the
-      database have that SSL certificate installed into their browsers.
-      If you have other compensating controls or do not want to use
-      ssl, you can enter the same http url in both variables.
-
-#+BEGIN_EXAMPLE
-      $url_prefix = "http://server.example.com/citrusdb/";
-      $ssl_url_prefix = "https://server.example.com/citrusdb/";
-#+END_EXAMPLE
-
     + If you would like to use an LDAP server to authenticate users 
       you can setup the ldap variables.  Set the ldap_enable variable
       to TRUE and the other variables to correspond to your LDAP configuration.

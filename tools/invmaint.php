@@ -125,8 +125,7 @@ if ($delete) {
 	h.billing_type h_billing_type, 
 	b.name b_name, b.company b_company, d.invoice_number, 
 	SUM(d.billed_amount) as billed_amount, 
-	SUM(d.paid_amount) as normal_paid_amount, 
-	SUM(ABS(d.paid_amount)) as paid_amount
+	SUM(d.paid_amount) as normal_paid_amount 
 	FROM billing_history h
         LEFT JOIN billing b ON h.billing_id = b.id 
 	LEFT JOIN billing_details d ON h.id = d.invoice_number 
@@ -160,7 +159,6 @@ if ($delete) {
      $new_charges = sprintf("%.2f",$myresult['h_new_charges']);		
      $total_due = sprintf("%.2f",$myresult['h_total_due']);
      $billing_type = $myresult['h_billing_type'];
-     $sum = $myresult['paid_amount'];
      $normal_sum = sprintf("%.2f",$myresult['normal_paid_amount']);
      
      print "<tr bgcolor=\"#eeeeee\">
