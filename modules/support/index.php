@@ -66,6 +66,7 @@ if (!isset($base->input['status'])) { $base->input['status'] = ""; }
 if (!isset($base->input['dtext'])) { $base->input['dtext'] = ""; }
 if (!isset($base->input['reminderdate'])) { $base->input['reminderdate'] = ""; }
 if (!isset($base->input['serviceid'])) { $base->input['serviceid'] = ""; }
+if (!isset($base->input['description'])) { $base->input['description'] = ""; }
 
 $editticket = $base->input['editticket'];
 $notify = $base->input['notify'];
@@ -73,10 +74,11 @@ $status = $base->input['status'];
 $dtext = $base->input['dtext'];
 $reminderdate = $base->input['reminderdate'];
 $user_services_id = $base->input['serviceid'];
+$description = $base->input['description'];
 
 // grab the description manually to preserve newlines
-$description = $_POST['description'];
-$description = safe_value_with_newlines($description);
+//$description = $_POST['description'];
+//$description = safe_value_with_newlines($description);
 
 if ($edit)
 {
