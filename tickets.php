@@ -128,8 +128,9 @@ if ($pending) {
     print "<td width=10%>$status</td>";
     print "<td width=50% colspan=3><a href=\"index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
 
-    print "<tr><td width=100% colspan=8>".
-      "&nbsp; $description  <a href=\"$linkurl\">$linkname</a>";
+    print "<tr><td width=100% colspan=8> &nbsp; ";
+    echo nl2br($description);
+    echo "<a href=\"$linkurl\">$linkname</a>";
 
     // get the sub_history printed here
     $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
@@ -140,7 +141,9 @@ if ($pending) {
       $sub_created_by = $mysubresult['created_by'];
       $sub_description = $mysubresult['description'];
       
-      print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: $sub_description</p>\n";
+      print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: ";
+      echo nl2br($sub_description);
+      echo "</p>\n";
     }
 
     // end the table block
@@ -233,8 +236,9 @@ if ($pending) {
     print "<td width=10%>$status</td>";
     print "<td width=50% colspan=3><a href=\"index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
     
-    print "<tr><td width=100% colspan=8>".
-      "&nbsp; $description  <a href=\"$linkurl\">$linkname</a>";
+    print "<tr><td width=100% colspan=8>&nbsp;";
+    echo nl2br($description);
+    echo "<a href=\"$linkurl\">$linkname</a>";
 
     // get the sub_history printed here
     $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
@@ -245,7 +249,9 @@ if ($pending) {
       $sub_created_by = $mysubresult['created_by'];
       $sub_description = $mysubresult['description'];
       
-      print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: $sub_description</p>\n";
+      print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: ";
+      echo nl2br ($sub_description);
+      echo "</p>\n";
     }
 
     // end the table block
