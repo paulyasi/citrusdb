@@ -124,7 +124,6 @@ if ($delete) {
 	h.new_charges h_new_charges, h.total_due h_total_due,
 	h.billing_type h_billing_type, 
 	b.name b_name, b.company b_company, d.invoice_number, 
-	SUM(d.billed_amount) as billed_amount, 
 	SUM(d.paid_amount) as normal_paid_amount 
 	FROM billing_history h
         LEFT JOIN billing b ON h.billing_id = b.id 

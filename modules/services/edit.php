@@ -789,8 +789,11 @@ if ($save) {
   } else {
     print "<tr bgcolor=\"#ddddff\">";
   }
+
+  // add br tags to line breaks
+  $br_description = preg_replace( "/\n/"        , "<br />"        , $description );
   
-  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description";
+  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$br_description";
   
   // get the sub_history printed here
   $query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
@@ -802,8 +805,11 @@ if ($save) {
     $mydatetime = $mysubresult['month']."/".$mysubresult['day']." ".$mysubresult['hour'].":".$mysubresult['minute'];    
     $sub_created_by = $mysubresult['created_by'];
     $sub_description = $mysubresult['description'];
+
+    // add br tags to line breaks
+    $br_sub_description = preg_replace( "/\n/"        , "<br />"        , $sub_description );
     
-    print "<br>$mydatetime $sub_created_by: $sub_description\n";
+    print "<br>$mydatetime $sub_created_by: $br_sub_description\n";
   }
   
   echo "</td>";

@@ -32,5 +32,7 @@ list($myyear, $mymonth, $myday) = split('-', $mydate);
 $day_of_week = date("w", mktime(0, 0, 0, $mymonth, $myday, $myyear));
 echo "day of week $day_of_week";
 
+$nextmonthexpdate = date("my", mktime(0, 0, 0, date("m")+1  , date("y")));
+print "next month exp date = $nextmonthexpdate<p>";
 
 ?>

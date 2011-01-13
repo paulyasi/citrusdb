@@ -133,7 +133,10 @@ while ($myresult = $result->FetchRow()) {
     print "<tr bgcolor=\"#ffffdd\">";
   }
 
-  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$description<br>";
+  // add br tags to line breaks
+  $br_description = preg_replace( "/\n/"        , "<br />"        , $description );
+  
+  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;$br_description<br>";
 
   // get the sub_history printed here
   $query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
@@ -149,7 +152,10 @@ while ($myresult = $result->FetchRow()) {
     // if today, show time
     // if creation date not today, show date/time
     
-    print "$mydatetime $sub_created_by: $sub_description<br>\n";
+    // add br tags to line breaks
+    $br_sub_description = preg_replace( "/\n/"        , "<br />"        , $sub_description );
+    
+    print "$mydatetime $sub_created_by: $br_sub_description<br>\n";
     }
 
   // end this table block

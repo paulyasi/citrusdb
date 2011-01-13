@@ -22,22 +22,25 @@ require_once('./include/permissions.inc.php');
 if (!isset($base->input['id'])) { $base->input['id'] = ""; }
 if (!isset($base->input['notify'])) { $base->input['notify'] = ""; }
 if (!isset($base->input['status'])) { $base->input['status'] = ""; }
-if (!isset($base->input['description'])) { $base->input['description'] = ""; }
 if (!isset($base->input['savechanges'])) { $base->input['savechanges'] = ""; }
 if (!isset($base->input['reminderdate'])) { $base->input['reminderdate'] = ""; }
 if (!isset($base->input['serviceid'])) { $base->input['serviceid'] = ""; }
-if (!isset($base->input['addnote'])) { $base->input['addnote'] = ""; }
 if (!isset($base->input['oldstatus'])) { $base->input['oldstatus'] = ""; }
 
 $id = $base->input['id'];
 $notify = $base->input['notify'];
 $status = $base->input['status'];
-$description = $base->input['description'];
 $savechanges = $base->input['savechanges'];
 $reminderdate = $base->input['reminderdate'];
 $serviceid = $base->input['serviceid'];
-$addnote = $base->input['addnote'];
 $oldstatus = $base->input['oldstatus'];
+
+// grab the description and addnote field (subnotes) manually to preserve newlines
+$description = $_POST['description'];
+$description = safe_value_with_newlines($description);
+
+$addnote = $_POST['addnote'];
+$addnote = safe_value_with_newlines($addnote);
 
 if ($savechanges) {
 
@@ -135,8 +138,8 @@ if ($savechanges) {
   $serviceid = $myresult['ch_user_services_id'];
   $closed_by = $myresult['ch_closed_by'];
   $closed_date = $myresult['ch_closed_date'];
-  $service_description = $myresult['service_description'];	
-	
+  $service_description = $myresult['service_description'];
+
   echo "<a href=\"index.php?load=customer&type=module\">[ $l_undochanges ]</a>".
     "&nbsp; <a href=\"index.php?load=tickets&type=base\">".
     "[ $l_checknotes ]</a>".
@@ -221,7 +224,9 @@ if ($savechanges) {
     // let the user edit their own descriptions if not yet completed or pending
     echo "<textarea name=\"description\" rows=4 cols=70>$description</textarea></td><tr>";
   } else {
-    echo "<br>$description<input type=hidden name=\"description\" value=\"$description\"<br><br></td><tr>";
+    // fix the description to print with line breaks here
+    $br_description = preg_replace( "/\n/"        , "<br />"        , $description );
+    echo "$br_description<input type=hidden name=\"description\" value=\"$description\"></td><tr>";
   }
   
   // print the current notes attached to this item
@@ -232,8 +237,10 @@ if ($savechanges) {
     $sub_creation_date = $mysubresult['creation_date'];
     $sub_created_by = $mysubresult['created_by'];
     $sub_description = $mysubresult['description'];
+
+    $br_description = preg_replace( "/\n/"        , "<br />"        , $sub_description );
     
-    print "<td bgcolor=\"#ccccdd\"><b>$sub_created_by<br>$sub_creation_date</b></td><td colspan=3 bgcolor=\"#ddddee\">$sub_description</td><tr>\n";
+    print "<td bgcolor=\"#ccccdd\"><b>$sub_created_by<br>$sub_creation_date</b></td><td colspan=3 bgcolor=\"#ddddee\">$br_description</td><tr>\n";
   }
 
   // print the end of the form  
