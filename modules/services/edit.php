@@ -790,10 +790,9 @@ if ($save) {
     print "<tr bgcolor=\"#ddddff\">";
   }
 
-  // add br tags to line breaks
-  //$br_description = preg_replace( "/\n/"        , "<br />"        , $description );
-  
-  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;description";
+  // add br tags to line breaks with nl2br
+  print "<td colspan=6 style=\"font-size: 10pt; padding-bottom: 5px;\">&nbsp;";
+  echo nl2br($description);
   
   // get the sub_history printed here
   $query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
@@ -806,10 +805,9 @@ if ($save) {
     $sub_created_by = $mysubresult['created_by'];
     $sub_description = $mysubresult['description'];
 
-    // add br tags to line breaks
-    //$br_sub_description = preg_replace( "/\n/"        , "<br />"        , $sub_description );
-    
-    print "<br>$mydatetime $sub_created_by: $sub_description\n";
+    // add br tags to line breaks with nl2br
+    print "<br>$mydatetime $sub_created_by: ";
+    echo nl2br($sub_description);
   }
   
   echo "</td>";

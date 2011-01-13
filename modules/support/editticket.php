@@ -26,8 +26,6 @@ if (!isset($base->input['savechanges'])) { $base->input['savechanges'] = ""; }
 if (!isset($base->input['reminderdate'])) { $base->input['reminderdate'] = ""; }
 if (!isset($base->input['serviceid'])) { $base->input['serviceid'] = ""; }
 if (!isset($base->input['oldstatus'])) { $base->input['oldstatus'] = ""; }
-if (!isset($base->input['description'])) { $base->input['description'] = ""; }
-if (!isset($base->input['addnote'])) { $base->input['addnote'] = ""; }
 
 $id = $base->input['id'];
 $notify = $base->input['notify'];
@@ -36,15 +34,13 @@ $savechanges = $base->input['savechanges'];
 $reminderdate = $base->input['reminderdate'];
 $serviceid = $base->input['serviceid'];
 $oldstatus = $base->input['oldstatus'];
-$description = $base->input['description'];
-$addnote = $base->input['addnote'];
 
 // grab the description and addnote field (subnotes) manually to preserve newlines
-//$description = $_POST['description'];
-//$description = safe_value_with_newlines($description);
+$description = $_POST['description'];
+$description = safe_value_with_newlines($description);
 
-//$addnote = $_POST['addnote'];
-//$addnote = safe_value_with_newlines($addnote);
+$addnote = $_POST['addnote'];
+$addnote = safe_value_with_newlines($addnote);
 
 if ($savechanges) {
 
@@ -229,8 +225,8 @@ if ($savechanges) {
     echo "<textarea name=\"description\" rows=4 cols=70>$description</textarea></td><tr>";
   } else {
     // fix the description to print with line breaks here
-    //$br_description = preg_replace( "/\n/"        , "<br />"        , $description );
-    echo "$description<input type=hidden name=\"description\" value=\"$description\"></td><tr>";
+    echo nl2br ($description);
+    echo "<input type=hidden name=\"description\" value=\"$description\"></td><tr>";
   }
   
   // print the current notes attached to this item
@@ -242,9 +238,9 @@ if ($savechanges) {
     $sub_created_by = $mysubresult['created_by'];
     $sub_description = $mysubresult['description'];
 
-    //$br_description = preg_replace( "/\n/"        , "<br />"        , $sub_description );
-    
-    print "<td bgcolor=\"#ccccdd\"><b>$sub_created_by<br>$sub_creation_date</b></td><td colspan=3 bgcolor=\"#ddddee\">$sub_description</td><tr>\n";
+    print "<td bgcolor=\"#ccccdd\"><b>$sub_created_by<br>$sub_creation_date</b></td><td colspan=3 bgcolor=\"#ddddee\">";
+    echo nl2br($sub_description);
+    echo "</td><tr>\n";
   }
 
   // print the end of the form  
