@@ -10,6 +10,10 @@
 	document.phonesearch.s2.value = document.phonesearch.s1.value.replace(/\-/g, "")
       }
     }
+
+      function nameformat() {
+	document.namesearch.s1.value = document.namesearch.s1.value.replace(/\s/g, "%")
+      }
    </script>
       
 <fieldset>
@@ -17,11 +21,11 @@
 
 <table width=500>   
 <td valign=top>
-<form ACTION="index.php?load=dosearch&type=fs" METHOD="POST">
+<form ACTION="index.php?load=dosearch&type=fs" METHOD="POST" name="namesearch">
 <?php echo "$l_name/$l_company"; ?></td><td><input type=text name=s1>
 <input type=hidden name=id value=2> <!-- the id of this search in the searches table -->
 <?php
-echo "<input type=submit name=submit value=\"$l_search\" class=smallbutton>";
+echo "<input type=submit name=submit value=\"$l_search\" class=smallbutton onclick=\"nameformat();\">";
 ?>
 </form>
 
