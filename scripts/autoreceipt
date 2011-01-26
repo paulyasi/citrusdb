@@ -29,7 +29,8 @@ $query = "SELECT b.id b_id, b.contact_email, b.name, b.company, ".
   "FROM billing b ".
   "LEFT JOIN customer c on c.account_number = b.account_number ".
   "LEFT JOIN payment_history ph ON ph.billing_id = b.id ".
-  "WHERE b.automatic_receipt = 'y' AND ph.creation_date = CURRENT_DATE";
+  "WHERE b.automatic_receipt = 'y' AND ph.creation_date = CURRENT_DATE ".
+  "AND ph.billing_amount > 0";
 
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $receiptresult = $DB->Execute($query) or die ("automatic_receipt select for today failed");
