@@ -161,12 +161,12 @@ if ($submit) {
       } // end if billing method
       
       // update the billing_details for things that still need to be paid
-      // order by the invoice in descending order to pay newest run items first
+      // order by the most recent invoice in descending order to pay newest run items first
       // thereby makeing sure to pay the correct rerun items too
       $query = "SELECT * FROM billing_details ". 
 	"WHERE paid_amount < billed_amount ".
 	"AND billing_id = $billing_id ".
-	"ORDER BY invoice_number DESC";
+	"ORDER BY recent_invoice_number DESC";
       $DB->SetFetchMode(ADODB_FETCH_ASSOC);
       $result = $DB->Execute($query)
 	or die ("select billing details $l_queryfailed $query");

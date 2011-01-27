@@ -95,6 +95,7 @@ CREATE TABLE `billing_details` (
   `payment_applied` date NULL,
   `original_invoice_number` int(11) NULL,
   `payment_history_id` int(11) NULL,
+  `recent_invoice_number` int(11) NULL,
   PRIMARY KEY  (`id`),
   KEY `creation_date` (`creation_date`)
 ) TYPE=MyISAM AUTO_INCREMENT=1 ;
@@ -778,7 +779,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- Dumping data for table `settings`
 -- 
 
-INSERT INTO `settings` VALUES (1, '2.2', 'users', '/home/pyasi/citrus_project/io','16:00:00','y','n','n','n','n','n','y','http://localhost/cancel', 'billing', 'shipping');
+INSERT INTO `settings` VALUES (1, '2.2.1', 'users', '/home/pyasi/citrus_project/io','16:00:00','y','n','n','n','n','n','y','http://localhost/cancel', 'billing', 'shipping');
 
 
 

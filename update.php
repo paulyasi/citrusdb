@@ -920,7 +920,21 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";	  
 	}
-	
+
+	if ($databaseversion == "2.2") {
+	  // add the recent_invoice_number to billing details for new credit card rerun method
+	  // that keeps the regular invoice number the same and just makes a new invoice
+	  // with a pastdue amount, keeping items on old invoice itself
+	  $query = "ALTER TABLE  `billing_details` ADD  `recent_invoice_number` INT NULL DEFAULT NULL";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
+	  // set the version number in the database to 2.2
+	  $query = "UPDATE `settings` SET `version` = '2.2.1' ".
+	    "WHERE `id` =1 LIMIT 1";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";	  
+	}
 	
 	echo "<center><h2>Database Updated</h2></center>";
 }
@@ -948,7 +962,7 @@ else
 	<p>
 	Your database version: <b>$databaseversion</b><p>
 
-	This script will update it to version: <b>2.2</b></h3>";
+	This script will update it to version: <b>2.2.1</b></h3>";
 
 	echo "<p style=\"font-weight: bold;\">Upgrading version 1.3.0 or ".
 	  "older will reset the rerun dates ".
@@ -956,7 +970,7 @@ else
 	  "check for pending reruns before running this script on an active ".
 	  "system.</p>";
 
-	if ($databaseversion == "2.2") {
+	if ($databaseversion == "2.2.1") {
 		echo "<p><b>Nothing to update</b>";
 	} else {
 		echo "

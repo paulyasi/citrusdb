@@ -574,11 +574,10 @@ function update_rerundetails($DB, $billingdate, $batchid, $organization_id)
     $rerun_date = $myresult['rerun_date'];
 
     // set the item to be rerun that is unpaid and has the rerun flag set
-    // TODO: determine if I can remove the invoice_number = NULL and keep the info on that one invoice
-    // does it just run as a new invoice with no items, but just a past due amount?  is that OK?
+    // set the recent_invoice_number to NULL so it is replaced when creating billing_history
     $query = "UPDATE billing_details SET ".         
       "batch = '$batchid', ".        
-      //      "invoice_number = NULL, ".
+      "recent_invoice_number = NULL, ".
       "rerun_date = '$rerun_date' ".
       "WHERE billing_id = $billing_id ".
       "AND billed_amount > paid_amount ".
@@ -632,11 +631,22 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
 
     // set the original_invoice_number here for billing_details with a
     // null original_invoice_number (eg: a brand new one)
+    // NOTE: recent changes 1/27/2011 make the original_invoice_number obsolete
+    // but it is still printed and required for old items to look the same
     $query = "UPDATE billing_details SET ".
       "original_invoice_number = '$invoice_number' ".
       "WHERE invoice_number = '$invoice_number' ".
       "AND original_invoice_number IS NULL";
     $originalinvoice = $DB->Execute($query) or die ("Query Failed");
+
+    // set the recent_invoice_number here for billing_details with a
+    // null recent_invoice_number, items included as new charges or pastdue on that most recent invoice
+    // used for credit card imports to assign payments to hightest recent_invoice number
+    $query = "UPDATE billing_details ".
+      "SET recent_invoice_number = '$invoice_number' ".
+      "WHERE billing_id = '$mybilling_id' ".
+      "AND recent_invoice_number IS NULL";
+    $recentinvoice = $DB->Execute($query) or die ("Query Failed");
 
     //
     // Apply Credits
