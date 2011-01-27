@@ -574,9 +574,11 @@ function update_rerundetails($DB, $billingdate, $batchid, $organization_id)
     $rerun_date = $myresult['rerun_date'];
 
     // set the item to be rerun that is unpaid and has the rerun flag set
+    // TODO: determine if I can remove the invoice_number = NULL and keep the info on that one invoice
+    // does it just run as a new invoice with no items, but just a past due amount?  is that OK?
     $query = "UPDATE billing_details SET ".         
       "batch = '$batchid', ".        
-      "invoice_number = NULL, ".
+      //      "invoice_number = NULL, ".
       "rerun_date = '$rerun_date' ".
       "WHERE billing_id = $billing_id ".
       "AND billed_amount > paid_amount ".

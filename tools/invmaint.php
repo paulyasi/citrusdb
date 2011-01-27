@@ -124,13 +124,15 @@ if ($delete) {
 	h.new_charges h_new_charges, h.total_due h_total_due,
 	h.billing_type h_billing_type, 
 	b.name b_name, b.company b_company, d.invoice_number, 
-	SUM(d.paid_amount) as normal_paid_amount 
+        SUM(d.paid_amount) as normal_paid_amount 
 	FROM billing_history h
         LEFT JOIN billing b ON h.billing_id = b.id 
 	LEFT JOIN billing_details d ON h.id = d.invoice_number 
-        WHERE h.billing_id  = '$billingid' GROUP BY d.invoice_number 
-	ORDER BY d.invoice_number DESC";
+        WHERE h.billing_id  = '$billingid' GROUP BY h.id 
+	ORDER BY h.id DESC";
 
+   // SUM(d.paid_amount) as normal_paid_amount 
+   
    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
    $result = $DB->Execute($query) or die ("$l_queryfailed");
 
