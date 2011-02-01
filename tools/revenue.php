@@ -88,7 +88,7 @@ if ($day1) {
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
 
-  echo "<table><td>$l_service</td><td>$l_organizationname</td><td>$l_category</td><td>$l_amount</td>
+  echo "<table><td>$l_service</td><td>$l_organizationname</td><td>$l_category</td><td>$l_amount</td><td></td>
 		<tr>";
   while ($myresult = $result->FetchRow()) {
     $category_total = $myresult['CategoryTotal'];
@@ -98,7 +98,7 @@ if ($day1) {
     $org_name = $myresult['g_org_name'];
     echo "<td>$service_description</td><td>$org_name</td>
 			<td>$service_category</td>
-			<td>$category_total ($count)</td><tr>";
+			<td>$category_total </td><td>($count)</td><tr>";
   }
   echo "</table>";
   
@@ -121,13 +121,13 @@ if ($day1) {
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
 
-  echo "<p><table><td>$l_credit</td><td>$l_organizationname</td><td>$l_amount</td><tr>";
+  echo "<p><table><td>$l_credit</td><td>$l_organizationname</td><td>$l_amount</td><td></td><tr>";
   while ($myresult = $result->FetchRow()) {
     $category_total = $myresult['CategoryTotal'];
     $count = $myresult['ServiceCount'];
     $credit_description = $myresult['credit_description'];
     $org_name = $myresult['g_org_name'];
-    echo "<td>$credit_description</td><td>$org_name</td><td>$category_total ($count)</td><tr>";
+    echo "<td>$credit_description</td><td>$org_name</td><td>$category_total</td><td>($count)</td><tr>";
   }
   echo "</table>";
   
@@ -152,14 +152,14 @@ if ($day1) {
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
 	
-  echo "<p><table><td>$l_refund</td><td>$l_organizationname</td><td>$l_category</td><td>$l_amount</td><tr>";
+  echo "<p><table><td>$l_refund</td><td>$l_organizationname</td><td>$l_category</td><td>$l_amount</td><td></td><tr>";
   while ($myresult = $result->FetchRow()) {
     $category_total = $myresult['CategoryTotal'];
     $service_category = $myresult['service_category'];
     $count = $myresult['ServiceCount'];
     $org_name = $myresult['g_org_name'];
     $service_description = $myresult['service_description'];
-    echo "<td>$service_description</td><td>$org_name</td><td>$service_category</td><td>$category_total ($count)</td><tr>";
+    echo "<td>$service_description</td><td>$org_name</td><td>$service_category</td><td>$category_total</td><td>($count)</td><tr>";
   }
 
   // show discounts entered for a specified date range
@@ -180,7 +180,7 @@ if ($day1) {
     $name = $myresult['name'];
     $company = $myresult['company'];    
     $amount = $myresult['billing_amount'];    
-    echo "<td>$date ($invoice_number)</td><td>$name $company</td><td>$amount</td><tr>";
+    echo "<td>$date ($invoice_number)</td><td>$name $company</td><td>$amount</td><td></td><tr>";
   }
   echo "</table>";  
 
@@ -204,12 +204,12 @@ echo "<hr>";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
 
-  echo "<p><table><td>$l_tax</td><td>$l_amount</td><tr>";
+  echo "<p><table><td>$l_tax</td><td>$l_amount</td><td></td><tr>";
   while ($myresult = $result->FetchRow()) {
     $category_total = $myresult['CategoryTotal'];
     $count = $myresult['ServiceCount'];
     $tax_description = $myresult['tax_description'];
-    echo "<td>$tax_description</td><td>$category_total ($count)</td><tr>";
+    echo "<td>$tax_description</td><td>$category_total</td><td>($count)</td><tr>";
   }
   echo "</table>";  
 
@@ -230,12 +230,12 @@ echo "<hr>";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $result = $DB->Execute($query) or die ("$l_queryfailed");
 
-  echo "<p><table><td>$l_tax $l_refund</td><td>$l_organizationname</td><td>$l_category</td><td>$l_amount</td><tr>";
+  echo "<p><table><td>$l_tax $l_refund</td><td>$l_organizationname</td><td>$l_category</td><td>$l_amount</td><td></td><tr>";
   while ($myresult = $result->FetchRow()) {
     $category_total = $myresult['CategoryTotal'];
     $tax_description = $myresult['tax_description'];
     $count = $myresult['ServiceCount'];
-    echo "<td>$tax_description</td><td></td><td>$l_tax</td><td>$category_total($count)</td><tr>";
+    echo "<td>$tax_description</td><td></td><td>$l_tax</td><td>$category_total</td><td>($count)</td><tr>";
   }
   echo "</table>";
 
