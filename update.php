@@ -928,6 +928,9 @@ if ($base->input['submit'] == "Update")
 	  $query = "ALTER TABLE  `billing_details` ADD  `recent_invoice_number` INT NULL DEFAULT NULL";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
+
+	  // add index to billing_history for faster invoice maintenance
+	  ALTER TABLE  `citrus`.`billing_history` ADD INDEX  `billing_id_index` (  `id` ,  `billing_id` )	  
 	  
 	  // set the version number in the database to 2.2
 	  $query = "UPDATE `settings` SET `version` = '2.2.1' ".

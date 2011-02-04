@@ -210,7 +210,7 @@ href=\"index.php?load=tools/modules/billing/emailpreviousinvoice&billingid=$bill
    }
    
    print "<td bgcolor=\"#dddddd\" colspan=16>";
-   if (!$showall) { echo "<a href=\"http://localhost/~pyasi/citrus_project/citrusdb/index.php?load=invmaint&type=tools&billingid=$billingid&submit=Submit&showall=true\">$l_showall</a>"; }
+   if (!$showall) { echo "<a href=\"index.php?load=invmaint&type=tools&billingid=$billingid&submit=Submit&showall=true\">$l_showall</a>"; }
    print "</td></table>";
    
  }
