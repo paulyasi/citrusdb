@@ -33,6 +33,7 @@ if (!isset($base->input['invoicenum'])) { $base->input['invoicenum'] = ""; }
 if (!isset($base->input['editduedate'])) { $base->input['editduedate'] = ""; }
 if (!isset($base->input['saveduedate'])) { $base->input['saveduedate'] = ""; }
 if (!isset($base->input['duedate'])) { $base->input['duedate'] = ""; }
+if (!isset($base->input['showall'])) { $base->input['showall'] = ""; }
 
 $submit = $base->input['submit'];
 $billingid = $base->input['billingid'];
@@ -43,6 +44,7 @@ $invoicenum = $base->input['invoicenum'];
 $editduedate = $base->input['editduedate'];
 $saveduedate = $base->input['saveduedate'];
 $duedate = $base->input['duedate'];
+$showall = $base->input['showall'];
 
 if ($delete) {
 
@@ -119,7 +121,8 @@ if ($delete) {
    //
    // Show the invoices that belong to that billing id:
    //
-   $query = "SELECT h.id h_id, h.billing_date h_billing_date, h.from_date 
+   if ($showall) {
+     $query = "SELECT h.id h_id, h.billing_date h_billing_date, h.from_date 
 	h_from_date, h.to_date h_to_date, h.payment_due_date h_due_date, 
 	h.new_charges h_new_charges, h.total_due h_total_due,
 	h.billing_type h_billing_type, 
@@ -130,8 +133,19 @@ if ($delete) {
 	LEFT JOIN billing_details d ON h.id = d.invoice_number 
         WHERE h.billing_id  = '$billingid' GROUP BY h.id 
 	ORDER BY h.id DESC";
-
-   // SUM(d.paid_amount) as normal_paid_amount 
+   } else {
+     $query = "SELECT h.id h_id, h.billing_date h_billing_date, h.from_date 
+	h_from_date, h.to_date h_to_date, h.payment_due_date h_due_date, 
+	h.new_charges h_new_charges, h.total_due h_total_due,
+	h.billing_type h_billing_type, 
+	b.name b_name, b.company b_company, d.invoice_number, 
+        SUM(d.paid_amount) as normal_paid_amount 
+	FROM billing_history h
+        LEFT JOIN billing b ON h.billing_id = b.id 
+	LEFT JOIN billing_details d ON h.id = d.invoice_number 
+        WHERE h.billing_id  = '$billingid' GROUP BY h.id 
+	ORDER BY h.id DESC LIMIT 6";     
+   }
    
    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
    $result = $DB->Execute($query) or die ("$l_queryfailed");
@@ -161,6 +175,7 @@ if ($delete) {
      $total_due = sprintf("%.2f",$myresult['h_total_due']);
      $billing_type = $myresult['h_billing_type'];
      $normal_sum = sprintf("%.2f",$myresult['normal_paid_amount']);
+
      
      print "<tr bgcolor=\"#eeeeee\">
 		<td>$invoice_number</td>
@@ -194,7 +209,9 @@ href=\"index.php?load=tools/modules/billing/emailpreviousinvoice&billingid=$bill
        "</td><tr>";
    }
    
-   print "</table>";
+   print "<td bgcolor=\"#dddddd\" colspan=16>";
+   if (!$showall) { echo "<a href=\"http://localhost/~pyasi/citrus_project/citrusdb/index.php?load=invmaint&type=tools&billingid=$billingid&submit=Submit&showall=true\">$l_showall</a>"; }
+   print "</td></table>";
    
  }
  else {
