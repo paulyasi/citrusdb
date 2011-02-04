@@ -930,9 +930,10 @@ if ($base->input['submit'] == "Update")
 	  echo "$query<br>\n";
 
 	  // add index to billing_history for faster invoice maintenance
-	  ALTER TABLE  `citrus`.`billing_history` ADD INDEX  `billing_id_index` (  `id` ,  `billing_id` )	  
-	  
-	  // set the version number in the database to 2.2
+	  ALTER TABLE  `billing_history` ADD INDEX  `billing_id_index` ( `billing_id` )	  
+	  ALTER TABLE  `billing_details` ADD INDEX  `invoice_number_index` ( `invoice_number` )
+
+	    // set the version number in the database to 2.2
 	  $query = "UPDATE `settings` SET `version` = '2.2.1' ".
 	    "WHERE `id` =1 LIMIT 1";
 	  $result = $DB->Execute($query) or die ("$query failed");
