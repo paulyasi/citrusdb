@@ -154,7 +154,7 @@ else if ($pallow_view)
 	print "<option value=\"nobody\">$l_nobody</option>\n";
 	print "<optgroup label=\"$l_groups\">\n";
 	// print the list of groups
-        $query = "SELECT DISTINCT groupname FROM groups ";
+        $query = "SELECT DISTINCT groupname FROM groups ORDER BY groupname";
         $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$result = $DB->Execute($query) or die ("$l_queryfailed");
 
