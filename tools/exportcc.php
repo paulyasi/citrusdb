@@ -179,7 +179,7 @@ if ($submit) {
 	$handle = fopen($filename, 'w') or die ("cannot open $filename"); // open the file
 
 	// query the batch for the invoices to do
-	$query = "SELECT DISTINCT d.invoice_number FROM billing_details d 
+	$query = "SELECT DISTINCT d.recent_invoice_number FROM billing_details d 
 	WHERE batch = '$batchid'";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$result = $DB->Execute($query) 
@@ -187,8 +187,8 @@ if ($submit) {
 
 	while ($myresult = $result->FetchRow()) {
 
-		// get the invoice data to process now
-		$invoice_number = $myresult['invoice_number'];
+		// get the recent invoice data to process now
+		$invoice_number = $myresult['recent_invoice_number'];
 
 		$query = "SELECT h.id h_id, h.billing_date h_billing_date, 
 		h.created_by h_created_by, h.billing_id h_billing_id, 
