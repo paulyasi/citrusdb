@@ -828,7 +828,8 @@ ALTER TABLE `billing_details` ADD INDEX `billing_id_index` ( `billing_id` );
 ALTER TABLE `payment_history` ADD INDEX `billing_id_index` ( `billing_id` );
 ALTER TABLE `customer_history` ADD INDEX ( `notify` );  
 ALTER TABLE `billing_history` ADD INDEX  `billing_id_index` (  `billing_id` );
-ALTER TABLE  `billing_details` ADD INDEX  `invoice_number_index` ( `invoice_number` )
+ALTER TABLE `billing_details` ADD INDEX  `invoice_number_index` ( `invoice_number` );
+ALTER TABLE `customer_history` ADD INDEX  `account_number_index` (  `account_number` );
 
 --
 -- Table structure for activity_log table
