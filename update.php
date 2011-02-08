@@ -929,11 +929,23 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 
-	  // add index to billing_history for faster invoice maintenance
-	  ALTER TABLE  `billing_history` ADD INDEX  `billing_id_index` ( `billing_id` )	  
-	  ALTER TABLE  `billing_details` ADD INDEX  `invoice_number_index` ( `invoice_number` )
-	  ALTER TABLE  `citrus`.`customer_history` ADD INDEX  `account_number_index` (  `account_number` )
-
+	  // add indexes
+	  $query = "ALTER TABLE  `billing_history` ADD INDEX  `billing_id_index` ( `billing_id` )";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE  `billing_details` ADD INDEX  `invoice_number_index` ( `invoice_number` )";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE  `customer_history` ADD INDEX  `account_number_index` (  `account_number` )";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
+	  $query = "ALTER TABLE  `billing` ADD INDEX  `account_number_index` (  `account_number` )";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
 	    // set the version number in the database to 2.2
 	  $query = "UPDATE `settings` SET `version` = '2.2.1' ".
 	    "WHERE `id` =1 LIMIT 1";
