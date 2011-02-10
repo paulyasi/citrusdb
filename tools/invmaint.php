@@ -201,12 +201,13 @@ href=\"index.php?load=tools/modules/billing/emailpreviousinvoice&billingid=$bill
      } else {
        echo "<td>$normal_sum $l_paid</td>";
      }
-     // print payment link with prefilled in information
-     
-     echo "<td><a href=# onclick=\"popupPage('index.php?".
-       "load=payment&type=tools&invoice_number=$invoice_number&amount=$new_charges'); return false;\">$l_enterpayments</a>".
-       
-       "</td><tr>";
+     // print payment link with prefilled in information if there are new charges to pay to this invoice
+     echo "<td>";
+     if ($new_charges > 0) {
+       echo "<a href=# onclick=\"popupPage('index.php?".
+	 "load=payment&type=tools&invoice_number=$invoice_number&amount=$new_charges'); return false;\">$l_enterpayments</a>";
+     }
+     echo "</td><tr>";
    }
    
    print "<td bgcolor=\"#dddddd\" colspan=16>";
