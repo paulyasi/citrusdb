@@ -946,8 +946,8 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 	  
-	    // set the version number in the database to 2.2.1
-	  $query = "UPDATE `settings` SET `version` = '2.2.1' ".
+	  // set the version number in the database to 2.3
+	  $query = "UPDATE `settings` SET `version` = '2.3' ".
 	    "WHERE `id` =1 LIMIT 1";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";	  
@@ -975,19 +975,12 @@ else
 	  }
 	}
 	echo "<center>	
-	This update script only works with versions 0.9.2 or greater
 	<p>
 	Your database version: <b>$databaseversion</b><p>
 
-	This script will update it to version: <b>2.2.1</b></h3>";
+	This script will update it to version: <b>2.3</b></h3>";
 
-	echo "<p style=\"font-weight: bold;\">Upgrading version 1.3.0 or ".
-	  "older will reset the rerun dates ".
-	  "to NULL when running this upgrade script.  Please make sure you ".
-	  "check for pending reruns before running this script on an active ".
-	  "system.</p>";
-
-	if ($databaseversion == "2.2.1") {
+	if ($databaseversion == "2.3") {
 		echo "<p><b>Nothing to update</b>";
 	} else {
 		echo "
@@ -997,6 +990,14 @@ else
 		<input name=submit type=submit value=\"Update\">
 		</form>"; 
 	}
+
+	echo "<p style=\"font-weight: bold;\">Upgrading version 1.3.0 or ".
+	  "older will reset the rerun dates ".
+	  "to NULL when running this upgrade script.  Please make sure you ".
+	  "check for pending reruns before running this script on an active ".
+	  "system.</p>";
+
+
 }
 
 

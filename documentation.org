@@ -1,4 +1,4 @@
-#+TITLE:     CitrusDB 2.2 Manual
+#+TITLE:     CitrusDB 2.3 Manual
 #+AUTHOR:    Paul Yasi
 #+EMAIL:     pyasi@citrusdb.org
 #+LANGUAGE:  en
@@ -552,7 +552,7 @@ $tracking_url = "http://trkcnfrm1.smi.usps.com/PTSInternetWeb/InterLabelInquiry.
 
     + creditcard: For billing via a credit card batch export.
 
-    + einvoice: For emailing invoices.  The invoice is in text format,
+    + einvoice: For emailing invoices.  The invoice is in pdf format,
       and will be sent to the email address indicated on the billing record.
 
     + invoice: For printed invoices.
@@ -1353,7 +1353,7 @@ $tracking_url = "http://trkcnfrm1.smi.usps.com/PTSInternetWeb/InterLabelInquiry.
    individual invoices based on their Billing ID number, or Account
    Number. After you enter this information it will then provide you
    with a summary of what it found and prompt you to email the
-   invoices. The invoice will be sent in an text formatted email to
+   invoices. The invoice will be sent as a pdf file attached to email to
    the billing\_email specified in their billing record.  The web
    server that is running CitrusDB server must be properly configured
    to send email.  This tool is a prime candidate to be automated by
