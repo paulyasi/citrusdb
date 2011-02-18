@@ -26,7 +26,7 @@ if (!isset($base->input['tooltype'])) { $base->input['tooltype'] = ""; }
 $loadname = $base->input["load"];
 $tooltype = $base->input["tooltype"];
 
-if ($loadname == "") {
+if (empty($loadname)) {
 	include('./tools/version.php');
 }
 else

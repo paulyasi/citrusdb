@@ -38,7 +38,7 @@ function delete_service($userserviceid, $service_notify_type, $removal_date)
 	global $DB, $user;
 
 	// check if there is a removal date or blank
-	if ($removal_date == '') {
+	if (empty($removal_date)) {
 	  $query = "UPDATE user_services SET removed = 'y', ".
 	    "end_datetime = NOW() WHERE id = $userserviceid";	  
 	} else {

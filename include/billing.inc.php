@@ -93,7 +93,7 @@ function automatic_to_date ($DB, $from_date, $billing_type, $billing_id) {
   // to the from_date and billing_type
   /*--------------------------------------------------------------------*/
   // figure out the billing frequency
-  if ($from_date == "" OR $from_date == "0000-00-00") {
+  if (empty($from_date) OR $from_date == '0000-00-00') {
     $query = "UPDATE billing SET to_date = NULL WHERE id = '$billing_id'";
     $updateresult = $DB->Execute($query) or die ("query failed");
   } else {
@@ -800,7 +800,7 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
     
     // if the individual customer's billing notes are blank
     // then use the automatic invoice notes from general config
-    if ($billing_notes == '') {
+    if (empty($billing_notes)) {
       if ($status == $l_pastdue) {
 	$billing_notes = $pastdue_invoicenote;
       } elseif ($status == $l_turnedoff) {
@@ -1650,7 +1650,7 @@ function billingstatus($billingid) {
   
   //"Pending", - not being billed, pending an account change
   // if last payment_history = pending
-  if ($next_billing_date == "" OR $next_billing_date == "0000-00-00") {
+  if (empty($next_billing_date) OR $next_billing_date == '0000-00-00') {
     $status = "$l_pending";
   }
   
