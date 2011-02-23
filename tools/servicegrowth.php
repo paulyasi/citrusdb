@@ -70,10 +70,13 @@ if ($year) {
       $lostarray[$msid] = $count;
       echo "$service_description $count ";
 
+      $firstofmonth = "$year-01-$month";
+
       // churn, number of customers lost divided by total number of customers we had each day that month
+      // customers with no end_datetime or with an end_datetime before the first of that month
       $query = "SELECT count(*) as countnow FROM user_services us ".
 	"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-	"WHERE (us.end_datetime IS NULL OR us.end_datetime = 0) AND ms.id = '$msid'";
+	"WHERE us.end_datetime IS NULL OR (date(us.end_datetime) < $firstofmonth) AND ms.id = '$msid' ";
       $DB->SetFetchMode(ADODB_FETCH_ASSOC);
       $nowresult = $DB->Execute($query) or die ("$query $l_queryfailed");
       $mynowresult = $nowresult->fields;
