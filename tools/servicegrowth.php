@@ -80,9 +80,9 @@ if ($year) {
       $countnow = $mynowresult['countnow'];
 
       $totalformonth = $count + $countnow;
-      $percentchurn = ($count/$totalformonth)*100;
+      $percentchurn = sprintf("%.2f",($count/$totalformonth)*100);
 
-      echo "total: $totalformonth churn: $percentchurn&percnt; <br>\b";
+      echo "total: $totalformonth churn: $percentchurn&percnt; <br>\n";
     }
 
  } else {
