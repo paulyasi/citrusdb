@@ -70,13 +70,13 @@ if ($year) {
       $lostarray[$msid] = $count;
       echo "$service_description $count ";
 
-      $firstofmonth = "$year-01-$month";
+      $firstofmonth = "$year-$month-01";
 
       // churn, number of customers lost divided by total number of customers we had each day that month
       // customers with no end_datetime or with an end_datetime before the first of that month
       $query = "SELECT count(*) as countnow FROM user_services us ".
 	"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-	"WHERE us.end_datetime IS NULL OR (date(us.end_datetime) < $firstofmonth) AND ms.id = '$msid' ";
+	"WHERE (us.end_datetime IS NULL OR date(us.end_datetime) < $firstofmonth) AND ms.id = '$msid' ";
       $DB->SetFetchMode(ADODB_FETCH_ASSOC);
       $nowresult = $DB->Execute($query) or die ("$query $l_queryfailed");
       $mynowresult = $nowresult->fields;
@@ -95,15 +95,15 @@ if ($year) {
 echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">".
   "Year: <input type=text name=\"year\" value=\"$year\" size=4>".
   "Month <select name=\"month\">".
-  "<option>1</option>".
-    "<option>2</option>".
-    "<option>3</option>".
-    "<option>4</option>".
-    "<option>5</option>".
-  "<option>6</option>".
-  "<option>7</option>".
-  "<option>8</option>".
-  "<option>9</option>".
+  "<option>01</option>".
+    "<option>02</option>".
+    "<option>03</option>".
+    "<option>04</option>".
+    "<option>05</option>".
+  "<option>06</option>".
+  "<option>07</option>".
+  "<option>08</option>".
+  "<option>09</option>".
   "<option>10</option>".
   "<option>11</option>".  
   "<option>12<option></select>";
