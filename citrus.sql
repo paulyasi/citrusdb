@@ -672,6 +672,7 @@ CREATE TABLE `user` (
   `email_notify` enum('y','n') default 'n',
   `screenname_notify` enum('y','n') default 'n',
   PRIMARY KEY  (`id`)
+  UNIQUE KEY 'username' ('username') 
 ) TYPE=MyISAM AUTO_INCREMENT=24 ;
 
 -- 

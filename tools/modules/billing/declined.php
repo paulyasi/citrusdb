@@ -1,5 +1,5 @@
 <?php
-// Copyright (C) 2005-2009  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2005-2011  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 /*----------------------------------------------------------------------------*/
 // Check for authorized accesss
@@ -199,7 +199,6 @@ if ($day1) {
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   echo "<tr><td>$l_organizationname: ".
     "<select name=\"organization_id\">".
-    "<option value=\"\">$l_choose</option>".
     "<option value=\"all\">All</option>";
   while ($myresult = $result->FetchRow()) {
     $myid = $myresult['id'];

@@ -952,6 +952,16 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";	  
 	}
+
+	if ($databaseversion == "2.3") {
+	  $query = "ALTER TABLE  `user` ADD UNIQUE (`username`)";
+
+	  // set the version number in the database to 2.3.1
+	  $query = "UPDATE `settings` SET `version` = '2.3.1' ".
+	    "WHERE `id` =1 LIMIT 1";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";	  
+	}
 	
 	echo "<center><h2>Database Updated</h2></center>";
 }
