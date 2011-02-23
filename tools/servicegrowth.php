@@ -26,6 +26,10 @@ $month = $base->input['month'];
 if (!isset($base->input['category'])) { $base->input['category'] = ""; }
 $category = $base->input['category'];
 
+// initialize arrays to hold growth and losses
+$gainarray = array();
+$lostarray = array();
+
 if ($year) {
   // print out a graph that compares each of the last 12 months
   // of service start_dates compared to end_dates
@@ -45,6 +49,7 @@ if ($year) {
       $service_description = $myresult['service_description'];
       $mymonthname = $myresult['month'];
       $msid = $myresult['id'];
+      $gainarray[$msid] = $count;
       echo "$service_description $count<br>\n";
     }
 
@@ -62,9 +67,24 @@ if ($year) {
       $service_description = $myresult['service_description'];
       $mymonthname = $myresult['month'];
       $msid = $myresult['id'];
-      echo "$service_description $count<br>\n";
+      $lostarray[$msid] = $count;
+      echo "$service_description $count ";
+
+      // churn, number of customers lost divided by total number of customers we had each day that month
+      $query = "SELECT count(*) as countnow FROM user_services us ".
+	"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+	"WHERE (us.end_datetime IS NULL OR us.end_datetime = 0) AND ms.id = '$msid'";
+      $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+      $nowresult = $DB->Execute($query) or die ("$query $l_queryfailed");
+      $mynowresult = $nowresult->fields;
+      $countnow = $mynowresult['countnow'];
+
+      $totalformonth = $count + $countnow;
+      $percentchurn = ($count/$totalformonth)*100;
+
+      echo "total: $totalformonth churn: $percentchurn&percnt; <br>\b";
     }
-    
+
  } else {
   
   // print a form to ask what date you want to view
