@@ -65,7 +65,7 @@ if ($year) {
     "LEFT JOIN billing b ON b.id = us.billing_id ".
     "LEFT JOIN billing_types t ON t.id = b.billing_type ".
     "WHERE date(us.start_datetime) <= '$lastofmonth' ".
-    "AND ((date(us.end_datetime) BETWEEN '$firstofmonth' AND '$lastofmonth') OR (us.end_datetime IS NULL)) ".
+    "AND ((date(us.end_datetime) BETWEEN '$firstofmonth' AND '$lastofmonth') OR (us.removed <> 'y')) ".
     "AND ms.frequency > 0 AND t.method <> 'free' GROUP BY ms.id";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $totalresult = $DB->Execute($query) or die ("$query $l_queryfailed");
@@ -86,7 +86,7 @@ if ($year) {
 
     $percentchurn = sprintf("%.2f",($lostcount/$totalformonth)*100);
     
-    echo "<td>$service_description</td><td>$lostcount<td><td>$totalformonth</td><td>$percentchurn&percnt; $firstofmonth $lastofmonth</td><tr>";
+    echo "<td>$service_description</td><td>$lostcount<td><td>$totalformonth</td><td>$percentchurn&percnt;</td><tr>";
 
     }
 
