@@ -62,9 +62,11 @@ if ($year) {
 
   $query = "SELECT us.start_datetime, us.end_datetime, ms.service_description, ms.id, count(*) AS monthtotal ".
     "FROM user_services us LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+    "LEFT JOIN billing b ON b.id = us.billing_id ".
+    "LEFT JOIN billing_types t ON t.id = b.billing_type ".
     "WHERE date(us.start_datetime) <= '$lastofmonth' ".
-    "AND ((date(us.end_datetime) >= '$firstofmonth') OR (us.end_datetime IS NULL)) ".
-    "AND ms.frequency > 0 GROUP BY ms.id";
+    "AND ((date(us.end_datetime) BETWEEN '$firstofmonth' AND '$lastofmonth') OR (us.end_datetime IS NULL)) ".
+    "AND ms.frequency > 0 AND t.method <> 'free' GROUP BY ms.id";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $totalresult = $DB->Execute($query) or die ("$query $l_queryfailed");
   while ($mytotalresult = $totalresult->FetchRow()) {
