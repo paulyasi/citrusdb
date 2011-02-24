@@ -53,26 +53,27 @@ if ($year) {
   // churn, number of customers lost in that period divided by total number of customers we had at the end of the month
 
   echo "<table>";
-  echo "<td>Service</td><td>Canceled<td><td>Total</td><td>Churn</td><tr>";
+  echo "<td>Service</td><td>Category</td><td>Canceled<td><td>Total</td><td>Churn</td><tr>";
 
   // get a total of customers for of all services at end of that month/year period
   $daysinmonth = date("t", mktime(0,0,0, $month, 1, $year));
   $firstofmonth = date("Y-m-d", mktime(0, 0, 0, $month, 1, $year));
   $lastofmonth = date("Y-m-d", mktime(0, 0, 0, $month, $daysinmonth, $year));
 
-  $query = "SELECT us.start_datetime, us.end_datetime, ms.service_description, ms.id, count(*) AS monthtotal ".
+  $query = "SELECT ms.category, ms.service_description, ms.id, count(*) AS monthtotal ".
     "FROM user_services us LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
     "LEFT JOIN billing b ON b.id = us.billing_id ".
     "LEFT JOIN billing_types t ON t.id = b.billing_type ".
     "WHERE date(us.start_datetime) <= '$lastofmonth' ".
     "AND ((date(us.end_datetime) >= '$firstofmonth') OR (us.removed <> 'y')) ".
-    "AND ms.frequency > 0 AND t.method <> 'free' GROUP BY ms.id";
+    "AND ms.frequency > 0 AND t.method <> 'free' GROUP BY ms.id ORDER BY category";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $totalresult = $DB->Execute($query) or die ("$query $l_queryfailed");
   while ($mytotalresult = $totalresult->FetchRow()) {
     $service_description = $mytotalresult['service_description'];
     $msid = $mytotalresult['id'];
     $totalformonth = $mytotalresult['monthtotal'];
+    $category = $mytotalresult['category'];
       
     // search for customers with recurring service charges have an end_datetime in that month and year period
     //   us.end_datetime >= first of month AND us.end_datetime <= end of month
@@ -86,7 +87,7 @@ if ($year) {
 
     $percentchurn = sprintf("%.2f",($lostcount/$totalformonth)*100);
     
-    echo "<td>$service_description</td><td>$lostcount<td><td>$totalformonth</td><td>$percentchurn&percnt;</td><tr>";
+    echo "<td>$service_description</td><td>$category</td><td>$lostcount<td><td>$totalformonth</td><td>$percentchurn&#37;</td><tr>";
 
     }
 
