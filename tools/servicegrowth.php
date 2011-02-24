@@ -56,14 +56,14 @@ if ($year) {
   echo "<td>Service</td><td>Canceled<td><td>Total</td><td>Churn</td><tr>";
 
   // get a total of customers for of all services at end of that month/year period
-  $daysinmonth = date("t");
+  $daysinmonth = date("t", mktime(0,0,0, $month, 1, $year));
   $firstofmonth = date("Y-m-d", mktime(0, 0, 0, $month, 1, $year));
   $lastofmonth = date("Y-m-d", mktime(0, 0, 0, $month, $daysinmonth, $year));
 
   $query = "SELECT us.start_datetime, us.end_datetime, ms.service_description, ms.id, count(*) AS monthtotal ".
     "FROM user_services us LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
     "WHERE date(us.start_datetime) <= '$lastofmonth' ".
-    "AND date(us.end_datetime) BETWEEN '$firstofmonth' AND '$lastofmonth' OR us.end_datetime IS NULL ".
+    "AND ((date(us.end_datetime) >= '$firstofmonth') OR (us.end_datetime IS NULL)) ".
     "AND ms.frequency > 0 GROUP BY ms.id";
   $DB->SetFetchMode(ADODB_FETCH_ASSOC);
   $totalresult = $DB->Execute($query) or die ("$query $l_queryfailed");
@@ -84,7 +84,7 @@ if ($year) {
 
     $percentchurn = sprintf("%.2f",($lostcount/$totalformonth)*100);
     
-    echo "<td>$service_description</td><td>$lostcount<td><td>$totalformonth</td><td>$percentchurn&percnt;</td><tr>";
+    echo "<td>$service_description</td><td>$lostcount<td><td>$totalformonth</td><td>$percentchurn&percnt; $firstofmonth $lastofmonth</td><tr>";
 
     }
 
