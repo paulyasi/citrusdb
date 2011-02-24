@@ -26,16 +26,13 @@ $month = $base->input['month'];
 if (!isset($base->input['category'])) { $base->input['category'] = ""; }
 $category = $base->input['category'];
 
-// initialize arrays to hold growth and losses
-$gainarray = array();
-$lostarray = array();
-
 if ($year) {
   // print out a graph that compares each of the last 12 months
   // of service start_dates compared to end_dates
   $current  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
   echo "$year service churn, month: $month<p>\n";
 
+  /*
   echo "Gained:<br>\n";
     $query = "SELECT ms.service_description, ms.id, monthname(us.start_datetime) AS month, year(start_datetime), ".
       "count(*) AS count FROM user_services us ".
@@ -49,49 +46,54 @@ if ($year) {
       $service_description = $myresult['service_description'];
       $mymonthname = $myresult['month'];
       $msid = $myresult['id'];
-      $gainarray[$msid] = $count;
       echo "$service_description $count<br>\n";
     }
+  */
+  
+  // churn, number of customers lost in that period divided by total number of customers we had at the end of the month
 
-  echo "<p>Lost<br>\n";  
+  echo "<table>";
+  echo "<td>Service</td><td>Canceled<td><td>Total</td><td>Churn</td><tr>";
 
-    $query = "SELECT ms.service_description, ms.id, monthname(us.end_datetime) AS month, year(end_datetime), ".
-      "count(*) AS count FROM user_services us ".
-      "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+  // get a total of customers for of all services at end of that month/year period
+  $daysinmonth = date("t");
+  $firstofmonth = date("Y-m-d", mktime(0, 0, 0, $month, 1, $year));
+  $lastofmonth = date("Y-m-d", mktime(0, 0, 0, $month, $daysinmonth, $year));
+
+  $query = "SELECT us.start_datetime, us.end_datetime, ms.service_description, ms.id, count(*) AS monthtotal ".
+    "FROM user_services us LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+    "WHERE date(us.start_datetime) <= '$lastofmonth' ".
+    "AND date(us.end_datetime) BETWEEN '$firstofmonth' AND '$lastofmonth' OR us.end_datetime IS NULL ".
+    "AND ms.frequency > 0 GROUP BY ms.id";
+  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+  $totalresult = $DB->Execute($query) or die ("$query $l_queryfailed");
+  while ($mytotalresult = $totalresult->FetchRow()) {
+    $service_description = $mytotalresult['service_description'];
+    $msid = $mytotalresult['id'];
+    $totalformonth = $mytotalresult['monthtotal'];
+      
+    // search for customers with recurring service charges have an end_datetime in that month and year period
+    //   us.end_datetime >= first of month AND us.end_datetime <= end of month
+    $query = "SELECT count(*) AS count FROM user_services us ".
       "WHERE YEAR(us.end_datetime) = '$year' ".
-      "AND MONTH(us.end_datetime) = '$month' GROUP BY ms.id";
+      "AND MONTH(us.end_datetime) = '$month' AND us.master_service_id = '$msid'";
     $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-    $result = $DB->Execute($query) or die ("$query $l_queryfailed");
-    while ($myresult = $result->FetchRow()) {
-      $count = $myresult['count'];
-      $service_description = $myresult['service_description'];
-      $mymonthname = $myresult['month'];
-      $msid = $myresult['id'];
-      $lostarray[$msid] = $count;
-      echo "$service_description $count ";
+    $endresult = $DB->Execute($query) or die ("$query $l_queryfailed");
+    $myendresult = $endresult->fields;
+    $lostcount = $myendresult['count'];
 
-      $firstofmonth = "$year-$month-01";
+    $percentchurn = sprintf("%.2f",($lostcount/$totalformonth)*100);
+    
+    echo "<td>$service_description</td><td>$lostcount<td><td>$totalformonth</td><td>$percentchurn&percnt;</td><tr>";
 
-      // churn, number of customers lost divided by total number of customers we had each day that month
-      // customers with no end_datetime or with an end_datetime before the first of that month
-      $query = "SELECT count(*) as countnow FROM user_services us ".
-	"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-	"WHERE (us.end_datetime IS NULL OR date(us.end_datetime) < $firstofmonth) AND ms.id = '$msid' ";
-      $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-      $nowresult = $DB->Execute($query) or die ("$query $l_queryfailed");
-      $mynowresult = $nowresult->fields;
-      $countnow = $mynowresult['countnow'];
-
-      $totalformonth = $count + $countnow;
-      $percentchurn = sprintf("%.2f",($count/$totalformonth)*100);
-
-      echo "total: $totalformonth churn: $percentchurn&percnt; <br>\n";
     }
+
+  echo "</table>";
 
  } else {
   
   // print a form to ask what date you want to view
-  echo "Enter year of to see service growth:";
+  echo "Enter year and month of to see service churn:";
 echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">".
   "Year: <input type=text name=\"year\" value=\"$year\" size=4>".
   "Month <select name=\"month\">".
