@@ -147,6 +147,8 @@ while ($myresult = $result->FetchRow()) {
   $acnum = 0;
   $serviceid = 0;
   $id = 0;
+  $removed = '';
+  $cancel_date = '';
   
   // get the account_number or service id in the search result
   foreach ($myresult as $key => $value) {
@@ -162,10 +164,13 @@ while ($myresult = $result->FetchRow()) {
     if ($key == 'removed') {
       $removed = $value;
     }
+    if ($key == 'cancel_date') {
+      $cancel_date = $value;
+    }
   }
 
   // if the row is a removed service, grey it out
-  if ($removed == 'y') {
+  if ($removed == 'y' OR !empty($cancel_date)) {
     $rowstyle = "background-color: eee; color: aaa;";
   } else {
     $rowstyle = "background-color: dde; color: black;";
@@ -189,7 +194,7 @@ while ($myresult = $result->FetchRow()) {
       if ($pagetype == "record") { echo "</table>"; }
     } else {      
       // else just link to the account by account number
-      echo "<tr bgcolor=#ddddee><td><a href=\"index.php?load=viewaccount&".
+      echo "<tr style=\"$rowstyle\"><td><a href=\"index.php?load=viewaccount&".
 	"type=fs&acnum=$acnum\">$l_view: $l_account</a></td>";
       if ($pagetype == "record") { echo "</table>"; }
     }

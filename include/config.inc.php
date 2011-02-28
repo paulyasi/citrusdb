@@ -13,8 +13,8 @@ $sys_dbtype = 'mysql';
 $path_to_citrus = '/home/pyasi/citrus_project/citrusdb/';
 $hidden_hash_var='youmustchangethis';
 $lang = './include/local/us-english.inc.php';
-$url_prefix = "http://localhost/~pyasi/citrus_project/citrusdb/";
-$ssl_url_prefix = "https://localhost/~pyasi/citrus_project/citrusdb/";
+$url_prefix = "http://ubuntu/~pyasi/citrus_project/citrusdb/";
+$ssl_url_prefix = "https://ubuntu/~pyasi/citrus_project/citrusdb/";
 
 // these gpg commands are required for encrypted storage of credit card data
 $gpg_command = "/usr/bin/gpg --homedir /home/www-data/.gnupg --armor --batch -e -r 'CitrusDB'";
