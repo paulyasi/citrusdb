@@ -20,11 +20,13 @@ if (!isset($base->input['id'])) { $base->input['id'] = ""; }
 if (!isset($base->input['pending'])) { $base->input['pending'] = ""; }
 if (!isset($base->input['completed'])) { $base->input['completed'] = ""; }
 if (!isset($base->input['showall'])) { $base->input['showall'] = ""; }
+if (!isset($base->input['anchor'])) { $base->input['anchor'] = ""; }
 
 $id = $base->input['id'];
 $pending = $base->input['pending'];
 $completed = $base->input['completed'];
 $showall = $base->input['showall'];
+$anchor = $base->input['anchor'];
 
 if ($pending) {
   /*--------------------------------------------------------------------------*/
@@ -32,7 +34,7 @@ if ($pending) {
   /*--------------------------------------------------------------------------*/
   $query = "UPDATE customer_history SET status = \"pending\" WHERE id = $id";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
-  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";			
+  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base#$anchor\";</script>";			
  } else if ($completed) {
   /*--------------------------------------------------------------------------*/
   // make the customer_history id as completed
@@ -40,7 +42,7 @@ if ($pending) {
   $mydate = date("Y-m-d H:i:s");
   $query = "UPDATE customer_history SET status = 'completed', closed_by = '$user', closed_date = '$mydate' WHERE id = $id";
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
-  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base&\";</script>";	
+  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base#$anchor\";</script>";	
  } else {
   /*--------------------------------------------------------------------------*/
   // print the listing of tickets for this database user
@@ -150,8 +152,8 @@ if ($pending) {
     echo "</td>";
         
     print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";  
-    print " | <a href=\"index.php?load=tickets&type=base&pending=on&id=$id\">$l_pending</a>"; 
-    print " | <a href=\"index.php?load=tickets&type=base&completed=on&id=$id\">$l_finished</a></td></table>";
+    print " | <a href=\"index.php?load=tickets&type=base&pending=on&anchor=$notify&id=$id\">$l_pending</a>"; 
+    print " | <a href=\"index.php?load=tickets&type=base&completed=on&anchor=$notify&id=$id\">$l_finished</a></td></table>";
       
       
     }
