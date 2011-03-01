@@ -75,7 +75,7 @@ while ($myresult = $result->FetchRow())
 	  echo "<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>\n";
 	  echo "<script language=\"javascript\">".
 	    "new Ajax.PeriodicalUpdater('messagetabs', 'index.php?load=messagetabs&type=dl',".
-	    "{ method: 'get', insertion: Insertion.Top, frequency: 300 }); </script>";
+	    "{ method: 'get', frequency: 300 }); </script>";
 	  
 	  echo "<div id=\"messagetabs\">";
 	  echo "</div>";
