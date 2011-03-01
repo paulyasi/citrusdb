@@ -33,10 +33,15 @@ echo "</td></table></p>";
 
 echo "<hr size=2 style=\"color:#eee;\">";
 
-// print the new message count tabs
-message_tabs($DB, $user);
+// print the new message count tabs using ajax so they refresh
+echo "<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>\n";
+echo "<script language=\"javascript\">
+new Ajax.PeriodicalUpdater('messagetabs', 'index.php?load=messagetabs&type=dl',
+{ method: 'get', insertion: Insertion.Top, frequency: 300 }); </script>";
 
+echo "<div id=\"messagetabs\">";
 echo "</div>";
+
 
 // show other dashboard specifictabs down here:
 

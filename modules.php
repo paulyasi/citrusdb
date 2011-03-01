@@ -70,9 +70,15 @@ while ($myresult = $result->FetchRow())
 	if ($modulename == "support")
 	{
 	  echo "<hr size=2 style=\"color:#eee;\">";
+
+	  // print the new message count tabs using ajax so they refresh
+	  echo "<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>\n";
+	  echo "<script language=\"javascript\">".
+	    "new Ajax.PeriodicalUpdater('messagetabs', 'index.php?load=messagetabs&type=dl',".
+	    "{ method: 'get', insertion: Insertion.Top, frequency: 300 }); </script>";
 	  
-	  // print the new message count tabs
-	  message_tabs($DB, $user);	  
+	  echo "<div id=\"messagetabs\">";
+	  echo "</div>";
 	  
 	} // end if modulename == support
 

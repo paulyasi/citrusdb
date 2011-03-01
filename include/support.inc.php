@@ -304,16 +304,15 @@ function message_tabs($DB, $user) {
     $messagearray[$groupname] = $num_rows;  
     
   }
-  
-  // put the num messages link inside of tabnav
-  echo "<div id=\"tabnav\">";
-  foreach ($messagearray as $recipient => $messagecount) {
-    if ($messagecount == 0) {
-      echo "<a href=\"index.php?load=tickets&type=base#$recipient\"><b style=\"font-weight:normal;\">$recipient($messagecount)</b></a>\n";
-    } else {
-      echo "<a href=\"index.php?load=tickets&type=base#$recipient\">$recipient($messagecount)</a>\n";    
-    }
+
+echo "<div id=\"tabnav\">\n";
+foreach ($messagearray as $recipient => $messagecount) {
+  if ($messagecount == 0) {
+    echo "<a href=\"index.php?load=tickets&type=base#$recipient\"><b style=\"font-weight:normal;\">$recipient($messagecount)</b></a>\n";
+  } else {
+    echo "<a href=\"index.php?load=tickets&type=base#$recipient\">$recipient($messagecount)</a>\n";    
   }
-  echo "</div>";
+}
+echo "</div>\n";
   
 }
