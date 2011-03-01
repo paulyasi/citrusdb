@@ -98,19 +98,19 @@ if ($num_of_results > $perpage)
       echo "$l_previous ";
     } else {
     echo "<a
-href=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=" . ($page - 1) . "&perpage=$perpage&pagetype=$pagetype\">$l_previous</a> ";	
+href=\"$url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=" . ($page - 1) . "&perpage=$perpage&pagetype=$pagetype\">$l_previous</a> ";	
   }
   
   if($page == $pager->numPages)
     {
       echo "$l_next";
     } else {
-    echo "<a href=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&".
+    echo "<a href=\"$url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&".
       "s3=$s3&s4=$s4&s5=$s5&page="
       . ($page + 1) . "&perpage=$perpage&pagetype=$pagetype\">$l_next</a>";
   }
 
-  echo " | <a href=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&".
+  echo " | <a href=\"$url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&".
           "s3=$s3&s4=$s4&s5=$s5&page="
     . $numpages . "&perpage=$perpage&pagetype=$pagetype\">$l_last</a>";
 
@@ -139,8 +139,8 @@ value=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s
 }
 
 // record view
-echo "&nbsp;&nbsp;&nbsp;&nbsp; <a href=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=1&pagetype=record\">$l_recordview</a> | ";
-echo "<a href=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=20&pagetype=list\">$l_listview</a><br>";
+echo "&nbsp;&nbsp;&nbsp;&nbsp; <a href=\"$url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=1&pagetype=record\">$l_recordview</a> | ";
+echo "<a href=\"$url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=20&pagetype=list\">$l_listview</a><br>";
 
 while ($myresult = $result->FetchRow()) {
   // initialize variables;
@@ -180,21 +180,21 @@ while ($myresult = $result->FetchRow()) {
     // check if this is a service item and redirect to the service item
     if ($serviceid) {
       print "<script language=\"JavaScript\">window.location.href = ".
-	"\"index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$acnum\";</script>";      
+	"\"$url_prefix/index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$acnum\";</script>";      
     } else {
       // else just redirect the account by account_number
       print "<script language=\"JavaScript\">window.location.href = ".
-	"\"index.php?load=viewaccount&type=fs&acnum=$acnum\";</script>";
+	"\"$url_prefix/index.php?load=viewaccount&type=fs&acnum=$acnum\";</script>";
     }
   } else {
     // check if this is a service item and link to the service item
     if ($serviceid) {
-      echo "<tr style=\"$rowstyle\"><td><a href=\"index.php?load=viewservice&".
+      echo "<tr style=\"$rowstyle\"><td><a href=\"$url_prefix/index.php?load=viewservice&".
 	"type=fs&userserviceid=$serviceid&acnum=$acnum\">$l_view: $l_service</a></td>";
       if ($pagetype == "record") { echo "</table>"; }
     } else {      
       // else just link to the account by account number
-      echo "<tr style=\"$rowstyle\"><td><a href=\"index.php?load=viewaccount&".
+      echo "<tr style=\"$rowstyle\"><td><a href=\"$url_prefix/index.php?load=viewaccount&".
 	"type=fs&acnum=$acnum\">$l_view: $l_account</a></td>";
       if ($pagetype == "record") { echo "</table>"; }
     }
@@ -226,7 +226,7 @@ while ($myresult = $result->FetchRow()) {
 if (empty($key)) 
   {
     echo "<tr><td><b>$l_sorrynorecordsfound</b></td></tr>\n";
-    echo "<tr><td><a href=\"index.php?load=search&type=base\"> $l_clickheretotryagain</a>";
+    echo "<tr><td><a href=\"$url_prefix/index.php?load=search&type=base\"> $l_clickheretotryagain</a>";
   } 
 
 echo '</table>';

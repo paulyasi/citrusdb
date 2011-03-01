@@ -73,7 +73,7 @@ while ($myresult = $result->FetchRow()) {
   print "<td style=\"border-top: 1px solid grey;\">$id &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$date &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$description &nbsp;</td>";
-  print "<td style=\"border-top: 1px solid grey;\">[ <a href=\"index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$account_number&invoiceid=$invoice&details=on&type=fs&submit=on\" target=\"_blank\">$invoice</a> ]($original_invoice)</td>";	
+  print "<td style=\"border-top: 1px solid grey;\">[ <a href=\"$url_prefix/index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$account_number&invoiceid=$invoice&details=on&type=fs&submit=on\" target=\"_blank\">$invoice</a> ]($original_invoice)</td>";	
 
   //print "<td style=\"border-top: 1px solid grey;\">$invoice &nbsp;</td>";
 

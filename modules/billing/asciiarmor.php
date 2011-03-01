@@ -65,7 +65,7 @@ if ($save) {
   log_activity($DB,$user,$account_number,'edit','creditcard',$billing_id,'success');  
 
   print "<script language=\"JavaScript\">window.location.href = ".
-    "\"index.php?load=billing&type=module\";</script>";
+    "\"$url_prefix/index.php?load=billing&type=module\";</script>";
 
 } else {
 
@@ -91,7 +91,7 @@ if ($save) {
   print "<input name=save type=submit value=\" $l_replace \" ".
     "class=smallbutton></form>";
   print "<br><form style=\"margin-bottom:0;\" ".
-    "action=\"index.php\">";
+    "action=\"$url_prefix/index.php\">";
   print "<input name=done type=submit value=\" $l_cancel  \" class=smallbutton>";
   print "<input type=hidden name=load value=billing>";
   print "<input type=hidden name=type value=module>";

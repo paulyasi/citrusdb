@@ -97,7 +97,7 @@ while ($myresult = $result->FetchRow()) {
   //    OR ($user == $created_by)) {
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
       "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\"><a target=\"_parent\" ". 
-      "href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
+      "href=\"$url_prefix/index.php?load=support&type=module&editticket=on&id=$id\">".
       "$id</a> &nbsp;</td>";
     //} else {
     //print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
@@ -114,10 +114,10 @@ while ($myresult = $result->FetchRow()) {
     "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$status &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
     "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">".
-    "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
+    "<a href=\"$url_prefix/index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
 
   if ($linkurl) {
-    print "<a href=\"$linkurl\">$linkname</a>";
+    print "<a href=\"$url_prefix/$linkurl\">$linkname</a>";
   }
   
   print "</td>";

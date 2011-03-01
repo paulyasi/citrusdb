@@ -61,7 +61,7 @@ c.account_number c_acctnum, b.account_number b_acctnum, b.id b_id
 		$total_due = sprintf("%.2f",$myresult['h_total']);
 
 		print "<tr bgcolor=\"#eeffff\">";
-		print "<td style=\"border-top: 1px solid grey;\">[ <a href=\"index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$account_number&invoiceid=$id&details=on&type=fs&submit=on\" target=\"_blank\">$id</a> ]</td>";
+		print "<td style=\"border-top: 1px solid grey;\">[ <a href=\"$url_prefix/index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$account_number&invoiceid=$id&details=on&type=fs&submit=on\" target=\"_blank\">$id</a> ]</td>";
 		print "<td style=\"border-top: 1px solid grey;\">$billing_id &nbsp;</td>";
 		print "<td style=\"border-top: 1px solid grey;\">$billing_date &nbsp;</td>";
 		print "<td style=\"border-top: 1px solid grey;\">$billing_type &nbsp;</td>";

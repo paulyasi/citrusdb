@@ -97,7 +97,7 @@ while ($myresult = $result->FetchRow()) {
   //    OR ($user == $created_by)) {
     print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
       "padding-bottom: 2px; font-size: 9pt; font-weight: bold;\"><a target=\"_parent\" ". 
-      "href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
+      "href=\"$url_prefix/index.php?load=support&type=module&editticket=on&id=$id\">".
       "$id</a> &nbsp;</td>";
     //} else {
     //print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
@@ -117,11 +117,11 @@ while ($myresult = $result->FetchRow()) {
 
   // if they have a valid service id that is greater than zero, print the link to it here
   if ($serviceid > 0) {
-    print "<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a>&nbsp;";
+    print "<a href=\"$url_prefix/index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a>&nbsp;";
   }
   
   if ($linkurl) {
-    print "<a href=\"$linkurl\" target=\"_new\">$linkname</a>";
+    print "<a href=\"$url_prefix/$linkurl\" target=\"_new\">$linkname</a>";
   }
   
   print "&nbsp;</td>";
@@ -165,7 +165,7 @@ while ($myresult = $result->FetchRow()) {
   $linecount++;
  }
 
-echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"index.php?load=all_customer_history&type=fs&account_number=$account_number\">$l_showall...</a></td>";
+echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"$url_prefix/index.php?load=all_customer_history&type=fs&account_number=$account_number\">$l_showall...</a></td>";
 echo '</table>';
 
 ?>

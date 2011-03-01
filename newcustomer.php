@@ -84,13 +84,13 @@ if ($base->input['save']) {
   log_activity($DB,$user,$account_number,'create','customer',0,'success');
   
   
-  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=customer&type=module\";</script>";
+  print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=customer&type=module\";</script>";
  } else {
   //
   // prompt for some standard information to put in the new customer record
   //
   echo "
-<a href=\"index.php?load=search&type=base\">[ $l_undochanges ]</a>
+<a href=\"$url_prefix/index.php?load=search&type=base\">[ $l_undochanges ]</a>
 <table cellpadding=0 border=0 cellspacing=0 width=720>
 <td valign=top width=720>
 <form action=\"index.php\">

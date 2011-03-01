@@ -26,7 +26,7 @@ while ($myresult = $result->FetchRow()) {
   $account_number = $myresult['account_number'];
   $name = $myresult['name'];
 
-  echo "<a href=\"index.php?load=viewaccount&type=fs&acnum=$account_number\">$account_number: $name</a><br>";
+  echo "<a href=\"$url_prefix/index.php?load=viewaccount&type=fs&acnum=$account_number\">$account_number: $name</a><br>";
 
  }
 echo "</td></table></p>";
@@ -34,9 +34,8 @@ echo "</td></table></p>";
 echo "<hr size=2 style=\"color:#eee;\">";
 
 // print the new message count tabs using ajax so they refresh
-echo "<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>\n";
 echo "<script language=\"javascript\">
-new Ajax.PeriodicalUpdater('messagetabs', 'index.php?load=messagetabs&type=dl',
+new Ajax.PeriodicalUpdater({ success: 'messagetabs'}, 'index.php?load=messagetabs&type=dl',
 { method: 'get', frequency: 300 }); </script>";
 
 echo "<div id=\"messagetabs\">";

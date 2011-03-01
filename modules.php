@@ -61,9 +61,9 @@ while ($myresult = $result->FetchRow())
     if (in_array ($modulename, $viewable))
     {
 		if ($load == $modulename) {
-			print "<div><a class=\"active\" href=\"index.php?load=$modulename&type=module\">$commonname</a></div>";
+			print "<div><a class=\"active\" href=\"$url_prefix/index.php?load=$modulename&type=module\">$commonname</a></div>";
 		} else {
-			print "<div><a href=\"index.php?load=$modulename&type=module\">$commonname</a></div>";
+			print "<div><a href=\"$url_prefix/index.php?load=$modulename&type=module\">$commonname</a></div>";
 		}
     }
     	
@@ -72,9 +72,8 @@ while ($myresult = $result->FetchRow())
 	  echo "<hr size=2 style=\"color:#eee;\">";
 
 	  // print the new message count tabs using ajax so they refresh
-	  echo "<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>\n";
 	  echo "<script language=\"javascript\">".
-	    "new Ajax.PeriodicalUpdater('messagetabs', 'index.php?load=messagetabs&type=dl',".
+	    "new Ajax.PeriodicalUpdater({ success: 'messagetabs'}, 'index.php?load=messagetabs&type=dl',".
 	    "{ method: 'get', frequency: 300 }); </script>";
 	  
 	  echo "<div id=\"messagetabs\">";

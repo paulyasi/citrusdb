@@ -62,7 +62,7 @@ if ($base->input['submit'] == $l_login) {
 	$u->user_login($base->input['user_name'],$base->input['password']);
 
 	// redirect to myself to get the cookie loaded
-	print "<script language=\"JavaScript\">window.location.href = \"index.php?load=search&type=base\";</script>";
+	print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=search&type=base\";</script>";
 }
 
 //echo '<pre>';
@@ -103,7 +103,6 @@ if ($u->user_isloggedin()) {
 		echo "<html>
 		<head>
 		<title>$l_title</title>
-<base href=\"$url_prefix\" />
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
 		<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
                 <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
@@ -119,6 +118,7 @@ if ($u->user_isloggedin()) {
 		}
 		</script>
 		<script language=\"JavaScript\" src=\"include/md5.js\"></script>
+                <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
 		</head>
 		<body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>";
 
@@ -136,7 +136,6 @@ if ($u->user_isloggedin()) {
 		<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
         <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
-<base href=\"$url_prefix\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -153,6 +152,7 @@ if ($u->user_isloggedin()) {
 		}
 		</script>
 		<script language=\"JavaScript\" src=\"include/md5.js\"></script>
+                <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
 		</head>
 		<body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>";
 
@@ -211,7 +211,7 @@ if ($u->user_isloggedin()) {
 		print "<br>";
 		$time_end = getmicrotime();
 		$time = round(($time_end - $time_start),4);
-		echo "<center><b><a target=\"_blank\" href=\"documentation.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
+		echo "<center><b><a target=\"_blank\" href=\"$url_prefix/documentation.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
 	
 		print "</div></body></html>";
 	break; // end module
@@ -223,7 +223,6 @@ if ($u->user_isloggedin()) {
 		<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
         <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
-<base href=\"$url_prefix\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -240,6 +239,7 @@ if ($u->user_isloggedin()) {
 		}
 		</script>
 		<script language=\"JavaScript\" src=\"include/md5.js\"></script>
+                <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
 		</head>
 		<body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>";
 	
@@ -300,7 +300,7 @@ if ($u->user_isloggedin()) {
 		$time_end = getmicrotime();
 		$time = round(($time_end - $time_start),4);
                 
-		echo "<center><b><a target=\"_blank\" href=\"documentation.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
+		echo "<center><b><a target=\"_blank\" href=\"$url_prefix/documentation.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
 	
 		print "</div></body></html>";
 	break; // end base
@@ -313,7 +313,6 @@ if ($u->user_isloggedin()) {
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
 		<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
         <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
-<base href=\"$url_prefix\" />
 		<script language=\"JavaScript\">
 		function h(oR) {
 			oR.style.backgroundColor='ffdd77';
@@ -345,6 +344,7 @@ if ($u->user_isloggedin()) {
                 
                 </script>
                 <script language=\"JavaScript\" src=\"include/md5.js\"></script>
+                <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
                 </head>
                 <body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0 onload=\"toggleOff();\">";
 
@@ -369,7 +369,6 @@ echo "<html>
 <LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
 <LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
 <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
-<base href=\"$url_prefix\" />
 <script language=\"JavaScript\">
 function h(oR) {
 	oR.style.backgroundColor='ffdd77';
@@ -382,6 +381,7 @@ function dehnew(oR) {
 }
 </script>
 <script language=\"JavaScript\" src=\"include/md5.js\"></script>
+<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
 </head>
 <body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>
 	<div id=horizon>

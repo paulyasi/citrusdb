@@ -24,7 +24,7 @@ $ticket = $base->input['ticket'];
 
 echo "<html>
 <body bgcolor=\"#ffffff\">
-<script language=\"JavaScript\">window.location.href = \"index.php?load=support&type=module&editticket=on&id=$ticket\";</script>
+<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=support&type=module&editticket=on&id=$ticket\";</script>
 </body>
 </html>";
 

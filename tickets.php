@@ -34,7 +34,7 @@ if ($pending) {
   /*--------------------------------------------------------------------------*/
   $query = "UPDATE customer_history SET status = \"pending\" WHERE id = $id";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
-  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base#$anchor\";</script>";			
+  print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base#$anchor\";</script>";			
  } else if ($completed) {
   /*--------------------------------------------------------------------------*/
   // make the customer_history id as completed
@@ -42,12 +42,12 @@ if ($pending) {
   $mydate = date("Y-m-d H:i:s");
   $query = "UPDATE customer_history SET status = 'completed', closed_by = '$user', closed_date = '$mydate' WHERE id = $id";
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
-  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base#$anchor\";</script>";	
+  print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base#$anchor\";</script>";	
  } else {
   /*--------------------------------------------------------------------------*/
   // print the listing of tickets for this database user
   /*--------------------------------------------------------------------------*/
-  echo "<a href=\"index.php?load=tickets&type=base&showall=on\">$l_showlast50</a><br>";
+  echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&showall=on\">$l_showlast50</a><br>";
   echo "<table cellpadding=0 border=0 width=720>";
   
   // find notes for groups that this user belongs to
@@ -123,16 +123,16 @@ if ($pending) {
 	"style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
     }
     
-    print "<td width=10%><a href=\"index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
+    print "<td width=10%><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
     print "<td width=20%>$creation_date</td>";
     print "<td width=10%>$created_by</td>";
-    print "<td width=20%><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
+    print "<td width=20%><a href=\"$url_prefix/index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
     print "<td width=10%>$status</td>";
-    print "<td width=50% colspan=3><a href=\"index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
+    print "<td width=50% colspan=3><a href=\"$url_prefix/index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
 
     print "<tr><td width=100% colspan=8> &nbsp; ";
     echo nl2br($description);
-    echo "<a href=\"$linkurl\">$linkname</a>";
+    echo "<a href=\"$url_prefix/$linkurl\">$linkname</a>";
 
     // get the sub_history printed here
     $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
@@ -151,9 +151,9 @@ if ($pending) {
     // end the table block
     echo "</td>";
         
-    print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";  
-    print " | <a href=\"index.php?load=tickets&type=base&pending=on&anchor=$notify&id=$id\">$l_pending</a>"; 
-    print " | <a href=\"index.php?load=tickets&type=base&completed=on&anchor=$notify&id=$id\">$l_finished</a></td></table>";
+    print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";  
+    print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&pending=on&anchor=$notify&id=$id\">$l_pending</a>"; 
+    print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&completed=on&anchor=$notify&id=$id\">$l_finished</a></td></table>";
       
       
     }
@@ -231,16 +231,16 @@ if ($pending) {
 	"style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
     }
     
-    print "<td width=10%><a href=\"index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
+    print "<td width=10%><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
     print "<td width=20%>$creation_date</td>";
     print "<td width=10%>$created_by</td>";
-    print "<td width=20%><a href=\"index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
+    print "<td width=20%><a href=\"$url_prefix/index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
     print "<td width=10%>$status</td>";
-    print "<td width=50% colspan=3><a href=\"index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
+    print "<td width=50% colspan=3><a href=\"$url_prefix/index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
     
     print "<tr><td width=100% colspan=8>&nbsp;";
     echo nl2br($description);
-    echo "<a href=\"$linkurl\">$linkname</a>";
+    echo "<a href=\"$url_prefix/$linkurl\">$linkname</a>";
 
     // get the sub_history printed here
     $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
@@ -259,9 +259,9 @@ if ($pending) {
     // end the table block
     echo "</td>";
     
-    print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";
-    print " | <a href=\"index.php?load=tickets&type=base&pending=on&id=$id\">$l_pending</a>"; 
-    print " | <a href=\"index.php?load=tickets&type=base&completed=on&id=$id\">$l_finished</a></td></table>";
+    print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";
+    print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&pending=on&id=$id\">$l_pending</a>"; 
+    print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&completed=on&id=$id\">$l_finished</a></td></table>";
   }
 
   echo '</table><br>';	

@@ -302,7 +302,7 @@ if ($save) {
   $automatic_receipt = $myresult['automatic_receipt'];
   $organization_id = $myresult['organization_id'];
   
-  echo "<a href=\"index.php?load=billing&type=module\">[ $l_undochanges ]</a>";
+  echo "<a href=\"$url_prefix/index.php?load=billing&type=module\">[ $l_undochanges ]</a>";
   
   // get the organization info
   $query = "SELECT org_name FROM general WHERE id = $organization_id LIMIT 1";

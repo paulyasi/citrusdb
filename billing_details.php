@@ -89,7 +89,7 @@ while ($myresult = $result->FetchRow()) {
   print "<td style=\"border-top: 1px solid grey;\">$id &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$date &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$description &nbsp;</td>";
-  print "<td style=\"border-top: 1px solid grey;\">[ <a href=\"index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$account_number&invoiceid=$invoice&details=on&type=fs&submit=on\" target=\"_blank\">$invoice</a> ]($original_invoice)</td>";	
+  print "<td style=\"border-top: 1px solid grey;\">[ <a href=\"$url_prefix/index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$account_number&invoiceid=$invoice&details=on&type=fs&submit=on\" target=\"_blank\">$invoice</a> ]($original_invoice)</td>";	
 
   //print "<td style=\"border-top: 1px solid grey;\">$invoice &nbsp;</td>";
   print "<td style=\"border-top: 1px solid grey;\">$billing_id</td>";
@@ -118,7 +118,7 @@ while ($myresult = $result->FetchRow()) {
 
  } // end while
 
-echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"index.php?load=all_billing_details&type=fs&account_number=$account_number\">$l_showall...</a></td>";
+echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"$url_prefix/index.php?load=all_billing_details&type=fs&account_number=$account_number\">$l_showall...</a></td>";
 echo '</table>';
 
 ?>

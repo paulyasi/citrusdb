@@ -24,7 +24,7 @@ $userserviceid = $base->input['userserviceid'];
 
 echo "<html>
 <body bgcolor=\"#ffffff\">
-<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module&edit=on&userserviceid=$userserviceid&editbutton=Edit\";</script>
+<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=services&type=module&edit=on&userserviceid=$userserviceid&editbutton=Edit\";</script>
 
 </body>
 </html>";

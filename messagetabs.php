@@ -59,9 +59,9 @@ while ($mygroupresult = $supportresult->FetchRow()) {
 echo "<div id=\"tabnav\">\n";
 foreach ($messagearray as $recipient => $messagecount) {
   if ($messagecount == 0) {
-    echo "<a href=\"index.php?load=tickets&type=base#$recipient\"><b style=\"font-weight:normal;\">$recipient($messagecount)</b></a>\n";
+    echo "<a href=\"$url_prefix/index.php?load=tickets&type=base#$recipient\"><b style=\"font-weight:normal;\">$recipient($messagecount)</b></a>\n";
   } else {
-    echo "<a href=\"index.php?load=tickets&type=base#$recipient\">$recipient($messagecount)</a>\n";    
+    echo "<a href=\"$url_prefix/index.php?load=tickets&type=base#$recipient\">$recipient($messagecount)</a>\n";    
   }
 }
 echo "</div>\n";

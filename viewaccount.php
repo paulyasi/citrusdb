@@ -18,10 +18,11 @@ $_SESSION['account_number'] = $account_number;
 
 // log this account view
 log_activity($DB, $user, $account_number, 'view', 'customer', 0, 'success');
-?>
 
+echo "
 <html>
-<body bgcolor="#ffffff">
-<script language="JavaScript">window.location.href = "index.php?load=customer&type=module";</script>
+<body bgcolor=\"#ffffff\">
+<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=customer&type=module\";</script>
 </body>
-</html>
+</html>";
+?>
