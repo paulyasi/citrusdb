@@ -31,88 +31,10 @@ while ($myresult = $result->FetchRow()) {
  }
 echo "</td></table></p>";
 
-
-// Print Number of New Support Messages
-
-// make an empty array to hold the message count
-$messagearray = array();
-
-// query the customer_history for the number of 
-// waiting messages sent to that user
-$supportquery = "SELECT * FROM customer_history WHERE notify = '$user' ".
-  "AND status = \"not done\" AND date(creation_date) <= CURRENT_DATE";
-$supportresult = $DB->Execute($supportquery) or die ("$l_queryfailed");
-$num_rows = $supportresult->RowCount();
-
-$nummessages = 0;
-
-$nummessages = $nummessages + $num_rows;
-
-// assign the count of messages to the user message associative array
-$messagearray[$user] = $num_rows;
-
-// query the customer_history for messages sent to 
-// groups the user belongs to
-$query = "SELECT * FROM groups WHERE groupmember = '$user' ";
-$supportresult = $DB->Execute($query) 
-  or die ("$l_queryfailed");
-
-while ($mygroupresult = $supportresult->FetchRow()) {
-  if (!isset($mygroupresult['groupname']))  { 
-    $mygroupresult['groupname'] = ""; 
-  }
-
-  // query each group
-  $groupname = $mygroupresult['groupname'];
-  $query = "SELECT * FROM customer_history WHERE notify = '$groupname' ".
-    "AND status = \"not done\" AND date(creation_date) <= CURRENT_DATE";
-  $gpresult = $DB->Execute($query) or die ("$l_queryfailed");
-  $num_rows = $gpresult->RowCount();
-
-  $nummessages = $nummessages + $num_rows;
-
-  // assign the count of messages to the user message associative array
-  $messagearray[$groupname] = $num_rows;  
-  
- }
-
-// put the num messages link inside of tabnav
 echo "<hr size=2 style=\"color:#eee;\">";
-echo "<div id=\"tabnav\">";
-foreach ($messagearray as $recipient => $messagecount) {
-  if ($messagecount == 0) {
-    echo "<a href=\"index.php?load=tickets&type=base#$recipient\"><b style=\"font-weight:normal;\">$recipient($messagecount)</b></a>\n";
-  } else {
-    echo "<a href=\"index.php?load=tickets&type=base#$recipient\">$recipient($messagecount)</a>\n";    
-  }
-}
-echo "</div>";
 
-/* commented out for testing a new idea, printing new message count for each group
-if ($nummessages > 0) {
-  if ($nummessages > 1) {
-    // plural messages
-    if ($load == "tickets") {   
-      print "<div <a class = \"active\" href=\"index.php?load=tickets&type=base\">$nummessages new messages</a></div>";
-    } else {
-      print "<div <a href=\"index.php?load=tickets&type=base\">$nummessages new messages</a></div>";      
-    }
-  } else {
-    // singular message
-    if ($load == "tickets") {
-      print "<div><a class = \"active\" href=\"index.php?load=tickets&type=base\">$nummessages new message</a></div>";
-    } else {
-      print "<div><a href=\"index.php?load=tickets&type=base\">$nummessages new message</a></div>";      
-    }
-  }
- } else {
-  if ($load == "tickets") {
-    echo "<div><a href=\"index.php?load=tickets&type=base\">No New Messages</a></div>";
-  } else {
-    echo "<div><a href=\"index.php?load=tickets&type=base\">No New Messages</a></div>";
-  }
- }
-*/
+// print the new message count tabs
+message_tabs($DB, $user);
 
 echo "</div>";
 
