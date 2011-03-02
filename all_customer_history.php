@@ -117,7 +117,7 @@ while ($myresult = $result->FetchRow()) {
     "<a href=\"$url_prefix/index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
 
   if ($linkurl) {
-    print "<a href=\"$url_prefix/$linkurl\">$linkname</a>";
+    print "<a href=\"$linkurl\">$linkname</a>";
   }
   
   print "</td>";
