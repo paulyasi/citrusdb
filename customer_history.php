@@ -121,7 +121,7 @@ while ($myresult = $result->FetchRow()) {
   }
   
   if ($linkurl) {
-    print "<a href=\"$url_prefix/$linkurl\" target=\"_new\">$linkname</a>";
+    print "<a href=\"$linkurl\" target=\"_new\">$linkname</a>";
   }
   
   print "&nbsp;</td>";
