@@ -52,7 +52,7 @@ if ($pending) {
   // to figure out whether to show ticket tabs in green/unread
   // ticket cookie will be set to datetime YmdHis
   $ticketdatetime = date('YmdHis');
-  setcookie('ticketdatetime',$ticketdatetime,(time()+36000),'/','',0);
+  setcookie('ticketdatetime',$ticketdatetime,(time()+3600000),'/','',0);
   
   echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&showall=on\">$l_showlast50</a><br>";
   echo "<table cellpadding=0 border=0 width=720>";
