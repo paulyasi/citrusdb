@@ -47,6 +47,13 @@ if ($pending) {
   /*--------------------------------------------------------------------------*/
   // print the listing of tickets for this database user
   /*--------------------------------------------------------------------------*/
+
+  // set the cookie that will allow us to determine if they have viewed the ticket screen or not
+  // to figure out whether to show ticket tabs in green/unread
+  // ticket cookie will be set to datetime YmdHis
+  $ticketdatetime = date('YmdHis');
+  setcookie('ticketdatetime',$ticketdatetime,(time()+36000),'/','',0);
+  
   echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&showall=on\">$l_showlast50</a><br>";
   echo "<table cellpadding=0 border=0 width=720>";
   
@@ -132,7 +139,7 @@ if ($pending) {
 
     print "<tr><td width=100% colspan=8> &nbsp; ";
     echo nl2br($description);
-    echo "<a href=\"$url_prefix/$linkurl\">$linkname</a>";
+    echo "<a href=\"$linkurl\">$linkname</a>";
 
     // get the sub_history printed here
     $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
@@ -240,7 +247,7 @@ if ($pending) {
     
     print "<tr><td width=100% colspan=8>&nbsp;";
     echo nl2br($description);
-    echo "<a href=\"$url_prefix/$linkurl\">$linkname</a>";
+    echo "<a href=\"$linkurl\">$linkname</a>";
 
     // get the sub_history printed here
     $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";

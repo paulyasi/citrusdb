@@ -33,24 +33,22 @@ echo "</td></table></p>";
 
 echo "<hr size=2 style=\"color:#eee;\">";
 
+
 echo "<form id=\"messagetabform\">";
 //echo "<input type=hidden name=\"blah\" value=\"1\">";
 echo "<div id=\"messagetabs\">";
-echo "</div></form>";
+echo "</div>";
 
-// print the new message count tabs using ajax so they refresh
-echo "<script language=\"javascript\">
-var serializedForm = Form.serialize('messagetabform');
-document.write(serializedForm);
-var mtparameters = 'load=messagetabs&type=dl' + serializedForm;
-new Ajax.PeriodicalUpdater('messagetabs', 'index.php',
+// print the new message count tabs using ajax so they refresh periodically
+$mydatetime = date('YmdHis');
+echo "
+<script language=\"javascript\">
+new Ajax.PeriodicalUpdater('messagetabs', 'index.php?load=messagetabs&type=dl&datetime=$mydatetime',
 {
 method: 'get',
-parameters: mtparameters,
-frequency: 300
+frequency: 300,
 });
-</script>";
-
+</script></form>";
 
 
 // show other dashboard specifictabs down here:

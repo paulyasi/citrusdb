@@ -71,13 +71,21 @@ while ($myresult = $result->FetchRow())
 	{
 	  echo "<hr size=2 style=\"color:#eee;\">";
 
-	  // print the new message count tabs using ajax so they refresh
-	  echo "<script language=\"javascript\">".
-	    "new Ajax.PeriodicalUpdater({ success: 'messagetabs'}, 'index.php?load=messagetabs&type=dl',".
-	    "{ method: 'get', frequency: 300 }); </script>";
 	  
+	  echo "<form id=\"messagetabform\">";
+	  //echo "<input type=hidden name=\"blah\" value=\"1\">";
 	  echo "<div id=\"messagetabs\">";
 	  echo "</div>";
+	  
+	  // print the new message count tabs using ajax so they refresh periodically
+	  $mydatetime = date('YmdHis');
+	  echo "<script language=\"javascript\">".
+	    "new Ajax.PeriodicalUpdater('messagetabs', 'index.php?load=messagetabs&type=dl&datetime=$mydatetime',".
+	    "{".
+	    "method: 'get',".
+	    "frequency: 300,".
+	    "});".
+	    "</script></form>";
 	  
 	} // end if modulename == support
 

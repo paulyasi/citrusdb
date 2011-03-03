@@ -312,7 +312,10 @@ foreach ($messagearray as $recipient => $messagecount) {
   } else {
     echo "<a href=\"index.php?load=tickets&type=base#$recipient\">$recipient($messagecount)</a>\n";    
   }
+  echo "<input type=text name=\"$recipient\" value=\"$messagecount\">";
 }
 echo "</div>\n";
-  
+
+return $messagearray;
+
 }
