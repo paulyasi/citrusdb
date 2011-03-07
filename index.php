@@ -227,19 +227,22 @@ if ($u->user_isloggedin()) {
 	      $ticketdatetime = date('YmdHis');
 	      $cookiename = $ticketuser . 'datetime'; //usernamedatetime
 	      setcookie($cookiename,$ticketdatetime,(time()+3600000),'/','',0);
+	      echo "<html><head>";
+	      echo "<meta http-equiv=\"refresh\" content=\"300;url=$url_prefix/index.php?load=tickets&type=base&ticketuser=$ticketuser&lastview=$ticketdatetime\">";
 	    }
-	    
+
 	    if ($ticketgroup) {
 	      $ticketdatetime = date('YmdHis');
 	      $cookiename = $ticketgroup . 'datetime'; //groupnamedatetime
 	      setcookie($cookiename,$ticketdatetime,(time()+3600000),'/','',0);
+	      echo "<html><head>";
+	      echo "<meta http-equiv=\"refresh\" content=\"300;url=$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup&lastview=$ticketdatetime\">";
 	    }
 	    
 	  }
 // print the html for the top of pages
-		echo "<html>
-		<head>
-		<title>$l_title</title>
+
+		echo "<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
         <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
 		<script language=\"JavaScript\">
