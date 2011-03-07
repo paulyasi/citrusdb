@@ -20,13 +20,13 @@ if (!isset($base->input['id'])) { $base->input['id'] = ""; }
 if (!isset($base->input['pending'])) { $base->input['pending'] = ""; }
 if (!isset($base->input['completed'])) { $base->input['completed'] = ""; }
 if (!isset($base->input['showall'])) { $base->input['showall'] = ""; }
-if (!isset($base->input['anchor'])) { $base->input['anchor'] = ""; }
+if (!isset($base->input['lastview'])) { $base->input['lastview'] = ""; }
 
 $id = $base->input['id'];
 $pending = $base->input['pending'];
 $completed = $base->input['completed'];
 $showall = $base->input['showall'];
-$anchor = $base->input['anchor'];
+$lastview = $base->input['lastview'];
 
 if ($pending) {
   /*--------------------------------------------------------------------------*/
@@ -34,7 +34,11 @@ if ($pending) {
   /*--------------------------------------------------------------------------*/
   $query = "UPDATE customer_history SET status = \"pending\" WHERE id = $id";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
-  print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base#$anchor\";</script>";			
+  if ($ticketgroup) {
+    print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup\";</script>";
+  } else {
+    print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user\";</script>";
+  }
  } else if ($completed) {
   /*--------------------------------------------------------------------------*/
   // make the customer_history id as completed
@@ -42,31 +46,34 @@ if ($pending) {
   $mydate = date("Y-m-d H:i:s");
   $query = "UPDATE customer_history SET status = 'completed', closed_by = '$user', closed_date = '$mydate' WHERE id = $id";
   $result = $DB->Execute($query) or die ("$query $l_queryfailed");
-  print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base#$anchor\";</script>";	
- } else {
-  /*--------------------------------------------------------------------------*/
-  // print the listing of tickets for this database user
-  /*--------------------------------------------------------------------------*/
+  if ($ticketgroup) {
+    print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup\";</script>";
+  } else {
+    print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user\";</script>";
+  }
+} else {
+  if ($ticketgroup) {
+    /*--------------------------------------------------------------------------*/
+    // print the listing of tickets for this database groupname
+    /*--------------------------------------------------------------------------*/
+    
+    // set the cookie that will allow us to determine if they have viewed the ticket screen or not
+    // to figure out whether to show ticket tabs in green/unread
+    // ticket cookie will be set to datetime YmdHis
+  
+    echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&showall=on\">$l_showlast50</a><br>";
+    echo "<table cellpadding=0 border=0 width=720>";
+  
+    // find notes for this group that the user belongs to    
+    $query = "SELECT * FROM groups WHERE groupmember = '$user' AND groupname = '$ticketgroup' LIMIT 1";
+    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+    $result = $DB->Execute($query) or die ("$l_queryfailed");
+    $myresult = $result->fields;
 
-  // set the cookie that will allow us to determine if they have viewed the ticket screen or not
-  // to figure out whether to show ticket tabs in green/unread
-  // ticket cookie will be set to datetime YmdHis
-  $ticketdatetime = date('YmdHis');
-  setcookie('ticketdatetime',$ticketdatetime,(time()+3600000),'/','',0);
-  
-  echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&showall=on\">$l_showlast50</a><br>";
-  echo "<table cellpadding=0 border=0 width=720>";
-  
-  // find notes for groups that this user belongs to
-  
-  $query = "SELECT * FROM groups WHERE groupmember = '$user' ";
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
-  
-  while ($myresult = $result->FetchRow()) {
     $groupname = $myresult['groupname'];
     if ($showall) {
       $query = "SELECT ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+	"DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime, ".
 	"ch.account_number, ch.status, ch.description, ch.linkname, ".
 	"ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
 	"FROM customer_history ch ".
@@ -78,6 +85,7 @@ if ($pending) {
     } else {
       //add "LEFT JOIN user_services us ON us.id = ch.".      
       $query = "SELECT ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+	"DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime, ".
 	"ch.account_number, ch.status, ch.description, ch.linkname, ".
 	"ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
 	"FROM customer_history ch ".
@@ -89,10 +97,11 @@ if ($pending) {
 	"ORDER BY notify,creation_date DESC";
     }
     $gpresult = $DB->Execute($query) or die ("$l_queryfailed");
-    
+      
     while ($groupresult = $gpresult->FetchRow()) {
       $id = $groupresult['id'];
       $creation_date = $groupresult['creation_date'];
+      $mydatetime = $groupresult['mydatetime'];
       $notify = $groupresult['notify'];
       $created_by = $groupresult['created_by'];
       $accountnum = $groupresult['account_number'];
@@ -103,12 +112,12 @@ if ($pending) {
       $linkurl = $groupresult['linkurl'];
       $serviceid = $groupresult['user_services_id'];
       $service_description = $groupresult['service_description'];
-
+      
       if ($serviceid == 0) {
 	$serviceid = '';
 	$servicedescription = '';
       }
-
+      
       // print the heading for each group listing
       if (!isset($previousnotify)) { $previousnotify = ""; }
       if ($previousnotify <> $notify) {
@@ -118,56 +127,59 @@ if ($pending) {
       }
       
       print "<tr>";
-
-    if ($status == "not done"){
-      print "<table onmouseover='h(this);'".
-	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"720\" ".
-	"cellpadding=5 style=\"border-top: 1px solid #888; ".
-	"border-bottom: 1px solid #888;\">";
-    } else {
-      print "<table onmouseover='h(this);' onmouseout='deh(this);' ".
-	"bgcolor=\"#ddddee\" width=\"720\" cellpadding=5 ".
-	"style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
-    }
-    
-    print "<td width=10%><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
-    print "<td width=20%>$creation_date</td>";
-    print "<td width=10%>$created_by</td>";
-    print "<td width=20%><a href=\"$url_prefix/index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
-    print "<td width=10%>$status</td>";
-    print "<td width=50% colspan=3><a href=\"$url_prefix/index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
-
-    print "<tr><td width=100% colspan=8> &nbsp; ";
-    echo nl2br($description);
-    echo "<a href=\"$linkurl\">$linkname</a>";
-
-    // get the sub_history printed here
-    $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
-    $subresult = $DB->Execute($query) or die ("sub_history $l_queryfailed");
-    
-    while ($mysubresult = $subresult->FetchRow()) {
-      $sub_creation_date = $mysubresult['creation_date'];
-      $sub_created_by = $mysubresult['created_by'];
-      $sub_description = $mysubresult['description'];
       
-      print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: ";
-      echo nl2br($sub_description);
-      echo "</p>\n";
+      if (!empty($lastview) AND $mydatetime > $lastview) {
+	print "<table onmouseover='h(this);'".
+	  "onmouseout='dehnew(this);' bgcolor=\"#aaffaa\" width=\"720\" ".
+	  "cellpadding=5 style=\"border-top: 1px solid #888; ".
+	  "border-bottom: 1px solid #888;\">";      
+      } elseif ($status == "not done"){	
+	print "<table onmouseover='h(this);'".
+	  "onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"720\" ".
+	  "cellpadding=5 style=\"border-top: 1px solid #888; ".
+	  "border-bottom: 1px solid #888;\">";
+      } else {
+	print "<table onmouseover='h(this);' onmouseout='deh(this);' ".
+	  "bgcolor=\"#ddddee\" width=\"720\" cellpadding=5 ".
+	  "style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
+      }
+      
+      print "<td width=10%><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
+      print "<td width=20%>$creation_date</td>";
+      print "<td width=10%>$created_by</td>";
+      print "<td width=20%><a href=\"$url_prefix/index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
+      print "<td width=10%>$status</td>";
+      print "<td width=50% colspan=3><a href=\"$url_prefix/index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
+      
+      print "<tr><td width=100% colspan=8> &nbsp; ";
+      echo nl2br($description);
+      echo "<a href=\"$linkurl\">$linkname</a>";
+      
+      // get the sub_history printed here
+      $query = "SELECT * FROM sub_history WHERE customer_history_id = $id";
+      $subresult = $DB->Execute($query) or die ("sub_history $l_queryfailed");
+      
+      while ($mysubresult = $subresult->FetchRow()) {
+	$sub_creation_date = $mysubresult['creation_date'];
+	$sub_created_by = $mysubresult['created_by'];
+	$sub_description = $mysubresult['description'];
+	
+	print "<p>&nbsp;&nbsp;&nbsp;$sub_created_by: ";
+	echo nl2br($sub_description);
+	echo "</p>\n";
+      }
+	
+      // end the table block
+      echo "</td>";
+      
+      print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";  
+      print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&pending=on&ticketgroup=$notify&id=$id\">$l_pending</a>"; 
+      print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&completed=on&ticketgroup=$notify&id=$id\">$l_finished</a></td></table>";
+            
     }
 
-    // end the table block
-    echo "</td>";
-        
-    print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";  
-    print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&pending=on&anchor=$notify&id=$id\">$l_pending</a>"; 
-    print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&completed=on&anchor=$notify&id=$id\">$l_finished</a></td></table>";
-      
-      
-    }
-  }
-  
-  
-  // find notes for that user
+  } else {  
+  // not ticketgroup, must be ticketuser, find notes for that user
   
   print "<a name=\"$user\"><tr><td bgcolor=\"#ffffff\" width=100% colspan=8><br>".
     "<b style=\"font-size: 14pt;\">$l_notesforuser $user</td></a>";
@@ -182,6 +194,7 @@ if ($pending) {
 
   if ($showall) {
     $query = "SELECT  ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+      "DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime, ".
       "ch.account_number, ch.status, ch.description, ch.linkname, ".
       "ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
       "FROM customer_history ch ".
@@ -191,6 +204,7 @@ if ($pending) {
       "WHERE notify = '$user' ORDER BY creation_date DESC LIMIT 50";
   } else {
     $query = "SELECT  ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+      "DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime, ".
       "ch.account_number, ch.status, ch.description, ch.linkname, ".
       "ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
       "FROM customer_history ch ".
@@ -208,6 +222,7 @@ if ($pending) {
   while ($myresult = $result->FetchRow()) {
     $id = $myresult['id'];
     $creation_date = $myresult['creation_date'];
+    $mydatetime = $myresult['mydatetime'];
     $created_by = $myresult['created_by'];
     $notify = $myresult['notify'];
     $accountnum = $myresult['account_number'];
@@ -227,12 +242,19 @@ if ($pending) {
 
     print "<tr>";
 
-    if ($status == "not done"){
+    // if this item has not been viewed yet, then print in green for brand new item
+    if (!empty($lastview) AND $mydatetime > $lastview) {
+      print "<table onmouseover='h(this);'".
+	"onmouseout='dehnew(this);' bgcolor=\"#aaffaa\" width=\"720\" ".
+	"cellpadding=5 style=\"border-top: 1px solid #888; ".
+	"border-bottom: 1px solid #888;\">";      
+    } elseif ($status == "not done"){
       print "<table onmouseover='h(this);'".
 	"onmouseout='dehnew(this);' bgcolor=\"#ddeeff\" width=\"720\" ".
 	"cellpadding=5 style=\"border-top: 1px solid #888; ".
 	"border-bottom: 1px solid #888;\">";
     } else {
+      // this is pending
       print "<table onmouseover='h(this);' onmouseout='deh(this);' ".
 	"bgcolor=\"#ddddee\" width=\"720\" cellpadding=5 ".
 	"style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
@@ -271,7 +293,9 @@ if ($pending) {
     print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&completed=on&id=$id\">$l_finished</a></td></table>";
   }
 
-  echo '</table><br>';	
+  echo '</table><br>';
+
+  } // end if ticketgroup else ticketuser
 
 }
 ?>

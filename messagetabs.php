@@ -20,15 +20,6 @@ if (!defined("INDEX_CITRUS")) {
 //if (!isset($base->input['datetime'])) { $base->input['datetime'] = ""; }
 //$pagedatetime = $base->input['datetime'];
 
-// get the ticketdatetime set by tickets.php that holds the last datetime it was viewed
-// to compare that to the newest note's datetime
-
-if (!isset($_COOKIE['ticketdatetime'])) { 
-  $_COOKIE['ticketdatetime'] = ""; 
-}
-
-$pagedatetime = $_COOKIE['ticketdatetime'];
-
 // make an empty array to hold the message count and initialize nummessages
 $messagearray = array();
 $nummessages = 0;
@@ -36,6 +27,13 @@ $num_rows = 0;
 $created = 0;
 
 echo "<div id=\"tabnav\">\n";
+
+// get the ticketdatetime for the user, the last time tickets.php was loaded for $user
+$ticketdatetime = $user . 'datetime';
+if (!isset($_COOKIE[$ticketdatetime])) { 
+  $_COOKIE[$ticketdatetime] = ""; 
+}
+$usernamedatetime = $_COOKIE[$ticketdatetime];
 
 // query the customer_history for the number of 
 // waiting messages sent to that user
@@ -60,17 +58,19 @@ if ($num_rows > 0) {
 // assign the count of messages to the user message associative array
 //$messagearray[$user] = $num_rows;
 
-if ($created > $pagedatetime) {
+if (!empty($usernamedatetime) AND $created > $usernamedatetime) {
   $bgstyle = "style = \"background-color: #AFA;\"";
+} elseif ($ticketuser == $user) {
+  $bgstyle = "class = \"active\"";
 } else {
   $bgstyle = "";
 }
 
 if ($num_rows == 0) {
-  echo "<a href=\"$url_prefix/index.php?load=tickets&type=base#$user\" $bgstyle>".
+  echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user&lastview=$usernamedatetime\" $bgstyle>".
     "<b style=\"font-weight:normal;\">$user($num_rows)</b></a>\n";
 } else {
-  echo "<a href=\"$url_prefix/index.php?load=tickets&type=base#$user\" $bgstyle>$user($num_rows)</a>\n";    
+  echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user&lastview=$usernamedatetime\" $bgstyle>$user($num_rows)</a>\n";    
 }
 
 // query the customer_history for messages sent to 
@@ -83,13 +83,22 @@ while ($mygroupresult = $supportresult->FetchRow()) {
   if (!isset($mygroupresult['groupname']))  { 
     $mygroupresult['groupname'] = "";    
   }
+  $groupname = $mygroupresult['groupname'];
 
   // initialize num_rows
   $num_rows = 0;
   $created = 0;
+
+  // get the ticketdatetime for this group, the last time tickets.php was loaded for $groupname
+  $ticketdatetime = $groupname . 'datetime';
+  if (!isset($_COOKIE[$ticketdatetime])) { 
+    $_COOKIE[$ticketdatetime] = ""; 
+  }
+  $groupnamedatetime = $_COOKIE[$ticketdatetime];
+  
   
   // query each group
-  $groupname = $mygroupresult['groupname'];
+
   $query = "SELECT id, DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime FROM customer_history WHERE notify = '$groupname' ".
     "AND status = \"not done\" AND date(creation_date) <= CURRENT_DATE ORDER BY id DESC";
   $gpresult = $DB->Execute($query) or die ("$l_queryfailed");
@@ -99,17 +108,19 @@ while ($mygroupresult = $supportresult->FetchRow()) {
     $mygpresult = $gpresult->fields;
     $created = $mygpresult['mydatetime'];
   }
-  
-  if ($created > $pagedatetime) {
+
+  if (!empty($groupnamedatetime) AND $created > $groupnamedatetime) {
     $bgstyle = "style = \"background-color: #AFA;\"";
+  } elseif ($ticketgroup == $groupname) {
+    $bgstyle = "class = \"active\"";
   } else {
     $bgstyle = "";
   }
 
   if ($num_rows == 0) {
-    echo "<a href=\"$url_prefix/index.php?load=tickets&type=base#$groupname\" $bgstyle><b style=\"font-weight:normal;\">$groupname($num_rows)</b></a>\n";
+    echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$groupname&lastview=groupnamedatetime\" $bgstyle><b style=\"font-weight:normal;\">$groupname($num_rows)</b></a>\n";
   } else {
-    echo "<a href=\"$url_prefix/index.php?load=tickets&type=base#$groupname\" $bgstyle>$groupname($num_rows)</a>\n";    
+    echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$groupname&lastview=$groupnamedatetime\" $bgstyle>$groupname($num_rows)</a>\n";    
   }
 
 }

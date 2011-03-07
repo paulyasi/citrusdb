@@ -76,11 +76,18 @@ while ($myresult = $result->FetchRow())
 	  //echo "<input type=hidden name=\"blah\" value=\"1\">";
 	  echo "<div id=\"messagetabs\">";
 	  echo "</div>";
+
+	  if ($ticketgroup) {
+	    $messagetabsurl = 'index.php?load=messagetabs&type=dl&ticketgroup=' . $ticketgroup;
+	  } elseif ($ticketuser) {
+	    $messagetabsurl = 'index.php?load=messagetabs&type=dl&ticketuser=' . $ticketuser;
+	  } else {
+	    $messagetabsurl = 'index.php?load=messagetabs&type=dl';
+	  }	  
 	  
 	  // print the new message count tabs using ajax so they refresh periodically
-	  $mydatetime = date('YmdHis');
 	  echo "<script language=\"javascript\">".
-	    "new Ajax.PeriodicalUpdater('messagetabs', 'index.php?load=messagetabs&type=dl&datetime=$mydatetime',".
+	    "new Ajax.PeriodicalUpdater('messagetabs', '$messagetabsurl',".
 	    "{".
 	    "method: 'get',".
 	    "frequency: 300,".

@@ -56,6 +56,8 @@ if (!isset($base->input['edit'])) { $base->input['edit'] = ""; }
 if (!isset($base->input['create'])) { $base->input['create'] = ""; }
 if (!isset($base->input['delete'])) { $base->input['delete'] = ""; }
 if (!isset($base->input['account_number'])) { $base->input['account_number'] = ""; }
+if (!isset($base->input['ticketuser'])) { $base->input['ticketuser'] = ""; }
+if (!isset($base->input['ticketgroup'])) { $base->input['ticketgroup'] = ""; }
 
 if ($base->input['submit'] == $l_login) {
 	// check the user login information
@@ -83,6 +85,8 @@ if ($u->user_isloggedin()) {
 	$edit = $base->input['edit'];
 	$create = $base->input['create'];
 	$delete = $base->input['delete'];
+	$ticketuser = $base->input['ticketuser'];
+	$ticketgroup = $base->input['ticketgroup'];
 	
 	if (!$type) { 
 		$load = "search"; 
@@ -217,6 +221,21 @@ if ($u->user_isloggedin()) {
 	break; // end module
 	
 	case 'base': // base functions
+	  if ($load == 'tickets') {
+
+	    if ($ticketuser) {
+	      $ticketdatetime = date('YmdHis');
+	      $cookiename = $ticketuser . 'datetime'; //usernamedatetime
+	      setcookie($cookiename,$ticketdatetime,(time()+3600000),'/','',0);
+	    }
+	    
+	    if ($ticketgroup) {
+	      $ticketdatetime = date('YmdHis');
+	      $cookiename = $ticketgroup . 'datetime'; //groupnamedatetime
+	      setcookie($cookiename,$ticketdatetime,(time()+3600000),'/','',0);
+	    }
+	    
+	  }
 // print the html for the top of pages
 		echo "<html>
 		<head>
