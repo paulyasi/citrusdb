@@ -106,8 +106,14 @@ if ($savechanges) {
   } // end if addnote
 
   // redirect back to the account record
-  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";			
-	
+  if ($notify == $user) {
+    // then send with ticketuser string
+    print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";
+  } else {
+    // send with ticketgroup string
+    print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";
+  }
+  
  } else {
   // show the ticket info to edit
   $query = "SELECT ch.id ch_id, ch.creation_date ch_creation_date, ".

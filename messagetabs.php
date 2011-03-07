@@ -118,7 +118,7 @@ while ($mygroupresult = $supportresult->FetchRow()) {
   }
 
   if ($num_rows == 0) {
-    echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$groupname&lastview=groupnamedatetime\" $bgstyle><b style=\"font-weight:normal;\">$groupname($num_rows)</b></a>\n";
+    echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$groupname&lastview=$groupnamedatetime\" $bgstyle><b style=\"font-weight:normal;\">$groupname($num_rows)</b></a>\n";
   } else {
     echo "<a href=\"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$groupname&lastview=$groupnamedatetime\" $bgstyle>$groupname($num_rows)</a>\n";    
   }
