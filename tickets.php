@@ -182,7 +182,7 @@ if ($pending) {
   // not ticketgroup, must be ticketuser, find notes for that user
   
   print "<a name=\"$user\"><tr><td bgcolor=\"#ffffff\" width=100% colspan=8><br>".
-    "<b style=\"font-size: 14pt;\">$l_notesforuser $user</td></a>";
+    "<b style=\"font-size: 14pt;\">$l_notesforuser $user</b></td></a>";
     //echo "<tr><td bgcolor=\"#ccccdd\" width=10%><b>$l_ticketnumber</b></td>".
     //"<td bgcolor=\"#ccccdd\" width=20%><b>$l_datetime</b></td>".
     //"<td bgcolor=\"#ccccdd\" width=10%><b>$l_from</b></td>".

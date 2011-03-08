@@ -412,7 +412,7 @@ function dehnew(oR) {
 	<P>
 	$l_logintext
 	<P>
-	<FORM ACTION=\"index.php\" METHOD=\"POST\" AUTOCOMPLETE=\"off\">
+	<FORM ACTION=\"$ssl_url_prefix/index.php\" METHOD=\"POST\" AUTOCOMPLETE=\"off\">
 	<B>$l_username</B><BR>
 	<INPUT TYPE=\"TEXT\" NAME=\"user_name\" VALUE=\"\" SIZE=\"15\" MAXLENGTH=\"15\">
 	<P>
