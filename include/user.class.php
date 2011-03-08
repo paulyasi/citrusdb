@@ -1,13 +1,22 @@
 <?php
 /*----------------------------------------------------------------------------*/
 // Includes Code Contributed by Matthew Veno and Bryan Nielsen
-// Copyright (C) 2005-2008  Paul Yasi (paul at citrusdb.org)
+// Copyright (C) 2005-2011  Paul Yasi (paul at citrusdb.org)
 // Read the README file for more information
 /*----------------------------------------------------------------------------*/
 
 class user {
 	
   var $LOGGED_IN=false;
+  
+  //base-2 logarithm of the iteration count for password stretching
+  var $hash_cost_log2 = 8;
+
+  // do we require the hashes to be portable to older systems (less secure)?
+  // bcrypt hashes have '$2a$' header
+  // des ext hashes have '_'
+  // portable md5 hashes have '$P$' header
+  var $hash_portable = FALSE;
 	
   /*--------------------------------------------------------------------*/
   // Constructor - initialize class
@@ -15,8 +24,6 @@ class user {
   function __construct() {
     //clear it out in case someone sets it in the URL or something
     unset($LOGGED_IN);
-
-
   }
 
   /*--------------------------------------------------------------------*/
@@ -122,11 +129,14 @@ class user {
       }
       else {
         // standard authentication method
-        $sql="SELECT * FROM user WHERE username='$user_name' ".
-          "AND password='$password'";
+	$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
+	
+        $sql="SELECT password FROM user WHERE username='$user_name'";
         $result = $DB->Execute($sql);
+	$myresult = $result->fields;
+	$checkhash = $myresult['password'];
 
-        if (!$result ||  $result->RowCount() < 1){
+        if (!$result ||  $result->RowCount() < 1 || !$hasher->CheckPassword($password, $checkhash)) {
 
           $feedback .=  " ERROR - User not found or password ".
             "incorrect $user_name $password ";
@@ -230,15 +240,28 @@ class user {
 	$change_user_name=strtolower($change_user_name);
 	//$old_password=strtolower($old_password);
 	//$new_password1=strtolower($new_password1);
-	$sql="SELECT * FROM user WHERE username='$change_user_name' AND password='$old_password'";
+
+	// check that old password is valid
+	$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
+	
+	$sql="SELECT password FROM user WHERE username='$change_user_name' LIMIT 1";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$result=$DB->Execute($sql) or die ("Query Failed");
-	if (!$result || $result->RowCount() < 1) {
+	$mypassresult = $result->fields;
+	$checkhash = $mypassresult['password'];
+	
+	if (!$result || $result->RowCount() < 1 || !$hasher->CheckPassword($old_password, $checkhash)) {
 	  $feedback .= " User not found or bad password";
-	  return false;
+	  return false;	  
 	} else {
-	  $sql="UPDATE user SET password='$new_password1' ".
-	    "WHERE username='$change_user_name' AND password='$old_password'";
+	  $newhash = $hasher->HashPassword($new_password1);
+	  if (strlen($newhash) < 20) {
+	    $feedback .= "Failed to hash new password";
+	    return false;
+	  }
+	  
+	  $sql="UPDATE user SET password='$newhash' ".
+	    "WHERE username='$change_user_name'";
 	  $result=$DB->Execute($sql) or die ("Query Failed");
 	  $feedback .= ' Password Changed ';
 	  return true;
@@ -279,8 +302,19 @@ class user {
 	  $feedback .=  ' ERROR - USER NAME EXISTS ';
 	  return false;
 	} else {
+	  // make a new password hash	  
+	  $hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
+	  $hash = $hasher->HashPassword($password1);
+	  if (strlen($hash) < 20 ) {
+	    // hash length always greater than 20, if not then something went wrong
+	    $feedback .= "Failed to hash new password";
+	    return false;
+	  }
+	  unset ($hasher);
+	  
+	  // then insert it into the database
 	  $sql="INSERT INTO user (username,real_name,password,remote_addr,admin,manager) ".
-	    "VALUES ('$user_name','$real_name','$password1','$GLOBALS[REMOTE_ADDR]','$admin','$manager')";
+	    "VALUES ('$user_name','$real_name','$hash','$GLOBALS[REMOTE_ADDR]','$admin','$manager')";
 	  $result=$DB->Execute($sql) or die ("Insert Query Failed");
 	  if (!$result) {
 	    $feedback .= ' ERROR - '.db_error();

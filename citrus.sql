@@ -662,7 +662,7 @@ CREATE TABLE `taxed_services` (
 CREATE TABLE `user` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `username` varchar(50) NOT NULL default '',
-  `password` varchar(32) NOT NULL default '',
+  `password` varchar(60) NOT NULL default '',
   `real_name` varchar(50) NOT NULL default '',
   `admin` enum('y','n') NOT NULL default 'n',
   `manager` enum('y','n') NOT NULL default 'n',
@@ -671,8 +671,8 @@ CREATE TABLE `user` (
   `screenname` varchar(254) default NULL,
   `email_notify` enum('y','n') default 'n',
   `screenname_notify` enum('y','n') default 'n',
-  PRIMARY KEY  (`id`)
-  UNIQUE KEY 'username' ('username') 
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `username` (`username`) 
 ) TYPE=MyISAM AUTO_INCREMENT=24 ;
 
 -- 

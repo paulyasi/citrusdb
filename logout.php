@@ -5,6 +5,7 @@ include('./include/config.inc.php');
 include("$lang");
 require_once('./include/database.inc.php');
 require_once('./include/citrus_base.php');
+require_once('./include/PasswordHash.php');
 require_once('./include/user.class.php');
 
 $u = new user();

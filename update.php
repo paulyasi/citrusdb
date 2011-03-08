@@ -956,6 +956,8 @@ if ($base->input['submit'] == "Update")
 	if ($databaseversion == "2.3") {
 	  $query = "ALTER TABLE  `user` ADD UNIQUE (`username`)";
 
+	  $query = "ALTER TABLE  `user` CHANGE  `password`  `password` VARCHAR( 60 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT  ''";
+
 	  // set the version number in the database to 2.3.1
 	  $query = "UPDATE `settings` SET `version` = '2.3.1' ".
 	    "WHERE `id` =1 LIMIT 1";

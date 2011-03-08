@@ -6,15 +6,15 @@
 
 // define variables
 $sys_dbhost = 'localhost';
-$sys_dbuser = 'citrus';
-$sys_dbpasswd = 'citrus';
-$sys_dbname = 'citrus';
+$sys_dbuser = 'phpass';
+$sys_dbpasswd = 'phpass';
+$sys_dbname = 'phpass';
 $sys_dbtype = 'mysql';
-$path_to_citrus = '/home/pyasi/citrus_project/citrusdb/';
+$path_to_citrus = '/home/pyasi/citrus_project/phpass/';
 $hidden_hash_var='youmustchangethis';
 $lang = './include/local/us-english.inc.php';
-$url_prefix = "http://ubuntu/~pyasi/citrus_project/citrusdb";
-$ssl_url_prefix = "https://ubuntu/~pyasi/citrus_project/citrusdb";
+$url_prefix = "http://ubuntu/~pyasi/citrus_project/phpass/";
+$ssl_url_prefix = "https://ubuntu/~pyasi/citrus_project/phpass/";
 
 // these gpg commands are required for encrypted storage of credit card data
 $gpg_command = "/usr/bin/gpg --homedir /home/www-data/.gnupg --armor --batch -e -r 'CitrusDB'";
