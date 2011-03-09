@@ -136,19 +136,56 @@ class user {
 	$myresult = $result->fields;
 	$checkhash = $myresult['password'];
 
-        if (!$result ||  $result->RowCount() < 1 || !$hasher->CheckPassword($password, $checkhash)) {
+	// check the password with the new phpass checkpassword function
+	$passwordmatch = $hasher->CheckPassword($password, $checkhash);
 
-          $feedback .=  " ERROR - User not found or password ".
-            "incorrect $user_name $password ";
+	// bcrypt hashes have '$2a$' header
+	// des ext hashes have '_' header
+	// portable md5 hashes have '$P$' header
+	// the old md5 passwords that should be upgraded have no header
+	$bcrypt_h = substr($checkhash, 0, 4);
+	$desext_h = substr($checkhash, 0, 1);
+	$portmd5_h = substr($checkhash, 0, 3);
+
+	if (($bcrypt_h != "$2a$") AND ($desext_h != "_") AND ($portmd5_h != "$P$")) {
+	  // the password must be an old md5 hash and must be upgraded to the new type
+	  // authenticate the old md5 password
+	  $passwordhashed = md5($password);
+	  if ($passwordhashed == $checkhash) {
+	    // upgrade it to the newer phpass password format
+	    $passwordmatch = 1;
+
+	    $newhash = $hasher->HashPassword($password);
+	    if (strlen($newhash) < 20) {
+	      $feedback .= "Failed to hash new password";
+	      return false;
+	    }
+	    
+	    $sql="UPDATE user SET password='$newhash' ".
+	      "WHERE username='$user_name'";
+	    $passresult=$DB->Execute($sql) or die ("Query Failed");
+
+	  } else {
+	    $passwordmatch = 0;
+	  }
+	 
+	}
 	
-          // keep track of login failures to stop them trying forever
-          $this->loginfailure($user_name);
+	// check the normal passwords are valid
 	
-          return false;
-        }
+	if (!$result ||  $result->RowCount() < 1 || !$passwordmatch) {
+	
+	$feedback .=  " ERROR - User not found or password ".
+	  "incorrect $user_name $password ";
+	
+	// keep track of login failures to stop them trying forever
+	$this->loginfailure($user_name);
+	
+	return false;
       }
+    }
 /* end of ldap mod */
-      {
+    {
 
 	$this->user_set_tokens($user_name);
 

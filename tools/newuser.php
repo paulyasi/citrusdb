@@ -70,11 +70,10 @@ $password1='';
 $password2='';
 $real_name='';
 
-echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
-	<script language=\"JavaScript\" src=\"include/verify.js\"></script>
+echo "<script language=\"JavaScript\" src=\"include/verify.js\"></script>
 	<H3>$l_addnewuser</H3>
 	<P>
-	<FORM ACTION=\"index.php\" METHOD=\"GET\">
+	<FORM ACTION=\"$ssl_url_prefix/index.php\" METHOD=\"GET\">
 	<B>$l_name:</B><BR>
 	<INPUT TYPE=\"TEXT\" NAME=\"real_name\" VALUE=\"\" SIZE=\"20\" MAXLENGTH=\"65\">
 	<P>
@@ -97,7 +96,7 @@ echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
 	<p>
 	<input type=hidden name=load value=newuser>
 	<input type=hidden name=type value=tools>
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_submit\" ".($ldap_enable?"":"onclick=\"if (validatePassword(password1.value) == 0) { return false; }; password1.value = calcMD5(password1.value); password2.value = calcMD5(password2.value);\"").">
+	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_submit\">
 	</FORM>";
 
 
