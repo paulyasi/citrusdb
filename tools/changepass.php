@@ -42,7 +42,7 @@ if ($feedback) {
 echo "<script language=\"JavaScript\" src=\"include/verify.js\"></script>
 	<H3>$l_changepassword</H3>
 	<P>
-	<FORM ACTION=\"$ssl_url_prefix/index.php\" METHOD=\"GET\">
+	<FORM ACTION=\"$ssl_url_prefix/index.php\" METHOD=\"POST\">
 	<input type=hidden name=load value=\"changepass\">
 	<input type=hidden name=type value=\"tools\">
 	<INPUT TYPE=\"hidden\" NAME=\"change_user_name\" VALUE=\"$user\" SIZE=\"10\" MAXLENGTH=\"32\">

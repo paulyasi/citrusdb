@@ -131,7 +131,7 @@ class user {
         // standard authentication method
 	$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
 	
-        $sql="SELECT password FROM user WHERE username='$user_name'";
+        $sql="SELECT password FROM user WHERE username='$user_name' LIMIT 1";
         $result = $DB->Execute($sql);
 	$myresult = $result->fields;
 	$checkhash = $myresult['password'];
@@ -162,7 +162,7 @@ class user {
 	    }
 	    
 	    $sql="UPDATE user SET password='$newhash' ".
-	      "WHERE username='$user_name'";
+	      "WHERE username='$user_name' LIMIT 1";
 	    $passresult=$DB->Execute($sql) or die ("Query Failed");
 
 	  } else {
