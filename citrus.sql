@@ -216,7 +216,7 @@ CREATE TABLE `customer` (
   `cancel_date` date default NULL,
   `removal_date` date default NULL,
   `default_billing_id` int(10) unsigned NOT NULL default '0',
-  `account_manager_password` varchar(32) default NULL,
+  `account_manager_password` varchar(60) default NULL,
   `cancel_reason` int(11) NULL,
   `notes` text, 
   PRIMARY KEY  (`account_number`)

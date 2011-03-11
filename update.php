@@ -956,7 +956,12 @@ if ($base->input['submit'] == "Update")
 	if ($databaseversion == "2.3") {
 	  $query = "ALTER TABLE  `user` ADD UNIQUE (`username`)";
 
+	  // increase size of password field to hold new bcrypt length passwords
 	  $query = "ALTER TABLE  `user` CHANGE  `password`  `password` VARCHAR( 60 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT  ''";
+
+	  // increase size of account_manager_password field to hold bcrypt length passwords
+	  $query = "ALTER TABLE  `customer` CHANGE  `account_manager_password`  `account_manager_password` VARCHAR( 60 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL
+";
 
 	  // set the version number in the database to 2.3.1
 	  $query = "UPDATE `settings` SET `version` = '2.3.1' ".

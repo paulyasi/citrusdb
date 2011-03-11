@@ -147,7 +147,7 @@ class user {
 	$desext_h = substr($checkhash, 0, 1);
 	$portmd5_h = substr($checkhash, 0, 3);
 
-	if (($bcrypt_h != "$2a$") AND ($desext_h != "_") AND ($portmd5_h != "$P$")) {
+	if (($bcrypt_h != '$2a$') AND ($desext_h != '_') AND ($portmd5_h != '$P$')) {
 	  // the password must be an old md5 hash and must be upgraded to the new type
 	  // authenticate the old md5 password
 	  $passwordhashed = md5($password);
