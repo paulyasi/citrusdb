@@ -22,6 +22,8 @@ require_once('./include/permissions.inc.php');
 // GET Variables
 if (!isset($base->input['undelete'])) { $base->input['undelete'] = ""; }
 $undelete = $base->input['undelete'];
+if (!isset($base->input['resetamp'])) { $base->input['resetamp'] = ""; }
+$resetamp = $base->input['resetamp'];
 
 
 if ($edit) {
@@ -36,6 +38,10 @@ if ($edit) {
     if ($pallow_remove) {
        include('./modules/customer/delete.php');
     } else permission_error();
+ } else if ($resetamp) {
+    if ($pallow_remove) {
+       include('./modules/customer/resetamp.php');
+    } else permission_error();        
  } else if ($undelete) {
   if ($pallow_remove) {
     include('./modules/customer/undelete.php');
@@ -187,9 +193,13 @@ echo
   "<td><b>$l_country</b></td>".
   "<td>$country</td><tr>".
   
-  "<td><b>$l_acctmngrpasswd</b></td>".
-  "<td>$account_manager_password</td><tr>".
-  
+  "<td><b>$l_acctmngrpasswd</b></td>";
+  if ($account_manager_password) { 
+    echo "<td><a href=\"$url_prefix/index.php?load=customer&type=module&resetamp=on\">$l_reset</a></td><tr>";
+  } else {
+    echo "<td><a href=\"$url_prefix/index.php?load=customer&type=module&resetamp=on\">$l_notset</a></td><tr>";
+  }
+    echo 
   "</table></td></table></form>";
 //end of second column
 
