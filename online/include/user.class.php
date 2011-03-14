@@ -74,6 +74,8 @@ class user {
       $result = $DB->Execute($sql);
       $myresult = $result->fields;
       $checkhash = $myresult['account_manager_password'];
+
+      
       
       // check the password with the new phpass checkpassword function
       $passwordmatch = $hasher->CheckPassword($password, $checkhash);
