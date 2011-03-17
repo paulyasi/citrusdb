@@ -955,12 +955,20 @@ if ($base->input['submit'] == "Update")
 
 	if ($databaseversion == "2.3") {
 	  $query = "ALTER TABLE  `user` ADD UNIQUE (`username`)";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";	  	  
 
-	  // make the password field 60 characters long to hold bcrypt passwords
-	  $query = "ALTER TABLE  `user` CHANGE  `password`  `password` VARCHAR( 60 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT  ''";
-
+	  // increase size of password field to hold new bcrypt length passwords
+	  $query = "ALTER TABLE  `user` CHANGE  `password`  `password` VARCHAR( 60 ) NOT NULL DEFAULT  ''";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
 	  
-
+	  // increase size of account_manager_password field to hold bcrypt length passwords
+	  $query = "ALTER TABLE  `customer` CHANGE  `account_manager_password`  ".
+	    "`account_manager_password` VARCHAR( 60 ) NULL DEFAULT NULL";
+	  $result = $DB->Execute($query) or die ("$query failed");
+	  echo "$query<br>\n";
+	  
 	  // set the version number in the database to 2.3.1
 	  $query = "UPDATE `settings` SET `version` = '2.3.1' ".
 	    "WHERE `id` =1 LIMIT 1";
@@ -971,7 +979,7 @@ if ($base->input['submit'] == "Update")
 	echo "<center><h2>Database Updated</h2></center>";
 }
 else 
-{
+v{
 	$query = "SELECT * FROM general";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$result = $DB->Execute($query) or die ("query failed");

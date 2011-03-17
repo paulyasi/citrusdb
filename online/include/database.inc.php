@@ -27,4 +27,22 @@ $DB->Connect($sys_dbhost, $sys_dbuser, $sys_dbpasswd, $sys_dbname);
 // include the session2 system from adodb
 include_once("./include/adodb/session/adodb-session2.php");
 ADOdb_Session::config($sys_dbtype, $sys_dbhost, $sys_dbuser, $sys_dbpasswd, $sys_dbname,$options=false);
+
+/*--------------------------------------------------------------------*/
+// check for too many login falures
+/*--------------------------------------------------------------------*/
+function checkfailures() {
+  global $DB;
+  $ipaddress = $_SERVER["REMOTE_ADDR"];
+  $query = "SELECT * FROM login_failures WHERE ip = '$ipaddress' ".
+    "AND DATE(logintime) = CURRENT_DATE";
+  $result = $DB->Execute($query);
+  $attempts = $result->RowCount();
+  if ($attempts > 5) {
+    return TRUE;
+  } else {
+    return FALSE;
+  }
+}
+
 ?>

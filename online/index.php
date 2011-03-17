@@ -1,7 +1,7 @@
 <?php
 /*----------------------------------------------------------------------------*/
 // CitrusDB - The Open Source Customer Database
-// Copyright (C) 2005-2006 Paul Yasi
+// Copyright (C) 2005-2011 Paul Yasi
 //
 // This program is free software; you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software 
@@ -24,6 +24,7 @@ include('./include/config.inc.php');
 include('./include/database.inc.php');
 
 // Get our user class
+include('./include/PasswordHash.php');
 include('./include/user.class.php');
 $u = new user();
 
@@ -31,18 +32,24 @@ $u = new user();
 require './include/citrus_base.php';
 $base = new citrus_base();
 
+// kick you out if you have 5 failed logins from the same ip
+$failures = checkfailures();
+if ($failures) {
+  echo "Login Failure.  Please Contact Customer Service";
+  die;
+}
+
 if (!isset($base->input['submit'])) { $base->input['submit'] = ""; }
 if (!isset($base->input['cmd'])) { $base->input['cmd'] = ""; }
 
 $submit = $base->input['submit'];
 
 if ($submit) {
-	// check the user login information
-	$u->user_login($base->input['user_name'],$base->input['password']);
-	
-	// redirect back to this page to set any cookies properly
-        print "<script language=\"JavaScript\">window.location.href =
-\"index.php\";</script>";
+  // check the user login information
+  $u->user_login($base->input['user_name'],$base->input['password']);
+  
+  // redirect back to this page to set any cookies properly
+  print "<script language=\"JavaScript\">window.location.href = \"index.php\";</script>";
 }
 
 //echo '<pre>';
@@ -500,7 +507,7 @@ function dehnew(oR) {
 	<P>
 	$l_logintext
 	<P>
-	<FORM ACTION=\"index.php\" METHOD=\"POST\" AUTOCOMPLETE=\"off\">
+	<FORM ACTION=\"$ssl_url_prefix/index.php\" METHOD=\"POST\" AUTOCOMPLETE=\"off\">
 	<B>$l_accountnumber:</B><BR>
 	<INPUT TYPE=\"TEXT\" NAME=\"user_name\" VALUE=\"\" SIZE=\"15\" MAXLENGTH=\"15\">
 	<P>

@@ -6,105 +6,178 @@
 
 class user {
 	
-	var $LOGGED_IN=false;
+  var $LOGGED_IN=false;
+
+  //base-2 logarithm of the iteration count for password stretching
+  var $hash_cost_log2 = 8;
+
+  // do we require the hashes to be portable to older systems (less secure)?
+  // bcrypt hashes have '$2a$' header
+  // des ext hashes have '_'
+  // portable md5 hashes have '$P$' header
+  var $hash_portable = FALSE;
+
+  
+  /*--------------------------------------------------------------------*/
+  // Constructor - initialize class
+  /*--------------------------------------------------------------------*/
+  function user() {
+    //clear it out in case someone sets it in the URL or something
+    unset($LOGGED_IN);
+  }
+  
+  /*--------------------------------------------------------------------*/
+  // Check if they are logged in
+  /*--------------------------------------------------------------------*/
+  function user_isloggedin() {
+    
+    global $hidden_hash_var,$LOGGED_IN;
+    
+    //if we already ran the hash checks, return the pre-set var
+    if (isset($LOGGED_IN)) {
+      return $LOGGED_IN;
+    }
+    if (!isset($_COOKIE['user_name'])) {
+      $_COOKIE['user_name'] = "";
+    }	
+    if ($_COOKIE['user_name'] && $_COOKIE['id_hash']) {
+      $hash=md5($_COOKIE['user_name'].$hidden_hash_var);
+      if ($hash == $_COOKIE['id_hash']) {
+	$LOGGED_IN=true;
+	return true;
+      } else {
+	$LOGGED_IN=false;
+	return false;
+      }
+    } else {
+      $LOGGED_IN=false;
+      return false;
+    }
+  }
+  
+  /*--------------------------------------------------------------------*/
+  // Log in the user
+  /*--------------------------------------------------------------------*/
+  function user_login($user_name,$password) {
+    
+    global $feedback, $DB;
+    
+    if (!$user_name || !$password) {
+      $feedback .=  ' ERROR - Missing user name or password ';
+      return false;
+    } else {
+      $user_name=strtolower($user_name);
+
+      $hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
+      
+      $sql="SELECT account_manager_password FROM customer where account_number='$user_name' LIMIT 1";      
+      $result = $DB->Execute($sql);
+      $myresult = $result->fields;
+      $checkhash = $myresult['account_manager_password'];
+
+      
+      
+      // check the password with the new phpass checkpassword function
+      $passwordmatch = $hasher->CheckPassword($password, $checkhash);
+      
+      // bcrypt hashes have '$2a$' header
+      // des ext hashes have '_' header
+      // portable md5 hashes have '$P$' header
+      // the old md5 passwords that should be upgraded have no header
+      $bcrypt_h = substr($checkhash, 0, 4);
+      $desext_h = substr($checkhash, 0, 1);
+      $portmd5_h = substr($checkhash, 0, 3);
+
+      if (($bcrypt_h != '$2a$') AND ($desext_h != '_') AND ($portmd5_h != '$P$')) {
+	// the password must be in the old format and must be upgraded to the new type
+	if ($password == $checkhash) {
+	  // upgrade it to the newer phpass password format
+	  $passwordmatch = 1;
+	  
+	  $newhash = $hasher->HashPassword($password);
+	  if (strlen($newhash) < 20) {
+	    $feedback .= "Failed to hash new password";
+	    return false;
+	  }
+          
+	  $sql="UPDATE customer SET account_manager_password='$newhash' ".
+	    "WHERE account_number='$user_name' LIMIT 1";
+	  $passresult=$DB->Execute($sql) or die ("Query Failed");
+	  
+	} else {
+	  $passwordmatch = 0;
+	}
+         
+      }      
+      
+      if (!$result || $result->RowCount() < 1 || !$passwordmatch){
+	$feedback .=  " ERROR - User not found or password incorrect";
+
+	// keep track of login failures to stop them trying forever
+        $this->loginfailure($user_name);
+
+	return false;
+      } else {
+	$this->user_set_tokens($user_name);
+
+	//$sql="UPDATE user SET remote_addr='$GLOBALS[REMOTE_ADDR]' WHERE username='$user_name'";
+	//$result = $DB->Execute($sql);
 	
-	/*--------------------------------------------------------------------*/
-	// Constructor - initialize class
-	/*--------------------------------------------------------------------*/
-	function user() {
-		//clear it out in case someone sets it in the URL or something
-		unset($LOGGED_IN);
+	if (!$result) {
+	  $feedback .= ' ERROR - ';
+	  return false;
+	} else {
+	  $feedback .=  ' SUCCESS - You Are Now Logged In ';
+	  return true;
 	}
+      }
+    }
+  }
+  
+  /*--------------------------------------------------------------------*/
+  // Logout the user
+  /*--------------------------------------------------------------------*/
+  function user_logout() {
+    setcookie('user_name','',(time()+2592000),'/','',0);
+    setcookie('id_hash','',(time()+2592000),'/','',0);
+  }
 
-	/*--------------------------------------------------------------------*/
-	// Check if they are logged in
-	/*--------------------------------------------------------------------*/
-	function user_isloggedin() {
-		
-		global $hidden_hash_var,$LOGGED_IN;
-		
-		//if we already ran the hash checks, return the pre-set var
-		if (isset($LOGGED_IN)) {
-			return $LOGGED_IN;
-		}
-		if (!isset($_COOKIE['user_name'])) {
-			$_COOKIE['user_name'] = "";
-		}	
-		if ($_COOKIE['user_name'] && $_COOKIE['id_hash']) {
-			$hash=md5($_COOKIE['user_name'].$hidden_hash_var);
-			if ($hash == $_COOKIE['id_hash']) {
-				$LOGGED_IN=true;
-				return true;
-			} else {
-				$LOGGED_IN=false;
-				return false;
-			}
-		} else {
-			$LOGGED_IN=false;
-			return false;
-		}
-	}
+  /*--------------------------------------------------------------------*/
+  // keep track of failed login attempts from IP addresses
+  /*--------------------------------------------------------------------*/
+  function loginfailure($user_name) {
 
-	/*--------------------------------------------------------------------*/
-	// Log in the user
-	/*--------------------------------------------------------------------*/
-	function user_login($user_name,$password) {
-		
-		global $feedback, $DB;
-		
-		if (!$user_name || !$password) {
-			$feedback .=  ' ERROR - Missing user name or password ';
-			return false;
-		} else {
-			$user_name=strtolower($user_name);
-			//$password=strtolower($password);
-			$sql="select * from customer where account_number='$user_name' and account_manager_password='$password'";
-			$result = $DB->Execute($sql);
-			if (!$result || $result->RowCount() < 1){
-				$feedback .=  " ERROR - User not found or password incorrect $user_name $password ";
-				return false;
-			} else {
-				$this->user_set_tokens($user_name);
-				//$sql="UPDATE user SET remote_addr='$GLOBALS[REMOTE_ADDR]' WHERE username='$user_name'";
-				//$result = $DB->Execute($sql);
-				//if (!$result) {
-				//	$feedback .= ' ERROR - ';
-				//	return false;
-				//} else {
-				//	$feedback .=  ' SUCCESS - You Are Now Logged In ';
-				//	return true;
-				//}
-			}
-		}
-	}
+    global $DB;
+    
+    $ipaddress = $_SERVER["REMOTE_ADDR"];
+    
+    $query="INSERT INTO login_failures(ip,logintime) ".
+            "VALUES ('$ipaddress',CURRENT_TIMESTAMP)";
+    $result=$DB->Execute($query) or die ("Log Insert Failed");
 
-	/*--------------------------------------------------------------------*/
-	// Logout the user
-	/*--------------------------------------------------------------------*/
-	function user_logout() {
-		setcookie('user_name','',(time()+2592000),'/','',0);
-		setcookie('id_hash','',(time()+2592000),'/','',0);
-	}
+  }
 
-	/*--------------------------------------------------------------------*/
-	// Set the cookie tokens
-	/*--------------------------------------------------------------------*/
-	function user_set_tokens($user_name_in) {
-		global $hidden_hash_var,$user_name,$id_hash;
-		if (!$user_name_in) {
-			$feedback .=  ' ERROR - User Name Missing When Setting Tokens ';
-			return false;
-		}
-		$user_name=strtolower($user_name_in);
-		$id_hash= md5($user_name.$hidden_hash_var);
-		
-		setcookie('user_name',$user_name,(time()+3600),'/','',0);
-		setcookie('id_hash',$id_hash,(time()+3600),'/','',0);
-	}
-
-	/*--------------------------------------------------------------------*/
-	// Change the password for the user
-	/*--------------------------------------------------------------------*/
+  
+  
+  /*--------------------------------------------------------------------*/
+  // Set the cookie tokens
+  /*--------------------------------------------------------------------*/
+  function user_set_tokens($user_name_in) {
+    global $hidden_hash_var,$user_name,$id_hash;
+    if (!$user_name_in) {
+      $feedback .=  ' ERROR - User Name Missing When Setting Tokens ';
+      return false;
+    }
+    $user_name=strtolower($user_name_in);
+    $id_hash= md5($user_name.$hidden_hash_var);
+    
+    setcookie('user_name',$user_name,(time()+3600),'/','',0);
+    setcookie('id_hash',$id_hash,(time()+3600),'/','',0);
+  }
+  
+  /*--------------------------------------------------------------------*/
+  // Change the password for the user
+  /*--------------------------------------------------------------------*/
 	function user_change_password ($new_password1,$new_password2,$change_user_name,$old_password) {
 		global $feedback;
 		//new passwords present and match?

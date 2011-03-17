@@ -75,7 +75,6 @@ if ($base->input['save']) {
   $contact_email = $base->input['contact_email'];
   $secret_question = $base->input['secret_question'];
   $secret_answer = $base->input['secret_answer'];
-  $account_manager_password = $base->input['account_manager_password'];
   $cancel_date = $base->input['cancel_date'];
   //$removal_date = $base->input['removal_date'];
   $account_number = $_SESSION['account_number'];
@@ -112,8 +111,7 @@ if ($base->input['save']) {
       "secret_answer = '$secret_answer', ".
       "cancel_date = NULL, ".
       "cancel_reason = NULL, ".
-      "notes = '$notes', ".
-      "account_manager_password = '$account_manager_password' ".
+      "notes = '$notes' ".
       "WHERE account_number = '$account_number'";
   } else {
     // there is a cancel date, so put there in there
@@ -134,8 +132,7 @@ if ($base->input['save']) {
       "secret_answer = '$secret_answer', ".
       "cancel_date = '$cancel_date', ".
       "cancel_reason = '$cancel_reason', ".
-      "notes = '$notes', ".
-      "account_manager_password = '$account_manager_password' ".
+      "notes = '$notes' ".
       "WHERE account_number = '$account_number'";
   }
   $result = $DB->Execute($query) or die ("$l_queryfailed");
@@ -201,7 +198,6 @@ if ($base->input['save']) {
      $secret_question = $myresult['secret_question'];
      $secret_answer = $myresult['secret_answer'];
      $default_billing_id = $myresult['default_billing_id'];
-     $account_manager_password = $myresult['account_manager_password'];
      $cancel_date = $myresult['cancel_date'];
      $cancel_reason = $myresult['cancel_reason'];
      $notes = $myresult['notes'];
@@ -238,7 +234,6 @@ echo "<td bgcolor=\"#ccccdd\"><b>$l_source</b></td><td bgcolor=\"#ddddee\"><inpu
 	<td bgcolor=\"#ccccdd\"><b>$l_secret_answer</b></td><td bgcolor=\"#ddddee\"><input name=\"secret_answer\" type=text value=\"$secret_answer\"></td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_defaultbillingid</b></td><td bgcolor=\"#ddddee\"><input type=hidden name=default_billing_id value=\"$default_billing_id\">$default_billing_id</td><tr>
 	<td bgcolor=\"#ccccdd\"><b>$l_country</b></td><td bgcolor=\"#ddddee\"><input name=\"country\" type=text value=\"$country\"></td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_acctmngrpasswd</b></td><td bgcolor=\"#ddddee\"><input name=\"account_manager_password\" type=text value=\"$account_manager_password\"></td><tr>
 
 <td width=180 bgcolor=\"#ccccdd\"><b>$l_cancelreason</b></td><td width=180 bgcolor=\"#ddddee\">";
 

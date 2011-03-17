@@ -32,7 +32,8 @@ include('./include/services.inc.php');
 
 //$DB->debug = true;
 
-// Get our user class
+// Get our user and password hash class
+include('./include/PasswordHash.php');
 include('./include/user.class.php');
 $u = new user();
 
@@ -402,7 +403,6 @@ function dehnew(oR) {
 	oR.style.backgroundColor='ddeeff';
 }
 </script>
-<script language=\"JavaScript\" src=\"include/md5.js\"></script>
 <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
 </head>
 <body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>
@@ -419,7 +419,7 @@ function dehnew(oR) {
 	<B>$l_password</B><BR>
 	<INPUT TYPE=\"password\" NAME=\"password\" VALUE=\"\" SIZE=\"15\" MAXLENGTH=\"32\">
 	<P>
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_login\"  ".($ldap_enable?"":"onclick=\"password.value = calcMD5(password.value)\" ")."class=smallbutton>
+	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_login\" class=smallbutton>
 	</FORM>
 	<P></td></table></div></div></body></html>";
 }

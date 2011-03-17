@@ -662,7 +662,7 @@ CREATE TABLE `taxed_services` (
 CREATE TABLE `user` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `username` varchar(50) NOT NULL default '',
-  `password` varchar(32) NOT NULL default '',
+  `password` varchar(60) NOT NULL default '',
   `real_name` varchar(50) NOT NULL default '',
   `admin` enum('y','n') NOT NULL default 'n',
   `manager` enum('y','n') NOT NULL default 'n',
