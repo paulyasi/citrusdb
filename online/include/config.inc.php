@@ -15,12 +15,12 @@ $sys_dbuser = 'phpass';
 $sys_dbpasswd = 'phpass';
 $sys_dbname = 'phpass';
 $sys_dbtype = 'mysql';
-$path_to_citrus = '/users/pyasi/citrus_project/phpass/online';
+$path_to_citrus = '/users/pyasi/citrus_project/citrusdb/online';
 $hidden_hash_var='youmusalsotchangethis';
 $payment_url = 'https://www.example.com/payment.cgi';
 $notify_user = 'online';
-$url_prefix = "http://ubuntu/~pyasi/citrus_project/phpass/online";
-$ssl_url_prefix = "https://ubuntu/~pyasi/citrus_project/phpass/online";
+$url_prefix = "http://ubuntu/~pyasi/citrus_project/citrusdb/online";
+$ssl_url_prefix = "https://ubuntu/~pyasi/citrus_project/citrusdb/online";
 
 // include localization file
 include('./include/local/us-english.inc.php');

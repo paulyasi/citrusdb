@@ -93,7 +93,7 @@ if ($base->input['save']) {
 <a href=\"$url_prefix/index.php?load=search&type=base\">[ $l_undochanges ]</a>
 <table cellpadding=0 border=0 cellspacing=0 width=720>
 <td valign=top width=720>
-<form action=\"index.php\">
+<form action=\"index.php\" method=POST>
         <table cellpadding=5 cellspacing=1 border=0 width=720>
 ";
 

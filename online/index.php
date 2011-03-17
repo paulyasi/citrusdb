@@ -49,7 +49,7 @@ if ($submit) {
   $u->user_login($base->input['user_name'],$base->input['password']);
   
   // redirect back to this page to set any cookies properly
-  print "<script language=\"JavaScript\">window.location.href = \"index.php\";</script>";
+  print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php\";</script>";
 }
 
 //echo '<pre>';
