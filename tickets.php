@@ -37,9 +37,9 @@ if ($pending) {
   $query = "UPDATE customer_history SET status = \"pending\" WHERE id = $id";
   $result = $DB->Execute($query) or die ("$l_queryfailed");
   if ($ticketgroup) {
-    //print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup\";</script>";
+    print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup\";</script>";
   } else {
-    //print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user\";</script>";
+    print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user\";</script>";
   }
  } else if ($completed) {
   /*--------------------------------------------------------------------------*/
@@ -194,7 +194,7 @@ if ($pending) {
       print "<form action=\"$url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">".
 	"<input type=hidden name=load value=tickets>".
 	"<input type=hidden name=type value=base>".
-	"<input type=hidden name=pending value=on>".
+	"<input type=hidden name=completed value=on>".
 	"<input type=hidden name=ticketgroup value=\"$notify\">".
 	"<input type=hidden name=id value=$id>".
 	"<input type=submit value=\"$l_finished\" class=smallbutton></form>";
@@ -315,9 +315,35 @@ if ($pending) {
     // end the table block
     echo "</td>";
     
-    print "<tr><td colspan=8 style=\"text-align: right;\"><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";
-    print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&pending=on&id=$id\">$l_pending</a>"; 
-    print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&completed=on&id=$id\">$l_finished</a></td></table>";
+    print "<tr><td colspan=8 align=right>";
+    print "<table><td>";
+    print "<form action=\"$url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">".
+      "<input type=hidden name=load value=viewticket>".
+      "<input type=hidden name=type value=fs>".
+      "<input type=hidden name=ticket value=$id>".
+      "<input type=hidden name=acnum value=$accountnum>".
+      "<input type=submit value=\"$l_edit\" class=\"smallbutton\"></form>";
+    print "</td><td>";
+    print "<form action=\"$url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">\n".
+      "<input type=hidden name=load value=tickets>\n".
+      "<input type=hidden name=type value=base>\n".
+      "<input type=hidden name=pending value=on>\n".
+      "<input type=hidden name=id value=$id>\n".
+      "<input type=submit value=\"$l_pending\" class=\"smallbutton\"></form>";
+    print "</td><td>";
+    print "<form action=\"$url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">".
+      "<input type=hidden name=load value=tickets>".
+      "<input type=hidden name=type value=base>".
+      "<input type=hidden name=completed value=on>".
+      "<input type=hidden name=id value=$id>".
+      "<input type=submit value=\"$l_finished\" class=smallbutton></form>";
+    
+    print "</td></table>";
+    
+    
+    //<a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$l_edit</a>";
+    //print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&pending=on&id=$id\">$l_pending</a>"; 
+    //print " | <a href=\"$url_prefix/index.php?load=tickets&type=base&completed=on&id=$id\">$l_finished</a></td></table>";
   }
 
   echo '</table><br>';
