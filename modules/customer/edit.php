@@ -154,7 +154,7 @@ if ($base->input['save']) {
     
     // if they hit yes, this will sent them into the billingaddress update
     
-    print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+    print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
     print "<input type=hidden name=load value=customer>";
     print "<input type=hidden name=type value=module>";
     print "<input type=hidden name=edit value=on>";
@@ -162,7 +162,7 @@ if ($base->input['save']) {
     
     // if they hit no, send them back to the service edit screen
     
-    print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\">";
+    print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
     print "<input name=done type=submit value=\" $l_no \" class=smallbutton>";
     print "<input type=hidden name=load value=customer>";        
     print "<input type=hidden name=type value=module>";

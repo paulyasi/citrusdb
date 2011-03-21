@@ -31,7 +31,7 @@ $now = $base->input['now'];
 if ($whycancel) {
   // ask what reason they are canceling
   print "$l_whycanceling<p>";
-  print "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"cancelform\">";
+  print "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"cancelform\" method=post>";
   print "<input type=hidden name=load value=customer>";        
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=delete value=on>";
@@ -185,7 +185,7 @@ if ($whycancel) {
     
     // if they hit yes, this will sent them into the delete.php file and remove the service on their next billing anniversary
     
-    print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+    print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
     print "<input type=hidden name=load value=customer>";
     print "<input type=hidden name=type value=module>";
     print "<input type=hidden name=delete value=on>";
@@ -194,7 +194,7 @@ if ($whycancel) {
     // if they hit no, send them back to the service edit screen
     
     print "<td align=left width=240>";
-    print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+    print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
     print "<input type=hidden name=load value=customer>";        
     print "<input type=hidden name=type value=module>";
     print "<input name=done type=submit value=\" $l_no \" class=smallbutton>";
@@ -204,7 +204,7 @@ if ($whycancel) {
     // work date, the next valid billing date
     
     print "<td align=left width=240>";
-    print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+    print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
     print "<input type=hidden name=load value=customer>";        
     print "<input type=hidden name=type value=module>";
     print "<input type=hidden name=delete value=on>";
