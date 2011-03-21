@@ -64,7 +64,7 @@ if ($save) {
   // print the yes/no confirmation form
   print "<br><br>";
   print "<table cellpadding=15 cellspacing=0 border=0 width=520><td><center>";
-  print "<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">";
+  print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post name=\"form1\">";
 
   print "$l_send_cancel_notice_question $human_cancel? <p>";
   print "<input type=hidden name=cancel_date value=$cancel_date>";
@@ -75,7 +75,7 @@ if ($save) {
   print "<input type=hidden name=billing_id value=$billing_id>";
   
   print "<input name=save type=submit value=\" $l_yes \" class=smallbutton></form></center></td>";
-  print "</td><td><form style=\"margin-bottom:0;\" action=\"index.php\">";
+  print "</td><td><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
   print "<input name=done type=submit value=\" $l_no  \" class=smallbutton>";
   print "<input type=hidden name=load value=billing>";
   print "<input type=hidden name=type value=module>";

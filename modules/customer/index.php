@@ -120,8 +120,8 @@ if ($edit) {
    }
   // print the HTML table
   echo "<table cellpadding=0 border=0 cellspacing=1 width=719>".
-  "<td valign=top width=259 style=\"background-color: #dde;\">".
-  "<table cellpadding=4 cellspacing=0 border=0 width=259>".
+    "<td valign=top width=259 style=\"background-color: #dde;\">".
+    "<table cellpadding=4 cellspacing=0 border=0 width=259>".
   
   "<tr>".
   //"<td width=180><b>$l_name</b></td>".
@@ -199,8 +199,7 @@ echo
   } else {
     echo "<td><a href=\"$url_prefix/index.php?load=customer&type=module&resetamp=on\">$l_notset</a></td><tr>";
   }
-    echo 
-  "</table></td></table></form>";
+    echo "</table></td></table></form>";
 //end of second column
 
  echo "<p>";

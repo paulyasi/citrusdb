@@ -39,7 +39,7 @@ echo "
 <p>
 $l_areyousureadd $account_number
 <p>
-<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\">
+<form style=\"margin-bottom:0;\" action=\"index.php\" name=\"form1\" method=post>
 <input type=hidden name=load value=billing>
 <input type=hidden name=type value=module>
 <input type=hidden name=create value=on>

@@ -345,7 +345,7 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
     "<a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | ".
     "<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">$l_refund</a>".
     "</td><td>".
-    "<form name=status$billing_id style=\"margin-bottom:0;\">".
+    "<form name=status$billing_id style=\"margin-bottom:0;\" method=post>".
     "<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.status$billing_id.menu.options[document.status$billing_id.menu.selectedIndex].value;\" value=GO>".
     "<option value=\"\">$l_changestatus</option>".
     "<option value=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">- $l_turnoff</option>".
@@ -355,7 +355,7 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
     "<option value=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">- $l_collections</option>".    
     "</select></form>".
     "</td><td>".
-    "<form name=notice$billing_id style=\"margin-bottom:0;\">".
+    "<form name=notice$billing_id style=\"margin-bottom:0;\" method=post>".
     "<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.notice$billing_id.menu.options[document.notice$billing_id.menu.selectedIndex].value;\" value=GO>".
     "<option value=\"\">$l_invoiceornotice</option>".
     "<option value=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">- $l_createinvoice</option> | ".

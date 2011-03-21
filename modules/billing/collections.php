@@ -41,7 +41,7 @@ else
     print "<br><br>";
     print "<h4>$l_areyousurecollections</h4>";
     print "<table cellpadding=15 cellspacing=0 border=0 width=720><td align=right width=360>";
-    print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+    print "<form style=\"margin-bottom:0;\" action=\"index.php\" METHOD=POST>";
     print "<input type=hidden name=load value=billing>";
     print "<input type=hidden name=type value=module>";
     print "<input type=hidden name=collections value=on>";

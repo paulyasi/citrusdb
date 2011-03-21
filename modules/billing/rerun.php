@@ -166,7 +166,7 @@ if ($save) {
     print "<input name=save type=submit value=\" $l_yes \" class=smallbutton>".
       "</form></td>";
     print "<td align=left width=360><form style=\"margin-bottom:0;\" ".
-      "action=\"index.php\">";
+      "action=\"index.php\" method=post>";
     
     print "<input type=hidden name=load value=billing>";
     print "<input type=hidden name=type value=module>";
