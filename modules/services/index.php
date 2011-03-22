@@ -201,7 +201,7 @@ if ($edit) {
      if ($service_organization_id <> $billing_organization_id) {
        print "<b>$l_orgmismatch</b>";
      }
-     print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+     print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
      print "<input type=hidden name=load value=services>";
      print "<input type=hidden name=type value=module>";
      print "<input type=hidden name=edit value=on>";
@@ -211,7 +211,7 @@ if ($edit) {
      print "<input name=editbutton type=submit value=\"$l_edit\" ".
        "class=smallbutton></form>";
 
-     print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+     print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
      print "<input type=hidden name=load value=support>";
      print "<input type=hidden name=type value=module>";
      print "<input type=hidden name=serviceid value=\"$id\">";     
@@ -329,7 +329,7 @@ function checktaxes($DB, $user_services_id) {
 	  "<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
 	  "colspan=4>$tax_amount</td>".
 	  "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
-	  "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+	  "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
 	  "<input type=hidden name=load value=services>".
 	  "<input type=hidden name=type value=module>".
 	  "<input type=hidden name=edit value=on>".
@@ -346,7 +346,7 @@ function checktaxes($DB, $user_services_id) {
 	  "colspan=4>$l_exempt: $customer_tax_id ".
 	  "$customer_tax_id_expdate</td>".
 	  "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
-	  "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+	  "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
 	  "<input type=hidden name=load value=services>".
 	  "<input type=hidden name=type value=module>".
 	  "<input type=hidden name=edit value=on>".

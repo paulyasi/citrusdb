@@ -62,7 +62,7 @@ if ($ship) {
 
   // print a form that asks for info about what the asset they are assigning
 
-  print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+  print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
     "<table width=720 cellpadding=5 cellspacing=1 border=0>";
   print "<input type=hidden name=userserviceid value=$userserviceid>";
   print "<input type=hidden name=load value=services>";
@@ -98,7 +98,7 @@ if ($ship) {
  } else if ($return) {
 
   // ask for return date and return notes and send to returned  
-  print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+  print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
     "<table width=720 cellpadding=5 cellspacing=1 border=0>";
   print "<input type=hidden name=userserviceid value=$userserviceid>";
   print "<input type=hidden name=load value=services>";

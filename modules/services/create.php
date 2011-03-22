@@ -119,7 +119,7 @@ if ($addnow) {
     "</script>";	
 	
   print "<h4>$l_addingservice: $servicename ($service_org_name)</h4>".
-    "<form action=\"index.php\" name=\"AddService\">".
+    "<form action=\"index.php\" name=\"AddService\" method=post>".
     "<table width=720 cellpadding=5 cellspacing=1 border=0>\n";
   print "<input type=hidden name=load value=services>\n";
   print "<input type=hidden name=type value=module>\n";
@@ -329,7 +329,7 @@ if ($addnow) {
     $previouscategory = $category;
 		
     // print service listing
-    printf("<tr onmouseover='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&create=on&serviceid=$myrow[0]&addbutton=Add\";' bgcolor=\"#ddddee\"><td>%s</td><td>%s</td><td>$%s</td><td>%s</td><td>%s</td><td align=center><form  style=\"margin-bottom:0;\" action=\"index.php\"><input type=hidden name=load value=services><input type=hidden name=type value=module><input type=hidden name=create value=on><input type=hidden name=serviceid value=$myrow[0]><input name=addbutton type=submit value=\"$l_add\" class=smallbutton></form></td></tr>\n", $myrow[0], $myrow[1], $myrow[2], $myrow[3], $myrow[13]); 
+    printf("<tr onmouseover='h(this);' onmouseout='deh(this);' onmousedown='window.location.href=\"index.php?load=services&type=module&create=on&serviceid=$myrow[0]&addbutton=Add\";' bgcolor=\"#ddddee\"><td>%s</td><td>%s</td><td>$%s</td><td>%s</td><td>%s</td><td align=center><form style=\"margin-bottom:0;\" action=\"index.php\" method=post><input type=hidden name=load value=services><input type=hidden name=type value=module><input type=hidden name=create value=on><input type=hidden name=serviceid value=$myrow[0]><input name=addbutton type=submit value=\"$l_add\" class=smallbutton></form></td></tr>\n", $myrow[0], $myrow[1], $myrow[2], $myrow[3], $myrow[13]); 
 
     // print the list of linked services under the service they are linked to      
     $query = "SELECT mfrom.id mfrom_id, ".

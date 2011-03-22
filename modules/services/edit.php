@@ -200,7 +200,7 @@ if ($save) {
   // if they hit yes, this will sent them into the delete.php file
   // and remove the service
 
-  print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+  print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
     "<input type=hidden name=optionstable value=$optionstable>";
   print "<input type=hidden name=userserviceid value=$userserviceid>";
   print "<input type=hidden name=load value=services>";
@@ -209,7 +209,7 @@ if ($save) {
   print "<input name=deletenow type=submit value=\" $l_deleteservice_removeuser $removal_date\" ".
     "class=smallbutton></form></td>";
 
-  print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\">".
+  print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
     "<input type=hidden name=optionstable value=$optionstable>";
   print "<input type=hidden name=userserviceid value=$userserviceid>";
   print "<input type=hidden name=load value=services>";
@@ -222,7 +222,7 @@ if ($save) {
   // and remove the service
 
   
-  print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\">".
+  print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
     "<input type=hidden name=optionstable value=$optionstable>";
   print "<input type=hidden name=userserviceid value=$userserviceid>";
   print "<input type=hidden name=load value=services>";
@@ -234,7 +234,7 @@ if ($save) {
   // if they hit no, send them back to the service edit screen
 
   print "<td align=left><form style=\"margin-bottom:0;\" ".
-    "action=\"index.php\">";
+    "action=\"index.php\" method=post>";
   print "<input name=done type=submit value=\" $l_no \" class=smallbutton>";
   print "<input type=hidden name=load value=services>";        
   print "<input type=hidden name=type value=module>";
@@ -415,7 +415,7 @@ if ($save) {
 
   if ($removed == 'y' AND $cancel_date == '') {
     // print the undelete button
-    print "</form><p><form style=\"margin-bottom:0;\" action=\"index.php\">".
+    print "</form><p><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
       "<input type=hidden name=optionstable value=$optionstable>";
     print "<input type=hidden name=userserviceid value=$userserviceid>";
     print "<input type=hidden name=load value=services>";
@@ -430,7 +430,7 @@ if ($save) {
   }
 
   // print the open ticket button
-  print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+  print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
   print "<input type=hidden name=load value=support>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=serviceid value=\"$userserviceid\">";
@@ -515,7 +515,7 @@ if ($save) {
   // only show choices if field asset items are compatible with the service category
   if ($result->RowCount() > 0) {
 
-    print "<form style=\"margin-bottom:0;\" action=\"index.php\">".
+    print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
       "<table width=720 cellpadding=5 cellspacing=1 border=0>".
       "<input type=hidden name=optionstable value=$optionstable>";
     print "<input type=hidden name=userserviceid value=$userserviceid>";
@@ -545,7 +545,7 @@ if ($save) {
 
   /*----------------------------------------------------------------------*/
   // print the usage multiple form section
-  print "<form action=\"index.php\"><table width=720 cellpadding=5 cellspacing=1 border=0>";
+  print "<form action=\"index.php\" method=post><table width=720 cellpadding=5 cellspacing=1 border=0>";
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
   print "<input type=hidden name=edit value=on>";
@@ -578,7 +578,7 @@ if ($save) {
 
   /*----------------------------------------------------------------------*/
   // change the billing ID	
-  print "<form action=\"index.php\"><table width=720 cellpadding=5 ".
+  print "<form action=\"index.php\" method=post><table width=720 cellpadding=5 ".
     "cellspacing=1 border=0>";
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";
@@ -630,7 +630,7 @@ if ($save) {
   
   if ($optionstable) {
 
-    print "<form action=\"index.php\"><table width=720 cellpadding=5 ".
+    print "<form action=\"index.php\" method=post><table width=720 cellpadding=5 ".
       "cellspacing=1 border=0>\n";
     print "<input type=hidden name=load value=services>\n";
     print "<input type=hidden name=type value=module>\n";
@@ -822,7 +822,7 @@ if ($save) {
 } else if ($exempt) {
   // ask the user for customer tax id, and exempt id expiration date
   print "<a href=\"index.php?load=services&type=module\">[ $l_undochanges ]</a>";
-  print "<h4>$l_exempt</h4><form action=\"index.php\">".
+  print "<h4>$l_exempt</h4><form action=\"index.php\" method=post>".
     "<table width=720 cellpadding=5 cellspacing=1 border=0>";
   print "<input type=hidden name=load value=services>";
   print "<input type=hidden name=type value=module>";

@@ -179,7 +179,7 @@ if ($submit) {
   // print a form to make a new vendor history entry
   /*--------------------------------------------------------------------------*/
   echo "<hr><h3>$l_add</h3>";
-  echo "<form action=\"index.php\">".
+  echo "<form action=\"index.php\" method=post>".
     "<input type=hidden name=userserviceid value=$userserviceid>".
     "<input type=hidden name=load value=services>".
     "<input type=hidden name=type value=module>".

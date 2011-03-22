@@ -27,7 +27,7 @@ $serviceid = $base->input['serviceid'];
 
 if ($editremovaldate) {
   // prompt to change the removal date
-  echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">".
+  echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">".
     "<input type=hidden name=load value=services>".
     "<input type=hidden name=type value=module>".
     "<input type=hidden name=history value=on>".
@@ -132,7 +132,7 @@ while ($myresult = $result->FetchRow())
 	<td>$billing_id</td>
 	<td>$totalprice</td>
 <td>
-<form style=\"margin-bottom:0;\" action=\"index.php\">
+<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>
 <input type=hidden name=load value=services>
 <input type=hidden name=type value=module>
 <input type=hidden name=edit value=on>
