@@ -109,7 +109,7 @@ $dependent_cancel_url = $myresult['dependent_cancel_url'];
 	
 echo "$l_databaseversion: $databaseversion<br>
 $l_softwareversion: $softwareversion<br>
-<FORM ACTION=\"index.php\" METHOD=\"GET\">
+<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<input type=hidden name=load value=settings>
 	<input type=hidden name=type value=tools>
 	<table><td>

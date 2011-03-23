@@ -74,7 +74,7 @@ while ($myresult = $result->FetchRow())
 }
 
 echo "
-<form name=\"form1\" method=\"get\" action=\"index.php\">
+<form name=\"form1\" method=\"post\" action=\"index.php\">
     <input type=\"hidden\" name=\"load\" value=\"apermissions\">
     <input type=hidden name=type value=tools>
     <input name=\"module\" type=\"hidden\" id=\"module\" value=\"$module\">

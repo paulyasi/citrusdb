@@ -46,7 +46,7 @@ if ($day) {
 
   // print a form to ask what date you want to view
   echo "Enter date of pdf notices to view:";
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">".
+echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">".
   "Date: <input type=text name=\"day\" value=\"$day\">".
   "<input type=hidden name=type value=tools>".
   "<input type=hidden name=load value=listpdf>".

@@ -56,7 +56,7 @@ if ($submit) {
 echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
         <script language=\"JavaScript\" src=\"include/verify.js\"></script>
 	<p>
-	<FORM ACTION=\"index.php\" METHOD=\"GET\">
+	<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<input type=hidden name=load value=notifications>
 	<input type=hidden name=type value=tools>
         <B>$l_contactemail:</B> <INPUT TYPE=\"TEXT\" NAME=\"email\" VALUE=\"$email\" SIZE=\"20\" MAXLENGTH=\"65\"><p>

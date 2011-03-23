@@ -255,7 +255,7 @@ while($myresult = $result->FetchRow()) {
     
 
     // show status modification dropdown menu
-    echo "<td><form style=\"margin-bottom:0;\" action=\"index.php\">".
+    echo "<td><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
       "<input type=hidden name=load value=billing_status>".
       "<input type=hidden name=type value=tools>".
 

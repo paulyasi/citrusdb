@@ -236,7 +236,7 @@ $exportprefix = $myresult['exportprefix'];
 //echo "$l_databaseversion: $databaseversion<br>
 //$l_softwareversion: $softwareversion<br>
 echo "<hr><h2>$org_name</h2>
-	<FORM ACTION=\"index.php\" METHOD=\"GET\">
+	<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<input type=hidden name=load value=general>
 	<input type=hidden name=type value=tools>
 	<input type=hidden name=id value=\"$id\">

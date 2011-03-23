@@ -62,7 +62,7 @@ if ($submit) {
 }
 else {
 // ask for the billing date that they want to invoice
-echo '<FORM ACTION="'. $PHP_SELF .'" METHOD="GET" name="form1">
+echo '<FORM ACTION="'. $PHP_SELF .'" METHOD="POST" name="form1">
 	<input type=hidden name=load value=exportcc2>
 	<input type=hidden name=type value=tools>
 	<table>

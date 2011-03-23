@@ -105,7 +105,7 @@ while($myresult = $result->FetchRow()) {
 
     // show collections button for cancelwfee and cancel button for collections
     if ($status == 'cancelwfee') {
-      echo "<td><form style=\"margin-bottom:0;\" action=\"index.php\">".
+      echo "<td><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
 	"<input type=hidden name=load value=collections>".
 	"<input type=hidden name=type value=tools>".
 	"<input type=hidden name=changestatus value=collections>".
@@ -113,7 +113,7 @@ while($myresult = $result->FetchRow()) {
 	"<input type=\"SUBMIT\" NAME=\"submit\" value=\"$l_collections\" class=\"smallbutton\"> ".
 	"</form></td>";
     } else {
-      echo "<td><form style=\"margin-bottom:0;\" action=\"index.php\">".
+      echo "<td><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
 	"<input type=hidden name=load value=collections>".
 	"<input type=hidden name=type value=tools>".
 	"<input type=hidden name=changestatus value=cancel>".

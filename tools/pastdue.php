@@ -277,7 +277,7 @@ $query = "SELECT ph.billing_id, b.account_number, b.name, b.company, ".
     
 
     // show status modification dropdown menu
-    echo "<td><form style=\"margin-bottom:0;\" action=\"index.php\">".
+    echo "<td><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
       "<input type=hidden name=load value=pastdue>".
       "<input type=hidden name=type value=tools>".
 

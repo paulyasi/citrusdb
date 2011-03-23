@@ -243,7 +243,7 @@ while (($mypayresult = $payresult->FetchRow()))
 /*----------------------------------------------------------------------------*/
 // print the by billing id form
 /*----------------------------------------------------------------------------*/
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">
         <input type=hidden name=load value=payment>
 	<input type=hidden name=type value=tools>
 	$l_enteroneofthesethreevalues:

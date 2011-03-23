@@ -42,7 +42,7 @@ $day2 = $base->input['day2'];
 $organization_id = $base->input['organization_id'];
 
 
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<table>
 	<td>From: <input type=text name=\"day1\" value=\"$day1\" size=10> - </td>
 	<td>To: <input type=text name=\"day2\" value=\"$day2\" size=10></td>";

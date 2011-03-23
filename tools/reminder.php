@@ -89,7 +89,7 @@ if ($submit) {
 
 	echo "$i $l_services $billingdate<br>";
 
-	echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">
+	echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">
         	<input type=hidden name=load value=remindersave>
 		<input type=hidden name=type value=tools>
 		<input type=hidden name=mydate value=\"$billingdate\">
@@ -99,7 +99,7 @@ if ($submit) {
 }
 else {
 // ask for the billing date that they want to invoice
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"POST\" name=\"form1\">
 	<input type=hidden name=load value=reminder>
 	<input type=hidden name=type value=tools>
 	<table>

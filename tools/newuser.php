@@ -73,7 +73,7 @@ $real_name='';
 echo "<script language=\"JavaScript\" src=\"include/verify.js\"></script>
 	<H3>$l_addnewuser</H3>
 	<P>
-	<FORM ACTION=\"$ssl_url_prefix/index.php\" METHOD=\"GET\">
+	<FORM ACTION=\"$ssl_url_prefix/index.php\" METHOD=\"POST\">
 	<B>$l_name:</B><BR>
 	<INPUT TYPE=\"TEXT\" NAME=\"real_name\" VALUE=\"\" SIZE=\"20\" MAXLENGTH=\"65\">
 	<P>

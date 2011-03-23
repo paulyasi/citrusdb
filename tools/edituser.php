@@ -88,7 +88,7 @@ echo "<script language=\"JavaScript\" src=\"include/md5.js\"></script>
 	[<a href=\"index.php?load=adminchangepass&type=tools&userid=$userid\">
 	$l_changepassword</a>]")."
 	<p>
-	<FORM ACTION=\"index.php\" METHOD=\"GET\">
+	<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<input type=hidden name=load value=edituser>
 	<input type=hidden name=type value=tools>
         <B>$l_name:</B><BR>

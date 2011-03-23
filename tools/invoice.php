@@ -114,7 +114,7 @@ if ($submit) {
 	var cal = new CalendarPopup();
 	</SCRIPT>
 	<h3>$l_printinvoices</h3>";
-  echo "<FORM ACTION=\"index.php\" METHOD=\"GET\" name=\"form1\" onsubmit=\"toggleOn();\">
+  echo "<FORM ACTION=\"index.php\" METHOD=\"POST\" name=\"form1\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=tools/invoice>
 	<input type=hidden name=type value=dl>
 	<table>";
@@ -144,7 +144,7 @@ if ($submit) {
 	</table></form>";
 
   // or ask the the single billing ID they want to invoice
-  echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\" onsubmit=\"toggleOn();\">
+  echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"POST\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=tools/invoice>
 	<input type=hidden name=type value=dl>
 	<table>
@@ -155,7 +155,7 @@ if ($submit) {
 	</table></form>";
 
   // or ask what customer id they want to invoice (uses the default_billing_id)
-  echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"GET\" onsubmit=\"toggleOn();\">
+  echo "<p>$l_or<p><FORM ACTION=\"index.php\" METHOD=\"POST\" onsubmit=\"toggleOn();\">
 	<input type=hidden name=load value=tools/invoice>
 	<input type=hidden name=type value=dl>
 	<table>

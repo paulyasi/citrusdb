@@ -113,7 +113,7 @@ else if ($refund) {
 	$refunded = $myresult['d_refunded'];
 
 	// print refund form
-	echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">
+	echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<input type=hidden name=load value=refund>
 	<input type=hidden name=type value=tools>
 	<input type=hidden name=refundnow value=on>
@@ -233,7 +233,7 @@ else {
 //
 // ask for the billing id that they want to refund services for
 //
-echo "<FORM ACTION=\"index.php\" METHOD=\"GET\">
+echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<input type=hidden name=load value=refund>
 	<input type=hidden name=type value=tools>
 	<table>

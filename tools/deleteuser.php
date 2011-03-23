@@ -61,7 +61,7 @@ else
 
 	// if they hit yes, this will sent them into the deletegroup.php file and remove the service
 
-	print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+	print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
 	print "<input type=hidden name=load value=deleteuser>";
 	print "<input type=hidden name=type value=tools>";
 	print "<input type=hidden name=uid value=$uid>";
@@ -69,7 +69,7 @@ else
 
 	// if they hit no, send them back to the service edit screen
 
-	print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\">";
+	print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
 	print "<input name=done type=submit value=\"  $l_no  \" class=smallbutton>";
         print "<input type=hidden name=load value=users>";  
 	print "<input type=hidden name=type value=tools>";        

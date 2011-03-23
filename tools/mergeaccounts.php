@@ -69,13 +69,13 @@ if ($submit) {
     "<br>$to_city $to_state $to_zip</td></table><br>";
 
      print "<table cellpadding=15 cellspacing=0 border=0 width=720><td align=right width=360>";
-   print "<form style=\"margin-bottom:0;\" action=\"index.php\">";
+   print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
    print "<input type=hidden name=load value=mergeaccounts>";
    print "<input type=hidden name=type value=tools>";
    print "<input type=hidden name=to_account value=$to_account>";
    print "<input type=hidden name=from_account value=$from_account>";
    print "<input name=confirm type=submit value=\"  $l_yes  \" class=smallbutton></form></td>";
-   print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\">";
+   print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
    print "<input type=hidden name=type value=tools>";
    print "<input name=done type=submit value=\"  $l_no  \" class=smallbutton>";
    print "<input type=hidden name=load value=mergeaccounts>";
@@ -110,7 +110,7 @@ if ($confirm) {
 
 	echo "
 	<P>
-	<FORM ACTION=\"index.php\" METHOD=\"GET\">
+	<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<B>$l_from</B><BR><INPUT TYPE=\"TEXT\" NAME=\"from_account\">
 	<P>
 	<B>$l_to</B><BR><INPUT TYPE=\"TEXT\" NAME=\"to_account\">

@@ -42,7 +42,7 @@ if ($submit) {
 
 echo "<H3>$l_addnewgroup</H3>
 	<P>
-	<FORM ACTION=\"index.php\" METHOD=\"GET\">
+	<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<B>$l_addmember:</B><BR>
 	<SELECT NAME=\"membername\">";
 	

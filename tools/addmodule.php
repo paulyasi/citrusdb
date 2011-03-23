@@ -51,7 +51,7 @@ if ($submit) {
 echo "$l_beforeyoucanaddanewmodule $path_to_citrus/modules";
 	echo "
 	<P>
-	<FORM ACTION=\"index.php\" METHOD=\"GET\">
+	<FORM ACTION=\"index.php\" METHOD=\"POST\">
 	<B>$l_commonname</B><BR><INPUT TYPE=\"TEXT\" NAME=\"commonname\">
 	<P>
 	<B>$l_modulename</B><BR><INPUT TYPE=\"TEXT\" NAME=\"modulename\">
