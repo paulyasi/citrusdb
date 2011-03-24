@@ -88,12 +88,41 @@ if ($u->user_isloggedin()) {
 	<body bgcolor=\"#ffffff\">";
 		
 	// Print heading and links
-	echo "<h2>$l_customeraccountmanager: $l_account $user</h2>";
-	echo "<a href=\"index.php\">$l_profile</a> | ";
-	echo "<a href=\"index.php?cmd=view_services\">$l_services</a> | ";
-        echo "<a href=\"index.php?cmd=view_bill\">$l_billing</a> | ";
-	echo "<a href=\"index.php?cmd=support\">$l_supportrequest</a> | ";
-	echo "<a href=\"logout.php\">$l_logout</a>\n";
+	echo "<div id=\"sidebar\">";
+	echo "<div id=tabnav>";
+
+	if ($cmd == '') {
+	  echo "<div><a class=active href=\"index.php\">$l_profile</a></div>";
+	} else {
+	  echo "<div><a href=\"index.php\">$l_profile</a></div>";
+	}
+
+	if ($cmd == 'view_services') {	  
+	  echo "<div><a class=active href=\"index.php?cmd=view_services\">$l_services</a></div>";
+	} else {
+	  echo "<div><a href=\"index.php?cmd=view_services\">$l_services</a></div>";
+	}
+
+	if ($cmd == 'view_bill') {
+	  echo "<div><a class=active href=\"index.php?cmd=view_bill\">$l_billing</a></div>";
+	} else {
+	  echo "<div><a href=\"index.php?cmd=view_bill\">$l_billing</a></div>";
+	}
+
+	if ($cmd == 'support') {
+	  echo "<div><a class=active href=\"index.php?cmd=support\">$l_supportrequest</a></div>";
+	} else {
+	  echo "<div><a href=\"index.php?cmd=support\">$l_supportrequest</a></div>";
+	}
+	  
+	echo "</div>";
+
+	echo "<div id=\"header\"><table cellpadding=10 cellspacing=0 border=0 width=720>";
+	echo "<td><h2>$l_customeraccountmanager: $l_account $user</h2></td>";
+	echo "<td><a href=\"logout.php\">$l_logout</a></td>\n";
+	echo "</table></div>";
+
+	echo "<div id=\"content\">";
 	
 	switch ($cmd) {
 		
@@ -478,6 +507,9 @@ if ($u->user_isloggedin()) {
 		Billing Contact Email: $billingemail<br>";  
                 break;
 	}
+
+	// print the end of the content div
+	echo "</div>";
 }
 else // show the login screen
 {
@@ -486,6 +518,7 @@ echo "
 <head>
 <title>Customer Account Manager</title>
 <LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
+<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
 <script language=\"JavaScript\">
 function h(oR) {
 	oR.style.background-color='ffdd77';
