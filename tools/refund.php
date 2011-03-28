@@ -205,7 +205,7 @@ else if ($submit) {
 			$description &nbsp;</td>";
 		print "<td style=\"border-top: 1px solid grey;\">
 		[ <a href=\"index.php?load=tools/modules/billing/
-		htmlpreviousinvoice&billingid=$account_number
+		htmlpreviousinvoice&billingid=$billingid
 		&invoiceid=$invoice&details=on&type=fs&submit=on\" 
 		target=\"_blank\">$invoice</a> ]</td>";	
 		print "<td style=\"border-top: 1px solid grey;\">

@@ -73,9 +73,9 @@ $status = $base->input['status'];
 $dtext = $base->input['dtext'];
 $reminderdate = $base->input['reminderdate'];
 $user_services_id = $base->input['serviceid'];
-$description = $base->input['description'];
 
 // grab the description manually to preserve newlines
+if (!isset($_POST['description'])) { $_POST['description'] = ''; }
 $description = $_POST['description'];
 $description = safe_value_with_newlines($description);
 

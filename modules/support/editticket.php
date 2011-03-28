@@ -39,6 +39,7 @@ $oldstatus = $base->input['oldstatus'];
 $description = $_POST['description'];
 $description = safe_value_with_newlines($description);
 
+if (!isset($_POST['addnote'])) { $_POST['addnote'] = ""; }
 $addnote = $_POST['addnote'];
 $addnote = safe_value_with_newlines($addnote);
 

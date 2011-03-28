@@ -1742,8 +1742,14 @@ function humandate($date, $lang) {
 
   include ($lang);
 
-  // split the iso date into parts
-  list($myyear, $mymonth, $myday) = split('-', $date);
+  if ($date) {
+    // split the iso date into parts
+    list($myyear, $mymonth, $myday) = split('-', $date);
+  } else {
+    $myyear = '';
+    $mymonth = '';
+    $myday = '';
+  }
 
   // assign the month it's written name
   switch($mymonth) {

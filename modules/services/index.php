@@ -154,8 +154,16 @@ if ($edit) {
        $DB->SetFetchMode(ADODB_FETCH_NUM);
        $optionsresult = $DB->Execute($query) or die ("$l_queryfailed");
        $myoptions = $optionsresult->fields;
-       $optiondetails = $myoptions[2];
-       $optiondetails2 = $myoptions[3];
+       if (count($myoptions) >= 3) { 
+         $optiondetails = $myoptions[2]; 
+       } else { 
+         $optiondetails = ''; 
+       }
+       if (count($myoptions) >= 4) { 
+         $optiondetails2 = $myoptions[3]; 
+       } else {
+         $optiondetails2 = '';
+       }
      } else {
        $optiondetails = '';
        $optiondetails2 = '';
