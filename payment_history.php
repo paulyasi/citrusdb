@@ -129,8 +129,9 @@ while ($myresult = $result->FetchRow()) {
   $userresult = $DB->Execute($query) or die ("$l_queryfailed");
   $myuserresult = $userresult->fields;
   
-  if (($amount > 0) AND ($nsfcount < 3)
-      AND (($type == 'check') OR ($type == 'cash') OR ($type == 'eft') OR ($type == 'discount'))) {
+  if (($amount > 0) AND ($nsfcount < 3) 
+    AND (($type == 'check') OR ($type == 'cash') OR ($type == 'eft') 
+    OR ($type == 'discount'))) { 
     if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
       echo "<a href=\"$url_prefix/index.php?load=billing&type=module&nsf=on=&".
 	"paymentid=$id&amount=$amount&invoicenum=$invoice_number&".

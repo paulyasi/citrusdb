@@ -181,7 +181,11 @@ $query = "SELECT id,org_name from general";
 $DB->SetFetchMode(ADODB_FETCH_ASSOC);
 $result = $DB->Execute($query) or die ("$l_queryfailed");
 
-echo "<b><a href=\"index.php?load=general&type=tools&addnew=on\">$l_add</a></b><br\>";
+echo "<form action=\"index.php\" method=post>".
+  "<input type=hidden name=load value=general>".
+  "<input type=hidden name=type value=tools>".
+  "<input type=hidden name=addnew value=on>".
+  "<input type=submit value=\"$l_add\">";
 
 echo "<table cellpadding=5 cellspacing=1><tr bgcolor=\"#eeeeee\">";
 while ($myresult = $result->FetchRow()) {

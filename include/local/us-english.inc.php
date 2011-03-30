@@ -73,6 +73,7 @@ $l_areyousuredefaultbillingaddress = "Are you sure you want to set the default b
 $l_areyousureyouwanttoremoveinvoice = "Are you sure you want to remove invoice number";
 $l_areyousureyouwanttoremovethegroupid = "Are you sure you want to remove the group id";
 $l_areyousureyouwanttoremovetheuserid = "Are you sure you want to remove the user id";
+$l_areyousureyouwanttoremovethis = "Are you sure you want to remove this?";
 $l_assign = "Assign";
 $l_assigned = "Assigned";
 $l_automatic = "Automatic";
