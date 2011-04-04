@@ -243,7 +243,7 @@ if ($u->user_isloggedin()) {
 	  }
 // print the html for the top of pages
 
-		echo "<title>$l_title</title>
+  echo "<title>$l_title</title>
 		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
         <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
 		<script language=\"JavaScript\">

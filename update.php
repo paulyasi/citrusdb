@@ -954,6 +954,7 @@ if ($base->input['submit'] == "Update")
 	}
 
 	if ($databaseversion == "2.3") {
+		// make sure the user table unique
 	  $query = "ALTER TABLE  `user` ADD UNIQUE (`username`)";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";	  	  
@@ -969,8 +970,8 @@ if ($base->input['submit'] == "Update")
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";
 	  
-	  // set the version number in the database to 2.3.1
-	  $query = "UPDATE `settings` SET `version` = '2.3.1' ".
+	  // set the version number in the database to 2.4
+	  $query = "UPDATE `settings` SET `version` = '2.4' ".
 	    "WHERE `id` =1 LIMIT 1";
 	  $result = $DB->Execute($query) or die ("$query failed");
 	  echo "$query<br>\n";	  
@@ -979,7 +980,7 @@ if ($base->input['submit'] == "Update")
 	echo "<center><h2>Database Updated</h2></center>";
 }
 else 
-v{
+{
 	$query = "SELECT * FROM general";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 	$result = $DB->Execute($query) or die ("query failed");
@@ -1001,9 +1002,9 @@ v{
 	<p>
 	Your database version: <b>$databaseversion</b><p>
 
-	This script will update it to version: <b>2.3</b></h3>";
+	This script will update it to version: <b>2.4</b></h3>";
 
-	if ($databaseversion == "2.3") {
+	if ($databaseversion == "2.4") {
 		echo "<p><b>Nothing to update</b>";
 	} else {
 		echo "

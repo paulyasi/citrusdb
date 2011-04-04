@@ -21,7 +21,7 @@
 
 // indicate the release version of citrusdb
 
-$softwareversion = "2.3.1";
+$softwareversion = "2.4";
 
 // check that we are running php version 5.2 or greater
 if (version_compare(phpversion(), "5.2.0", "<")) {
