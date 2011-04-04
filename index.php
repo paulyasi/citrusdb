@@ -1,427 +1,201 @@
 <?php
-/*----------------------------------------------------------------------------*/
-// CitrusDB - The Open Source Customer Database
-// Copyright (C) 2002-2008 Paul Yasi
-//
-// This program is free software; you can redistribute it and/or modify it under
-// the terms of the GNU General Public License as published by the
-// Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful, but WITHOUT 
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-// details.
-//
-// You should have received a copy of the GNU General Public License along with 
-// this program; if not, write to the Free Software Foundation, Inc., 59 Temple 
-// Place, Suite 330, Boston, MA 02111-1307 USA
-//
-// http://www.citrusdb.org
-// Read the README file for more details
-/*----------------------------------------------------------------------------*/
 
-// Includes
-include('./include/config.inc.php');
-include('./include/local/us-english.inc.php');
-include("$lang");
-include('./include/database.inc.php');
-include('./include/billing.inc.php');
-include('./include/support.inc.php');
-include('./include/services.inc.php');
+/*
+ *---------------------------------------------------------------
+ * APPLICATION ENVIRONMENT
+ *---------------------------------------------------------------
+ *
+ * You can load different configurations depending on your
+ * current environment. Setting the environment also influences
+ * things like logging and error reporting.
+ *
+ * This can be set to anything, but default usage is:
+ *
+ *     development
+ *     testing
+ *     production
+ *
+ * NOTE: If you change these, also change the error_reporting() code below
+ *
+ */
+	define('ENVIRONMENT', 'development');
+/*
+ *---------------------------------------------------------------
+ * ERROR REPORTING
+ *---------------------------------------------------------------
+ *
+ * Different environments will require different levels of error reporting.
+ * By default development will show errors but testing and live will hide them.
+ */
 
-//$DB->debug = true;
-
-// Get our user and password hash class
-include('./include/PasswordHash.php');
-include('./include/user.class.php');
-$u = new user();
-
-// Get our base functions and class
-require './include/citrus_base.php';
-$base = new citrus_base();
-
-// kick you out if you have 5 failed logins from the same ip
-$failures = checkfailures();
-if ($failures) {
-  echo "Login Failure.  Please See Administrator";
-  die;
-}
-
-
-// set input indexes to values so they are not undefined
-if (!isset($base->input['submit'])) { $base->input['submit'] = ""; }
-if (!isset($base->input['load'])) { $base->input['load'] = ""; }
-if (!isset($base->input['type'])) { $base->input['type'] = ""; }
-if (!isset($base->input['edit'])) { $base->input['edit'] = ""; }
-if (!isset($base->input['create'])) { $base->input['create'] = ""; }
-if (!isset($base->input['delete'])) { $base->input['delete'] = ""; }
-if (!isset($base->input['account_number'])) { $base->input['account_number'] = ""; }
-if (!isset($base->input['ticketuser'])) { $base->input['ticketuser'] = ""; }
-if (!isset($base->input['ticketgroup'])) { $base->input['ticketgroup'] = ""; }
-
-if ($base->input['submit'] == $l_login) {
-	// check the user login information
-	$u->user_login($base->input['user_name'],$base->input['password']);
-
-	// redirect to myself to get the cookie loaded
-	print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=search&type=base\";</script>";
-}
-
-//echo '<pre>';
-//var_dump($_SERVER);
-//die;
-
-if ($u->user_isloggedin()) {
-	session_start();
-	
-	// define this constant
-	define('INDEX_CITRUS',1);
-
-	$user =  $u->user_getname();
-
-	//GET Variables (sorta like the old way for now)
-	$load = $base->input['load'];
-	$type = $base->input['type'];
-	$edit = $base->input['edit'];
-	$create = $base->input['create'];
-	$delete = $base->input['delete'];
-	$ticketuser = $base->input['ticketuser'];
-	$ticketgroup = $base->input['ticketgroup'];
-	
-	if (!$type) { 
-		$load = "search"; 
-		$type="base";	
-	}
-	
-	switch ($type)
+	switch (ENVIRONMENT)
 	{
-	case 'dl':  // for file downloads like pdf's, so there is no html printed before the file is sent
-		// Check if the file is inside the path_to_citrus
-		$filepath = "$path_to_citrus/$load.php";
-		if (file_exists($filepath)) {
-			include('./'.$load.'.php');
-		}
-	break; // end download
+		case 'development':
+			error_reporting(E_ALL);
+		break;
 	
-	case 'fs':  // full screen
-		echo "<html>
-		<head>
-		<title>$l_title</title>
-		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
-		<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
-                <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
-		<script language=\"JavaScript\">
-		function h(oR) {
-			oR.style.backgroundColor='ffdd77';
-		}	
-		function deh(oR) {
-			oR.style.backgroundColor='ddddee';
-		}
-		function dehnew(oR) {
-			oR.style.backgroundColor='ddeeff';
-		}
-		</script>
-		<script language=\"JavaScript\" src=\"include/md5.js\"></script>
-                <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
-		</head>
-		<body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>";
+		case 'testing':
+		case 'production':
+			error_reporting(0);
+		break;
 
-		// Check if the file is inside the path_to_citrus
-		$filepath = "$path_to_citrus/$load.php";
-		if (file_exists($filepath)) {
-			include('./'.$load.'.php');
-		}
-	break; // end full screen
-	
-	case 'module':	// show a module
-		// print the html for the top of pages
-		echo "<html>
-		<head>
-		<title>$l_title</title>
-		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
-        <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
-		<script language=\"JavaScript\">
-		function h(oR) {
-			oR.style.backgroundColor='ffdd77';
-		}	
-		function deh(oR) {
-			oR.style.backgroundColor='ddddee';
-		}
-		function dehnew(oR) {
-			oR.style.backgroundColor='ddeeff';
-		}
-		function popupPage(page) {
-			windowprops = \"height=400,width=600,location=no,\"+ \"scrollbars=yes,menubars=no,toolbars=no,resizable=no\";
-			window.open(page, \"Tools\", windowprops);
-		}
-		</script>
-		<script language=\"JavaScript\" src=\"include/md5.js\"></script>
-                <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
-		</head>
-		<body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>";
-
-		
-		//SESSION Variables
-		if (!$_SESSION['account_number']) {
-			$_SESSION['account_number'] = 1;	
-		}
-
-		$account_number = $_SESSION['account_number'];
-		
-		$time_start = getmicrotime();
-		
-		// select name and company from the customer table
-		$query = "SELECT name,company FROM customer ".
-		  "WHERE account_number = $account_number";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		$myresult = $result->fields;
-		$acct_name = $myresult['name'];
-		$acct_company = $myresult['company'];
-	
-		// print the left side bar 
-
-	
-		echo '<div id="sidebar">
-		<p align=center class="smalltext">
-		<img src="images/my-logo.png">
-		<p align=center class="smalltext">';
-		echo "<b>$l_accountnum:&nbsp; $account_number &nbsp; </b><br>";
-		echo "$acct_name<br>";
-		echo "$acct_company<br></p><p align=right>";
-		
-		include('./modules.php');
-		
-		print '</div>';
-	
-
-		print '<div id="header">';
-		
-		include('./header.php');  
-		
-		print '</div><div id="content">';
-		
-		// show the module
-		// Check if the file is inside the path_to_citrus
-		$filepath = "$path_to_citrus/modules/$load/index.php";
-		if (file_exists($filepath)) {
-			include('./modules/'.$load.'/index.php');
-		}					
-
-		print "<br>";
-
-        	include('./footer.php'); 
-		
-		print "<br>";
-		$time_end = getmicrotime();
-		$time = round(($time_end - $time_start),4);
-		echo "<center><b><a target=\"_blank\" href=\"$url_prefix/documentation.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
-	
-		print "</div></body></html>";
-	break; // end module
-	
-	case 'base': // base functions
-	  if ($load == 'tickets') {
-
-	    if ($ticketuser) {
-	      $ticketdatetime = date('YmdHis');
-	      $cookiename = $ticketuser . 'datetime'; //usernamedatetime
-	      setcookie($cookiename,$ticketdatetime,(time()+3600000),'/','',0);
-	      echo "<html><head>";
-	      echo "<meta http-equiv=\"refresh\" content=\"300;url=$url_prefix/index.php?load=tickets&type=base&ticketuser=$ticketuser&lastview=$ticketdatetime\">";
-	    }
-
-	    if ($ticketgroup) {
-	      $ticketdatetime = date('YmdHis');
-	      $cookiename = $ticketgroup . 'datetime'; //groupnamedatetime
-	      setcookie($cookiename,$ticketdatetime,(time()+3600000),'/','',0);
-	      echo "<html><head>";
-	      echo "<meta http-equiv=\"refresh\" content=\"300;url=$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup&lastview=$ticketdatetime\">";
-	    }
-	    
-	  }
-// print the html for the top of pages
-
-  echo "<title>$l_title</title>
-		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
-        <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
-		<script language=\"JavaScript\">
-		function h(oR) {
-			oR.style.backgroundColor='ffdd77';
-		}	
-		function deh(oR) {
-			oR.style.backgroundColor='ddddee';
-		}
-		function dehnew(oR) {
-			oR.style.backgroundColor='ddeeff';
-		}
-
-		function popupPage(page) {
-			window.open(page, \"Tools\", \"height=400,width=600,location=0,scrollbars=1,menubar=1,toolbar=0,resizeable=1,left=100,top=100\");
-		}
-		</script>
-		<script language=\"JavaScript\" src=\"include/md5.js\"></script>
-                <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
-		</head>
-		<body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>";
-	
-		//SESSION Variables
-		if (!isset($_SESSION['account_number'])) {
-			$_SESSION['account_number'] = 1;	
-		}
-		
-		$account_number = $_SESSION['account_number'];
-		
-		$time_start = getmicrotime();
-		
-		// select name and company from the customer table
-		$query = "SELECT name,company FROM customer WHERE account_number = $account_number";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		$myresult = $result->fields;	
-		$acct_name = $myresult['name'];
-		$acct_company = $myresult['company'];
-	
-		// print the left side bar 
-		
-		echo '<div id="sidebar">
-		<p align=center>
-		<img src="images/my-logo.png"></p>';
-
-		/* TEST HIDING THE MODULES ON THE SIDE, PUT SOME DASHBOARD THERE?
-		<p align=center class="smalltext">';
-		echo "<b>$l_accountnum:&nbsp; $account_number &nbsp; </b><br>";
-		echo "$acct_name<br>";
-		echo "$acct_company<br></p><p align=right>";
-		
-		include('./modules.php');
-		*/
-		include ('./dashboard.php');
-		print '</div><div id="header">';
-		
-		include('./header.php');  
-		
-		print '</div><div id="content">';
-	
-		
-		// show base function
-		// Load the files wrapped by buttons
-		// Check if the file is inside the path_to_citrus
-		$filepath = "$path_to_citrus/$load.php";
-		if (file_exists($filepath)) {
-			include('./'.$load.'.php');
-		} else {
-			echo "<br><br><br><b> $l_error: $l_yourpathtocitrusisincorrect, ";
-			$mypath = $_SERVER["SCRIPT_FILENAME"];
-			$mypath = substr($mypath,0,-10);
-			echo "$l_itshouldbesetto '$mypath'</b>";
-		}
-
-
-		print "<br>";
-		$time_end = getmicrotime();
-		$time = round(($time_end - $time_start),4);
-                
-		echo "<center><b><a target=\"_blank\" href=\"$url_prefix/documentation.html#$load\" style=\"color: red; font-size: 10pt;\">?</a></b></center><br>&nbsp; &nbsp; $l_completedin $time $l_seconds";
-	
-		print "</div></body></html>";
-	break; // end base
-	
-	case 'tools': // show in tools function
-		// print the html for the top of pages
-		echo "<html>
-		<head>
-		<title>$l_title</title>
-		<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
-		<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
-        <link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
-		<script language=\"JavaScript\">
-		function h(oR) {
-			oR.style.backgroundColor='ffdd77';
-		}	
-		function deh(oR) {
-			oR.style.backgroundColor='ddddee';
-		}
-		function dehnew(oR) {
-			oR.style.backgroundColor='ddeeff';
-		}
-		
-		function popupPage(page) {
-			windowprops = \"height=400,width=600,location=no,\"+ \"scrollbars=no,menubars=no,toolbars=no,resizable=no\";
-			window.open(page, \"Tools\", windowprops);
-		}
-
-
-                function toggleOff()
-                {       
-                        var myelement = document.getElementById(\"WaitingMessage\").style;
-                        myelement.display=\"none\";     
-                }
-
-                function toggleOn()
-                {
-                        var myelement = document.getElementById(\"WaitingMessage\").style;
-                        myelement.display=\"block\";
-                }
-                
-                </script>
-                <script language=\"JavaScript\" src=\"include/md5.js\"></script>
-                <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
-                </head>
-                <body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0 onload=\"toggleOff();\">";
-
-		// Check if the file is inside the path_to_citrus
-		$filepath = "$path_to_citrus/tools/index.php";
-		if (file_exists($filepath)) {
-			include('./tools/index.php');
-		} else {
-			echo "<br><br><br><b> $l_error: $l_yourpathtocitrusisincorrect, ";
-			$mypath = $_SERVER["SCRIPT_FILENAME"]; 
- 			$mypath = substr($mypath,0,-10);
-			echo "$l_itshouldbesetto '$mypath'</b>";			}		
-	break; // end tools
-	
+		default:
+			exit('The application environment is not set correctly.');
 	}
-}
-else // show the login screen
-{
-echo "<html>
-<head>
-<title>$l_title</title>
-<LINK href=\"citrus.css\" type=text/css rel=STYLESHEET>
-<LINK href=\"fullscreen.css\" type=text/css rel=STYLESHEET>
-<link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
-<script language=\"JavaScript\">
-function h(oR) {
-	oR.style.backgroundColor='ffdd77';
-}	
-function deh(oR) {
-	oR.style.backgroundColor='ddddee';
-}
-function dehnew(oR) {
-	oR.style.backgroundColor='ddeeff';
-}
-</script>
-<SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/prototype.js\"></SCRIPT>
-</head>
-<body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>
-	<div id=horizon>
-		<div id=loginbox>
-	<center><table><td valign=top><img src=\"images/my-logo.png\">
-	<P>
-	$l_logintext
-	<P>
-	<FORM ACTION=\"$ssl_url_prefix/index.php\" METHOD=\"POST\" AUTOCOMPLETE=\"off\">
-	<B>$l_username</B><BR>
-	<INPUT TYPE=\"TEXT\" NAME=\"user_name\" VALUE=\"\" SIZE=\"15\" MAXLENGTH=\"15\">
-	<P>
-	<B>$l_password</B><BR>
-	<INPUT TYPE=\"password\" NAME=\"password\" VALUE=\"\" SIZE=\"15\" MAXLENGTH=\"32\">
-	<P>
-	<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_login\" class=smallbutton>
-	</FORM>
-	<P></td></table></div></div></body></html>";
-}
 
-?>
+/*
+ *---------------------------------------------------------------
+ * SYSTEM FOLDER NAME
+ *---------------------------------------------------------------
+ *
+ * This variable must contain the name of your "system" folder.
+ * Include the path if the folder is not in the same  directory
+ * as this file.
+ *
+ */
+	$system_path = 'system';
+
+/*
+ *---------------------------------------------------------------
+ * APPLICATION FOLDER NAME
+ *---------------------------------------------------------------
+ *
+ * If you want this front controller to use a different "application"
+ * folder then the default one you can set its name here. The folder
+ * can also be renamed or relocated anywhere on your server.  If
+ * you do, use a full server path. For more info please see the user guide:
+ * http://codeigniter.com/user_guide/general/managing_apps.html
+ *
+ * NO TRAILING SLASH!
+ *
+ */
+	$application_folder = 'application';
+
+/*
+ * --------------------------------------------------------------------
+ * DEFAULT CONTROLLER
+ * --------------------------------------------------------------------
+ *
+ * Normally you will set your default controller in the routes.php file.
+ * You can, however, force a custom routing by hard-coding a
+ * specific controller class/function here.  For most applications, you
+ * WILL NOT set your routing here, but it's an option for those
+ * special instances where you might want to override the standard
+ * routing in a specific front controller that shares a common CI installation.
+ *
+ * IMPORTANT:  If you set the routing here, NO OTHER controller will be
+ * callable. In essence, this preference limits your application to ONE
+ * specific controller.  Leave the function name blank if you need
+ * to call functions dynamically via the URI.
+ *
+ * Un-comment the $routing array below to use this feature
+ *
+ */
+	// The directory name, relative to the "controllers" folder.  Leave blank
+	// if your controller is not in a sub-folder within the "controllers" folder
+	// $routing['directory'] = '';
+
+	// The controller class file name.  Example:  Mycontroller.php
+	// $routing['controller'] = '';
+
+	// The controller function you wish to be called.
+	// $routing['function']	= '';
+
+
+/*
+ * -------------------------------------------------------------------
+ *  CUSTOM CONFIG VALUES
+ * -------------------------------------------------------------------
+ *
+ * The $assign_to_config array below will be passed dynamically to the
+ * config class when initialized. This allows you to set custom config
+ * items or override any default config values found in the config.php file.
+ * This can be handy as it permits you to share one application between
+ * multiple front controller files, with each file containing different
+ * config values.
+ *
+ * Un-comment the $assign_to_config array below to use this feature
+ *
+ */
+	// $assign_to_config['name_of_config_item'] = 'value of config item';
+
+
+
+// --------------------------------------------------------------------
+// END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
+// --------------------------------------------------------------------
+
+/*
+ * ---------------------------------------------------------------
+ *  Resolve the system path for increased reliability
+ * ---------------------------------------------------------------
+ */
+
+	// Set the current directory correctly for CLI requests
+	if (defined('STDIN'))
+	{
+		chdir(dirname(__FILE__));
+	}
+
+	if (realpath($system_path) !== FALSE)
+	{
+		$system_path = realpath($system_path).'/';
+	}
+
+	// ensure there's a trailing slash
+	$system_path = rtrim($system_path, '/').'/';
+
+	// Is the system path correct?
+	if ( ! is_dir($system_path))
+	{
+		exit("Your system folder path does not appear to be set correctly. Please open the following file and correct this: ".pathinfo(__FILE__, PATHINFO_BASENAME));
+	}
+
+/*
+ * -------------------------------------------------------------------
+ *  Now that we know the path, set the main path constants
+ * -------------------------------------------------------------------
+ */
+	// The name of THIS file
+	define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
+
+	// The PHP file extension
+	define('EXT', '.php');
+
+	// Path to the system folder
+	define('BASEPATH', str_replace("\\", "/", $system_path));
+
+	// Path to the front controller (this file)
+	define('FCPATH', str_replace(SELF, '', __FILE__));
+
+	// Name of the "system folder"
+	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
+
+
+	// The path to the "application" folder
+	if (is_dir($application_folder))
+	{
+		define('APPPATH', $application_folder.'/');
+	}
+	else
+	{
+		if ( ! is_dir(BASEPATH.$application_folder.'/'))
+		{
+			exit("Your application folder path does not appear to be set correctly. Please open the following file and correct this: ".SELF);
+		}
+
+		define('APPPATH', BASEPATH.$application_folder.'/');
+	}
+
+/*
+ * --------------------------------------------------------------------
+ * LOAD THE BOOTSTRAP FILE
+ * --------------------------------------------------------------------
+ *
+ * And away we go...
+ *
+ */
+require_once BASEPATH.'core/CodeIgniter'.EXT;
+
+/* End of file index.php */
+/* Location: ./index.php */
