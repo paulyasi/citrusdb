@@ -977,6 +977,22 @@ if ($base->input['submit'] == "Update")
 	  echo "$query<br>\n";	  
 	}
 	
+	if ($databaseversion == "2.4") {
+		
+		// make new session table for codeigniter
+		$query = "CREATE TABLE IF NOT EXISTS  `ci_sessions` (
+			session_id varchar(40) DEFAULT '0' NOT NULL,
+			ip_address varchar(16) DEFAULT '0' NOT NULL,
+			user_agent varchar(50) NOT NULL,
+			last_activity int(10) unsigned DEFAULT 0 NOT NULL,
+			user_data text DEFAULT '' NOT NULL,
+			PRIMARY KEY (session_id)
+			);";
+		
+		// drop old session table used by adodb
+		$query = "DROP TABLE session2";
+	}
+	
 	echo "<center><h2>Database Updated</h2></center>";
 }
 else 
@@ -1002,9 +1018,9 @@ else
 	<p>
 	Your database version: <b>$databaseversion</b><p>
 
-	This script will update it to version: <b>2.4</b></h3>";
+	This script will update it to version: <b>3.0 Development</b></h3>";
 
-	if ($databaseversion == "2.4") {
+	if ($databaseversion == "3.0") {
 		echo "<p><b>Nothing to update</b>";
 	} else {
 		echo "

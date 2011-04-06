@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Welcome to CodeIgniter</title>
+	<title>DASHBOARD</title>
 
 <style type="text/css">
 
@@ -45,7 +45,7 @@ code {
 </head>
 <body>
 
-<h1>Welcome to CodeIgniter!</h1>
+<h1>DASHBOARD!</h1>
 
 <p>The page you are looking at is being generated dynamically by CodeIgniter.</p>
 

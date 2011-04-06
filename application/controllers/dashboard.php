@@ -19,7 +19,10 @@ class Dashboard extends App_Controller {
 	 */
 	public function index()
 	{
-		$this->load->view('welcome_message');
+		// TODO: put header here
+		$this->load->view('dashboard');
+		// TODO: put search boxes
+		// TODO: put footer here
 	}
 }
 
