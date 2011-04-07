@@ -1,8 +1,8 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 #
 # Portable PHP password hashing framework.
 #
-# Version 0.3 / genuine.
+# Version 0.3 / modified by citrusdb.org for use as a codeigniter library
 #
 # Written by Solar Designer <solar at openwall.com> in 2004-2006 and placed in
 # the public domain.  Revised in subsequent years, still public domain.
@@ -30,8 +30,13 @@ class PasswordHash {
 	var $portable_hashes;
 	var $random_state;
 
-	// changed by PasswordHash to take a config array for use as @author pyasi
-	// library with CodeIgniter - py
+	/**
+	 * Constructor for phpass PasswordHash class
+	 * 
+	 * changed to take a config array for use as library with codeigniter
+	 * @author paul at citrusdb.org
+	 * 
+	 */
 	
 	function PasswordHash($config = array())
 	{

@@ -64,7 +64,7 @@ $autoload['libraries'] = array('database','session');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url');
+$autoload['helper'] = array('url','language');
 
 
 /*
@@ -96,7 +96,7 @@ $autoload['config'] = array();
 |
 */
 
-$autoload['language'] = array();
+$autoload['language'] = array('citrus');
 
 
 /*
@@ -109,7 +109,7 @@ $autoload['language'] = array();
 |
 */
 
-$autoload['model'] = array();
+$autoload['model'] = array('log');
 
 
 /* End of file autoload.php */

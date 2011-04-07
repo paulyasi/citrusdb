@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*----------------------------------------------------------------------------*/
 // Includes Code Contributed by Matthew Veno and Bryan Nielsen
 // Copyright (C) 2005-2011  Paul Yasi (paul at citrusdb.org)
@@ -36,7 +36,8 @@ class User extends CI_Model {
 
   /*--------------------------------------------------------------------*/
   // Check if they are logged in
-  /*--------------------------------------------------------------------*/
+  // UNUSED NOW
+  /* --------------------------------------------------------------------
   function user_isloggedin() {
     
     global $hidden_hash_var,$LOGGED_IN;
@@ -62,6 +63,7 @@ class User extends CI_Model {
       return false;
     }
   }
+  */
   
   /*--------------------------------------------------------------------*/
   // Authenticate the user
@@ -75,9 +77,6 @@ class User extends CI_Model {
     global $ldap_dn;
     global $ldap_protocol_version;
     global $ldap_uid_field;
-    
-    // load the PasswordHash library
-    //require_once('application/libraries/PasswordHash.php');
 
     if (!$user_name || !$password) {
       $feedback .=  ' ERROR - Missing user name or password ';
@@ -139,7 +138,6 @@ class User extends CI_Model {
       }
       else {
         // standard authentication method
-	//$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
 	
 	$result = $this->db->get_where('user', array('username' => $user_name), 1, 0);
 	
@@ -148,8 +146,7 @@ class User extends CI_Model {
 	$myresult = $result->row();
 	$checkhash = $myresult->password;
 
-	// check the password with the new phpass checkpassword function
-	//$passwordmatch = $hasher->CheckPassword($password, $checkhash);
+	// check the password with the phpass checkpassword function
 	$passwordmatch = $this->passwordhash->CheckPassword($password, $checkhash);
 
 	// bcrypt hashes have '$2a$' header
@@ -238,8 +235,6 @@ class User extends CI_Model {
   // keep track of failed login attempts from IP addresses
   /*--------------------------------------------------------------------*/
   function loginfailure($user_name) {
-
-    global $DB;
     
     $ipaddress = $_SERVER["REMOTE_ADDR"];
     
@@ -247,7 +242,7 @@ class User extends CI_Model {
 	    "VALUES ('$ipaddress',CURRENT_TIMESTAMP)";
     $result=$this->db->query($query) or die ("Log Insert Failed");
 
-    //log_activity($DB,$user_name,0,'login','dashboard',0,'failure');
+    $this->log->activity_log($user_name,0,'login','dashboard',0,'failure');
     
   }
 
@@ -255,8 +250,7 @@ class User extends CI_Model {
   // keep track of login success
   /*--------------------------------------------------------------------*/  
   function loginsuccess($user_name) {
-    global $DB;
-    //log_activity($DB,$user_name,0,'login','dashboard',0,'success');
+    $this->log->activity_log($user_name,0,'login','dashboard',0,'success');
   }
   
   /*--------------------------------------------------------------------*/
