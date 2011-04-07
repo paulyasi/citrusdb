@@ -25,6 +25,13 @@ class User extends CI_Model {
     //clear it out in case someone sets it in the URL or something
     parent::__construct();
     unset($LOGGED_IN);
+    
+    // load the PasswordHash library
+    $config = array (
+    	'iteration_count_log2' => '8', 
+    	'portable_hashes' => 'FALSE'
+    	);
+    $this->load->library('PasswordHash', $config);    
   }
 
   /*--------------------------------------------------------------------*/
@@ -68,7 +75,9 @@ class User extends CI_Model {
     global $ldap_dn;
     global $ldap_protocol_version;
     global $ldap_uid_field;
-
+    
+    // load the PasswordHash library
+    //require_once('application/libraries/PasswordHash.php');
 
     if (!$user_name || !$password) {
       $feedback .=  ' ERROR - Missing user name or password ';
@@ -130,7 +139,7 @@ class User extends CI_Model {
       }
       else {
         // standard authentication method
-	$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
+	//$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
 	
 	$result = $this->db->get_where('user', array('username' => $user_name), 1, 0);
 	
@@ -140,7 +149,8 @@ class User extends CI_Model {
 	$checkhash = $myresult->password;
 
 	// check the password with the new phpass checkpassword function
-	$passwordmatch = $hasher->CheckPassword($password, $checkhash);
+	//$passwordmatch = $hasher->CheckPassword($password, $checkhash);
+	$passwordmatch = $this->passwordhash->CheckPassword($password, $checkhash);
 
 	// bcrypt hashes have '$2a$' header
 	// des ext hashes have '_' header
@@ -158,7 +168,7 @@ class User extends CI_Model {
 	    // upgrade it to the newer phpass password format
 	    $passwordmatch = 1;
 
-	    $newhash = $hasher->HashPassword($password);
+	    $newhash = $this->passwordhash->HashPassword($password);
 	    if (strlen($newhash) < 20) {
 	      $feedback .= "Failed to hash new password";
 	      return false;
@@ -269,6 +279,10 @@ class User extends CI_Model {
   // Change the password for the user
   /*--------------------------------------------------------------------*/
   function user_change_password ($new_password1,$new_password2,$change_user_name,$old_password) {
+  	
+  	// load the PasswordHash library
+  	//require_once('application/libraries/PasswordHash.php');  	
+  	
     global $feedback, $DB;
     //new passwords present and match?
     if ($new_password1 && ($new_password1==$new_password2)) {
@@ -282,7 +296,7 @@ class User extends CI_Model {
 	//$new_password1=strtolower($new_password1);
 
 	// check that old password is valid
-	$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
+	//$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
 	
 	$sql="SELECT password FROM user WHERE username='$change_user_name' LIMIT 1";
 	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -290,11 +304,12 @@ class User extends CI_Model {
 	$mypassresult = $result->fields;
 	$checkhash = $mypassresult['password'];
 	
-	if (!$result || $result->num_rows() < 1 || !$hasher->CheckPassword($old_password, $checkhash)) {
+	if (!$result || $result->num_rows() < 1 
+		|| !$this->passwordhash->CheckPassword($old_password, $checkhash)) {
 	  $feedback .= " User not found or bad password";
 	  return false;	  
 	} else {
-	  $newhash = $hasher->HashPassword($new_password1);
+	  $newhash = $this->passwordhash->HashPassword($new_password1);
 	  if (strlen($newhash) < 20) {
 	    $feedback .= "Failed to hash new password";
 	    return false;
@@ -321,6 +336,9 @@ class User extends CI_Model {
   /*--------------------------------------------------------------------*/
   function user_register($user_name,$password1,$password2,$real_name,$admin,$manager) {
     global $feedback,$hidden_hash_var,$DB;
+    
+    // load the PasswordHash library
+    //require_once('application/libraries/PasswordHash.php');    
 
     global $ldap_enable;
     global $ldap_host;
@@ -343,8 +361,8 @@ class User extends CI_Model {
 	  return false;
 	} else {
 	  // make a new password hash	  
-	  $hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
-	  $hash = $hasher->HashPassword($password1);
+	  //$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
+	  $hash = $this->passwordhash->HashPassword($password1);
 	  if (strlen($hash) < 20 ) {
 	    // hash length always greater than 20, if not then something went wrong
 	    $feedback .= "Failed to hash new password";

@@ -17,7 +17,6 @@ class Session extends CI_Controller
 	{
 		// load the PasswordHash library file
 		// not using the CI loader because it instantiates immediately
-		require_once('application/libraries/PasswordHash.php');
 		
 		$this->load->model('user', '', true);
 		
