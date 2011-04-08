@@ -8,7 +8,7 @@ class Dashboard extends App_Controller {
 	public function index()
 	{
 		// TODO: put header here
-		$this->load->view('header');
+		$this->load->view('header_with_sidebar');
 		
 		// show recently viewed customers
 		$this->load->model('log');
@@ -16,7 +16,9 @@ class Dashboard extends App_Controller {
 		$this->load->view('recently_viewed', $data);
 		
 		// TODO: replace this dashboard view with messages tabnav
-		//$this->load->view('dashboard');
+		$this->load->view('messagetabs');
+		
+		$this->load->view('buttonbar');
 		
 		// TODO: put search boxes
 		// TODO: put footer here

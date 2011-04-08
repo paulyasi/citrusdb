@@ -31,6 +31,7 @@ class Session extends CI_Controller
 		{	
 			$newsession = array(
                    'user_name'  => $username,
+					'account_number' => 1,
                    'logged_in' => TRUE
                );
 
