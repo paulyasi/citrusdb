@@ -9,7 +9,7 @@ class App_Controller extends CI_Controller
 		$this->load->library('session');
 		$this->load->helper('url'); 
 		
-		if(!$this->session->userdata('loggedin'))
+		if(!$this->session->userdata('logged_in'))
 		{
 			//$this->load->view('loginform');
 			redirect('session/login');

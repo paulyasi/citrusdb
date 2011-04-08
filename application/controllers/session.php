@@ -6,40 +6,47 @@ class Session extends CI_Controller
 		parent::__construct();
 		
 		$this->load->library('session');
+		$this->load->model('user', '', true);		
 	}
 	
 	function login()
 	{
+		// kick you out if you have 5 failed logins from the same ip
+		if ($this->user->checkfailures()) 
+		{
+  			echo "Login Failure.  Please See Administrator";
+  			die;
+		}
+		
 		$this->load->view('loginform');
 	}
 	
 	function auth()
-	{
-		// load the PasswordHash library file
-		// not using the CI loader because it instantiates immediately
-		
-		$this->load->model('user', '', true);
+	{		
 		
 		$username = $this->input->post('user_name');
 		$password = $this->input->post('password');
 		
 		if ($this->user->user_login($username,$password)) 
 		{	
-			//$this->session->set_userdata('loggedin', true);
+			$newsession = array(
+                   'user_name'  => $username,
+                   'logged_in' => TRUE
+               );
+
+			$this->session->set_userdata($newsession);
 			
-			//redirect ('/');
-			
-			echo "Authenticated!";
+			redirect ('/');	
 		} 
 		else
 		{
-			echo "Not Authenticated!";
+			redirect('session/login');
 		}
 	}
 	
 	function logout()
 	{
-		$this->session->unset_userdata('loggedin');
+		$this->session->sess_destroy();
 		
 		redirect('/');
 	}

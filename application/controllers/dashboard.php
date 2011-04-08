@@ -3,24 +3,21 @@
 class Dashboard extends App_Controller {
 
 	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -  
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in 
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see http://codeigniter.com/user_guide/general/urls.html
+	 * Dashboard overview of everything
 	 */
 	public function index()
 	{
 		// TODO: put header here
-		$this->load->view('dashboard');
+		$this->load->view('header');
+		
+		// show recently viewed customers
+		$this->load->model('log');
+		$data['recent'] = $this->log->recently_viewed($this->session->userdata('user_name'));
+		$this->load->view('recently_viewed', $data);
+		
+		// TODO: replace this dashboard view with messages tabnav
+		//$this->load->view('dashboard');
+		
 		// TODO: put search boxes
 		// TODO: put footer here
 	}

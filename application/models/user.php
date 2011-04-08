@@ -33,6 +33,30 @@ class User extends CI_Model {
     	);
     $this->load->library('PasswordHash', $config);    
   }
+  
+  	/*--------------------------------------------------------------------*/
+	// check for too many login falures
+	/*--------------------------------------------------------------------*/
+	function checkfailures() 
+	{
+		$ipaddress = $_SERVER["REMOTE_ADDR"];
+		
+		$query = "SELECT * FROM login_failures WHERE ip = '$ipaddress' ".
+			"AND DATE(logintime) = CURRENT_DATE";
+		$result = $this->db->query($query);
+		
+		$attempts = $result->num_rows();
+		
+		if ($attempts > 5) 
+		{
+			return TRUE;
+		} 
+		else 
+		{
+			return FALSE;
+		}
+	}
+  
 
   /*--------------------------------------------------------------------*/
   // Check if they are logged in

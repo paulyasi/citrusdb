@@ -53,7 +53,14 @@
  *  Load the framework constants
  * ------------------------------------------------------
  */
-	require(APPPATH.'config/constants'.EXT);
+	if (defined('ENVIRONMENT') AND file_exists(APPPATH.'config/'.ENVIRONMENT.'/constants'.EXT))
+	{
+		require(APPPATH.'config/'.ENVIRONMENT.'/constants'.EXT);
+	}
+	else
+	{
+		require(APPPATH.'config/constants'.EXT);
+	}
 
 /*
  * ------------------------------------------------------
@@ -188,6 +195,13 @@
 			exit;
 		}
 	}
+
+/*
+ * -----------------------------------------------------
+ * Load the security class for xss and csrf support
+ * -----------------------------------------------------
+ */
+	$SEC =& load_class('Security', 'core');
 
 /*
  * ------------------------------------------------------

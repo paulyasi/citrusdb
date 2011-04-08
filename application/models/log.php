@@ -15,6 +15,18 @@ class Log extends CI_Model
         parent::__construct();
     }
     
+	function recently_viewed($user)
+	{
+		$query = "SELECT a.account_number, c.name FROM activity_log a 
+			LEFT JOIN customer c ON c.account_number = a.account_number 
+			WHERE a.user = '$user' AND activity_type = 'view' 
+			AND record_type = 'customer' ORDER BY datetime DESC limit 10";
+		
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+
+		return $result;
+	}
+    
 	function activity_log($user,$account_number,$activity_type,
 		$record_type,$record_id,$result)
 	{
