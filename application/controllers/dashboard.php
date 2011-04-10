@@ -15,13 +15,16 @@ class Dashboard extends App_Controller {
 		$data['recent'] = $this->log->recently_viewed($this->session->userdata('user_name'));
 		$this->load->view('recently_viewed', $data);
 		
-		// TODO: replace this dashboard view with messages tabnav
 		$this->load->view('messagetabs');
 		
 		$this->load->view('buttonbar');
 		
-		// TODO: put search boxes
-		// TODO: put footer here
+		$this->load->view('searchbox');
+		
+		// include module searches below here		
+		
+		
+		
 	}
 }
 
