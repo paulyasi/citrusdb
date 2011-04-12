@@ -8,7 +8,7 @@
  *
  */
 
-class Log extends CI_Model
+class Log_Model extends CI_Model
 {
 	function __construct()
     {
@@ -27,7 +27,7 @@ class Log extends CI_Model
 		return $result;
 	}
     
-	function activity_log($user,$account_number,$activity_type,
+	function activity($user,$account_number,$activity_type,
 		$record_type,$record_id,$result)
 	{
 		$sys_dbtype = $this->db->dbdriver;

@@ -109,7 +109,7 @@ $autoload['language'] = array('citrus');
 |
 */
 
-$autoload['model'] = array('log');
+$autoload['model'] = array('log_model');
 
 
 /* End of file autoload.php */

@@ -11,10 +11,11 @@ class Dashboard extends App_Controller {
 		$this->load->view('header_with_sidebar');
 		
 		// show recently viewed customers
-		$this->load->model('log');
-		$data['recent'] = $this->log->recently_viewed($this->session->userdata('user_name'));
+		$this->load->model('log_model');
+		$data['recent'] = $this->log_model->recently_viewed($this->session->userdata('user_name'));
 		$this->load->view('recently_viewed', $data);
 		
+		$this->load->model('ticket_model');
 		$this->load->view('messagetabs');
 		
 		$this->load->view('buttonbar');
@@ -22,7 +23,7 @@ class Dashboard extends App_Controller {
 		$this->load->view('searchbox');
 		
 		// include module searches below here		
-			
+		// TODO: put this into a permission model?
 		// First check for permissions to view search modules
 		$groupname = array();	
     	$modulelist = array();
@@ -62,6 +63,9 @@ class Dashboard extends App_Controller {
 				$this->load->view($viewthis);
     		}
 		}
+		
+		// show html footer
+		$this->load->view('html_footer');
 		
 		
 	}

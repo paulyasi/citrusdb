@@ -5,7 +5,7 @@
 // Read the README file for more information
 /*----------------------------------------------------------------------------*/
 
-class User extends CI_Model {	
+class User_Model extends CI_Model {	
 	
   var $LOGGED_IN=false;
   
@@ -266,7 +266,7 @@ class User extends CI_Model {
 	    "VALUES ('$ipaddress',CURRENT_TIMESTAMP)";
     $result=$this->db->query($query) or die ("Log Insert Failed");
 
-    $this->log->activity_log($user_name,0,'login','dashboard',0,'failure');
+    $this->log->activity($user_name,0,'login','dashboard',0,'failure');
     
   }
 
@@ -274,7 +274,7 @@ class User extends CI_Model {
   // keep track of login success
   /*--------------------------------------------------------------------*/  
   function loginsuccess($user_name) {
-    $this->log->activity_log($user_name,0,'login','dashboard',0,'success');
+    $this->log->activity($user_name,0,'login','dashboard',0,'success');
   }
   
   /*--------------------------------------------------------------------*/

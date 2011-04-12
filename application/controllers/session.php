@@ -6,13 +6,13 @@ class Session extends CI_Controller
 		parent::__construct();
 		
 		$this->load->library('session');
-		$this->load->model('user', '', true);		
+		$this->load->model('user_model', '', true);		
 	}
 	
 	function login()
 	{
 		// kick you out if you have 5 failed logins from the same ip
-		if ($this->user->checkfailures()) 
+		if ($this->user_model->checkfailures()) 
 		{
   			echo "Login Failure.  Please See Administrator";
   			die;
@@ -27,7 +27,7 @@ class Session extends CI_Controller
 		$username = $this->input->post('user_name');
 		$password = $this->input->post('password');
 		
-		if ($this->user->user_login($username,$password)) 
+		if ($this->user_model->user_login($username,$password)) 
 		{	
 			$newsession = array(
                    'user_name'  => $username,
