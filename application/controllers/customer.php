@@ -6,6 +6,7 @@ class Customer extends App_Controller {
 	{
 		parent::__construct();	
 		$this->load->model('customer_model');
+		$this->load->model('module_model');
 	}
 	
 	/**
@@ -13,26 +14,34 @@ class Customer extends App_Controller {
 	 */
 	public function index()
 	{
-		$this->load->view('header_with_sidebar');
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'customer');
+		if ($permission['view'])
+		{
 		
-		$data = $this->customer_model->sidebar($this->account_number);
-		$this->load->view('customer_in_sidebar', $data);
+			$this->load->view('header_with_sidebar');
 		
-		//$this->load->model('module');
-		$this->load->view('moduletabs');
-		
-		$this->load->model('ticket_model');
-		$this->load->view('messagetabs');
-		
-		$this->load->view('buttonbar');
-		
-		//$this->load->view('customer/index');
-		//$this->load->view('billing/mini');
-		//$this->load->view('services/index');
-		
-		// show html footer
-		$this->load->view('html_footer');
-		
+			$data = $this->customer_model->sidebar($this->account_number);
+			$this->load->view('customer_in_sidebar', $data);
+			
+			$this->load->view('moduletabs');
+			
+			$this->load->model('ticket_model');
+			$this->load->view('messagetabs');
+			
+			$this->load->view('buttonbar');
+			
+			//$this->load->view('customer/index');
+			//$this->load->view('billing/mini');
+			//$this->load->view('services/index');
+			
+			// show html footer
+			$this->load->view('html_footer');
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}	
 		
 	}
 }

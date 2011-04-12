@@ -4,55 +4,101 @@
  * 
  * Module class for citrus modules like customer, billing, services, and support
  * 
- * @author pyasi
+ * @author Paul Yasi and David Olivier
  *
  */
 
-class Module extends CI_Model
+class Module_model extends CI_Model
 {
 	function __construct()
     {
         parent::__construct();
     }
     
-	function recently_viewed($user)
-	{
-		$query = "SELECT a.account_number, c.name FROM activity_log a 
-			LEFT JOIN customer c ON c.account_number = a.account_number 
-			WHERE a.user = '$user' AND activity_type = 'view' 
-			AND record_type = 'customer' ORDER BY datetime DESC limit 10";
-		
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+    public function permission($user, $modulename)
+    {
+		// Check for permissions to view module
+    	$groupname = array();
+    	$modulelist = array();
+    	$query = "SELECT * FROM groups WHERE groupmember = '$user'";
+    	$result = $this->db->query($query) or die ("First Permission Query Failed");	
+    	foreach ($result->result() as $myresult)
+		{
+			array_push($groupname,$myresult->groupname);
+    	}
+    	$groups = array_unique($groupname);
+    	array_push($groups,$user);
+	
+	    $query = "SELECT user,permission FROM module_permissions WHERE modulename = '$modulename'";
+	    $result = $this->db->query($query) or die ("Second Permission Query Failed");	
+	    foreach ($result->result() as $myresult)
+		{
+			if (in_array ($myresult->user, $groups))
+	        {
+	            if ($myresult->permission == 'r')
+	            {
+	            	return array ('view' => TRUE);
+	            }
+    	        if ($myresult->permission == 'c')
+       	     	{
+       	     		return array ('create' => TRUE);
+            	}
+            	if ($myresult->permission == 'm')
+            	{
+            		return array ('modify' => TRUE);
+            	}
+            	if ($myresult->permission == 'd')
+            	{
+            		return array ('remove' => TRUE);
+            	}
+            	if ($myresult->permission == 'f')
+            	{
+                	return array ('view' => TRUE, 'create' => TRUE, 'modify' => TRUE, 'remove' => TRUE);
+            	}
+        	}
+    	}
+    } // end permission function
 
-		return $result;
+	function permission_error()
+	{
+		die ("You don't have permission to use this function");
 	}
     
-	function activity_log($user,$account_number,$activity_type,
-		$record_type,$record_id,$result)
-	{
-		$sys_dbtype = $this->db->dbdriver;
-  
-		// make an entry into the activity_log table regarding the activity passed
-		// to this function
-		$datetime = date("Y-m-d H:i:s");
-		$ip_address = $_SERVER["REMOTE_ADDR"];
-
-		// take advantage of mysql insert delayed to speed up this function if we can
-		if ($sys_dbtype == "mysql") 
-		{  
-			$query = "INSERT DELAYED INTO activity_log ".
-				"VALUES ('$datetime','$user','$ip_address',$account_number,".
-				"'$activity_type','$record_type','$record_id','$result')";
-		} 
-		else 
+    
+    public function module_permission_list($user)
+    {
+    	// get a list of modules we are allowed to view
+    	$groupname = array();
+    	$modulelist = array();
+		$query = "SELECT * FROM groups WHERE groupmember = '$user'";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		foreach($result->result() as $myresult)
 		{
-			$query = "INSERT INTO activity_log ".
-			"VALUES ('$datetime','$user','$ip_address',$account_number,".
-			"'$activity_type','$record_type','$record_id','$result')";    
+			array_push($groupname,$myresult->groupname);
 		}
+    	$groups = array_unique($groupname);
+    	array_push($groups,$this->user);
 
-		$result = $this->db->query($query) or die ("activity_log insert failed");
-  
-	} // end log_activity
-	
+    	while (list($key,$value) = each($groups))
+    	{
+        	$query = "SELECT * FROM module_permissions WHERE user = '$value' ";
+			$result = $this->db->query($query) or die ("$l_queryfailed");
+			foreach($result->result() as $myresult)
+			{
+        		array_push($modulelist,$myresult->modulename);
+    		}
+    	}
+    	
+    	return array_unique($modulelist);
+    
+    }
+    
+    public function modulelist()
+    {
+		$query = "SELECT * FROM modules ORDER BY sortorder";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		
+		return $result;
+    }
+    
 }

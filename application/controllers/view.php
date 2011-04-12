@@ -16,7 +16,7 @@ class View extends App_Controller
 		$this->account_number = $account_number;
 		
 		// log this account view
-		$this->log->activity($user, $this->account_number, 'view', 'customer', 0, 'success');
+		$this->log_model->activity($user, $this->account_number, 'view', 'customer', 0, 'success');
 
 		redirect('customer');
 	}

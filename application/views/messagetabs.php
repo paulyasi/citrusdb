@@ -13,11 +13,13 @@ $data = $this->ticket_model->user_count($this->user);
 $created = $data['created'];
 $num_rows = $data['num_rows'];
 
+$myuri = $this->uri->uri_string();
+
 if (!empty($usernamedatetime) AND $created > $usernamedatetime) {
   $bgstyle = "style = \"background-color: #AFA;\"";
-  // TODO: figure out if viewing the current user tickets
-//} elseif ($ticketuser == $this->user) {
-//  $bgstyle = "class = \"active\"";
+  // figures out if viewing the current user tickets
+} elseif ($myuri == "tickets/$this->user") {
+  $bgstyle = "class = \"active\"";
 } else {
   $bgstyle = "";
 }
@@ -51,13 +53,15 @@ foreach ($query->result() as $row) {
 	$created = $data['created'];
 	$num_rows = $data['num_rows'];	
 
+	$myuri = $this->uri->uri_string();
+	
   if (!empty($groupnamedatetime) AND $created > $groupnamedatetime) {
     $bgstyle = "style = \"background-color: #AFA;\"";
     // TODO: figure out if viewing the current ticket group
-//  } elseif ($ticketgroup == $groupname) {
-//    $bgstyle = "class = \"active\"";
-  } else {
-    $bgstyle = "";
+  } elseif ($myuri == "tickets/$groupname") {
+	    $bgstyle = "class = \"active\"";
+  	} else {
+    	$bgstyle = "";
   }
 
   if ($num_rows == 0) {
