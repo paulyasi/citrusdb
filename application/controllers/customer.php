@@ -21,7 +21,8 @@ class Customer extends App_Controller {
 		
 			$this->load->view('header_with_sidebar');
 		
-			$data = $this->customer_model->sidebar($this->account_number);
+			// get the customer title info, name and company
+			$data = $this->customer_model->title($this->account_number);
 			$this->load->view('customer_in_sidebar', $data);
 			
 			$this->load->view('moduletabs');
@@ -33,7 +34,11 @@ class Customer extends App_Controller {
 			
 			$data = $this->customer_model->record($this->account_number);
 			$this->load->view('customer/index', $data);
-			//$this->load->view('billing/mini');
+			
+			$this->load->model('billing_model');
+			$data['record'] = $this->billing_model->record_list($this->account_number);
+			$this->load->view('billing/mini_index', $data);
+			
 			//$this->load->view('services/index');
 			
 			// show html footer

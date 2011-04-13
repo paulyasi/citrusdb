@@ -1,108 +1,81 @@
-<?php
-
-  // get the cancel reason text
-  if ($cancel_reason_id > 0) {
-    $query = "SELECT reason FROM cancel_reason WHERE id = $cancel_reason_id";
-    $result = $this->db->query($query) or die ("$l_queryfailed");
-    $myresult = $result->row();
-    $cancel_reason = $myresult->reason;
-  } else {
-    $cancel_reason = "";
-  }
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
   // print the customer edit links
   echo "<a href=\"index.php/customer/edit\">".
     "[ " . lang('editcustomer') . "]</a>";
   if ($cancel_date) {
     echo "<a href=\"index.php/customer/undelete\">".
-      "[ $l_uncancelcustomer ]</a>";
+      "[ " . lang('uncancelcustomer') . " ]</a>";
   } else {
     echo "<a href=\"index.php/customer/delete\">".
-      "[ $l_cancelcustomer ]</a>";
+      "[ " . lang('cancelcustomer') . " ]</a>";
    }
-  // print the HTML table
-  echo "<table cellpadding=0 border=0 cellspacing=1 width=719>".
-    "<td valign=top width=259 style=\"background-color: #dde;\">".
-    "<table cellpadding=4 cellspacing=0 border=0 width=259>".
+?>
+<table cellpadding=0 border=0 cellspacing=1 width=719>
+<td valign=top width=259 style="background-color: #dde;">
+<table cellpadding=4 cellspacing=0 border=0 width=259>
   
-  "<tr>".
-  //"<td width=180><b>$l_name</b></td>".
-  "<td style=\"font-size: 12pt;\">" . $name . "</td>".
+<tr>
+<td style=\"font-size: 12pt;\"><?=$name?></td>
 
-  "<tr>".
-  //"<td><b>$l_company</b></td>".
-  "<td style=\"font-size: 12pt;\">$company</td>".
+<tr>
+<td style=\"font-size: 12pt;\"><?=$company?></td>
   
-  "<tr>".  
-  //"<td><b>$l_street</b></td>".
-  "<td>$street</td>".
+<tr>
+<td><?=$street?></td>
   
-  "<tr>".
-  //"<td><b>$l_city</b></td>".
-  "<td>$city $state $zip</td>".
+<tr>
+<td><?php echo "$city $state $zip";?></td>
+  
+<tr>
+<td><?php echo lang('phone') . ": " . $phone;?></td>
+  
+<tr>
+<td><?php echo lang('alt_phone') . ": " . $alt_phone;?></td>
+  
+<tr>
+<td><?php echo lang('fax') . ": " . $fax;?></td>
 
-  //"<tr>".
-  //"<td><b>$l_state</b></td>".
-  //"<td>$state</td>".
-  
-  //"<tr>".  
-  //"<td><b>$l_zip</b></td>".
-  //"<td>$zip</td>".
-  
-  "<tr>".
-  //"<td><b>$l_phone</b></td>".
-  "<td>$l_phone: $phone</td>".
-  
-  "<tr>".
-  //"<td><b>$l_alt_phone</b></td>".
-  "<td>$l_alt_phone: $alt_phone</td>".
-  
-  "<tr>".
-  //"<td><b>$l_fax</b></td>".
-    "<td>$l_fax: $fax</td>".
+<tr>
+<td><?php echo lang('notes') . ": " . $notes;?></td>
 
-    "<tr>".
-    "<td>$l_notes: $notes</td>".
+</table></td><td valign=top width=360 style="background-color: #dde;">
+<table cellpadding=3 cellspacing=0 border=0 width=360>
 
-  // end of left table column
-  
-  "</table></td><td valign=top width=360 style=\"background-color: #dde;\">".
-  "<table cellpadding=3 cellspacing=0 border=0 width=360>";
+<td width=160><b><?php echo lang('signupdate');?></b></td>
+<td width=200><?=$signup_date?></td><tr>
 
+<td valign=top><b><?php echo lang('canceldate');?></b></td>
+<td class=redbold><?=$cancel_date?><br> <?=$cancel_reason?></td><tr>
+  
+<td><b><?php echo lang('source');?></b></td>
+<td><?=$source?></td><tr>
+  
+<td><b><?php echo lang('contactemail');?></b></td>
+<td><?=$contactemail?></td><tr>
+  
+<td><b><?php echo lang('secret_question');?></b></td>
+<td><?=$secret_question?></td><tr>
+  
+<td><b><?php echo lang('secret_answer');?></b></td>
+<td><?=$secret_answer?></td><tr>
+ 
+<td><b><?php echo lang('defaultbillingid');?></b></td>
+<td><?=$default_billing_id?></td><tr>
+  
+<td><b><?php echo lang('country');?></b></td>
+<td><?=$country?></td><tr>
+  
+<td><b><?php echo lang('acctmngrpasswd');?></b></td>
 
-echo 
-  "<td width=160><b>$l_signupdate</b></td>".
-  "<td width=200>$signup_date</td><tr>".
-
-  "<td valign=top><b>$l_canceldate</b></td>".
-  "<td class=redbold>$cancel_date<br> $cancel_reason</td><tr>".
-  
-  "<td><b>$l_source</b></td>".
-  "<td>$source</td><tr>".
-  
-  "<td><b>$l_contactemail</b></td>".
-  "<td>$contactemail</td><tr>".
-  
-  "<td><b>$l_secret_question</b></td>".
-  "<td>$secret_question</td><tr>".
-  
-  "<td><b>$l_secret_answer</b></td>".
-  "<td>$secret_answer</td><tr>".
-  
-  "<td><b>$l_defaultbillingid</b></td>".
-  "<td>$default_billing_id</td><tr>".
-  
-  "<td><b>$l_country</b></td>".
-  "<td>$country</td><tr>".
-  
-  "<td><b>$l_acctmngrpasswd</b></td>";
+<?php
   if ($account_manager_password) { 
-    echo "<td><a href=\"$url_prefix/index.php?load=customer&type=module&resetamp=on\">$l_reset</a></td><tr>";
+    echo "<td><a href=\"" . $this->url_prefix . "index.php/customer/resetamp\">" . lang('reset') . "</a></td><tr>";
   } else {
-    echo "<td><a href=\"$url_prefix/index.php?load=customer&type=module&resetamp=on\">$l_notset</a></td><tr>";
+    echo "<td><a href=\"" . $this->url_prefix . "index.php/customer/resetamp\">" . lang('notset') . "</a></td><tr>";
   }
-    echo "</table></td></table></form>";
-//end of second column
+?>
 
- echo "<p>";
+</table></td></table></form>
+<p>
  
