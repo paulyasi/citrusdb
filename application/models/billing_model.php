@@ -29,6 +29,7 @@ class Billing_Model extends CI_Model
 			$newtaxes = sprintf("%.2f",$this->total_taxitems($billing_id));
   			$newcharges = sprintf("%.2f",$this->total_serviceitems($billing_id)+$newtaxes);
   			$pastcharges = sprintf("%.2f",$this->total_pastdueitems($billing_id));
+  			$newtotal = sprintf("%.2f",$newcharges + $pastcharges);
   	
 			$result[$i] = array(
 				'b_id' => $myrecord->b_id,

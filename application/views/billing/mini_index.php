@@ -1,8 +1,8 @@
-<br><table width=720 cellpadding=3><tr bgcolor=\"#dddddd\">".
-   "<td><b>$l_organizationname</b></td><td><b>$l_type</b></td>".
-   "<td><b>$l_status</b></td><td><b>$l_newcharges</b></td>".
-   "<td><b>$l_tax</b></td><td><b>$l_pastcharges</b></td>".
-   "<td><b><?php echo lang('total');?></b></td><tr>";
+<table width=720 cellpadding=3><tr bgcolor="#dddddd">
+<td><b><?php echo lang('organizationname')?></b></td><td><b><?php echo lang('type')?></b></td>
+<td><b><?php echo lang('status')?></b></td><td><b><?php echo lang('newcharges')?></b></td>
+<td><b><?php echo lang('tax')?></b></td><td><b><?php echo lang ('pastcharges')?></b></td>
+<td><b><?php echo lang('total');?></b></td><tr>
 <?php 
 
 foreach ($record as $billing_record) {
@@ -14,15 +14,16 @@ foreach ($record as $billing_record) {
 	$newcharges = $billing_record['newcharges'];
 	$pastcharges = $billing_record['pastcharges'];
 	$newtaxes = $billing_record['newtaxes'];
+	$newtotal = $billing_record['newtotal'];
 
 	// show active billing services that are authorized new or free in green
 	// show active billing services not in good standing in red
 	if ($billing_id == $not_removed_id) 
 	{
-    	if (($mystatus == $l_authorized)
-			OR ($mystatus == $l_new)
-			OR ($mystatus == $l_free)
-			OR ($mystatus == $l_pastdueexempt)) 
+    	if (($mystatus == lang('authorized'))
+			OR ($mystatus == lang('new'))
+			OR ($mystatus == lang('free'))
+			OR ($mystatus == lang('pastdueexempt'))) 
 		{
       		echo "<tr style=\"background-color: bdd;\">";
     	} 
@@ -52,20 +53,13 @@ foreach ($record as $billing_record) {
     	}
   	}
 
-  	$edit_billing_url = "$ssl_url_prefix" . "index.php?load=billing&type=module&edit=on&";
-  
-  	print "<td style=\"font-weight: bold;\">$billing_orgname&nbsp;".
-    	"<a href=\"$edit_billing_url".
-    	"billing_id=$billing_id\">$l_edit $billing_id</a>";
-
-  	print "</td><td>$billing_type</td><td>$mystatus</td>";
-  
-  	print "<td>$newcharges</td><td>$newtaxes</td><td>$pastcharges</td>";
-
-  	$newtotal = sprintf("%.2f",$newcharges + $pastcharges);
-  	print "<td>$newtotal</td>";
-  
- }
- ?>
+  	$edit_billing_url = $this->ssl_url_prefix . "index.php/billing/edit/" . $billing_id;
+}
+?>
+<td style="font-weight: bold;"><?=$billing_orgname?>&nbsp;
+<a href="<?=$edit_billing_url?>"><?php echo lang('edit') . " " . $billing_id;?></a>
+</td><td>$billing_type</td><td>$mystatus</td>
+<td><?=$newcharges?></td><td><?=$newtaxes?></td><td><?=$pastcharges?></td>
+<td><?=$newtotal?></td>
 </table>
 <p>
