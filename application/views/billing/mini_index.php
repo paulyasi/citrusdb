@@ -11,6 +11,9 @@ foreach ($record as $billing_record) {
 	$billing_orgname = $billing_record['g_org_name'];
 	$not_removed_id = $billing_record['not_removed_id'];
 	$mystatus = $billing_record['mystatus'];
+	$newcharges = $billing_record['newcharges'];
+	$pastcharges = $billing_record['pastcharges'];
+	$newtaxes = $billing_record['newtaxes'];
 
 	// show active billing services that are authorized new or free in green
 	// show active billing services not in good standing in red
@@ -56,10 +59,6 @@ foreach ($record as $billing_record) {
     	"billing_id=$billing_id\">$l_edit $billing_id</a>";
 
   	print "</td><td>$billing_type</td><td>$mystatus</td>";
-
-  	$newtaxes = sprintf("%.2f",total_taxitems($DB, $billing_id));
-  	$newcharges = sprintf("%.2f",total_serviceitems($DB, $billing_id)+$newtaxes);
-  	$pastcharges = sprintf("%.2f",total_pastdueitems($DB, $billing_id));
   
   	print "<td>$newcharges</td><td>$newtaxes</td><td>$pastcharges</td>";
 

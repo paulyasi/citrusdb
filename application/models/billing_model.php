@@ -25,13 +25,21 @@ class Billing_Model extends CI_Model
 			$not_removed_id = $myusresult->billing_id;		
 
 			$mystatus = $this->billingstatus($billing_id);
-						
+								
+			$newtaxes = sprintf("%.2f",$this->total_taxitems($billing_id));
+  			$newcharges = sprintf("%.2f",$this->total_serviceitems($billing_id)+$newtaxes);
+  			$pastcharges = sprintf("%.2f",$this->total_pastdueitems($billing_id));
+  	
 			$result[$i] = array(
 				'b_id' => $myrecord->b_id,
 				'g_org_name' => $myrecord->g_org_name,
 				't_name' => $myrecord->t_name,
 				'not_removed_id' => $myusresult->billing_id,
-				'mystatus' => $mystatus
+				'mystatus' => $mystatus,
+				'newtaxes' => $newtaxes,
+				'newcharges' => $newcharges,
+				'pastcharges' => $pastcharges,
+				'newtotal' => $newtotal
 			);
 			
 			$i++;
@@ -213,5 +221,213 @@ class Billing_Model extends CI_Model
 		return $status;	
 	
 	} // end billingstatus
+	
+	
+	function total_taxitems($bybillingid)
+	{
+		/*--------------------------------------------------------------------*/
+		// Add taxes together to get total for this billing id
+		/*--------------------------------------------------------------------*/
+
+		//
+		// query for taxed services that are billed by a specific billing id
+		//
+
+		$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+    "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+    "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+    "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+    "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+    "tr.percentage_or_fixed tr_percentage_or_fixed, ". 
+    "us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
+    "us.removed us_removed, us.account_number us_account_number, ".
+    "us.usage_multiple us_usage_multiple, ".
+    "te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
+    "b.id b_id, b.billing_type b_billing_type, ". 
+    "t.id t_id, t.frequency t_freq, t.method t_method ".
+    "FROM taxed_services ts ".
+    "LEFT JOIN user_services us ".
+    "ON us.master_service_id = ts.master_services_id ".
+    "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+    "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+    "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+    "AND te.tax_rate_id = tr.id ".
+    "LEFT JOIN billing b ON us.billing_id = b.id ".
+    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+    "WHERE b.id = '$bybillingid' AND us.removed <> 'y'";
+
+		$taxresult = $this->db->query($query) or die ("Taxes Query Failed");
+
+		// initialize to add up the total amount of taxes
+		$total_taxes = 0;
+		
+		foreach ($taxresult->result() as $mytaxresult)
+		{
+			$billing_id = $mytaxresult->b_id;
+			$taxed_services_id = $mytaxresult->ts_id;
+			$user_services_id = $mytaxresult->us_id;
+			$service_freq = $mytaxresult->ms_freq;
+			$billing_freq = $mytaxresult->t_freq;
+			$if_field = $mytaxresult->tr_if_field;
+			$if_value = $mytaxresult->tr_if_value;
+			$percentage_or_fixed = $mytaxresult->tr_percentage_or_fixed;
+			$my_account_number = $mytaxresult->us_account_number;
+			$usage_multiple = $mytaxresult->us_usage_multiple;
+			$pricerate = $mytaxresult->ms_pricerate;
+			$taxrate = $mytaxresult->tr_rate;
+			$tax_rate_id = $mytaxresult->tr_id;
+			$tax_exempt_rate_id = $mytaxresult->te_tax_rate_id;
+
+			// check that they are not exempt
+			if ($tax_exempt_rate_id <> $tax_rate_id) {
+				// check the if_field before adding to see if
+				// the tax applies to this customer
+				if ($if_field <> '') {
+					$ifquery = "SELECT $if_field FROM customer ".
+	  					"WHERE account_number = '$my_account_number'";
+					$ifresult = $this->db->query($ifquery) or die ("Query Failed");
+					$myifresult = $ifresult->row_array();
+					$checkvalue = $myifresult[0];
+				} else {
+					$checkvalue = TRUE;
+					$if_value = TRUE;
+				}
+
+				// check for any case, so lower them here
+				$checkvalue = strtolower($checkvalue);
+				$if_value = strtolower($if_value);
+
+				if (($checkvalue == $if_value) AND ($billing_freq > 0)) {
+					if ($percentage_or_fixed == 'percentage') {
+						if ($service_freq > 0) {
+							$servicecost = sprintf("%.2f",$taxrate * $pricerate);
+							$tax_amount = sprintf("%.2f",$servicecost * $billing_freq * $service_freq * $usage_multiple);
+						} else {
+							$servicecost = $pricerate * $usage_multiple;
+							$tax_amount = $taxrate * $servicecost;
+						}
+					} else {
+						// fixed fee amount, does not depend on price or usage
+						$tax_amount = $taxrate * $billing_freq;
+					}
+
+
+					// round the tax to two decimal places
+					$tax_amount = sprintf("%.2f", $tax_amount);
+
+					// add to total taxes
+					$total_taxes = $total_taxes + $tax_amount;
+
+				} //endif if_field/billing_freq
+
+			} // endif exempt
+
+		}
+
+		// send back total new taxes for that customer billingid
+		return $total_taxes;
+
+	}
+
+
+	function total_serviceitems($bybillingid)
+	{
+		/*--------------------------------------------------------------------*/
+		// Add services together to get total for this billing id
+		/*--------------------------------------------------------------------*/
+
+		$query = "SELECT u.id u_id, u.account_number u_ac, ".
+    "u.master_service_id u_msid, u.billing_id u_bid, ".
+    "u.removed u_rem, u.usage_multiple u_usage, ".
+    "b.next_billing_date b_next_billing_date, b.id b_id, ".
+    "b.billing_type b_type, ".
+    "t.id t_id, t.frequency t_freq, t.method t_method, ".
+    "m.id m_id, m.pricerate m_pricerate, m.frequency m_freq ".
+    "FROM user_services u ".
+    "LEFT JOIN master_services m ON u.master_service_id = m.id ".
+    "LEFT JOIN billing b ON u.billing_id = b.id ".
+    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+    "WHERE b.id = '$bybillingid' ".
+    "AND u.removed <> 'y'";
+
+		$result = $this->db->query($query) or die ("Services Query Failed");
+
+		// initialize the service totals
+		$total_service = 0;
+
+		foreach ($result->result() as $myresult)
+		{
+			$billing_id = $myresult->u_bid;
+			$user_services_id = $myresult->u_id;
+			$pricerate = $myresult->m_pricerate;
+			$usage_multiple = $myresult->u_usage;
+			$service_freq = $myresult->m_freq;
+			$billing_freq = $myresult->t_freq;
+
+			if ($billing_freq > 0) {
+				if ($service_freq > 0) {
+					$billed_amount = ($billing_freq/$service_freq)
+					*($pricerate*$usage_multiple);
+				} else {
+					// one time services
+					$billed_amount = ($pricerate*$usage_multiple);
+				} // end if
+
+				// round the tax to two decimal places
+				$billed_amount = sprintf("%.2f", $billed_amount);
+
+				// add to the total service cost
+				$total_service = $total_service + $billed_amount;
+
+			} // end if billing_freq
+
+		} // end while
+
+		// return the total amount of service charges for the billingid
+		return $total_service;
+
+	}
+
+
+
+	function total_pastdueitems($mybilling_id)
+	{
+		/*-------------------------------------------------------------------------*/
+		// get the amounts for the past due charges for that billing id
+		/*-------------------------------------------------------------------------*/
+
+		$query = "SELECT d.billing_id d_billing_id, ".
+    "d.paid_amount d_paid_amount, d.billed_amount d_billed_amount ".
+    "FROM billing_details d ".
+    "LEFT JOIN user_services u ON d.user_services_id = u.id ".
+    "LEFT JOIN master_services m ON u.master_service_id = m.id ".
+    "LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
+    "LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
+    "WHERE d.billing_id = $mybilling_id ".
+    "AND d.paid_amount != d.billed_amount"; 	
+
+		$invoiceresult = $this->db->query($query) or die ("This Query Failed");
+
+		// initialize past amounts
+		$pastdue = 0;
+
+		foreach($invoiceresult->result() as $myinvresult)
+		{
+			$billed_amount = $myinvresult->d_billed_amount;
+			$paid_amount = $myinvresult->d_paid_amount;
+
+			// get the difference between billed and paid amount
+			$billed_amount = $billed_amount - $paid_amount;
+
+			// add to past due charges
+			$pastdue = sprintf("%.2f",$pastdue + $billed_amount);
+
+		} // end while
+
+		// return the pastdue total to them
+		return $pastdue;
+
+	} // end total_pastdueitems
+	
 		
 }
