@@ -78,8 +78,24 @@ class Customer_Model extends CI_Model
     public function cancel_reason($cancel_reason_id)
     {
 		
-  		
   		return $cancel_reason;
+    }
+    
+    public function is_not_canceled($account_number)  
+    {
+    	// hide the Add Service function if the customer is canceled
+   		$query = "SELECT cancel_date FROM customer ".
+     	"WHERE account_number = $account_number AND cancel_date is NULL";
+   		$result = $this->db->query($query) or die ("$l_queryfailed");
+   		$notcanceled = $result->num_rows();
+   		if ($notcanceled == 1) 
+   		{ 
+   			return TRUE; 
+   		} 
+   		else 
+   		{ 
+   			return FALSE; 
+   		}
     }
 	
 }

@@ -430,5 +430,17 @@ class Billing_Model extends CI_Model
 
 	} // end total_pastdueitems
 	
+	public function frequency_and_organization($billing_id)
+	{
+		// get the data from the billing tables to compare service and billing frequency
+		$query = "SELECT * FROM billing b ".
+       	"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+       	"LEFT JOIN general g ON g.id = b.organization_id ".
+       	"WHERE b.id = '$billing_id'";
+		$freqoutput = $this->db->query($query) or die ("$l_queryfailed");
 		
+		return $freqoutput->row();
+	
+	}
+			
 }

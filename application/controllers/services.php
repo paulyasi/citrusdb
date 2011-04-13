@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Customer extends App_Controller {
+class Services extends App_Controller {
 
 	function __construct()
 	{
 		parent::__construct();	
-		$this->load->model('customer_model');
+		$this->load->model('service_model');
 		$this->load->model('module_model');
 	}
 	
@@ -15,7 +15,7 @@ class Customer extends App_Controller {
 	public function index()
 	{
 		// check permissions
-		$permission = $this->module_model->permission($this->user, 'customer');
+		$permission = $this->module_model->permission($this->user, 'services');
 		if ($permission['view'])
 		{
 		
@@ -32,22 +32,11 @@ class Customer extends App_Controller {
 			
 			$this->load->view('buttonbar');
 			
-			$data = $this->customer_model->record($this->account_number);
-			$this->load->view('customer/index', $data);
-			
-			$this->load->model('billing_model');
-			$data['record'] = $this->billing_model->record_list($this->account_number);
-			$this->load->view('billing/mini_index', $data);
-			
 			$this->load->model('service_model');
-			
-			// output the services headings
-			$data['categories'] = $this->service_model->service_categories($this->account_number);
-			$this->load->view('services/heading', $data);
-			
-			// output the list of services
-			$data['services'] = $this->service_model->list_services($this->account_number);
-			$this->load->view('services/index', $data);
+			$data = $this->service_model->service_categories($this->account_number);
+			$this->load->view('services/services_heading', $data);
+			// TODO make this service/index work
+			//$this->load->view('services/index');
 			
 			// show html footer
 			$this->load->view('html_footer');
@@ -80,17 +69,24 @@ class Customer extends App_Controller {
 	    } else permission_error();
 	}
 	
-	public function resetamp()
+	public function fieldassets()
 	{
 	    if ($pallow_remove) {
-	       include('./modules/customer/resetamp.php');
+	       include('./modules/customer/fieldassets');
 	    } else permission_error();        
 	}
 	
-	public function undelete()
+	public function history()
 	{
 		if ($pallow_remove) {
-  	  	include('./modules/customer/undelete.php');
+  	  	include('./modules/customer/history');
+ 	 	} else permission_error();
+	}
+	
+	public function vendor()
+	{
+		if ($pallow_remove) {
+  	  	include('./modules/customer/vendor');
  	 	} else permission_error();
 	}
   
