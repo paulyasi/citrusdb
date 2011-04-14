@@ -19,7 +19,7 @@
 CREATE TABLE `batch` (
   `id` int(11) NOT NULL auto_increment,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `batch`
@@ -63,7 +63,7 @@ CREATE TABLE `billing` (
   `encrypted_creditcard_number` text NULL default NULL,
   `automatic_receipt` enum('y','n') NOT NULL default 'n',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=34 ;
+) ENGINE=MyISAM AUTO_INCREMENT=34 ;
 
 -- 
 -- Dumping data for table `billing`
@@ -98,7 +98,7 @@ CREATE TABLE `billing_details` (
   `recent_invoice_number` int(11) NULL,
   PRIMARY KEY  (`id`),
   KEY `creation_date` (`creation_date`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `billing_details`
@@ -130,7 +130,7 @@ CREATE TABLE `billing_history` (
   `notes` text,
   `credit_applied` decimal(9,2) default '0',	
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `billing_history`
@@ -149,7 +149,7 @@ CREATE TABLE `billing_types` (
   `frequency` int(11) NOT NULL default '1',
   `method` enum('creditcard','invoice','einvoice','prepay','prepaycc','free') NOT NULL default 'creditcard',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=35 ;
+) ENGINE=MyISAM AUTO_INCREMENT=35 ;
 
 -- 
 -- Dumping data for table `billing_types`
@@ -183,7 +183,7 @@ CREATE TABLE `credit_options` (
   `user_services` int(11) NOT NULL default '0',
   `description` varchar(255) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `credit_options`
@@ -220,7 +220,7 @@ CREATE TABLE `customer` (
   `cancel_reason` int(11) NULL,
   `notes` text, 
   PRIMARY KEY  (`account_number`)
-) TYPE=MyISAM AUTO_INCREMENT=10000 ;
+) ENGINE=MyISAM AUTO_INCREMENT=10000 ;
 
 -- 
 -- Dumping data for table `customer`
@@ -248,7 +248,7 @@ CREATE TABLE `customer_history` (
   `closed_by` varchar(64) NULL,
   `closed_date` datetime NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=3 ;
+) ENGINE=MyISAM AUTO_INCREMENT=3 ;
 
 -- 
 -- Dumping data for table `customer_history`
@@ -268,7 +268,7 @@ CREATE TABLE `example_options` (
   `service_address` varchar(128) default NULL,
   `equipment` varchar(128) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM AUTO_INCREMENT=2 ;
 
 -- 
 -- Dumping data for table `example_options`
@@ -313,7 +313,7 @@ CREATE TABLE `general` (
   `dependent_canceled` INT NOT NULL DEFAULT '0',
   `exportprefix` VARCHAR( 64 ) NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM AUTO_INCREMENT=2 ;
 
 -- 
 -- Dumping data for table `general`
@@ -332,7 +332,7 @@ CREATE TABLE `groups` (
   `groupname` varchar(50) NOT NULL default '',
   `groupmember` varchar(32) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=34 ;
+) ENGINE=MyISAM AUTO_INCREMENT=34 ;
 
 -- 
 -- Dumping data for table `groups`
@@ -350,7 +350,7 @@ INSERT INTO `groups` VALUES (27, 'billing', 'admin');
 CREATE TABLE `holiday` (
   `holiday_date` date NOT NULL default '0000-00-00',
   PRIMARY KEY  (`holiday_date`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 -- 
 -- Dumping data for table `holiday`
@@ -374,7 +374,7 @@ CREATE TABLE `linked_services` (
   `linkfrom` int(11) NOT NULL default '0',
   `linkto` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=4 ;
+) ENGINE=MyISAM AUTO_INCREMENT=4 ;
 
 -- 
 -- Dumping data for table `linked_services`
@@ -405,7 +405,7 @@ CREATE TABLE `master_services` (
   `carrier_dependent` enum('y','n') NOT NULL default 'n',
   `support_notify` varchar(32) default NULL,   
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=18 ;
+) ENGINE=MyISAM AUTO_INCREMENT=18 ;
 
 -- 
 -- Dumping data for table `master_services`
@@ -427,7 +427,7 @@ CREATE TABLE `module_permissions` (
   `permission` char(1) NOT NULL default '',
   `user` varchar(30) NOT NULL default '',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=21 ;
+) ENGINE=MyISAM AUTO_INCREMENT=21 ;
 
 -- 
 -- Dumping data for table `module_permissions`
@@ -451,7 +451,7 @@ CREATE TABLE `modules` (
   `sortorder` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `sortorder` (`sortorder`)
-) TYPE=MyISAM AUTO_INCREMENT=8 ;
+) ENGINE=MyISAM AUTO_INCREMENT=8 ;
 
 -- 
 -- Dumping data for table `modules`
@@ -474,7 +474,7 @@ CREATE TABLE `options_urls` (
   `fieldname` varchar(255) NOT NULL default '',
   `url` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM AUTO_INCREMENT=2 ;
 
 -- 
 -- Dumping data for table `options_urls`
@@ -505,7 +505,7 @@ CREATE TABLE `payment_history` (
   `check_number` varchar(32) default NULL,
   `avs_response` varchar(32) default NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `payment_history`
@@ -524,7 +524,7 @@ CREATE TABLE `prorate_options` (
   `service_description` varchar(255) default NULL,
   `service_id` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 -- 
 -- Dumping data for table `prorate_options`
@@ -543,7 +543,7 @@ CREATE TABLE `searches` (
   `owner` varchar(32) default NULL,
   `outputform` text,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=12 ;
+) ENGINE=MyISAM AUTO_INCREMENT=12 ;
 
 -- 
 -- Dumping data for table `searches`
@@ -582,7 +582,7 @@ CREATE TABLE `tax_rates` (
   `if_value` varchar(30) default NULL,
   `percentage_or_fixed` enum('percentage','fixed') NOT NULL default 'percentage',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=53 ;
+) ENGINE=MyISAM AUTO_INCREMENT=53 ;
 
 -- 
 -- Dumping data for table `tax_rates`
@@ -646,7 +646,7 @@ CREATE TABLE `taxed_services` (
   `master_services_id` int(10) NOT NULL default '0',
   `tax_rate_id` int(10) NOT NULL default '0',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM AUTO_INCREMENT=2 ;
 
 -- 
 -- Dumping data for table `taxed_services`
@@ -673,7 +673,7 @@ CREATE TABLE `user` (
   `screenname_notify` enum('y','n') default 'n',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `username` (`username`) 
-) TYPE=MyISAM AUTO_INCREMENT=24 ;
+) ENGINE=MyISAM AUTO_INCREMENT=24 ;
 
 -- 
 -- Dumping data for table `user`
@@ -699,7 +699,7 @@ CREATE TABLE `user_services` (
   `usage_multiple` decimal(9,2) NOT NULL default '1',
   `removed` set('y','n') NOT NULL default 'n',
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=41 ;
+) ENGINE=MyISAM AUTO_INCREMENT=41 ;
 
 -- 
 -- Dumping data for table `user_services`
@@ -719,7 +719,7 @@ CREATE TABLE `tax_exempt` (
 `tax_rate_id` INT( 11 ) NOT NULL ,
 `customer_tax_id` VARCHAR( 64 ) NULL ,
 `expdate` DATE NULL
-) TYPE=MyISAM ;
+) ENGINE=MyISAM ;
 
 --
 -- sessions2 support from adodb
@@ -735,7 +735,7 @@ CREATE TABLE sessions2(
 	PRIMARY KEY ( sesskey ) ,
 	INDEX sess2_expiry( expiry ),
 	INDEX sess2_expireref( expireref )
-) TYPE=MyISAM ;
+) ENGINE=MyISAM ;
 
 
 --
@@ -745,7 +745,7 @@ CREATE TABLE `payment_mode` (
  `id` int(11) NOT NULL auto_increment,
  `name` varchar(32),
  PRIMARY KEY (`id`)
-) TYPE=MyISAM AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM AUTO_INCREMENT=1 ;
 
 
 --
