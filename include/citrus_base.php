@@ -319,19 +319,20 @@ function get_nextbillingdate()
 	return $mydate;
 }
 
+
 function credit_card_validator( $credit_card_number ) {      
 
     # Clean out any non-numeric characters in $credit_card_number 
-    $credit_card_number = EREG_REPLACE( '[^0-9]','', $credit_card_number ); 
+    $credit_card_number = preg_replace( '/[^0-9]/','', $credit_card_number ); 
      
     $ccn_length = STRLEN( $credit_card_number ); 
      
     # Find the type of the card based on the prefix and length of the card number 
-    IF( EREG( '^3[4|7]', $credit_card_number ) && $ccn_length == 15 ) 
+    IF( preg_match( '/^3[4|7]/', $credit_card_number ) && $ccn_length == 15 ) 
         $type = 'American Express'; 
-    ELSE IF( EREG( '^4', $credit_card_number )  && ( $ccn_length == 13 || $ccn_length == 16 ) ) 
+    ELSE IF( preg_match( '/^4/', $credit_card_number )  && ( $ccn_length == 13 || $ccn_length == 16 ) ) 
         $type = 'Visa'; 
-    ELSE IF( EREG( '^5[1-5]', $credit_card_number ) && $ccn_length == 16 ) 
+    ELSE IF( preg_match( '/^5[1-5]/', $credit_card_number ) && $ccn_length == 16 ) 
         $type = 'Mastercard'; 
     ELSE 
         RETURN ARRAY( 'valid' => false, 'type' => 'unknown', 'error' => 'This is not a valid number for an American Express, Mastercard or Visa Card. Please re-enter the number or use a different card.' ); 
@@ -374,7 +375,7 @@ function enum_select($table,$name,$default) {
                 if($enum_field == "enum"){ 
 			global $enum_field; 
                         $enums = substr($myrow[1],5,-1); 
-                        $enums = ereg_replace("'","",$enums); 
+                        $enums = preg_replace("/'/","",$enums); 
                         $enums = explode(",",$enums); 
                         foreach($enums as $val) { 
 				echo "<option value='$val'>$val</option>\n\t"; 
@@ -383,6 +384,7 @@ function enum_select($table,$name,$default) {
         }//----end while 
 	echo "\r</select>"; 
 }
+
 
 function getPagerData($numHits, $limit, $page) 
 { 
