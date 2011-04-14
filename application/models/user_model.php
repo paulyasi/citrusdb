@@ -504,27 +504,9 @@ class User_Model extends CI_Model {
       return false;
     }
     
-    // illegal names
-    if (eregi("^((root)|(bin)|(daemon)|(adm)|(admin)|(lp)|(sync)|(shutdown)|(halt)|(mail)|(news)"
-	      . "|(uucp)|(operator)|(games)|(mysql)|(httpd)|(nobody)|(dummy)"
-	      . "|(www)|(cvs)|(shell)|(ftp)|(irc)|(debian)|(ns)|(download))$",$name)) {
-      $feedback .= "Name is reserved.";
-      return 0;
-    }
-    if (eregi("^(anoncvs_)",$name)) {
-      $feedback .= "Name is reserved for CVS.";
-      return false;
-    }
-    
     return true;
   }
   
-  /*--------------------------------------------------------------------*/
-  // Check if their email address is valid
-  /*--------------------------------------------------------------------*/
-  function validate_email ($address) {
-    return (ereg('^[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+'. '@'. '[-!#$%&\'*+\\/0-9=?A-Z^_`a-z{|}~]+\.' . '[-!#$%&\'*+\\./0-9=?A-Z^_`a-z{|}~]+$', $address));
-  }
   
   } // end class
 
