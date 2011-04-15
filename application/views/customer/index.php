@@ -16,10 +16,10 @@
 <table cellpadding=4 cellspacing=0 border=0 width=259>
   
 <tr>
-<td style=\"font-size: 12pt;\"><?=$name?></td>
+<td style="font-size: 12pt;"><?=$name?></td>
 
 <tr>
-<td style=\"font-size: 12pt;\"><?=$company?></td>
+<td style="font-size: 12pt;"><?=$company?></td>
   
 <tr>
 <td><?=$street?></td>

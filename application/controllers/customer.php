@@ -49,7 +49,8 @@ class Customer extends App_Controller {
 			$data['services'] = $this->service_model->list_services($this->account_number);
 			$this->load->view('services/index', $data);
 			
-			// TODO: add the history listing tabs
+			// the history listing tabs
+			$this->load->view('historyframe_tabs');			
 			
 			// show html footer
 			$this->load->view('html_footer');
