@@ -18,10 +18,23 @@ function emailinvoice ($invoice_number,$contact_email,$invoice_billing_id) {
   
   // create a new pdf invoice
   $pdf = new FPDF();
-  
-  $pdf = outputinvoice($DB, $invoice_number, $lang, "pdf", $pdf);
-  $pdfdata = $pdf->Output("invoice.pdf",S);
-  
+	
+  // check whether they want a pdf or txt invoice
+  $query = "SELECT einvoice_type FROM billing WHERE id = '$invoice_billing_id'";
+  $type_result = $DB->Execute($query) or die ("$query ib $l_queryfailed");
+  $mytype_result = $type_result->fields;
+  $einvoice_type = $mytype_result['einvoice_type'];
+
+  if ($einvoice_type == 'txt')
+  {
+	$txt = outputinvoice($DB, $invoice_number, $lang, "html", $pdf, TRUE);
+  }
+  else
+  {
+	$pdf = outputinvoice($DB, $invoice_number, $lang, "pdf", $pdf, TRUE);
+	$pdfdata = $pdf->Output("invoice.pdf",'S');
+  }
+
   // get the org billing email address for from address		
   $query = "SELECT g.org_name, g.org_street, g.org_city, ".
     "g.org_state, g.org_zip, g.phone_billing, g.email_billing ".
@@ -67,16 +80,24 @@ function emailinvoice ($invoice_number,$contact_email,$invoice_billing_id) {
   
   //Set the To addresses with an associative array
   $message->setTo("$contact_email");
+ 
+  if ($einvoice_type == 'txt')
+  {
+	  $email_message .= $txt;
+	  $message->setBody("$email_message");
+  }
+  else
+  {
+	  //Give it a body
+  	$message->setBody("$email_message");
+  	
+	$filename = "invoice$invoice_number.pdf";
+  	$attachment = Swift_Attachment::newInstance($pdfdata, "$filename", 'application/pdf');  
   
-  //Give it a body
-  $message->setBody("$email_message");
-  
-  $filename = "invoice$invoice_number.pdf";
-  $attachment = Swift_Attachment::newInstance($pdfdata, "$filename", 'application/pdf');  
-  
-  //Attach it to the message
-  $message->attach($attachment);
-  
+  	//Attach it to the message
+  	$message->attach($attachment);
+  }
+
   //Create the Transport
   $transport = Swift_MailTransport::newInstance();
   
@@ -888,7 +909,7 @@ function create_billinghistory($DB, $batchid, $billingmethod, $user)
 
 
 // output invoices in text or pdf format
-function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
+function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject, $email = NULL) {
 
   include ("$lang");
   
@@ -937,7 +958,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
   $billing_po_number = $myinvresult['b_po_number'];
   
   // get the organization info to print on the bill
-  $query = "SELECT g.org_name,g.org_street,g.org_city,g.org_state,g.org_zip,g.phone_billing,g.email_billing,g.invoice_footer  
+  $query = "SELECT g.org_name,g.org_street,g.org_city,g.org_state,g.org_zip,g.phone_billing,g.email_billing,g.invoice_footer,g.einvoice_footer 
                         FROM billing b
 			LEFT JOIN general g ON g.id = b.organization_id 
 			WHERE b.id = $mybilling_id";
@@ -951,6 +972,7 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
   $phone_billing = $mygenresult['phone_billing'];
   $email_billing = $mygenresult['email_billing'];
   $invoice_footer = $mygenresult['invoice_footer'];
+  $einvoice_footer = $mygenresult['einvoice_footer'];
   
   /*------------------------------------------------------------*/
   // output the invoice page
@@ -1185,6 +1207,12 @@ function outputinvoice($DB, $invoiceid, $lang, $printtype, $pdfobject) {
   /*------------------------------------------------------------*/
   // print the notes and totals at the bottom of the invoice
   /*------------------------------------------------------------*/
+ 	if ($email == TRUE)
+	{
+		// set the invoice footer to use the one for email invoices
+		$invoice_footer = $einvoice_footer;
+	}
+
   if ($printtype == "pdf") {
     // fix html characters
     $billing_notes = html_to_ascii($billing_notes);

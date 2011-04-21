@@ -96,6 +96,16 @@ class Customer extends App_Controller {
   	  	include('./modules/customer/undelete.php');
  	 	} else permission_error();
 	}
+
+	public function history()
+	{
+		if($history)
+		{
+			echo "history";
+		}
+	}
+
+
   
 }
 
