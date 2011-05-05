@@ -22,15 +22,19 @@ else
 	echo "<a href=\"services\" style=\"font-weight: normal; border: 1px solid #ccd; padding-left: 5px; padding-right: 5px; background-color: #ccd;\">" . lang('showall') . "</a> ";
 }
 
-foreach ($categories->result() as $myresult) {
+foreach ($categories->result() as $myresult) 
+{
 	$categoryname = $myresult->category;
 	
 	$myuri = $this->uri->segment(2);	
 	
-	if ($myuri == $categoryname) {
+	if ($myuri == $categoryname) 
+	{
 		echo "<a href=\"services/category/".
 	 	$categoryname . "\" style=\"font-weight: normal; border: 1px solid #ccd; padding-left: 5px; padding-right: 5px; background-color: #ccd;\">$categoryname</a> \n";
-	} else {
+	} 
+	else 
+	{
 		echo "<a href=\"services/category/".
 	 	$categoryname . "\" style=\"font-weight: normal; border: 1px solid #eee; padding-left: 5px; padding-right: 5px; background-color: #eee;\">$categoryname</a> \n";       
 	}

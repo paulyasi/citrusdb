@@ -15,8 +15,35 @@ class Ticket_Model extends CI_Model
         parent::__construct();
     }
     
+	//---------------------------------------------------------------------------
+	// query the customer_history for the specific account_number
+	//---------------------------------------------------------------------------
+	function customer_history($account_number)
+	{
+		$query = "SELECT  ch.id, ch.creation_date, ".
+			"ch.created_by, ch.notify, ch.status, ch.description, ch.linkname, ".
+			"ch.linkname, ch.linkurl, ch.user_services_id, us.master_service_id, ".
+			"ms.service_description FROM customer_history ch ".
+			"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+			"WHERE ch.account_number = '$account_number' ORDER BY ch.id DESC LIMIT 25";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		
+		return $result;
+	}
+	
+	function customer_sub_history($customer_history_id)
+	{
+		$query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
+    		"hour(creation_date) as hour, LPAD(minute(creation_date),2,'00') as minute, ".
+    		"created_by, description FROM sub_history WHERE customer_history_id = $id";
+		$subresult = $this->db->query($query) or die ("sub_history $l_queryfailed");
+		
+		return $subresult;
+	}
+    
     function user_count($user)
-    {
+	{
 		// query the customer_history for the number of 
 		// waiting messages sent to that user
 		$supportquery = "SELECT id, DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime ".
