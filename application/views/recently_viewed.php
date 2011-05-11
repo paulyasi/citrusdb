@@ -4,7 +4,7 @@
 <?php foreach($recent->result() as $customer):?>
 
   <a href="
-  <?php echo $this->ssl_url_prefix?>view/account/<?php echo $customer->account_number;?>
+  <?php echo $this->url_prefix?>index.php/view/account/<?php echo $customer->account_number;?>
   ">
   <?php echo $customer->account_number . ": " . $customer->name?></a><br>
 

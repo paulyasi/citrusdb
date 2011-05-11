@@ -11,24 +11,24 @@ class Search extends App_Controller {
     	parent::__construct();
     	
 		// get the inputs from the search
-		$id = $this->input->post('id');
-		$s1 = $this->input->post('s1');
-		$s2 = $this->input->post('s2');
-		$s3 = $this->input->post('s3');
-		$s4 = $this->input->post('s4');
-		$s5 = $this->input->post('s5');
+		$this->id = $this->input->post('id');
+		$this->s1 = $this->input->post('s1');
+		$this->s2 = $this->input->post('s2');
+		$this->s3 = $this->input->post('s3');
+		$this->s4 = $this->input->post('s4');
+		$this->s5 = $this->input->post('s5');
 
 		// figure out which type of search it is from the searches table
-		$query = $this->db->get_where('searches', array('id' => $id));
+		$query = $this->db->get_where('searches', array('id' => $this->id));
 		$myresult = $query->row();
 		
 		// assign the query from the search to the query string
 		// replace the s1 thru s5 etc place holders with the actual variables
-		$searchquery = str_replace("%s1%", $s1, $myresult->query);
-		$searchquery = str_replace("%s2%", $s2, $searchquery);
-		$searchquery = str_replace("%s3%", $s3, $searchquery);
-		$searchquery = str_replace("%s4%", $s4, $searchquery);
-		$searchquery = str_replace("%s5%", $s5, $searchquery);
+		$searchquery = str_replace("%s1%", $this->s1, $myresult->query);
+		$searchquery = str_replace("%s2%", $this->s2, $searchquery);
+		$searchquery = str_replace("%s3%", $this->s3, $searchquery);
+		$searchquery = str_replace("%s4%", $this->s4, $searchquery);
+		$searchquery = str_replace("%s5%", $this->s5, $searchquery);
 
 		$this->result = $this->db->query($searchquery) or die ("$l_queryfailed");
 		$this->keyresult = $this->db->query($searchquery) or die ("$l_queryfailed");
@@ -83,7 +83,10 @@ class Search extends App_Controller {
     		} 
     		else 
     		{
-    			echo "<a href=\"$this->url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=" . ($page - 1) . "&perpage=$perpage\">$l_previous</a> ";	
+    			echo "<a href=\"$this->url_prefix/index.php/search/listresults/".
+    				($page - 1) . "/$perpage/&type=fs&id=$this->id&s1=$this->s1".
+    				"&s2=$this->s2&s3=$this->s3&s4=$this->s4&s5=$this->s5".
+    				">$l_previous</a> ";	
   			}
   
   			if($page == $pager->numPages)
@@ -117,8 +120,13 @@ class Search extends App_Controller {
 		}
 
 		// record view link
-		echo "&nbsp;&nbsp;&nbsp;&nbsp; <a href=\"$this->url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=1&pagetype=record\">$l_recordview</a> | ";
-		echo "<a href=\"$this->url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=20&pagetype=list\">$l_listview</a><br>";
+		echo "&nbsp;&nbsp;&nbsp;&nbsp; <a href=\"$this->url_prefix/index.php/recordview/".
+		"$page/1/?type=fs&id=$this->id&s1=$this->s1&s2=$this->s2".
+		"&s3=$this->s3&s4=$this->s4&s5=$this->s5\">".
+		lang ('recordview') . "</a> | ";
+		echo "<a href=\"$this->url_prefix/index.php/listresults/$page/$perpage/".
+		"?type=fs&id=$this->id&s1=$this->s1&s2=$this->s2&s3=$this->s3&s4=$this->s4".
+		"&s5=$this->s5\">" . lang('listview') . "</a><br>";
 
 		foreach($this->result->result() as $myresult)
 		{
@@ -174,13 +182,14 @@ class Search extends App_Controller {
     			if ($serviceid) 
     			{
       				print "<script language=\"JavaScript\">window.location.href = ".
-					"\"$this->url_prefix/index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$acnum\";</script>";      
+					"\"$this->url_prefix/index.php/view/service/$serviceid/$acnum\";</script>";      
     			} 
     			else 
     			{
-      				// else just redirect the account by account_number
+      				// else just redirect the account by account_number      				
       				print "<script language=\"JavaScript\">window.location.href = ".
-					"\"$this->url_prefix/index.php?load=viewaccount&type=fs&acnum=$acnum\";</script>";
+					"\"$this->url_prefix/index.php/view/account/$acnum\";</script>";
+					
     			}
   			} 
   			else 

@@ -36,13 +36,13 @@ foreach ($record as $billing_record) {
   	{
     	// show inactive billing services that are in not in good standing in red
     	// show inactive billing services in other status in grey
-    	if (($mystatus == $l_pastdue)
-			OR ($mystatus == $l_waiting)
-			OR ($mystatus == $l_noticesent)
-			OR ($mystatus == $l_turnedoff)
-			OR ($mystatus == $l_declined)
-			OR ($mystatus == $l_initialdecline)
-			OR ($mystatus == $l_declined2x)) 
+    	if (($mystatus == lang('pastdue'))
+			OR ($mystatus == lang('waiting'))
+			OR ($mystatus == lang('noticesent'))
+			OR ($mystatus == lang('turnedoff'))
+			OR ($mystatus == lang('declined'))
+			OR ($mystatus == lang('initialdecline'))
+			OR ($mystatus == lang('declined_2x'))) 
 		{
       		echo "<tr style=\"background-color: fbb;\">";
     	} 
@@ -53,12 +53,12 @@ foreach ($record as $billing_record) {
     	}
   	}
 
-  	$edit_billing_url = $this->ssl_url_prefix . "index.php/billing/edit/" . $billing_id;
+  	$edit_billing_url = $this->ssl_url_prefix . "/index.php/billing/edit/" . $billing_id;
 }
 ?>
 <td style="font-weight: bold;"><?=$billing_orgname?>&nbsp;
 <a href="<?=$edit_billing_url?>"><?php echo lang('edit') . " " . $billing_id;?></a>
-</td><td>$billing_type</td><td>$mystatus</td>
+</td><td><?php echo $billing_type?></td><td><?php echo $mystatus?></td>
 <td><?=$newcharges?></td><td><?=$newtaxes?></td><td><?=$pastcharges?></td>
 <td><?=$newtotal?></td>
 </table>

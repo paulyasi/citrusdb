@@ -1,7 +1,7 @@
 <html>
 <head>
 <title><?php echo lang('title');?></title>
-<LINK href="../citrus.css" type=text/css rel=STYLESHEET>
+<LINK href="<?php echo $this->url_prefix;?>/citrus.css" type=text/css rel=STYLESHEET>
 <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
 <script language=\"JavaScript\">
 	function h(oR) {
@@ -24,4 +24,4 @@
 <body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>
 <div id="sidebar">
 <p align=center>
-<img src="../images/my-logo.png"></p>
+<img src="<?php echo $this->url_prefix;?>/images/my-logo.png"></p>

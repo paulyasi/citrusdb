@@ -35,6 +35,7 @@ class Services extends App_Controller {
 			$this->load->model('service_model');
 			$data = $this->service_model->service_categories($this->account_number);
 			$this->load->view('services/services_heading', $data);
+			
 			// TODO make this service/index work
 			//$this->load->view('services/index');
 			

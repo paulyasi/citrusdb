@@ -15,7 +15,7 @@
 |
 */
 $config['base_url']	= 'http://ubuntu/~pyasi/Projects/CitrusDB/citrusdb_3.x/';
-$config['ssl_base_url'] = 'https://ubuntu/~pyasi/Projects/CitrusDB/citrusdb_3.x/index.php/';
+$config['ssl_base_url'] = 'https://ubuntu/~pyasi/Projects/CitrusDB/citrusdb_3.x/';
 /*
 |--------------------------------------------------------------------------
 | Index File
