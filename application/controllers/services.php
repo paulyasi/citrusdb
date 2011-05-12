@@ -7,6 +7,8 @@ class Services extends App_Controller {
 		parent::__construct();	
 		$this->load->model('service_model');
 		$this->load->model('module_model');
+		$this->load->model('customer_model');
+		$this->load->model('billing_model');
 	}
 	
 	/**
@@ -32,12 +34,15 @@ class Services extends App_Controller {
 			
 			$this->load->view('buttonbar');
 			
-			$this->load->model('service_model');
-			$data = $this->service_model->service_categories($this->account_number);
-			$this->load->view('services/services_heading', $data);
-			
-			// TODO make this service/index work
-			//$this->load->view('services/index');
+			$data['categories'] = $this->service_model->service_categories($this->account_number);
+			$this->load->view('services/heading', $data);
+						
+			// output the list of services
+			$data['services'] = $this->service_model->list_services($this->account_number);
+			$this->load->view('services/index', $data);
+						
+			// the history listing tabs
+			$this->load->view('historyframe_tabs');	
 			
 			// show html footer
 			$this->load->view('html_footer');

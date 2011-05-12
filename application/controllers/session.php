@@ -41,7 +41,7 @@ class Session extends CI_Controller
 		} 
 		else
 		{
-			redirect('session/login');
+			redirect('/session/login');
 		}
 	}
 	
