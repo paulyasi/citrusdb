@@ -75,6 +75,26 @@ class Customer_Model extends CI_Model
   		'cancel_reason' => $cancel_reason);	
     }
 
+	public function save_record($account_number, $customer_data)
+	{
+
+		// build update query, try with ActiveRecord from CI
+		// if the cancel date is empty, then put NULL in the cancel and removal date
+		if ($customer_data['cancel_date'] == "")
+		{               
+			$customer_data['cancel_date'] = NULL;
+			$customer_data['cancel_reason'] = NULL;
+			$this->db->where('account_number', $account_number);
+			$this->db->update('customer', $customer_data); 
+
+  		} else {
+			// there is a cancel date, so put everything in there
+			$this->db->where('account_number', $account_number);
+			$this->db->update('customer', $customer_data); 
+		}
+
+	}
+
 	
 	public function select_cancel_reasons()
 	{

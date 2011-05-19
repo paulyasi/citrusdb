@@ -4,7 +4,7 @@
 
 <table cellpadding=0 border=0 cellspacing=0 width=720>
 <td valign=top width=360>
-<form action="index.php" method=post>
+<form action="<?php echo $this->url_prefix;?>index.php/customer/save" method=post>
 	<table cellpadding=5 cellspacing=1 border=0 width=360>
 
 	<td bgcolor="#ccccdd" width=180><b><?php echo lang('signupdate');?></b></td>
