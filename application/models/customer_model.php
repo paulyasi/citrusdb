@@ -109,9 +109,8 @@ class Customer_Model extends CI_Model
 		// update their billing address after we prompt them if they want to
 		// get the customer information
 		$query = "SELECT * FROM customer WHERE account_number = $this->account_number";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $this->db->query($query) or die ("$l_queryfailed");
-		$myresult = $result->row();
+		$result = $this->db->query($query) or die ("query failed");
+		$myresult = $result->row_array();
 		
 		$street = $myresult['street'];
 		$city = $myresult['city'];
@@ -133,7 +132,7 @@ class Customer_Model extends CI_Model
 			"phone = '$phone', ".
 			"fax = '$fax', ".
 			"contact_email = '$contact_email' WHERE id = $default_billing_id";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("query failed");
 
 	}
     

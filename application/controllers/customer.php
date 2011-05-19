@@ -114,7 +114,7 @@ class Customer extends App_Controller
 	{
 		$this->customer_model->update_billingaddress();
 			
-		print "<h3>$l_changessaved<h3>";
+		print "<h3>" . lang('changessaved') . "<h3>";
 		
 		// redirect them back to the customer record view
 		redirect('/customer');
@@ -183,20 +183,18 @@ class Customer extends App_Controller
 
 			// if they hit yes, this will sent them into the billingaddress update
 
-			print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-			print "<input type=hidden name=load value=customer>";
-			print "<input type=hidden name=type value=module>";
-			print "<input type=hidden name=edit value=on>";
-			print "<input name=billingaddress type=submit value=\" $l_yes \" ".
-				"class=smallbutton></form></td>";
+			print "<form style=\"margin-bottom:0;\" action=\"".
+				$this->url_prefix . "index.php/customer/updatebillingaddress\" 
+				method=post>";
+			print "<input name=billingaddress type=submit value=\"" . lang('yes') . 
+				"\"class=smallbutton></form></td>";
 
 			// if they hit no, send them back to the service edit screen
 
 			print "<td align=left width=360><form style=\"margin-bottom:0;\" ".
-				"action=\"index.php\customer\" method=post>";
-			print "<input name=done type=submit value=\" $l_no \" class=smallbutton>";
-			print "<input type=hidden name=load value=customer>";        
-			print "<input type=hidden name=type value=module>";
+				"action=\"" . $this->url_prefix . "index.php/customer\" method=post>";
+			print "<input name=done type=submit value=\"" . lang('no') . 
+				"\"class=smallbutton>";
 			print "</form></td></table>";
 			print "</blockquote>";
 		} 
