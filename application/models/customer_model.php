@@ -31,7 +31,7 @@ class Customer_Model extends CI_Model
     
 	function record($account_number)
 	{
-	// get the all customer record information
+		// get the all customer record information
   		$query = "SELECT * FROM customer WHERE account_number = $account_number";
   		$result = $this->db->query($query) or die ("customer info $l_queryfailed");
   		$myresult = $result->row();	
@@ -74,6 +74,48 @@ class Customer_Model extends CI_Model
   		'notes' => $myresult->notes,
   		'cancel_reason' => $cancel_reason);	
     }
+
+	
+	public function select_cancel_reasons()
+	{
+		$query = "SELECT * FROM cancel_reason";
+    	$cancelreasonresult = $this->db->query($query) or die ("$l_queryfailed");
+
+		return $cancelreasonresult;
+	}
+
+	public function update_billingaddress()
+	{		
+		// update their billing address after we prompt them if they want to
+		// get the customer information
+		$query = "SELECT * FROM customer WHERE account_number = $this->account_number";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myresult = $result->row();
+		
+		$street = $myresult['street'];
+		$city = $myresult['city'];
+		$state = $myresult['state'];
+		$zip = $myresult['zip'];
+		$country = $myresult['country'];
+		$phone = $myresult['phone'];
+		$fax = $myresult['fax'];
+		$contact_email = $myresult['contact_email'];
+		$default_billing_id = $myresult['default_billing_id'];  
+		
+		// save billing address
+		$query = "UPDATE billing ".
+			"SET street = '$street', ".
+			"city = '$city', ".
+			"state = '$state', ".
+			"zip = '$zip', ".
+			"country = '$country', ".
+			"phone = '$phone', ".
+			"fax = '$fax', ".
+			"contact_email = '$contact_email' WHERE id = $default_billing_id";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+
+	}
     
     public function cancel_reason($cancel_reason_id)
     {

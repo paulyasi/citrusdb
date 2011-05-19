@@ -1,13 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
   // print the customer edit links
-  echo "<a href=\"index.php/customer/edit\">".
+  echo "<a href=\"customer/edit\">".
     "[ " . lang('editcustomer') . "]</a>";
   if ($cancel_date) {
-    echo "<a href=\"index.php/customer/undelete\">".
+    echo "<a href=\"customer/undelete\">".
       "[ " . lang('uncancelcustomer') . " ]</a>";
   } else {
-    echo "<a href=\"index.php/customer/delete\">".
+    echo "<a href=\"customer/delete\">".
       "[ " . lang('cancelcustomer') . " ]</a>";
    }
 ?>
