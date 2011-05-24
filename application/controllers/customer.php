@@ -180,9 +180,22 @@ class Customer extends App_Controller
 	}
 
 
+	// show the form for adding a new customer
+	public function newcustomer($billedby)
+	{
+		// set the billed by for the data array passed to the view
+		$data['billedby'] = $billedby;
 
+		// show the new customer form, if specified billed by, selected by default
+		$this->load->view('new_customer', $data);
+	}
+
+	// called by the new form to insert/create a new customer record
 	public function create()
 	{
+		// call the create_record function in the customer module with
+		// data given to me
+
 		if ($pallow_create) {
 			include('./modules/customer/create.php');
 		} else permission_error();

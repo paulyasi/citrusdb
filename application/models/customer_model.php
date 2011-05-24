@@ -95,11 +95,76 @@ class Customer_Model extends CI_Model
 
 	}
 
+	public function create_record($customer_data)
+	{
+		// customer_data in an assoc array with these values
+		/*
+			signup_date = CURRENT_DATE
+		    name
+			company
+			street
+			city
+			state
+			country
+			zip
+			phone
+			fax
+			contact_email
+			secret_question
+			secret_answer
+			source
+			organization_id
+
+		 */
+
+		// insert a new customer record
+		$query = "INSERT into customer (signup_date, name, company, street, city, 
+			state, country, zip, phone, fax, contact_email, secret_question, 
+			secret_answer, source) 
+			VALUES (CURRENT_DATE, '$name', '$company', '$street', '$city', '$state', 
+			'$country', '$zip', '$phone', '$fax', '$contact_email', 
+			'$secret_question','$secret_answer','$source')";
+		$result = $this->db->query($query) or die ("query failed");
+
+		$myinsertid = $DB->Insert_ID();  
 	
+		// set the active session account number to the one just created
+		$this->account_number=$myinsertid;
+
+		// start the session variables to hold the account number
+		$_SESSION['account_number'] = $account_number;
+
+		// get the next billing date value
+		$mydate = get_nextbillingdate();
+
+		// make a new billing record
+		// set the next billing date and from date to the date determined from above 
+		$query = "INSERT into billing (account_number,next_billing_date,from_date,
+			payment_due_date,name,company,street,city,state,country,zip,phone,fax,
+			contact_email,organization_id) 
+			VALUES ('$account_number','$mydate','$mydate','$mydate','$name','$company',
+			'$street','$city','$state','$country','$zip','$phone','$fax',
+			'$contact_email','$organization_id')";
+		$result = $this->db->query($query) or die ("query failed");	
+
+		// set the default billing ID for the customer record
+		$billingid = $DB->Insert_ID();
+		$query = "UPDATE customer SET default_billing_id = '$billingid' WHERE account_number = $account_number";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+		// log this record creation
+		log_activity($DB,$user,$account_number,'create','customer',0,'success');
+
+
+		print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=customer&type=module\";</script>";
+	} else {
+	}
+
+
 	public function select_cancel_reasons()
 	{
 		$query = "SELECT * FROM cancel_reason";
-    	$cancelreasonresult = $this->db->query($query) or die ("$l_queryfailed");
+		$cancelreasonresult = $this->db->query($query) or die ("$l_queryfailed");
 
 		return $cancelreasonresult;
 	}
@@ -111,7 +176,7 @@ class Customer_Model extends CI_Model
 		$query = "SELECT * FROM customer WHERE account_number = $this->account_number";
 		$result = $this->db->query($query) or die ("query failed");
 		$myresult = $result->row_array();
-		
+
 		$street = $myresult['street'];
 		$city = $myresult['city'];
 		$state = $myresult['state'];
@@ -121,7 +186,7 @@ class Customer_Model extends CI_Model
 		$fax = $myresult['fax'];
 		$contact_email = $myresult['contact_email'];
 		$default_billing_id = $myresult['default_billing_id'];  
-		
+
 		// save billing address
 		$query = "UPDATE billing ".
 			"SET street = '$street', ".
@@ -135,28 +200,28 @@ class Customer_Model extends CI_Model
 		$result = $this->db->query($query) or die ("query failed");
 
 	}
-    
-    public function cancel_reason($cancel_reason_id)
-    {
-		
-  		return $cancel_reason;
-    }
-    
-    public function is_not_canceled($account_number)  
-    {
-    	// hide the Add Service function if the customer is canceled
-   		$query = "SELECT cancel_date FROM customer ".
-     	"WHERE account_number = $account_number AND cancel_date is NULL";
-   		$result = $this->db->query($query) or die ("$l_queryfailed");
-   		$notcanceled = $result->num_rows();
-   		if ($notcanceled == 1) 
-   		{ 
-   			return TRUE; 
-   		} 
-   		else 
-   		{ 
-   			return FALSE; 
-   		}
-    }
-	
+
+	public function cancel_reason($cancel_reason_id)
+	{
+
+		return $cancel_reason;
+	}
+
+	public function is_not_canceled($account_number)  
+	{
+		// hide the Add Service function if the customer is canceled
+		$query = "SELECT cancel_date FROM customer ".
+			"WHERE account_number = $account_number AND cancel_date is NULL";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$notcanceled = $result->num_rows();
+		if ($notcanceled == 1) 
+		{ 
+			return TRUE; 
+		} 
+		else 
+		{ 
+			return FALSE; 
+		}
+	}
+
 }
