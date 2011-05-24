@@ -19,22 +19,9 @@ class Customer extends App_Controller
 
 		if ($permission['view'])
 		{
-			$this->load->view('header_with_sidebar');
+			// load the module header common to all module views
+			$this->load->view('module_header');
 			
-			// show the customer title info, name and company
-			$data = $this->customer_model->title($this->account_number);
-			$this->load->view('customer_in_sidebar', $data);
-
-			// show the module tab listing (customer, services, billing, etc.)
-			$this->load->view('moduletabs');
-
-			// show the tickets messages tabs for this user 
-			$this->load->model('ticket_model');
-			$this->load->view('messagetabs');
-
-			// show the buttons across the top (new, search, tools, etc)
-			$this->load->view('buttonbar');
-
 			// show the customer information (name, address, etc)
 			$data = $this->customer_model->record($this->account_number);
 			$this->load->view('customer/index', $data);
@@ -58,7 +45,7 @@ class Customer extends App_Controller
 			// the history listing tabs
 			$this->load->view('historyframe_tabs');			
 			
-			// show html footer
+			// the html page footer
 			$this->load->view('html_footer');
 			
 		}
@@ -78,22 +65,9 @@ class Customer extends App_Controller
 		
 		if ($permission['modify'])
 		{
-			$this->load->view('header_with_sidebar');
+			// the module header common to all module views
+			$this->load->view('module_header');
 			
-			// show the customer title info, name and company
-			$data = $this->customer_model->title($this->account_number);
-			$this->load->view('customer_in_sidebar', $data);
-
-			// show the module tab listing (customer, services, billing, etc.)
-			$this->load->view('moduletabs');
-
-			// show the tickets messages tabs for this user 
-			$this->load->model('ticket_model');
-			$this->load->view('messagetabs');
-
-			// show the buttons across the top (new, search, tools, etc)
-			$this->load->view('buttonbar');
-
 			// show the edit customer form
 			$data = $this->customer_model->record($this->account_number);
 			$this->load->view('customer/edit', $data);
@@ -176,6 +150,7 @@ class Customer extends App_Controller
 				OR ($customer_data['fax'] != $old_fax) 
 				OR ($customer_data['contact_email'] != $old_contact_email)) 
 		{
+			// TODO: put this stuff below in a view with proper html headers etc.
 			echo lang('addresschange') ."<p>";
 
 			print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
