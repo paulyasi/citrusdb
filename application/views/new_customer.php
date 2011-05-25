@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-?>
 // prompt for some standard information to put in the new customer record
+?>
 <a href="<?php echo $this->url_prefix?>/index.php/dashboard">
-[ <?php echo lang('undochanges'); ]</a>
+[ <?php echo lang('undochanges'); ?>]</a>
 <table cellpadding=0 border=0 cellspacing=0 width=720>
 <td valign=top width=720>
 <form action="index.php/customer/create" method=POST>

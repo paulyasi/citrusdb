@@ -126,7 +126,7 @@ class Customer_Model extends CI_Model
 			'$secret_question','$secret_answer','$source')";
 		$result = $this->db->query($query) or die ("query failed");
 
-		$myinsertid = $DB->Insert_ID();  
+		$myinsertid = $this->db->insert_it();  
 	
 		// set the active session account number to the one just created
 		$this->account_number=$myinsertid;
@@ -148,16 +148,16 @@ class Customer_Model extends CI_Model
 		$result = $this->db->query($query) or die ("query failed");	
 
 		// set the default billing ID for the customer record
-		$billingid = $DB->Insert_ID();
-		$query = "UPDATE customer SET default_billing_id = '$billingid' WHERE account_number = $account_number";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$billingid = $this->db->insert_id();
+		$query = "UPDATE customer SET default_billing_id = '$billingid' ".
+			"WHERE account_number = $account_number";
+		$result = $this->db->query($query) or die ("query failed");
 
 		// log this record creation
 		log_activity($DB,$user,$account_number,'create','customer',0,'success');
 
 
 		print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=customer&type=module\";</script>";
-	} else {
 	}
 
 

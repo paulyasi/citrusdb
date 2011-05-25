@@ -2,7 +2,7 @@
 <table cellpadding=0 cellspacing=0 border=0 width=720>
 
 <td width="20%" align=center>
-<a href="<?php echo $this->url_prefix;?>index.php/customer/new">
+<a href="<?php echo $this->url_prefix;?>index.php/customer/newcustomer">
 <img src="<?php echo $this->url_prefix;?>/images/new-icon.png" alt="<?php echo lang('new')?>" border=0><br><?php echo lang('new')?></a></td>
 <td width="20%" align=center>
 <a href="<?php echo $this->url_prefix;?>index.php/dashboard">
