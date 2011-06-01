@@ -21,7 +21,7 @@
 
 <table width=500>   
 <td valign=top>
-<form ACTION="index.php?load=dosearch&type=fs" METHOD="POST" name="namesearch">
+<form ACTION="<?php echo $this->url_prefix;?>index.php/search/listresults/1/20" METHOD="POST" name="namesearch">
 <?php echo lang('name') . "/"; echo lang('company'); ?></td><td><input type=text name=s1>
 <input type=hidden name=id value=2> <!-- the id of this search in the searches table -->
 <input type=submit name=submit value="<?php echo lang('search');?>" class=smallbutton onclick="nameformat();">
