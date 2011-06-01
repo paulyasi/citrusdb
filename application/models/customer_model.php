@@ -98,24 +98,20 @@ class Customer_Model extends CI_Model
 	public function create_record($customer_data)
 	{
 		// customer_data in an assoc array with these values
-		/*
-			signup_date = CURRENT_DATE
-		    name
-			company
-			street
-			city
-			state
-			country
-			zip
-			phone
-			fax
-			contact_email
-			secret_question
-			secret_answer
-			source
-			organization_id
-
-		 */
+	    $name = $customer_data['name'];
+		$company = $customer_data['company'];
+		$street = $customer_data['street'];
+		$city = $customer_data['city'];
+		$state = $customer_data['state'];
+		$country = $customer_data['country'];
+		$zip = $customer_data['zip'];
+		$phone = $customer_data['phone'];
+		$fax = $customer_data['fax'];
+		$contact_email = $customer_data['contact_email'];
+		$secret_question = $customer_data['secret_question'];
+		$secret_answer = $customer_data['secret_answer'];
+		$source = $customer_data['source'];
+		$organization_id = $customer_data['organization_id'];
 
 		// insert a new customer record
 		$query = "INSERT into customer (signup_date, name, company, street, city, 
@@ -152,10 +148,6 @@ class Customer_Model extends CI_Model
 		$query = "UPDATE customer SET default_billing_id = '$billingid' ".
 			"WHERE account_number = $account_number";
 		$result = $this->db->query($query) or die ("query failed");
-
-		// log this record creation
-		log_activity($DB,$user,$account_number,'create','customer',0,'success');
-
 
 		print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=customer&type=module\";</script>";
 	}

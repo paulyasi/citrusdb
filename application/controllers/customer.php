@@ -207,15 +207,39 @@ class Customer extends App_Controller
 	 */
 	public function create()
 	{
-		// put the data in a new customer record
-		$data = $this->customer_model->create_record($customer_data);		
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'customer');
+		
+		if ($permission['create'])
+		{
 
-		// log this record creation
-		log_activity($DB,$user,$account_number,'create','customer',0,'success');
+			$customer_data = array(
+					'name' => $this->input->post('name'),
+					'company' => $this->input->post('company'),
+					'street' => $this->input->post('street'),
+					'city' => $this->input->post('city'),
+					'state' => $this->input->post('state'),
+					'country' => $this->input->post('country'),
+					'zip' => $this->input->post('zip'),
+					'phone' => $this->input->post('phone'),
+					'fax' => $this->input->post('fax'),
+					'source' => $this->input->post('source'),
+					'contact_email' => $this->input->post('contact_email'),
+					'secret_question' => $this->input->post('secret_question'),
+					'secret_answer' => $this->input->post('secret_answer')
+					);
 
-		if ($pallow_create) {
-			include('./modules/customer/create.php');
-		} else permission_error();
+			// put the data in a new customer record
+			$data = $this->customer_model->create_record($customer_data);		
+
+			// log this record creation
+			log_activity($DB,$user,$account_number,'create','customer',0,'success');
+
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}
 	}
 
 
