@@ -1,4 +1,3 @@
-
    <script language=javascript>
       function phoneformat() {
       if (document.phonesearch.s1.value.match(/^\d+$/)) {
@@ -21,24 +20,30 @@
 
 <table width=500>   
 <td valign=top>
-<form ACTION="<?php echo $this->url_prefix;?>index.php/search/listresults/1/20" METHOD="POST" name="namesearch">
-<?php echo lang('name') . "/"; echo lang('company'); ?></td><td><input type=text name=s1>
+<form ACTION="<?php echo $this->url_prefix;?>index.php/search/listresults/1/20" 
+METHOD="POST" name="namesearch">
+<?php echo lang('name') . "/"; echo lang('company'); ?></td><td>
+<input type=text name=s1>
 <input type=hidden name=id value=2> <!-- the id of this search in the searches table -->
-<input type=submit name=submit value="<?php echo lang('search');?>" class=smallbutton onclick="nameformat();">
+<input type=submit name=submit value="<?php echo lang('search');?>" 
+class=smallbutton onclick="nameformat();">
 </form>
 
 </td><tr><td valign=top>
-<form ACTION="index.php?load=dosearch&type=fs" METHOD="POST" name="phonesearch">
+<form ACTION="<?php echo $this->url_prefix;?>index.php/search/listresults/1/20" 
+METHOD="POST" name="phonesearch">
 <?php echo lang('phonenumber');?> </td><td>
 <input type=text name=s1>
 <input type=hidden name=s2>   
 <input type=hidden name=id value=3> <!-- the id of this search in the searches table -->
-<input type=submit name=submit value="<?php echo lang('search');?>" class=smallbutton onclick="phoneformat();">
+<input type=submit name=submit value="<?php echo lang('search');?>" 
+class=smallbutton onclick="phoneformat();">
 </form>
 
 
 </td><tr><td valign=top>
-<form ACTION="index.php?load=dosearch&type=fs" METHOD="POST">
+<form ACTION="<?php echo $this->url_prefix;?>index.php/search/listresults/1/20" 
+METHOD="POST">
 <?php echo lang('signupdaterange'); ?> </td>
 <td><input type=text name=s1 size=9> <?php echo lang('to'); ?> 
 <input type=text name=s2 size=9><input type=hidden name=id value=4>
@@ -47,7 +52,8 @@
 
 
 </td><tr><td valign=top>
-<form ACTION="index.php?load=dosearch&type=fs" METHOD="POST">
+<form ACTION="<?php echo $this->url_prefix;?>index.php/search/listresults/1/20" 
+METHOD="POST">
 <?php echo lang('street'); ?> </td>
 <td><input type=text name=s1 size=20><input type=hidden name=id value=12>
 <input type=submit name=submit value="<?php echo lang('search');?>" class=smallbutton>
