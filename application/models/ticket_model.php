@@ -137,7 +137,7 @@ class Ticket_Model extends CI_Model
 		$result = $this->db->query($query) or die ("create_ticket query failed");
 		$ticketnumber = $this->db->insert_id();
 
-		$url = "$this->url_prefix/index.php?load=support&type=module&editticket=on&id=$ticketnumber";
+		$url = "$this->url_prefix/index.php/support/editticket/$ticketnumber";
 		$message = "$notify: $description $url";
 
 		// if the notify is a group or a user, if a group, then get all the users and notify each individual
@@ -150,14 +150,14 @@ class Ticket_Model extends CI_Model
 			foreach ($result->result_array() as $myresult) 
 			{
 				$groupmember = $myresult['groupmember'];
-				this->enotify($groupmember, $message, $ticketnumber, $user, $notify, 
+				$this->enotify($groupmember, $message, $ticketnumber, $user, $notify, 
 						$description);
 			} // end while    
 		} 
 		else 
 		{
 			// we are notifying an individual user
-			this->enotify($notify, $message, $ticketnumber, $user, $notify, 
+			$this->enotify($notify, $message, $ticketnumber, $user, $notify, 
 					$description);
 		} // end if result
 

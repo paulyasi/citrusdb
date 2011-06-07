@@ -406,18 +406,19 @@ class Customer extends App_Controller
 				// if the next billing date is less than today, remove them next available day
 				if ($removal_date < $today) 
 				{
-					$removal_date = get_nextbillingdate();
+					$removal_date = $this->billing_model->get_nextbillingdate();
 				}
 			}
 
 			// figure out all the services that the customer has and delete each one.
 			$query = "SELECT * FROM user_services 
-				WHERE account_number = '$account_number' AND removed <> 'y'";
-			$result = $DB->Execute($query) or die ("$l_queryfailed");
-			while ($myserviceresult = $result->FetchRow()) 
+				WHERE account_number = '$this->account_number' AND removed <> 'y'";
+			$result = $this->db->query($query) or die ("query failed");
+			foreach ($result->result_array() as $myserviceresult) 
 			{
 				$userserviceid = $myserviceresult['id'];
-				delete_service($userserviceid,'canceled',$removal_date);
+				$this->service_model->delete_service($userserviceid,'canceled',
+						$removal_date);
 				$this->log_model->activity($this->user,$this->account_number,
 						'delete','service',$userserviceid,'success');
 			}
@@ -426,21 +427,20 @@ class Customer extends App_Controller
 			$query = "UPDATE customer ".
 				"SET cancel_date = CURRENT_DATE, ". 
 				"cancel_reason = '$cancel_reason' ".
-				"WHERE account_number = '$account_number'";
-			$result = $DB->Execute($query) or die ("$l_queryfailed");
+				"WHERE account_number = '$this->account_number'";
+			$result = $this->db->query($query) or die ("query failed");
 
 			// set next_billing_date to NULL since it normally won't be billed again
 			$query = "UPDATE billing ".
 				"SET next_billing_date = NULL ". 
-				"WHERE account_number = '$account_number'";
-			$result = $DB->Execute($query) or die ("$l_queryfailed");   
+				"WHERE account_number = '$this->account_number'";
+			$result = $this->db->query($query) or die ("query failed");   
 
 			// get the text of the cancel reason to use in the note
 			$query = "SELECT * FROM cancel_reason " . 
 				"WHERE id = '$cancel_reason'";
-			$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-			$result = $DB->Execute($query) or die ("$l_queryfailed");
-			$myresult = $result->fields;
+			$result = $this->db->query($query) or die ("query failed");
+			$myresult = $result->row_array();
 			$cancel_reason_text = $myresult['reason'];
 
 			// add cancel ticket to customer_history

@@ -192,4 +192,174 @@ class Service_Model extends CI_Model
 		return $dependent;
 	}
 
+
+	function delete_service($userserviceid, $service_notify_type, $removal_date)
+	{
+		// check if there is a removal date or blank
+		if (empty($removal_date)) {
+			$query = "UPDATE user_services SET removed = 'y', ".
+				"end_datetime = NOW() WHERE id = $userserviceid";	  
+		} else {
+			$query = "UPDATE user_services SET removed = 'y', ".
+				"end_datetime = NOW(), ".
+				"removal_date = '$removal_date' ".
+				"WHERE id = $userserviceid";
+		}
+
+		$result = $this->db->query($query) or die ("query failed");
+
+		// put a note in the customer_history that this service was removed
+		// get the account_number and master_service_id first
+		$query = "SELECT * FROM user_services WHERE id = '$userserviceid'";
+		$result = $this->db->query($query) or die ("query failed");
+		$myresult = $result->row_array();
+		$account_number = $myresult['account_number'];
+		$master_service_id = $myresult['master_service_id'];
+
+		if ($service_notify_type <> "change") {
+			$this->service_message($service_notify_type, $account_number,
+					$master_service_id, $userserviceid, NULL, NULL);
+		}	
+	} // end delete_service
+
+
+	/*	
+	 * -------------------------------------------------------------------------------
+	 *  add a service message ticket for new, modified, or shutoff services
+	 * -------------------------------------------------------------------------------
+	 */
+	function service_message($service_notify_type, $account_number,
+			$master_service_id, $user_service_id,
+			$new_master_service_id, $new_user_service_id)
+
+	{
+		/*- Service Notify Types -*/
+		// added
+		// change - uses both user_service_id and new_user_service_id
+		//   the change function will need to create a new_user_service_id
+		//   like it should have been doing
+		//
+		// onetime - for one time billing removals
+		// undelete
+		//
+		// removed
+		// canceled
+		// turnoff
+		/*-------------------------*/
+
+		// get the name of the service
+		$query = "SELECT * FROM master_services WHERE id = $master_service_id";
+		$result = $this->db->query($query) or die ("service_message query failed");
+		$myresult = $result->row_array();	
+		$servicename = $myresult['service_description'];
+		$activate_notify = $myresult['activate_notify']; // added
+		$modify_notify = $myresult['modify_notify'];     // change,undelete
+		$shutoff_notify = $myresult['shutoff_notify'];   // turnoff, removed, canceled
+
+		// set a different notify and description depending on service_notify_type
+
+		// ADDED
+		if ($service_notify_type == "added") {
+			$description = lang('added') ." $servicename $user_service_id";
+			if ($activate_notify <> '') {
+				$status = "not done";
+				$notify = $activate_notify;
+			} else {
+				$status = "automatic";
+				$notify = "";
+			}
+		}
+
+		// CHANGE
+		if ($service_notify_type == "change") { 
+			// get the name of the new service
+			$query = "SELECT * FROM master_services WHERE id = $new_master_service_id";
+			$result = $this->db->query($query)
+				or die ("service_message_modify query failed");
+			$myresult = $result->row_array();	
+			$new_servicename = $myresult['service_description'];
+			// use the new services modify notify, maybe different from old one
+			$modify_notify = $myresult['modify_notify'];
+
+			$description = lang('change') . " $servicename $user_service_id -> $new_servicename $new_user_service_id";
+			if ($modify_notify <> '') {
+				$status = "not done";
+				$notify = $modify_notify;
+			} else {
+				$status = "automatic";
+				$notify = "";
+			} 
+		}
+
+		// UNDELETE
+		if ($service_notify_type == "undelete") {
+			$description = lang('undelete') . " $servicename $user_service_id";    
+			if ($modify_notify <> '') {
+				$status = "not done";
+				$notify = $modify_notify;
+			} else {
+				$status = "automatic";
+				$notify = "";
+			} 
+		}
+
+		// ONETIME
+		if ($service_notify_type == "onetime") {
+			$description = lang('onetimebilled') . "$servicename $user_service_id";    
+			if ($shutoff_notify <> '') {
+				$status = "not done";
+				$notify = $shutoff_notify;
+			} else {
+				$status = "automatic";
+				$notify = "";
+			} 
+		}
+
+		// REMOVED
+		if ($service_notify_type == "removed") {
+			$description = lang('removed') ." $servicename $user_service_id";    
+
+			if ($shutoff_notify <> '') {
+				$status = "not done";
+				$notify = $shutoff_notify;
+			} else {
+				$status = "automatic";
+				$notify = "";
+			}
+
+		}  
+
+		// CANCELED
+		if ($service_notify_type == "canceled") {
+			$description = "lang('canceled') ." $servicename $user_service_id";    
+
+			if ($shutoff_notify <> '') {
+				$status = "not done";
+				$notify = $shutoff_notify;
+			} else {
+				$status = "automatic";
+				$notify = "";
+			}
+
+		}
+
+
+		// TURNOFF
+		if ($service_notify_type == "turnoff") {
+			$description = lang('turnoff') ." $servicename $user_service_id";    
+
+			if ($shutoff_notify <> '') {
+				$status = "not done";
+				$notify = $shutoff_notify;
+			} else {
+				$status = "automatic";
+				$notify = "";
+			}
+
+		}
+
+		// create the ticket with the service message
+		$this->ticket_model->create_ticket($user, $notify, $account_number, $status, $description, NULL, NULL, NULL, $user_service_id);
+	}
+
 }
