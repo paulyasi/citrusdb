@@ -85,5 +85,136 @@ class Ticket_Model extends CI_Model
   		
   		return array('num_rows' => $num_rows, 'created' => $created);
     }
-	
+
+
+
+	// generic ticket creation function
+	function create_ticket($user, $notify, $account_number, $status,
+			$description, $linkname = NULL, $linkurl = NULL,
+			$reminderdate = NULL, $user_services_id = NULL)
+	{
+		if ($reminderdate) 
+		{
+			if ($user_services_id) 
+			{
+				// add ticket to customer_history table
+				$query = "INSERT into customer_history ".
+					"(creation_date, created_by, notify, account_number,".
+					"status, description, linkurl, linkname, user_services_id) ".
+					"VALUES ('$reminderdate', '$user', '$notify', '$account_number',".
+					"'$status', '$description', '$linkurl', '$linkname', '$user_services_id')";
+			} 
+			else 
+			{
+				$query = "INSERT into customer_history ".
+					"(creation_date, created_by, notify, account_number,".
+					"status, description, linkurl, linkname) ".
+					"VALUES ('$reminderdate', '$user', '$notify', '$account_number',".
+					"'$status', '$description', '$linkurl', '$linkname')";
+			}
+		} 
+		else 
+		{
+			if ($user_services_id) 
+			{
+				// add ticket to customer_history table
+				$query = "INSERT into customer_history ".
+					"(creation_date, created_by, notify, account_number,".
+					"status, description, linkurl, linkname, user_services_id) ".
+					"VALUES (CURRENT_TIMESTAMP, '$user', '$notify', '$account_number',".
+					"'$status', '$description', '$linkurl', '$linkname', '$user_services_id')";
+			} 
+			else 
+			{
+				$query = "INSERT into customer_history ".
+					"(creation_date, created_by, notify, account_number,".
+					"status, description, linkurl, linkname) ".
+					"VALUES (CURRENT_TIMESTAMP, '$user', '$notify', '$account_number',".
+					"'$status', '$description', '$linkurl', '$linkname')";      
+			}
+		}
+
+		$result = $this->db->query($query) or die ("create_ticket query failed");
+		$ticketnumber = $this->db->insert_id();
+
+		$url = "$this->url_prefix/index.php?load=support&type=module&editticket=on&id=$ticketnumber";
+		$message = "$notify: $description $url";
+
+		// if the notify is a group or a user, if a group, then get all the users and notify each individual
+		$query = "SELECT * FROM groups WHERE groupname = '$notify'";
+		$result = $this->db->query($query) or die ("Group Query Failed");
+
+		if ($result->RowCount() > 0) 
+		{
+			// we are notifying a group of users
+			foreach ($result->result_array() as $myresult) 
+			{
+				$groupmember = $myresult['groupmember'];
+				this->enotify($groupmember, $message, $ticketnumber, $user, $notify, 
+						$description);
+			} // end while    
+		} 
+		else 
+		{
+			// we are notifying an individual user
+			this->enotify($notify, $message, $ticketnumber, $user, $notify, 
+					$description);
+		} // end if result
+
+		return $ticketnumber;
+
+	} // end create_ticket function
+
+
+	/*
+	 * ------------------------------------------------------------------------------
+	 *  send notifications to the jabber id or email address
+	 * ------------------------------------------------------------------------------
+	 */
+	function enotify($user, $message, $ticketnumber, $fromuser, $tousergroup, 
+			$description)
+	{
+		$query = "SELECT email,screenname,email_notify,screenname_notify ".
+			"FROM user WHERE username = '$user'";
+		$result = $this->db->query($query) or die ("select screename queryfailed");
+		$myresult = $result->row_array();
+		$email = $myresult['email'];
+		$screenname = $myresult['screenname'];
+		$email_notify = $myresult['email_notify'];
+		$screenname_notify = $myresult['screenname_notify'];
+
+		include 'config.inc.php'; // include this here for jabber server config vars
+
+		// if they have specified a screenname then send them a jabber notification
+		if (($xmpp_server) && ($screenname) && ($screenname_notify == 'y')) {
+			include 'XMPPHP/XMPP.php';
+
+			// edit this to use database jabber user defined in config file
+			$conn = new XMPPHP_XMPP("$xmpp_server", 5222, "$xmpp_user", "$xmpp_password", 'xmpphp', "$xmpp_domain", $printlog=false, $loglevel=XMPPHP_Log::LEVEL_INFO);
+
+			try {
+				$conn->connect();
+				$conn->processUntil('session_start');
+				$conn->presence();
+				$conn->message("$screenname", "$message");
+				$conn->disconnect();
+			} catch(XMPPHP_Exception $e) {
+				//die($e->getMessage());
+				$xmppmessage = $e->getMessage();
+				echo "$xmppmessage";
+			}
+		}
+
+		// if they have specified an email then send them an email notification
+		if (($email) && ($email_notify == 'y')) {
+
+			// HTML Email Headers
+			$to = $email;
+			// truncate the description to fit in the subject
+			$description = substr($description, 0, 40);    
+			$subject = "$l_ticketnumber$ticketnumber $l_to: $tousergroup $l_from: $fromuser $description";
+			mail ($to, $subject, $message);
+
+		}
+	}
 }

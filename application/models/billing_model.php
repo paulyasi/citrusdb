@@ -49,52 +49,129 @@ class Billing_Model extends CI_Model
 		
 		return $result;
 	}
-		
+
+
+	/*
+	 * -------------------------------------------------------------------------------
+	 *  determine the next available billing date according to the rollover time
+	 *  and holiday dates that are excluded
+	 * -------------------------------------------------------------------------------
+	 */
+	function get_nextbillingdate()
+	{
+		// get the current date and time in the SQL query format
+		$mydate = date("Y-m-d");
+		$mytime = date("H:i:s");
+
+		// check if it's after the dayrollover time and get tomorrow's date if it is
+		$query = "SELECT billingdate_rollover_time from settings WHERE id = 1";
+		$result = $this->db->query($query) or die ("Billingdate rollover Query Failed");
+		$myresult = $result->row_array();
+		$rollover_time = $myresult['billingdate_rollover_time'];
+		if ($mytime > $rollover_time) 
+		{
+			$mydate = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, date("Y")));
+		}
+
+		// check if the date is in the holiday table, move up one day until not matched
+		$holiday = true;
+		while ($holiday == true)
+		{
+			$query = "SELECT holiday_date from holiday WHERE holiday_date = '$mydate'";
+			$result = $this->db->query($query) or die ("Holiday date Query Failed");
+			$myresult = $result->row_array();
+			$myholiday = $myresult['holiday_date'];
+
+			// check for billing weekend days
+			// check the database for what days are marked as billing weekends
+			$query = "SELECT billingweekend_sunday, billingweekend_monday, ".
+				"billingweekend_tuesday, billingweekend_wednesday, ".
+				"billingweekend_thursday, billingweekend_friday, ".
+				"billingweekend_saturday FROM settings WHERE id = 1";
+			$result = $this->db->query($query) or die ("Weekend Query Failed");
+			$myresult = $result->row_array();
+			$sunday = $myresult['billingweekend_sunday'];
+			$monday = $myresult['billingweekend_monday'];
+			$tuesday = $myresult['billingweekend_tuesday'];
+			$wednesday = $myresult['billingweekend_wednesday'];
+			$thursday = $myresult['billingweekend_thursday'];
+			$friday = $myresult['billingweekend_friday'];
+			$saturday = $myresult['billingweekend_saturday'];                                
+
+			// check the date we have agains those billing weekends
+			list($myyear, $mymonth, $myday) = split('-', $mydate); 
+			$day_of_week = date("w", mktime(0, 0, 0, $mymonth, $myday, $myyear));
+
+			// if the weekday is a billing weekend, 
+			// then make it a holiday so it gets moved forward
+			if ($sunday == 'y' && $day_of_week == 0) { $myholiday = $mydate; }
+			if ($monday == 'y' && $day_of_week == 1) { $myholiday = $mydate; }
+			if ($tuesday == 'y' && $day_of_week == 2) { $myholiday = $mydate; }
+			if ($wednesday == 'y' && $day_of_week == 3) { $myholiday = $mydate; }
+			if ($thursday == 'y' && $day_of_week == 4) { $myholiday = $mydate; }
+			if ($friday == 'y' && $day_of_week == 5) { $myholiday = $mydate; }
+			if ($saturday == 'y' && $day_of_week == 6) { $myholiday = $mydate; }
+
+			if($myholiday == $mydate) 
+			{
+				// holiday is still true move up one day and test that one
+				$mydate = date("Y-m-d", mktime(0, 0, 0, $mymonth , $myday+1, $myyear));
+			} 
+			else 
+			{
+				$holiday = false;
+			}
+
+			//echo "holiday $mydate<br>";
+		}
+		return $mydate;
+	}
+
 	/*---------------------------------------------------------------------------*/
 	// lookup the billing status and return it in the local language
 	/*---------------------------------------------------------------------------*/
 	public function billingstatus($billing_id)
 	{
-  
+
 		$status = "";
 		$todaydate = date("Ymd");
-	
+
 		// get the two latest payment_history status values
 		$query="SELECT * FROM payment_history 
 			WHERE billing_id = '$billing_id' ORDER BY id DESC LIMIT 2";
 		$result = $this->db->query($query) or die ("$l_queryfailed");
-	
+
 		//"New", - new account with no billing details	
 		$rowcount = $result->num_rows();
 		if ($rowcount < 1) {$status = lang('new'); }
-  
+
 		// get the first and second payment_history results
 		$i = 0;
 		if (!isset($myresult->status)) { $myresult->status = ""; }
 		if (!isset($firststatus)) { $firststatus = ""; }
 		if (!isset($secondstatus)) { $secondstatus = ""; }
 
-  		foreach($result->result() as $myresult)
-  		{
-    		if ($i == 0) 
-    		{
-      			// the most recent payment_history status
-      			$firststatus = $myresult->status;
-    		}
+		foreach($result->result() as $myresult)
+		{
+			if ($i == 0) 
+			{
+				// the most recent payment_history status
+				$firststatus = $myresult->status;
+			}
 
-    		if ($i == 1) 
-    		{
-      			// the second most recent payment_history status
+			if ($i == 1) 
+			{
+				// the second most recent payment_history status
 				$secondstatus = $myresult->status;
-    		}
-    
-    		// skip credit status
+			}
+
+			// skip credit status
 			if (($firststatus != 'credit') AND ($secondstatus != 'credit'))
-      		{
+			{
 				$i++;
-      		}
-  		}
-	
+			}
+		}
+
 		// Get the billing method
 		$query = "SELECT b.next_billing_date, b.billing_type, b.to_date, b.id, 
 			t.id, t.method FROM billing b 
@@ -108,45 +185,45 @@ class Billing_Model extends CI_Model
 		$method = $myresult->method;
 		$todate = $myresult->to_date;
 		$next_billing_date = $myresult->next_billing_date;
-  
-  
+
+
 		//"Not Renewed", - a past due prepaid account
 		// if method = prepay and today is greater than the billing to_date
 		$todate = str_replace( "-", "", $todate );
 		if (($method == "prepay") and ($todaydate > $todate)) {
 			$status = "$l_notrenewed";
 		}
-  
+
 		//"Authorized", - an authorized credit card or invoice account
 		// if last payment_history = authorized
 		if ($firststatus == "authorized") {
 			$status = "$l_authorized";
 		}
-  
-  		//"Declined", - a declined credit card account
-  		// if last payment_history = declined
-  		if ($firststatus == "declined") 
-  		{
-    		$status = "$l_declined";
-    		if ($rowcount == 1) 
-    		{
-      			// Initial Decline
-      			$status = "$l_initialdecline";
-    		}
-    		if ($secondstatus == "declined") 
-    		{
-      			// Declined 2X
-      			$status = "$l_declined2x";
-    		}
-  		}
-  
-  
-  		//"Pending", - not being billed, pending an account change
-  		// if last payment_history = pending
-  		if (empty($next_billing_date) OR $next_billing_date == '0000-00-00') 
-  		{
+
+		//"Declined", - a declined credit card account
+		// if last payment_history = declined
+		if ($firststatus == "declined") 
+		{
+			$status = "$l_declined";
+			if ($rowcount == 1) 
+			{
+				// Initial Decline
+				$status = "$l_initialdecline";
+			}
+			if ($secondstatus == "declined") 
+			{
+				// Declined 2X
+				$status = "$l_declined2x";
+			}
+		}
+
+
+		//"Pending", - not being billed, pending an account change
+		// if last payment_history = pending
+		if (empty($next_billing_date) OR $next_billing_date == '0000-00-00') 
+		{
 			$status = "$l_pending";
-  		}
+		}
 
 		//"Turned Off", - turned off by us
 		// if last payment_history is turned off
@@ -154,76 +231,76 @@ class Billing_Model extends CI_Model
 		if ($firststatus == "turnedoff") 
 		{
 			$status = "$l_turnedoff";
-  		}
+		}
 
-  		//"Notice Sent", - sent notice about to be shutoff
-  		// for carrier dependent services
-  		if ($firststatus == "noticesent") 
-  		{
-    		$status = "$l_noticesent";
-  		}
+		//"Notice Sent", - sent notice about to be shutoff
+		// for carrier dependent services
+		if ($firststatus == "noticesent") 
+		{
+			$status = "$l_noticesent";
+		}
 
-  		//"Waiting", - waiting for payment, stops pastdue process
-  		// for carrier dependent services
-  		if ($firststatus == "waiting") 
-  		{
+		//"Waiting", - waiting for payment, stops pastdue process
+		// for carrier dependent services
+		if ($firststatus == "waiting") 
+		{
 			$status = "$l_waiting";
-  		} 
-  
-  		// Past Due  - status set by the activator when run daily
-  		//"Turned Off", - turned off by us
-  		// if last payment_history is turned off
-  		// The middle past due days
-  		if ($firststatus == "pastdue") 
-  		{
+		} 
+
+		// Past Due  - status set by the activator when run daily
+		//"Turned Off", - turned off by us
+		// if last payment_history is turned off
+		// The middle past due days
+		if ($firststatus == "pastdue") 
+		{
 			$status = "$l_pastdue";
-  		}
+		}
 
-  		// get pastdue_exempt status
-  		$query = "SELECT pastdue_exempt FROM billing WHERE id = $billing_id";
-  		$result = $this->db->query($query) or die("$l_queryfailed");;
-  		$myresult = $result->row();
-  		$pastdue_exempt = $myresult->pastdue_exempt;
-  		if ($pastdue_exempt == 'y') { $status = "$l_pastdueexempt"; }
-  		if ($pastdue_exempt == 'bad_debt') { $status = "$l_bad_debt"; }
-  
-  		//"Free", - an account with the free billing type
-  		// overrides other billing types
-  		if ($method == "free") 
-  		{
+		// get pastdue_exempt status
+		$query = "SELECT pastdue_exempt FROM billing WHERE id = $billing_id";
+		$result = $this->db->query($query) or die("$l_queryfailed");;
+		$myresult = $result->row();
+		$pastdue_exempt = $myresult->pastdue_exempt;
+		if ($pastdue_exempt == 'y') { $status = "$l_pastdueexempt"; }
+		if ($pastdue_exempt == 'bad_debt') { $status = "$l_bad_debt"; }
+
+		//"Free", - an account with the free billing type
+		// overrides other billing types
+		if ($method == "free") 
+		{
 			$status = "$l_free";
-  		}
+		}
 
-  		//"Canceled" - canceled, has a cancel date
-  		// if they have a cancel date
-  		$query = "SELECT cancel_date FROM customer
+		//"Canceled" - canceled, has a cancel date
+		// if they have a cancel date
+		$query = "SELECT cancel_date FROM customer
 			WHERE default_billing_id = '$billing_id' LIMIT 1";
-  		$result = $this->db->query($query) or die("$l_queryfailed");;
-  		$myresult = $result->row();
-  		if (!isset($myresult->cancel_date)) { $myresult->cancel_date = "";}	
-  		$cancel_date = $myresult->cancel_date;
-  
-  		if ($cancel_date) 
-  		{
-    		if ($firststatus == "cancelwfee") 
-    		{
-      			$status = "$l_cancelwithfee";
-    		} 
-    		elseif ($firststatus == "collections") 
-    		{
-      			$status = "$l_collections";
-    		} 
-    		else 
-    		{
-      			$status = "$l_canceled";
-    		}
-  		}
-  
+		$result = $this->db->query($query) or die("$l_queryfailed");;
+		$myresult = $result->row();
+		if (!isset($myresult->cancel_date)) { $myresult->cancel_date = "";}	
+		$cancel_date = $myresult->cancel_date;
+
+		if ($cancel_date) 
+		{
+			if ($firststatus == "cancelwfee") 
+			{
+				$status = "$l_cancelwithfee";
+			} 
+			elseif ($firststatus == "collections") 
+			{
+				$status = "$l_collections";
+			} 
+			else 
+			{
+				$status = "$l_canceled";
+			}
+		}
+
 		return $status;	
-	
+
 	} // end billingstatus
-	
-	
+
+
 	function total_taxitems($bybillingid)
 	{
 		/*--------------------------------------------------------------------*/
@@ -235,33 +312,33 @@ class Billing_Model extends CI_Model
 		//
 
 		$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
-    "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
-    "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
-    "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
-    "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
-    "tr.percentage_or_fixed tr_percentage_or_fixed, ". 
-    "us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
-    "us.removed us_removed, us.account_number us_account_number, ".
-    "us.usage_multiple us_usage_multiple, ".
-    "te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
-    "b.id b_id, b.billing_type b_billing_type, ". 
-    "t.id t_id, t.frequency t_freq, t.method t_method ".
-    "FROM taxed_services ts ".
-    "LEFT JOIN user_services us ".
-    "ON us.master_service_id = ts.master_services_id ".
-    "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
-    "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
-    "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
-    "AND te.tax_rate_id = tr.id ".
-    "LEFT JOIN billing b ON us.billing_id = b.id ".
-    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-    "WHERE b.id = '$bybillingid' AND us.removed <> 'y'";
+			"ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+			"ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+			"ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+			"tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+			"tr.percentage_or_fixed tr_percentage_or_fixed, ". 
+			"us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
+			"us.removed us_removed, us.account_number us_account_number, ".
+			"us.usage_multiple us_usage_multiple, ".
+			"te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
+			"b.id b_id, b.billing_type b_billing_type, ". 
+			"t.id t_id, t.frequency t_freq, t.method t_method ".
+			"FROM taxed_services ts ".
+			"LEFT JOIN user_services us ".
+			"ON us.master_service_id = ts.master_services_id ".
+			"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+			"LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+			"LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+			"AND te.tax_rate_id = tr.id ".
+			"LEFT JOIN billing b ON us.billing_id = b.id ".
+			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+			"WHERE b.id = '$bybillingid' AND us.removed <> 'y'";
 
 		$taxresult = $this->db->query($query) or die ("Taxes Query Failed");
 
 		// initialize to add up the total amount of taxes
 		$total_taxes = 0;
-		
+
 		foreach ($taxresult->result() as $mytaxresult)
 		{
 			$billing_id = $mytaxresult->b_id;
@@ -285,7 +362,7 @@ class Billing_Model extends CI_Model
 				// the tax applies to this customer
 				if ($if_field <> '') {
 					$ifquery = "SELECT $if_field FROM customer ".
-	  					"WHERE account_number = '$my_account_number'";
+						"WHERE account_number = '$my_account_number'";
 					$ifresult = $this->db->query($ifquery) or die ("Query Failed");
 					$myifresult = $ifresult->row_array();
 					$checkvalue = $myifresult[0];
@@ -338,18 +415,18 @@ class Billing_Model extends CI_Model
 		/*--------------------------------------------------------------------*/
 
 		$query = "SELECT u.id u_id, u.account_number u_ac, ".
-    "u.master_service_id u_msid, u.billing_id u_bid, ".
-    "u.removed u_rem, u.usage_multiple u_usage, ".
-    "b.next_billing_date b_next_billing_date, b.id b_id, ".
-    "b.billing_type b_type, ".
-    "t.id t_id, t.frequency t_freq, t.method t_method, ".
-    "m.id m_id, m.pricerate m_pricerate, m.frequency m_freq ".
-    "FROM user_services u ".
-    "LEFT JOIN master_services m ON u.master_service_id = m.id ".
-    "LEFT JOIN billing b ON u.billing_id = b.id ".
-    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-    "WHERE b.id = '$bybillingid' ".
-    "AND u.removed <> 'y'";
+			"u.master_service_id u_msid, u.billing_id u_bid, ".
+			"u.removed u_rem, u.usage_multiple u_usage, ".
+			"b.next_billing_date b_next_billing_date, b.id b_id, ".
+			"b.billing_type b_type, ".
+			"t.id t_id, t.frequency t_freq, t.method t_method, ".
+			"m.id m_id, m.pricerate m_pricerate, m.frequency m_freq ".
+			"FROM user_services u ".
+			"LEFT JOIN master_services m ON u.master_service_id = m.id ".
+			"LEFT JOIN billing b ON u.billing_id = b.id ".
+			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+			"WHERE b.id = '$bybillingid' ".
+			"AND u.removed <> 'y'";
 
 		$result = $this->db->query($query) or die ("Services Query Failed");
 
@@ -368,7 +445,7 @@ class Billing_Model extends CI_Model
 			if ($billing_freq > 0) {
 				if ($service_freq > 0) {
 					$billed_amount = ($billing_freq/$service_freq)
-					*($pricerate*$usage_multiple);
+						*($pricerate*$usage_multiple);
 				} else {
 					// one time services
 					$billed_amount = ($pricerate*$usage_multiple);
@@ -398,14 +475,14 @@ class Billing_Model extends CI_Model
 		/*-------------------------------------------------------------------------*/
 
 		$query = "SELECT d.billing_id d_billing_id, ".
-    "d.paid_amount d_paid_amount, d.billed_amount d_billed_amount ".
-    "FROM billing_details d ".
-    "LEFT JOIN user_services u ON d.user_services_id = u.id ".
-    "LEFT JOIN master_services m ON u.master_service_id = m.id ".
-    "LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
-    "LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
-    "WHERE d.billing_id = $mybilling_id ".
-    "AND d.paid_amount != d.billed_amount"; 	
+			"d.paid_amount d_paid_amount, d.billed_amount d_billed_amount ".
+			"FROM billing_details d ".
+			"LEFT JOIN user_services u ON d.user_services_id = u.id ".
+			"LEFT JOIN master_services m ON u.master_service_id = m.id ".
+			"LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
+			"LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
+			"WHERE d.billing_id = $mybilling_id ".
+			"AND d.paid_amount != d.billed_amount"; 	
 
 		$invoiceresult = $this->db->query($query) or die ("This Query Failed");
 
@@ -429,18 +506,18 @@ class Billing_Model extends CI_Model
 		return $pastdue;
 
 	} // end total_pastdueitems
-	
+
 	public function frequency_and_organization($billing_id)
 	{
 		// get the data from the billing tables to compare service and billing frequency
 		$query = "SELECT * FROM billing b ".
-       	"LEFT JOIN billing_types t ON b.billing_type = t.id ".
-       	"LEFT JOIN general g ON g.id = b.organization_id ".
-       	"WHERE b.id = '$billing_id'";
+			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+			"LEFT JOIN general g ON g.id = b.organization_id ".
+			"WHERE b.id = '$billing_id'";
 		$freqoutput = $this->db->query($query) or die ("$l_queryfailed");
-		
+
 		return $freqoutput->row();
-	
+
 	}
-			
+
 }

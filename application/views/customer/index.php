@@ -4,10 +4,10 @@
   echo "<a href=\"customer/edit\">".
     "[ " . lang('editcustomer') . "]</a>";
   if ($cancel_date) {
-    echo "<a href=\"customer/undelete\">".
+    echo "<a href=\"customer/uncancel\">".
       "[ " . lang('uncancelcustomer') . " ]</a>";
   } else {
-    echo "<a href=\"customer/delete\">".
+    echo "<a href=\"customer/cancel\">".
       "[ " . lang('cancelcustomer') . " ]</a>";
    }
 ?>

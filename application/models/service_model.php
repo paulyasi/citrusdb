@@ -165,5 +165,31 @@ class Service_Model extends CI_Model
 		} // end while
 
 	} // end checktaxes function
-	
+
+
+	function carrier_dependent($account_number)
+	{
+		// check for carrier_dependent services that are still active
+
+		$query = "SELECT us.*,ms.carrier_dependent ".
+			"FROM user_services us ".
+			"LEFT JOIN master_services ms ".
+			"ON ms.id = us.master_service_id ".
+			"WHERE us.account_number = $account_number ".
+			"AND us.removed <> 'y' AND ms.carrier_dependent = 'y'";
+		$removedresult = $this->db->query($query) or die ("$l_queryfailed");
+
+		// get the rows returned by the dependent query
+		$count = $removedresult->num_rows();
+
+		// set carrier dependent value
+		if ($count > 0) {
+			$dependent = true;
+		} else {
+			$dependent = false;
+		}
+
+		return $dependent;
+	}
+
 }

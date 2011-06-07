@@ -35,6 +35,7 @@ $lang['add'] = "Add";
 $lang['addcreditfor'] = "Add Credit for";
 $lang['addaltbilling'] = "Add Alternate Billing";
 $lang['addbilling'] = "Add Billing";
+$lang['addnote'] = "Add Note";
 $lang['added'] = "Added";
 $lang['addedservice'] = "Added Service";
 $lang['addingservice'] = "Adding Service";
