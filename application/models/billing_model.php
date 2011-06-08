@@ -540,6 +540,17 @@ class Billing_Model extends CI_Model
 
 	}
 
+	public function get_organization_id($account_number)
+	{
+		$query = "SELECT organization_id FROM billing ".
+			"WHERE account_number = '$account_number' LIMIT 1";
+		$orgresult = $this->db->query($query) or die ("$l_queryfailed");
+		$myorgresult = $orgresult->row_array();
+	
+		return $myorgresult['organization_id'];
+
+	}
+
 
 	/*
 	 * --------------------------------------------------------------------
