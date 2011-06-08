@@ -16,6 +16,35 @@
 */
 $config['base_url']	= 'http://ubuntu/~pyasi/Projects/CitrusDB/citrusdb_3.x/';
 $config['ssl_base_url'] = 'https://ubuntu/~pyasi/Projects/CitrusDB/citrusdb_3.x/';
+
+
+/*
+|-------------------------------------------------------------------------
+| CitrusDB Specific Config
+|-------------------------------------------------------------------------
+*/
+
+$config['gpg_command'] = "/usr/bin/gpg --homedir /home/www-data/.gnupg --armor --batch -e -r 'CitrusDB'";
+$config['gpg_decrypt'] = "/usr/bin/gpg --homedir /home/www-data/.gnupg -v --passphrase-fd 0 --yes --no-tty --skip-verify --decrypt";
+$config['gpg_sign'] = "/usr/bin/gpg --homedir /home/www-data/.gnupg --passphrase-fd 0 --yes --no-tty --clearsign -u 'CitrusDB'";
+
+// ldap server settings (optional for authentication)
+$config['ldap_enable'] = FALSE;
+$config['ldap_host'] = 'ldaps://localhost';
+$config['ldap_dn'] = 'ou=webapps,dc=localhost';
+$config['ldap_protocol_version'] = 3;
+$config['ldap_uid_field'] = 'uid';
+
+// jabber/xmpp server information (optional for ticket notification)
+$config['xmpp_server'] = "";
+$config['xmpp_user'] = "";
+$config['xmpp_password'] = "";
+$config['xmpp_domain'] = "";
+
+// shipping tracking url
+$config['tracking_url'] = "http://trkcnfrm1.smi.usps.com/PTSInternetWeb/InterLabelInquiry.do?origTrackNum=";
+
+
 /*
 |--------------------------------------------------------------------------
 | Index File

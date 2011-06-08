@@ -39,10 +39,18 @@ class Customer_Model extends CI_Model
     	// get the cancel reason text
   		if ($myresult->cancel_reason > 0)
   		{
-    		$query = "SELECT reason FROM cancel_reason WHERE id = $cancel_reason_id";
-    		$cancelreasonresult = $this->db->query($query) or die ("$l_queryfailed");
-    		$mycancelreasonresult = $result->row();
-    		$cancel_reason = $myresult->reason;
+    		$query = "SELECT reason FROM cancel_reason ".
+				"WHERE id = $myresult->cancel_reason";
+    		$cancelreasonresult = $this->db->query($query) or die ("query failed");
+    		$mycancelreasonresult = $cancelreasonresult->row();
+			if ($cancelreasonresult->num_rows() > 0)
+			{
+    			$cancel_reason = $mycancelreasonresult->reason;
+			}
+			else
+			{
+				$cancel_reason = NULL;
+			}
   		} 
   		else 
   		{

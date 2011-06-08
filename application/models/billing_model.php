@@ -11,19 +11,26 @@ class Billing_Model extends CI_Model
 			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
 			"LEFT JOIN general g ON b.organization_id = g.id ".
 			"WHERE b.account_number = $account_number";
-		$record_result = $this->db->query($query) or die ("$l_queryfailed");
+		$record_result = $this->db->query($query) or die ("query failed");
 		
 		// check if billing id has active services and what it's status is
-		$i = 0; // make a multi dimensional array of these results for each record assigned to this user
+		$i = 0; 
+		// make a multi dimensional array of these results for each record assigned to this user
 		foreach($record_result->result() as $myrecord)
 		{
 			$billing_id = $myrecord->b_id;
 			$query = "SELECT billing_id FROM user_services ".
 				"WHERE removed = 'n' AND billing_id = $billing_id LIMIT 1";
-			$usresult = $this->db->query($query) or die ("user_service $l_queryfailed");
-			$myusresult = $usresult->row();
-			$not_removed_id = $myusresult->billing_id;		
-
+			$usresult = $this->db->query($query) or die ("user_service queryfailed");
+			if ($usresult->num_rows() > 0) 
+			{
+				$myusresult = $usresult->row_array();
+				$not_removed_id = $myusresult['billing_id'];		
+			}
+			else
+			{
+				$not_removed_id = 0;
+			}
 			$mystatus = $this->billingstatus($billing_id);
 								
 			$newtaxes = sprintf("%.2f",$this->total_taxitems($billing_id));
@@ -35,7 +42,7 @@ class Billing_Model extends CI_Model
 				'b_id' => $myrecord->b_id,
 				'g_org_name' => $myrecord->g_org_name,
 				't_name' => $myrecord->t_name,
-				'not_removed_id' => $myusresult->billing_id,
+				'not_removed_id' => $not_removed_id,
 				'mystatus' => $mystatus,
 				'newtaxes' => $newtaxes,
 				'newcharges' => $newcharges,
@@ -80,7 +87,14 @@ class Billing_Model extends CI_Model
 			$query = "SELECT holiday_date from holiday WHERE holiday_date = '$mydate'";
 			$result = $this->db->query($query) or die ("Holiday date Query Failed");
 			$myresult = $result->row_array();
-			$myholiday = $myresult['holiday_date'];
+			if ($result->num_rows() > 0)
+			{	
+				$myholiday = $myresult['holiday_date'];
+			}
+			else
+			{
+				$myholiday = NULL;
+			}
 
 			// check for billing weekend days
 			// check the database for what days are marked as billing weekends
@@ -99,7 +113,11 @@ class Billing_Model extends CI_Model
 			$saturday = $myresult['billingweekend_saturday'];                                
 
 			// check the date we have agains those billing weekends
-			list($myyear, $mymonth, $myday) = split('-', $mydate); 
+			$datepieces = explode('-', $mydate); 
+			$myyear = $datepieces[0];
+			$mymonth = $datepieces[1];
+			$myday = $datepieces[2];
+
 			$day_of_week = date("w", mktime(0, 0, 0, $mymonth, $myday, $myyear));
 
 			// if the weekday is a billing weekend, 
@@ -127,9 +145,11 @@ class Billing_Model extends CI_Model
 		return $mydate;
 	}
 
-	/*---------------------------------------------------------------------------*/
-	// lookup the billing status and return it in the local language
-	/*---------------------------------------------------------------------------*/
+	/*
+	 * ---------------------------------------------------------------------------
+	 *  lookup the billing status and return it in the local language
+	 * ---------------------------------------------------------------------------
+	 */
 	public function billingstatus($billing_id)
 	{
 
@@ -191,20 +211,20 @@ class Billing_Model extends CI_Model
 		// if method = prepay and today is greater than the billing to_date
 		$todate = str_replace( "-", "", $todate );
 		if (($method == "prepay") and ($todaydate > $todate)) {
-			$status = "$l_notrenewed";
+			$status = lang('notrenewed');
 		}
 
 		//"Authorized", - an authorized credit card or invoice account
 		// if last payment_history = authorized
 		if ($firststatus == "authorized") {
-			$status = "$l_authorized";
+			$status = lang('authorized');
 		}
 
 		//"Declined", - a declined credit card account
 		// if last payment_history = declined
 		if ($firststatus == "declined") 
 		{
-			$status = "$l_declined";
+			$status = lang('declined');
 			if ($rowcount == 1) 
 			{
 				// Initial Decline
@@ -213,7 +233,7 @@ class Billing_Model extends CI_Model
 			if ($secondstatus == "declined") 
 			{
 				// Declined 2X
-				$status = "$l_declined2x";
+				$status = lang('declined2x');
 			}
 		}
 
@@ -222,7 +242,7 @@ class Billing_Model extends CI_Model
 		// if last payment_history = pending
 		if (empty($next_billing_date) OR $next_billing_date == '0000-00-00') 
 		{
-			$status = "$l_pending";
+			$status = lang('pending');
 		}
 
 		//"Turned Off", - turned off by us
@@ -230,21 +250,21 @@ class Billing_Model extends CI_Model
 		// The middle past due days
 		if ($firststatus == "turnedoff") 
 		{
-			$status = "$l_turnedoff";
+			$status = lang('turnedoff');
 		}
 
 		//"Notice Sent", - sent notice about to be shutoff
 		// for carrier dependent services
 		if ($firststatus == "noticesent") 
 		{
-			$status = "$l_noticesent";
+			$status = lang('noticesent');
 		}
 
 		//"Waiting", - waiting for payment, stops pastdue process
 		// for carrier dependent services
 		if ($firststatus == "waiting") 
 		{
-			$status = "$l_waiting";
+			$status = lang('waiting');
 		} 
 
 		// Past Due  - status set by the activator when run daily
@@ -253,7 +273,7 @@ class Billing_Model extends CI_Model
 		// The middle past due days
 		if ($firststatus == "pastdue") 
 		{
-			$status = "$l_pastdue";
+			$status = lang('pastdue');
 		}
 
 		// get pastdue_exempt status
@@ -261,14 +281,14 @@ class Billing_Model extends CI_Model
 		$result = $this->db->query($query) or die("$l_queryfailed");;
 		$myresult = $result->row();
 		$pastdue_exempt = $myresult->pastdue_exempt;
-		if ($pastdue_exempt == 'y') { $status = "$l_pastdueexempt"; }
-		if ($pastdue_exempt == 'bad_debt') { $status = "$l_bad_debt"; }
+		if ($pastdue_exempt == 'y') { $status = lang('pastdueexempt'); }
+		if ($pastdue_exempt == 'bad_debt') { $status = lang('bad_debt'); }
 
 		//"Free", - an account with the free billing type
 		// overrides other billing types
 		if ($method == "free") 
 		{
-			$status = "$l_free";
+			$status = lang('free');
 		}
 
 		//"Canceled" - canceled, has a cancel date
@@ -284,15 +304,15 @@ class Billing_Model extends CI_Model
 		{
 			if ($firststatus == "cancelwfee") 
 			{
-				$status = "$l_cancelwithfee";
+				$status = lang('cancelwithfee');
 			} 
 			elseif ($firststatus == "collections") 
 			{
-				$status = "$l_collections";
+				$status = lang('collections');
 			} 
 			else 
 			{
-				$status = "$l_canceled";
+				$status = lang('canceled');
 			}
 		}
 
@@ -519,5 +539,32 @@ class Billing_Model extends CI_Model
 		return $freqoutput->row();
 
 	}
+
+
+	/*
+	 * --------------------------------------------------------------------
+	 *  set the to_date automatically according 
+	 *  to the from_date and billing_type
+	 * ---------------------------------------------------------------------
+	 */
+	function automatic_to_date ($from_date, $billing_type, $billing_id) {
+		// figure out the billing frequency
+		if (empty($from_date) OR $from_date == '0000-00-00') {
+			$query = "UPDATE billing SET to_date = NULL WHERE id = '$billing_id'";
+			$updateresult = $this->db->query($query) or die ("query failed");
+		} else {
+			$query = "SELECT * FROM billing_types WHERE id = $billing_type";
+			$result = $this->db->query($query) or die ("query failed");
+			$myresult = $result->row_array();
+			$frequency = $myresult['frequency'];
+			// add the number of frequency months to the from_date 
+			// to get what the to_date should be set to
+			$query = "UPDATE billing 
+				SET to_date = DATE_ADD('$from_date', INTERVAL '$frequency' MONTH) 
+				WHERE id = '$billing_id'";
+			$updateresult = $this->db->query($query) or die ("query failed");	
+		}
+	}
+
 
 }

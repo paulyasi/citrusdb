@@ -378,8 +378,13 @@ class Customer extends App_Controller
 		{
 			// load the models for functions we use
 			$this->load->model('billing_model');			
+			$this->load->model('ticket_model');			
 			$this->load->model('log_model');			
 			$this->load->model('service_model');			
+
+			// get the cancel reason input
+			$cancel_reason = $this->input->post('cancel_reason');
+
 
 			// set the removal date correctly for now or later
 			if ($now == "on") {
@@ -390,13 +395,17 @@ class Customer extends App_Controller
 				// figure out the customer's current next billing anniversary date
 				$query = "SELECT b.next_billing_date FROM customer c " .
 					"LEFT JOIN billing b ON c.default_billing_id = b.id ".
-					"WHERE c.account_number = '$account_number'";
+					"WHERE c.account_number = '$this->account_number'";
 				$result = $this->db->query($query) or die ("$query $l_queryfailed");
 				$myresult = $result->row_array();
 				$next_billing_date = $myresult['next_billing_date'];
 
 				// split date into pieces
-				list($myyear, $mymonth, $myday) = split('-', $next_billing_date);
+				$datepieces = explode('-', $next_billing_date);
+
+				$myyear = $datepieces[0];
+				$mymonth = $datepieces[1]; 
+				$myday = $datepieces[2]; 
 
 				// removal date is normally the anniversary billing date
 				$removal_date  = $next_billing_date;
@@ -446,32 +455,29 @@ class Customer extends App_Controller
 			// add cancel ticket to customer_history
 			// if they are carrier dependent, send a note to
 			// the billing_noti
-			$desc = "$l_canceled: $cancel_reason_text";
+			$desc = lang('canceled') . ": $cancel_reason_text";
 			$this->ticket_model->create_ticket($this->user, NULL, 
 					$this->account_number, 'automatic', $desc);
 
 			// get the billing_id for the customer's payment_history
 			$query = "SELECT default_billing_id FROM customer " . 
-				"WHERE account_number = '$account_number'";
-			$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-			$result = $DB->Execute($query) or die ("$l_queryfailed");
-			$myresult = $result->fields;
+				"WHERE account_number = '$this->account_number'";
+			$result = $this->db->query($query) or die ("$l_queryfailed");
+			$myresult = $result->row_array();
 			$default_billing_id = $myresult['default_billing_id'];
 
 			// add a canceled entry to the payment_history
 			$query = "INSERT INTO payment_history ".
 				"(creation_date, billing_id, status) ".
 				"VALUES (CURRENT_DATE,'$default_billing_id','canceled')";
-			$paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
+			$paymentresult = $this->db->query($query) or die ("$l_queryfailed");
 
 			// log this customer being canceled/deleted
 			$this->log_model->activity($this->user,$this->account_number,
 					'cancel','customer',0,'success');
 
 			// redirect them to the customer page	
-			print "<script language=\"JavaScript\">window.location.href = 
-				\"index.php?load=customer&type=module\";</script>";
-
+			redirect('/customer');
 
 		}
 		else 
@@ -489,11 +495,85 @@ class Customer extends App_Controller
 		} else permission_error();        
 	}
 
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  ask the user if they are sure they want to uncancel this customer
+	 * --------------------------------------------------------------------------------
+	 */
 	public function uncancel()
 	{
-		if ($pallow_remove) {
-			include('./modules/customer/undelete.php');
-		} else permission_error();
+		// show the regular cancel form for non carrier dependent and for managers
+		// ask if they are sure they want to cancel this customer
+		print "<br><br>";
+		print "<h4>". lang('areyousureuncancel') . ": $this->account_number</h4>";
+		print "<table cellpadding=15 cellspacing=0 border=0 width=720>";
+		print "<td align=right width=240>";
+
+		// if they hit yes, this will sent them into the undelete.php file
+		// and remove the service on their next billing anniversary
+
+		print "<form style=\"margin-bottom:0;\" action=\"". $this->url_prefix . "index.php/customer/undelete\" method=post>";
+		print "<input name=undeletenow type=submit value=\"". lang('yes') . " \" class=smallbutton></form></td>";
+
+		// if they hit no, send them back to the service edit screen
+
+		print "<td align=left width=240>";
+		print "<form style=\"margin-bottom:0;\" action=\"". $this->url_prefix ."index.php/customer\" method=post>";
+		print "<input name=done type=submit value=\"" . lang('no') . " \" class=smallbutton>";
+		print "</form></td>";
+
+		print "</table>";
+		print "</blockquote>";
+	}
+
+	
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  perform the uncancel by undeleting the customer record and associated things
+	 * --------------------------------------------------------------------------------
+	 */
+	public function undelete()
+	{
+		// load the billing model so I can get the next billingdate			
+		$this->load->model('billing_model');			
+		$this->load->model('log_model');			
+		
+		// undelete the customer record
+		$query = "UPDATE customer ".
+			"SET cancel_date = NULL, ".
+			"cancel_reason = NULL ".
+			"WHERE account_number = '$this->account_number'";
+		$result = $this->db->query($query) or die ("update customer query failed");
+
+		// update the default billing records with new billing dates
+		$mydate = $this->billing_model->get_nextbillingdate();
+		
+		$query = "UPDATE billing ".
+			"SET next_billing_date = '$mydate', ".
+			"from_date = '$mydate', ".
+			"payment_due_date = '$mydate' ".
+			"WHERE account_number = '$this->account_number'";
+		$result = $this->db->query($query) or die ("update billing $l_queryfailed");  
+
+		// get the default billing id and billing type for automati_to_date
+		$query = "SELECT c.default_billing_id,b.billing_type,b.from_date ".
+			"FROM customer c ".
+			"LEFT JOIN billing b ON b.id = c.default_billing_id ".
+			"WHERE c.account_number = '$this->account_number'";
+		$result = $this->db->query($query) or die ("Billing Query Failed");
+		$myresult = $result->row_array();	
+		$billing_id = $myresult['default_billing_id'];
+		$billing_type = $myresult['billing_type'];
+		$from_date = $myresult['from_date'];
+
+		// set the to_date automatically
+		$this->billing_model->automatic_to_date($from_date, $billing_type, $billing_id);
+
+		// log this uncancel
+		$this->log_model->activity($this->user,$this->account_number,'uncancel','customer',0,'success');
+
+		// redirect them to the customer page	
+		redirect('/customer');
 	}
 
 	public function history()

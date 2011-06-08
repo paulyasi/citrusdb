@@ -331,7 +331,7 @@ class Service_Model extends CI_Model
 
 		// CANCELED
 		if ($service_notify_type == "canceled") {
-			$description = "lang('canceled') ." $servicename $user_service_id";    
+			$description = lang('canceled') ." $servicename $user_service_id";    
 
 			if ($shutoff_notify <> '') {
 				$status = "not done";

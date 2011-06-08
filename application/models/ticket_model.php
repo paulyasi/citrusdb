@@ -35,8 +35,10 @@ class Ticket_Model extends CI_Model
 	function customer_sub_history($customer_history_id)
 	{
 		$query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
-    		"hour(creation_date) as hour, LPAD(minute(creation_date),2,'00') as minute, ".
-    		"created_by, description FROM sub_history WHERE customer_history_id = $id";
+    		"hour(creation_date) as hour, ".
+			"LPAD(minute(creation_date),2,'00') as minute, ".
+    		"created_by, description FROM sub_history ".
+			"WHERE customer_history_id = $customer_history_id";
 		$subresult = $this->db->query($query) or die ("sub_history $l_queryfailed");
 		
 		return $subresult;
@@ -144,7 +146,7 @@ class Ticket_Model extends CI_Model
 		$query = "SELECT * FROM groups WHERE groupname = '$notify'";
 		$result = $this->db->query($query) or die ("Group Query Failed");
 
-		if ($result->RowCount() > 0) 
+		if ($result->num_rows() > 0) 
 		{
 			// we are notifying a group of users
 			foreach ($result->result_array() as $myresult) 
@@ -183,14 +185,13 @@ class Ticket_Model extends CI_Model
 		$email_notify = $myresult['email_notify'];
 		$screenname_notify = $myresult['screenname_notify'];
 
-		include 'config.inc.php'; // include this here for jabber server config vars
 
 		// if they have specified a screenname then send them a jabber notification
-		if (($xmpp_server) && ($screenname) && ($screenname_notify == 'y')) {
-			include 'XMPPHP/XMPP.php';
+		if (($this->config->item('xmpp_server')) && ($screenname) && ($screenname_notify == 'y')) {
+			include 'libraries/XMPPHP/XMPP.php';
 
 			// edit this to use database jabber user defined in config file
-			$conn = new XMPPHP_XMPP("$xmpp_server", 5222, "$xmpp_user", "$xmpp_password", 'xmpphp', "$xmpp_domain", $printlog=false, $loglevel=XMPPHP_Log::LEVEL_INFO);
+			$conn = new XMPPHP_XMPP("$xmpp_server", 5222, "$this->config->item('xmpp_user')", "$this->config->item('xmpp_password')", 'xmpphp', "$this->config->item('xmpp_domain')", $printlog=false, $loglevel=XMPPHP_Log::LEVEL_INFO);
 
 			try {
 				$conn->connect();
@@ -212,7 +213,7 @@ class Ticket_Model extends CI_Model
 			$to = $email;
 			// truncate the description to fit in the subject
 			$description = substr($description, 0, 40);    
-			$subject = "$l_ticketnumber$ticketnumber $l_to: $tousergroup $l_from: $fromuser $description";
+			$subject = lang('ticketnumber') . "$ticketnumber" . lang('to') . ": $tousergroup ". lang('from') . ": $fromuser $description";
 			mail ($to, $subject, $message);
 
 		}

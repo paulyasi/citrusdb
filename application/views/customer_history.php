@@ -28,6 +28,8 @@
 
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+$linecount = 1;
+
 foreach($history->result() as $myresult) 
 {
 	$id = $myresult->id;
@@ -70,7 +72,7 @@ foreach($history->result() as $myresult)
 
 	print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
 	"padding-bottom: 2px; font-size: 9pt; font-weight: bold;\"><a target=\"_parent\" ". 
-	"href=\"$url_prefix/index.php?load=support&type=module&editticket=on&id=$id\">".
+	"href=\"$this->url_prefix/index.php?load=support&type=module&editticket=on&id=$id\">".
 	"$id</a> &nbsp;</td>";
 
 	print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
@@ -87,7 +89,7 @@ foreach($history->result() as $myresult)
 	// if they have a valid service id that is greater than zero, print the link to it here
 	if ($serviceid > 0) 
 	{
-		print "<a href=\"$url_prefix/index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a>&nbsp;";
+		print "<a href=\"$this->url_prefix/index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a>&nbsp;";
 	}
 
 	if ($linkurl) 
