@@ -84,13 +84,13 @@ foreach ($result->result_array() as $myrow)
 
 	// print service listing
 	print "<tr onmouseover='h(this);' onmouseout='deh(this);' ".
-		"onmousedown='window.location.href=\"index.php?load=services&type=module&".
-		"create=on&serviceid=".$myrow['id']."&addbutton=Add\";' bgcolor=\"#ddddee\">".
+		"onmousedown='window.location.href=\"".$this->url_prefix."index.php/services/add_options/".
+		$myrow['id']."\";' bgcolor=\"#ddddee\">".
 		"<td>".$myrow['id']."</td><td>".$myrow['service_description']."</td>".
 		"<td>".$myrow['pricerate']."</td><td>".$myrow['frequency']."</td>".
 		"<td>".$myrow['organization_id']."</td><td align=center>".
 		"<form style=\"margin-bottom:0;\" ".
-		"action=\"index.php/services/add_service/".$myrow['id']."\" method=post>".
+		"action=\"".$this->url_prefix."index.php/services/add_options/".$myrow['id']."\" method=post>".
 		"<input name=addbutton type=submit value=\"".lang('add')."\" ".
 		"class=smallbutton>".
 		"</form></td></tr>\n"; 
