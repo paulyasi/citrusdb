@@ -61,7 +61,7 @@ class Services extends App_Controller {
     	}  else permission_error();
 	}
 	
-	public function create()
+	public function create($showall = NULL)
 	{
 		// check permissions
 		$permission = $this->module_model->permission($this->user, 'services');
@@ -71,6 +71,8 @@ class Services extends App_Controller {
 			$this->load->view('module_header');
 
 			// show the services available to add to this customer
+			$data['showall'] = $showall;
+			$this->load->view('services/create', $data);	
 						
 			// the history listing tabs
 			$this->load->view('historyframe_tabs');	
@@ -88,16 +90,16 @@ class Services extends App_Controller {
 	public function add_service()
 	{
 		// GET Variables
-		$addnow = $base->input['addnow'];
-		$addbutton = $base->input['addbutton'];
-		$serviceid = $base->input['serviceid'];
-		$usagemultiple = $base->input['usagemultiple'];
-		$options_table_name = $base->input['options_table_name'];
-		$fieldlist = $base->input['fieldlist'];
-		$showall = $base->input['showall'];
-		$billing_id = $base->input['billing_id'];
-		$create_billing = $base->input['create_billing'];
-		$detail1 = $base->input['detail1'];
+		//$this->id = $this->input->post('id');
+		$addnow = $this->input->post('addnow');
+		$addbutton = $this->input->post('addbutton');
+		$serviceid = $this->input->post('serviceid');
+		$usagemultiple = $this->input->post('usagemultiple');
+		$options_table_name = $this->input->post('options_table_name');
+		$fieldlist = $this->input->post('fieldlist');
+		$billing_id = $this->input->post('billing_id');
+		$create_billing = $this->input->post('create_billing');
+		$detail1 = $this->input->post('detail1');
 
 		// add the services to the user_services table and the options table
 		$fieldlist = substr($fieldlist, 1); 
