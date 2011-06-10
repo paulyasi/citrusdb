@@ -52,9 +52,7 @@ else
 		echo "<a href=\"index.php/services/create#$categoryname\">$categoryname</a> | \n";
 	}
 
-	// set the query for the service listing
 	$query = "SELECT * FROM master_services m ".
-		"LEFT JOIN general g ON g.id = m.organization_id ".
 		"WHERE selling_active = 'y' AND hide_online <> 'y' ".
 		"AND organization_id = '$my_organization_id' ".
 		"ORDER BY category, pricerate, service_description";

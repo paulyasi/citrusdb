@@ -1,34 +1,31 @@
 <?php
-
 // list the service options after they clicked on the add button.
 echo "<a href=\"".$this->url_prefix."index.php/services\">
 [ ". lang('undochanges') ."</a>";
-$query = "SELECT * FROM master_services ms ". 
-"LEFT JOIN general g ON g.id = ms.organization_id ". 
-"WHERE ms.id = $serviceid";
-$result = $this->db->query($query) or die ("query failed");
-$myresult = $result->row_array();	
+$this->load->model('service_model');
+$myresult = $this->service_model->service_with_org($serviceid);
 $servicename = $myresult['service_description'];
 $options_table_name = $myresult['options_table'];
 $usage_label = $myresult['usage_label'];
 $service_org_id = $myresult['organization_id'];
 $service_org_name = $myresult['org_name'];
+?>
 
-echo "<script language=javascript>".
-"function popupURL(url,value) { ".
-"newurl = \"url + value\";".
-"window.open(\"newurl\");".
-"}".
-"</script>";	
+<script language=javascript>
+function popupURL(url,value) { 
+newurl = \"url + value\";
+window.open(\"newurl\");
+}
+</script>	
 
-print "<h4>". lang('addingservice') .": $servicename ($service_org_name)</h4>".
-"<form action=\"index.php/services/add_service\" name=\"AddService\" ".
-"method=post> <table width=720 cellpadding=5 cellspacing=1 border=0>\n";
-print "<input type=hidden name=options_table_name value=$options_table_name>".
-"<input type=hidden name=serviceid value=$serviceid>";
+<h4><?php echo lang('addingservice');?>: <?php echo $servicename?> (<?php echo $service_org_name?>)</h4>
+"<form action="<?=$this->url_prefix?>index.php/services/add_service" name="AddService" 
+method=post> <table width=720 cellpadding=5 cellspacing=1 border=0>
+<input type=hidden name=options_table_name value=<?=$options_table_name?>>
+<input type=hidden name=serviceid value=<?=$serviceid?>>
 
+<?php
 // check that there is an options_table_name, if so, show the options choices
-
 if ($options_table_name <> '') {
 	// get a list of all the field names in the options table
 	$fields = $this->db->field_data($options_table_name);	
