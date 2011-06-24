@@ -1,7 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Service_Model extends CI_Model
+class Service_model extends CI_Model
 {
+
+	function __construct()
+	{
+		    parent::__construct();
+	}
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  return service options table name and organization info

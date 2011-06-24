@@ -6,6 +6,7 @@ class Services extends App_Controller {
 	{
 		parent::__construct();	
 		$this->load->model('service_model');
+		$this->load->model('schema_model');
 		$this->load->model('module_model');
 		$this->load->model('customer_model');
 		$this->load->model('billing_model');
@@ -144,11 +145,13 @@ class Services extends App_Controller {
 				$user_service_id, NULL, NULL);
 
 		// add a log entry that this service was added
-		log_activity($DB,$user,$account_number,'create','service',$user_service_id,'success');
+		$this->log_model->activity($this->user,$this->account_number,'create',
+				'service',$user_service_id,'success');
 
 		print "$l_addedservice<p>";
-		print "<script language=\"JavaScript\">window.location.href = ".
-			"\"index.php?load=services&type=module\";</script>";
+
+		// go back to the customer's services listing
+		redirect('/services');
 	}
 
 

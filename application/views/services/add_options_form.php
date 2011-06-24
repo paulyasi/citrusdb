@@ -2,7 +2,6 @@
 // list the service options after they clicked on the add button.
 echo "<a href=\"".$this->url_prefix."index.php/services\">
 [ ". lang('undochanges') ."</a>";
-$this->load->model('service_model');
 $myresult = $this->service_model->service_with_org($serviceid);
 $servicename = $myresult['service_description'];
 $options_table_name = $myresult['options_table'];
@@ -13,13 +12,13 @@ $service_org_name = $myresult['org_name'];
 
 <script language=javascript>
 function popupURL(url,value) { 
-newurl = \"url + value\";
-window.open(\"newurl\");
+newurl = "url + value";
+window.open("newurl");
 }
 </script>	
 
 <h4><?php echo lang('addingservice');?>: <?php echo $servicename?> (<?php echo $service_org_name?>)</h4>
-"<form action="<?=$this->url_prefix?>index.php/services/add_service" name="AddService" 
+<form action="<?php echo $this->url_prefix?>index.php/services/add_service" name="AddService" 
 method=post> <table width=720 cellpadding=5 cellspacing=1 border=0>
 <input type=hidden name=options_table_name value=<?=$options_table_name?>>
 <input type=hidden name=serviceid value=<?=$serviceid?>>
@@ -28,18 +27,32 @@ method=post> <table width=720 cellpadding=5 cellspacing=1 border=0>
 // check that there is an options_table_name, if so, show the options choices
 if ($options_table_name <> '') {
 	// get a list of all the field names in the options table
-	$fields = $this->db->field_data($options_table_name);	
+	// TODO: make a new helper that can get the enum type, need to use my own
+	// SHOW COLUMNS FROM $options_table_name and look at the type column
+	// or more properly query the information_schema table
+	/*
+	   SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT
+	   FROM INFORMATION_SCHEMA.COLUMNS
+	   WHERE table_name = 'example_options'
+	   AND table_schema = 'citrus'
+	 */
+	//$fields = $this->db->field_data($options_table_name);	
+
+	// get the columns from schema model
+	$fields = $this->schema_model->columns($this->db->database, $options_table_name);
 
 	//initialize variables
 	$fieldlist = "";
 	$i = 0;
 
-	foreach($fields as $v) {
+	foreach($fields->result() as $v) {
 		//echo "Name: $v->name ";
 		//echo "Type: $v->type ";
 
-		$fieldname = $v->name;
-		$fieldflags = $v->type;
+		$fieldname = $v->COLUMN_NAME;
+		$fieldflags = $v->DATA_TYPE;
+
+		echo "$fieldname, $fieldflags<br>";
 
 		if ($detail1 <> '' AND $i == 2) 
 		{
@@ -59,13 +72,11 @@ if ($options_table_name <> '') {
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 					"<td bgcolor=\"#ddddee\">";
 
-				// load the enum helper
-				$this->load->helper('enum');
-
 				// print all the items listed in the enum
-				enum_select($options_table_name, $fieldname, $default_value);
+				$this->schema_model->enum_select($options_table_name, 
+						$fieldname, $default_value);
 
-				echo "</select></td><tr>\n";
+				echo "</td><tr>\n";
 			} 
 			elseif ($fieldname == "description")
 			{
