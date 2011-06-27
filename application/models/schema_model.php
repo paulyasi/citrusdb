@@ -21,8 +21,8 @@ class Schema_model extends CI_Model
 	 */
 	public function columns($database, $table)
 	{
-		$query = "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT
-			FROM INFORMATION_SCHEMA.COLUMNS 
+		$query = "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, 
+			COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS 
 			WHERE table_name = '$table'
 			AND table_schema = '$database'";	
 
@@ -34,33 +34,26 @@ class Schema_model extends CI_Model
 
 	/*
 	 * ----------------------------------------------------------------------------
-	 *  select enum items and generate a drop down menu with them
+	 *  select enum items from an enum column_type data
+	 *  and generate a drop down menu with them
 	 * ----------------------------------------------------------------------------
 	 */
-	public function enum_select($table,$name,$default) 
-	{ 
-		$sql = "SHOW COLUMNS FROM $table LIKE '$name'"; 
-		$result = $this->db->query($sql) or die ("Enum Query Failed");         
+	public function enum_select($column_type, $name, $default) 
+	{
 		echo "<select name='$name'>\n\t"; 
 		if($default) 
 		{
 			echo "<option selected value='$default'>$default</option>\n\t";
 		}
-		while($myrow = $result->FetchRow())
+
+		$enums = substr($column_type,5,-1); 
+		echo "enums: $enums";
+		$enums = preg_replace("/'/","",$enums); 
+		$enums = explode(",",$enums); 
+		foreach($enums as $val) 
 		{ 
-			$enum_field = substr($myrow[1],0,4); 
-			if($enum_field == "enum")
-			{ 
-				global $enum_field; 
-				$enums = substr($myrow[1],5,-1); 
-				$enums = preg_replace("/'/","",$enums); 
-				$enums = explode(",",$enums); 
-				foreach($enums as $val) 
-				{ 
-					echo "<option value='$val'>$val</option>\n\t"; 
-				}//----end foreach 
-			}//----end if 
-		}//----end while 
+			echo "<option value='$val'>$val</option>\n\t"; 
+		}//----end foreach 
 		echo "\r</select>"; 
 	}
 

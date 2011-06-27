@@ -27,7 +27,6 @@ method=post> <table width=720 cellpadding=5 cellspacing=1 border=0>
 // check that there is an options_table_name, if so, show the options choices
 if ($options_table_name <> '') {
 	// get a list of all the field names in the options table
-	// TODO: make a new helper that can get the enum type, need to use my own
 	// SHOW COLUMNS FROM $options_table_name and look at the type column
 	// or more properly query the information_schema table
 	/*
@@ -51,8 +50,7 @@ if ($options_table_name <> '') {
 
 		$fieldname = $v->COLUMN_NAME;
 		$fieldflags = $v->DATA_TYPE;
-
-		echo "$fieldname, $fieldflags<br>";
+		$fieldtype = $v->COLUMN_TYPE; // for enum has value: enum('1','2') etc.
 
 		if ($detail1 <> '' AND $i == 2) 
 		{
@@ -72,9 +70,8 @@ if ($options_table_name <> '') {
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 					"<td bgcolor=\"#ddddee\">";
 
-				// print all the items listed in the enum
-				$this->schema_model->enum_select($options_table_name, 
-						$fieldname, $default_value);
+				// print all the items listed in the enum data
+				$this->schema_model->enum_select($fieldtype, $fieldname, $default_value);
 
 				echo "</td><tr>\n";
 			} 
@@ -145,3 +142,4 @@ echo "</select></td><tr>";
 
 print "<td></td><td><input name=addnow type=submit value=\"".lang('add')."\" ".
 "class=smallbutton></td></table></form>";
+?>
