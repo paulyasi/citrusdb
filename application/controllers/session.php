@@ -53,3 +53,6 @@ class Session extends CI_Controller
 	}
 			
 }
+
+/* end of file: session */
+/* end of controllers/session.php */

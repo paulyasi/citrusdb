@@ -722,22 +722,17 @@ CREATE TABLE `tax_exempt` (
 ) ENGINE=MyISAM ;
 
 --
--- sessions2 support from adodb
+-- make new session table for codeigniter
 --
-
-CREATE TABLE sessions2(
-	  sesskey VARCHAR( 64 ) NOT NULL DEFAULT '',
-	  expiry TIMESTAMP NOT NULL ,
-	  expireref VARCHAR( 250 ) DEFAULT '',
-	  created TIMESTAMP NOT NULL ,
-	  modified TIMESTAMP NOT NULL ,
-	  sessdata LONGTEXT,
-	PRIMARY KEY ( sesskey ) ,
-	INDEX sess2_expiry( expiry ),
-	INDEX sess2_expireref( expireref )
-) ENGINE=MyISAM ;
-
-
+CREATE TABLE IF NOT EXISTS  `ci_sessions` (
+	session_id varchar(40) DEFAULT '0' NOT NULL,
+	ip_address varchar(16) DEFAULT '0' NOT NULL,
+	user_agent varchar(50) NOT NULL,
+	last_activity int(10) unsigned DEFAULT 0 NOT NULL,
+	user_data text DEFAULT '' NOT NULL,
+	PRIMARY KEY (session_id)
+) ENGINE=MyISAM;
+		
 --
 -- Table structure for payment_mode
 --
