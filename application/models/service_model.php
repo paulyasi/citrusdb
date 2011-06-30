@@ -44,6 +44,119 @@ class Service_model extends CI_Model
 
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Save changes to edited service
+	 * ------------------------------------------------------------------------
+	 */
+	function save_changes($userserviceid, $optionstable, $fieldvalues)
+	{
+		$query = "UPDATE $optionstable SET $fieldvalues ".
+			"WHERE user_services = $userserviceid";
+		$result = $this->db->query($query) or die ("save_changes query failed");
+	}
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Change the usage multiple (eg: unit quantity) for this service
+	 * ------------------------------------------------------------------------
+	 */
+	function change_usage($userserviceid, $usage_multiple)
+	{
+		// update the database if they changed the usage_multiple
+		$query = "UPDATE user_services SET usage_multiple = $usage_multiple ".
+			"WHERE id = $userserviceid";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Change the billing id for this service
+	 * ------------------------------------------------------------------------
+	 */
+	function change_billing($userserviceid, $billing_id) 
+	{
+		// update the database if they changed the billing ID
+		$query = "UPDATE user_services SET billing_id = $billing_id ".
+			"WHERE id = $userserviceid";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+	
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Change the service type and move attributes and notes to new service
+	 * ------------------------------------------------------------------------
+	 */
+	function change_servicetype($userserviceid, $master_service_id)
+	{
+		// get the old master service id
+		$query = "SELECT master_service_id FROM user_services ".
+			"WHERE id = $userserviceid";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$oldmasterresult = $result->fields;
+		$old_master_service_id = $oldmasterresult['master_service_id'];
+
+		// get the name of the options table, always the same
+		$query = "SELECT options_table FROM master_services ".
+			"WHERE id = $master_service_id";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$master_service_results = $result->fields;
+		$options_table_name = $master_service_results['options_table'];
+
+		// get the field names and values from the options_table
+		$fields = $DB->MetaColumns($options_table_name);
+		foreach($fields as $f) {
+			$fieldname = $f->name;
+			if ($fieldname <> "id" AND $fieldname <> "user_services") {
+				$fieldlist .= ',' . $fieldname;
+			}
+		}
+		$fieldlist = substr($fieldlist, 1);
+
+
+		// get the values out of those fields from the options table
+		$query = "SELECT $fieldlist from $options_table_name ".
+			"WHERE user_services = $userserviceid";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$options_table_result = $result->fields;
+
+		$array_fieldlist = explode(",",$fieldlist);
+		foreach($array_fieldlist as $myfield) {
+			$myvalue = $options_table_result["$myfield"];
+			$fieldvalues .= ',\'' . $myvalue . '\'';
+		}  
+
+		$fieldvalues = substr($fieldvalues, 1);
+
+
+		// TODO: make a new service with the new information from above
+		$new_user_service_id = create_service($account_number, $master_service_id,
+				$billing_id, $usage_multiple, 
+				$options_table_name,
+				$fieldlist, $fieldvalues);
+
+		// delete the old service but with no removal date and no delete message
+		delete_service($userserviceid, 'change', '');
+
+		// add an entry to the customer_history to modify_notify for the new service
+		service_message('change', $account_number,
+				$old_master_service_id, $userserviceid, 
+				$master_service_id, $new_user_service_id);
+
+		// move the notes from the old service to the new service
+		$query = "UPDATE customer_history ".
+			"SET user_services_id = '$new_user_service_id' ".
+			"WHERE user_services_id = '$userserviceid'";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$updateresult = $DB->Execute($query) or die ("$query $l_queryfailed");
+
+
+	}
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  return service options table name and organization info

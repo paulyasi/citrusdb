@@ -105,11 +105,98 @@ class Services extends App_Controller {
 	
 	public function edit()
 	{
-		if ($pallow_modify) {
-    	  include('./modules/customer/edit.php');
-    	}  else permission_error();
+		$this->load->view('services/edit', $data);	
 	}
-	
+
+	public function save()
+	{
+		$userserviceid = $this->input->post['userserviceid'];
+		$optionstable = $this->input->post['optionstable'];
+		$fieldlist = $this->input->post['fieldlist'];
+
+		$fieldlist = substr($fieldlist, 1); 
+		
+		// loop through post_vars associative/hash to get field values
+		$array_fieldlist = explode(",",$fieldlist);
+
+		// initialize fieldvalue variable
+		$fieldvalues = "";
+
+		foreach ($array_fieldlist as $myfield) {
+			$fieldvalues .= ',\'' . $this->input->post($myfield) . '\'';
+		}
+
+		$fieldvalues = substr($fieldvalues, 1);
+
+		$this->service_model->save_changes($userserviceid, $optionstable, $fieldvalues);
+
+		// log that this was changed
+		$this->log_model->activity($this->user,$this->account_number,
+				'edit','service',$userserviceid,'success');  
+
+		redirect('/services');
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  take input to change the usage multiple (eg: unit quantity) of this
+	 * ------------------------------------------------------------------------
+	 */
+	public function usage()
+	{
+		$userserviceid = $this->input->post['userserviceid'];
+		$usage_multiple = $this->input->post['usage_multiple'];
+
+		$this->service_module->change_usage($userservicesid, $usage_multiple);
+		// add a log entry that this service was edited
+		$this->log_model->activity($this->user,$this->account_number,
+				'edit','service',$userserviceid,'success');    
+
+		redirect('/services');
+	}
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  take input to change the billing id for the service
+	 * ------------------------------------------------------------------------
+	 */
+	public function changebilling()
+	{
+		$userserviceid = $this->input->post['userserviceid'];
+		$billing_id = $this->input->post['billing_id'];
+
+		$this->service_module->change_billing($userservicesid, $usage_multiple);
+		// add a log entry that this service was edited
+		$this->log_model->activity($this->user,$this->account_number,
+				'edit','service',$userserviceid,'success');    
+
+		redirect('/services');
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  take input to change the service type
+	 * ------------------------------------------------------------------------
+	 */
+	public function servicetype() 
+	{
+		$userserviceid = $this->input->post['userserviceid'];
+		$master_service_id = $this->input->post['master_service_id'];
+
+		$this->service_model->change_servicetype($userserviceid, $master_service_id);
+
+		// log an entry for a create and delete of the service as part of the change
+		log_activity($this->user,$this->account_number,
+				'create','service',$new_user_service_id,'success');
+		log_activity($this->user,$this->account_number,
+				'delete','service',$userserviceid,'success');  
+
+		redirect('/services');
+	}
+
+
 	public function create($showall = NULL)
 	{
 
@@ -123,10 +210,10 @@ class Services extends App_Controller {
 			// show the services available to add to this customer
 			$data['showall'] = $showall;
 			$this->load->view('services/create', $data);	
-						
+
 			// the history listing tabs
 			$this->load->view('historyframe_tabs');	
-			
+
 			// show html footer
 			$this->load->view('html_footer');
 		}
@@ -162,18 +249,13 @@ class Services extends App_Controller {
 
 		// loop through post_vars associative/hash to get field values
 		$array_fieldlist = explode(",",$fieldlist);
-		
+
 		// initialize fieldvalue variable
 		$fieldvalues = "";
 
-		//foreach ($this->input->post as $mykey => $myvalue) {
-			foreach ($array_fieldlist as $myfield) {
-				print "$myfield<br>";
-				//if ($myfield == $mykey) {
-					$fieldvalues .= ',\'' . $this->input->post($myfield) . '\'';
-				//}
-			}
-		//}
+		foreach ($array_fieldlist as $myfield) {
+			$fieldvalues .= ',\'' . $this->input->post($myfield) . '\'';
+		}
 
 		$fieldvalues = substr($fieldvalues, 1);
 
@@ -243,9 +325,71 @@ class Services extends App_Controller {
 
 	public function delete()
 	{
-		if ($pallow_remove) {
-			include('./modules/customer/delete.php');
-		} else permission_error();
+		$userserviceid = $this->input->post['userserviceid'];
+		
+		// figure out the signup anniversary removal date
+		$query = "SELECT signup_date FROM customer 
+			WHERE account_number = '$this->account_number'";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myresult = $result->row_array();
+		$signup_date = $myresult['signup_date'];
+		list($myyear, $mymonth, $myday) = split('-', $signup_date);
+		$removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
+		$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
+		if ($removal_date <= $today) {
+			$removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
+		}
+
+		// prompt them to ask if they are sure they want to delete the service
+		print "<br><br>";
+		print "<h4>$l_areyousuredelete: $servicedescription</h4>";
+		print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
+			"<td align=right>";
+
+		// if they hit yes, this will sent them into the delete.php file
+		// and remove the service
+
+		print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
+			"<input type=hidden name=optionstable value=$optionstable>";
+		print "<input type=hidden name=userserviceid value=$userserviceid>";
+		print "<input type=hidden name=load value=services>";
+		print "<input type=hidden name=type value=module>";
+		print "<input type=hidden name=delete value=on>";
+		print "<input name=deletenow type=submit value=\" $l_deleteservice_removeuser $removal_date\" ".
+			"class=smallbutton></form></td>";
+
+		print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
+			"<input type=hidden name=optionstable value=$optionstable>";
+		print "<input type=hidden name=userserviceid value=$userserviceid>";
+		print "<input type=hidden name=load value=services>";
+		print "<input type=hidden name=type value=module>";
+		print "<input type=hidden name=delete value=on>";
+		print "<input name=deletetoday type=submit value=\" $l_deleteservice_removetoday \" ".
+			"class=smallbutton></form></td>";   
+
+		// if they hit yes without automatic removal, this will sent them into the delete.php file
+		// and remove the service
+
+
+		print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
+			"<input type=hidden name=optionstable value=$optionstable>";
+		print "<input type=hidden name=userserviceid value=$userserviceid>";
+		print "<input type=hidden name=load value=services>";
+		print "<input type=hidden name=type value=module>";
+		print "<input type=hidden name=delete value=on>";
+		print "<input name=deletenoauto type=submit value=\" $l_deleteservice_activeuser \" ".
+			"class=smallbutton></form></td>"; 
+
+		// if they hit no, send them back to the service edit screen
+
+		print "<td align=left><form style=\"margin-bottom:0;\" ".
+			"action=\"index.php\" method=post>";
+		print "<input name=done type=submit value=\" $l_no \" class=smallbutton>";
+		print "<input type=hidden name=load value=services>";        
+		print "<input type=hidden name=type value=module>";
+		print "</form></td></table>";
+		print "</blockquote>";
+
 	}
 
 	public function fieldassets()
