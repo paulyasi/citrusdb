@@ -12,8 +12,10 @@ class Services extends App_Controller {
 		$this->load->model('billing_model');
 	}
 	
-	/**
-	 * Customer overview of everything
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Customer overview of everything
+	 * ------------------------------------------------------------------------
 	 */
 	public function index()
 	{
@@ -40,6 +42,52 @@ class Services extends App_Controller {
 						
 			// output the list of services
 			$data['services'] = $this->service_model->list_services($this->account_number);
+			$this->load->view('services/index', $data);
+						
+			// the history listing tabs
+			$this->load->view('historyframe_tabs');	
+			
+			// show html footer
+			$this->load->view('html_footer');
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}	
+		
+	}
+	
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Customer overview of a specified category
+	 * ------------------------------------------------------------------------
+	 */
+	public function category($category)
+	{
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'services');
+		if ($permission['view'])
+		{
+		
+			$this->load->view('header_with_sidebar');
+		
+			// get the customer title info, name and company
+			$data = $this->customer_model->title($this->account_number);
+			$this->load->view('customer_in_sidebar', $data);
+			
+			$this->load->view('moduletabs');
+			
+			$this->load->model('ticket_model');
+			$this->load->view('messagetabs');
+			
+			$this->load->view('buttonbar');
+			
+			$data['categories'] = $this->service_model->service_categories($this->account_number);
+			$this->load->view('services/heading', $data);
+						
+			// output the list of services
+			$data['services'] = $this->service_model->list_services($this->account_number, $category);
 			$this->load->view('services/index', $data);
 						
 			// the history listing tabs

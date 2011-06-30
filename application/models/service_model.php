@@ -73,15 +73,29 @@ class Service_model extends CI_Model
 	}
 
 
-	function list_services($account_number)
+	function list_services($account_number, $category = NULL)
 	{
-		$query = "SELECT user.*, master.service_description, master.options_table, ".
-			"master.pricerate, master.frequency, master.support_notify, ".
-			"master.organization_id master_organization_id ".
-			"FROM user_services AS user, master_services AS master ".
-			"WHERE user.master_service_id = master.id ".
-			"AND user.account_number = '$account_number' AND removed <> 'y' ".
-			"ORDER BY user.usage_multiple DESC, master.pricerate DESC";		
+		if ($category)
+		{
+			$query = "SELECT user.*, master.service_description, master.options_table, ".
+				"master.pricerate, master.frequency, master.support_notify, ".
+				"master.organization_id master_organization_id ".
+				"FROM user_services AS user, master_services AS master ".
+				"WHERE user.master_service_id = master.id ".
+				"AND user.account_number = '$account_number' AND removed <> 'y' ".
+				"AND master.category = '$category' ".
+				"ORDER BY user.usage_multiple DESC, master.pricerate DESC";		
+		}
+		else
+		{
+			$query = "SELECT user.*, master.service_description, master.options_table, ".
+				"master.pricerate, master.frequency, master.support_notify, ".
+				"master.organization_id master_organization_id ".
+				"FROM user_services AS user, master_services AS master ".
+				"WHERE user.master_service_id = master.id ".
+				"AND user.account_number = '$account_number' AND removed <> 'y' ".
+				"ORDER BY user.usage_multiple DESC, master.pricerate DESC";		
+		}
 
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 
