@@ -10,6 +10,42 @@ class Service_model extends CI_Model
 
 	/*
 	 * ------------------------------------------------------------------------
+	 *  create service record
+	 * ------------------------------------------------------------------------
+	 */
+	function create_service($account_number, $master_service_id, $billing_id,
+			$usage_multiple, $options_table_name,
+			$attribute_fieldname_string,
+			$attribute_fieldvalue_string)
+	{
+		$mydate = date("Y-m-d H:i:s");
+
+		// insert the new service into the user_services table
+		$query = "INSERT into user_services (account_number, master_service_id, ".
+			"billing_id, start_datetime, salesperson, usage_multiple) ".
+			"VALUES ('$account_number', '$master_service_id', '$billing_id',".
+			"'$mydate', '$this->user', '$usage_multiple')";
+		$result = $this->db->query($query) or die ("create_service $l_queryfailed");
+
+		// use the mysql_insert_id command to get the ID of the row the insert
+		// was to for the options table query
+		$myinsertid = $this->db->insert_id();
+
+		// insert values into the options table
+		// skip this if there is no options_table_name for this service
+		if ($options_table_name <> '') {
+			$query = "INSERT into $options_table_name ".
+				"(user_services,$attribute_fieldname_string) ".
+				"VALUES ($myinsertid,$attribute_fieldvalue_string)";
+			$result = $this->db->query($query) or die ("create_service $query");
+		}
+
+		return $myinsertid;
+
+	}
+
+	/*
+	 * ------------------------------------------------------------------------
 	 *  return service options table name and organization info
 	 * ------------------------------------------------------------------------
 	 */
@@ -68,9 +104,18 @@ class Service_model extends CI_Model
 	{
 		$query = "SELECT * FROM $options_table WHERE user_services = '$service_id'";
 		$optionsresult = $this->db->query($query) or die ("$l_queryfailed");
-		$myoptions = $optionsresult->row();
+		$myoptions = $optionsresult->row_array();
 
-		return $myoptions;
+		// convert the associative array into a numbered array
+		// since we don't know the names of customer attribute fields
+		$i = 0;
+		foreach($myoptions AS $myfieldname)
+		{
+			$data[$i] = $myfieldname;
+			$i++;
+		}
+
+		return $data;
 	}
 
 

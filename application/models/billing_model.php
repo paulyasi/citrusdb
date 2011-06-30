@@ -2,6 +2,81 @@
 
 class Billing_Model extends CI_Model
 {
+	/*
+	 * ---------------------------------------------------------------------------
+	 *  Create Billing Record
+	 * ---------------------------------------------------------------------------
+	 */
+	function create__record($organization_id, $my_account_number)
+	{
+		// query the customer record for the default billing id
+		$query = "SELECT default_billing_id FROM customer 
+			WHERE account_number = $my_account_number";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myresult = $result->row_array();
+		$default_billing_id = $myresult['default_billing_id'];
+
+		// query the default billing record for default name and address info to
+		// insert into the new alternate billing record
+		$query = "SELECT * FROM billing WHERE id = $default_billing_id";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myresult = $result->row_array();
+		$name = $myresult['name'];
+		$company = $myresult['company'];
+		$street = $myresult['street'];
+		$city = $myresult['city'];
+		$state = $myresult['state'];
+		$country = $myresult['country'];
+		$zip = $myresult['zip'];
+		$phone = $myresult['phone'];
+		$fax = $myresult['fax'];
+		$contact_email = $myresult['contact_email'];
+		$billing_type = $myresult['billing_type'];
+		$creditcard_number = $myresult['creditcard_number'];
+		$creditcard_expire = $myresult['creditcard_expire'];
+		$billing_status = $myresult['billing_status'];
+		$next_billing_date = $myresult['next_billing_date'];
+		$from_date = $myresult['from_date'];
+		$to_date = $myresult['to_date'];
+		$payment_due_date = $myresult['payment_due_date'];
+		$rerun_date = $myresult['rerun_date'];
+		$pastdue_exempt = $myresult['pastdue_exempt'];
+		$po_number = $myresult['po_number'];
+		$encrypted_creditcard_number = $myresult['encrypted_creditcard_number'];
+		$automatic_receipt = $myresult['automatic_receipt'];	
+
+		// save billing information
+		$query = "INSERT into billing
+			SET name = '$name',
+				company = '$company',
+				street = '$street',
+				city = '$city',
+				state = '$state',
+				country = '$country',
+				zip = '$zip',
+				phone = '$phone',
+				fax = '$fax',
+				contact_email = '$contact_email',
+				account_number = '$my_account_number',
+				billing_type = '$billing_type',
+				creditcard_number = '$creditcard_number',
+				creditcard_expire = '$creditcard_expire',
+				next_billing_date = '$next_billing_date',
+				from_date = '$from_date',
+				to_date = '$to_date',
+				payment_due_date = '$payment_due_date',
+				pastdue_exempt = '$pastdue_exempt',
+				po_number = '$po_number',
+				encrypted_creditcard_number = '$encrypted_creditcard_number',
+				automatic_receipt = '$automatic_receipt',
+				organization_id = '$organization_id'";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myinsertid = $this->db->insert_id();
+
+		return $myinsertid;
+	}
+
+
 	public function record_list($account_number)
 	{
 		// show the billing record info
@@ -12,7 +87,7 @@ class Billing_Model extends CI_Model
 			"LEFT JOIN general g ON b.organization_id = g.id ".
 			"WHERE b.account_number = $account_number";
 		$record_result = $this->db->query($query) or die ("query failed");
-		
+
 		// check if billing id has active services and what it's status is
 		$i = 0; 
 		// make a multi dimensional array of these results for each record assigned to this user
@@ -32,28 +107,28 @@ class Billing_Model extends CI_Model
 				$not_removed_id = 0;
 			}
 			$mystatus = $this->billingstatus($billing_id);
-								
+
 			$newtaxes = sprintf("%.2f",$this->total_taxitems($billing_id));
-  			$newcharges = sprintf("%.2f",$this->total_serviceitems($billing_id)+$newtaxes);
-  			$pastcharges = sprintf("%.2f",$this->total_pastdueitems($billing_id));
-  			$newtotal = sprintf("%.2f",$newcharges + $pastcharges);
-  	
+			$newcharges = sprintf("%.2f",$this->total_serviceitems($billing_id)+$newtaxes);
+			$pastcharges = sprintf("%.2f",$this->total_pastdueitems($billing_id));
+			$newtotal = sprintf("%.2f",$newcharges + $pastcharges);
+
 			$result[$i] = array(
-				'b_id' => $myrecord->b_id,
-				'g_org_name' => $myrecord->g_org_name,
-				't_name' => $myrecord->t_name,
-				'not_removed_id' => $not_removed_id,
-				'mystatus' => $mystatus,
-				'newtaxes' => $newtaxes,
-				'newcharges' => $newcharges,
-				'pastcharges' => $pastcharges,
-				'newtotal' => $newtotal
-			);
-			
+					'b_id' => $myrecord->b_id,
+					'g_org_name' => $myrecord->g_org_name,
+					't_name' => $myrecord->t_name,
+					'not_removed_id' => $not_removed_id,
+					'mystatus' => $mystatus,
+					'newtaxes' => $newtaxes,
+					'newcharges' => $newcharges,
+					'pastcharges' => $pastcharges,
+					'newtotal' => $newtotal
+					);
+
 			$i++;
 		}
-		
-		
+
+
 		return $result;
 	}
 
@@ -546,7 +621,7 @@ class Billing_Model extends CI_Model
 			"WHERE account_number = '$account_number' LIMIT 1";
 		$orgresult = $this->db->query($query) or die ("$l_queryfailed");
 		$myorgresult = $orgresult->row_array();
-	
+
 		return $myorgresult['organization_id'];
 
 	}

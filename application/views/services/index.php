@@ -11,9 +11,6 @@
    
 
 <?php 
-$this->load->model('service_model');
-$this->load->model('billing_model');
-
 foreach ($services->result() as $myresult)
 {
 	// select the options_table to get data for the details column
@@ -24,6 +21,7 @@ foreach ($services->result() as $myresult)
 	if ($options_table <> '') {
 		// get the data from the options table and put into variables
 		$myoptions = $this->service_model->options_attributes($id, $options_table);
+		//echo "$myoptions->username";
 		if (count($myoptions) >= 3) {
 			$optiondetails = $myoptions[2];
 		} else {

@@ -64,6 +64,7 @@ class Services extends App_Controller {
 	
 	public function create($showall = NULL)
 	{
+
 		// check permissions
 		$permission = $this->module_model->permission($this->user, 'services');
 		if ($permission['create'])
@@ -96,6 +97,8 @@ class Services extends App_Controller {
 	 */
 	public function add_service()
 	{
+		$this->load->model('ticket_model');
+
 		// GET Variables
 		//$this->id = $this->input->post('id');
 		$serviceid = $this->input->post('serviceid');
@@ -111,15 +114,18 @@ class Services extends App_Controller {
 
 		// loop through post_vars associative/hash to get field values
 		$array_fieldlist = explode(",",$fieldlist);
+		
+		// initialize fieldvalue variable
+		$fieldvalues = "";
 
-		foreach ($base->input as $mykey => $myvalue) {
+		//foreach ($this->input->post as $mykey => $myvalue) {
 			foreach ($array_fieldlist as $myfield) {
-				// print "$mykey<br>";
-				if ($myfield == $mykey) {
-					$fieldvalues .= ',\'' . $myvalue . '\'';
-				}
+				print "$myfield<br>";
+				//if ($myfield == $mykey) {
+					$fieldvalues .= ',\'' . $this->input->post($myfield) . '\'';
+				//}
 			}
-		}
+		//}
 
 		$fieldvalues = substr($fieldvalues, 1);
 
@@ -128,26 +134,28 @@ class Services extends App_Controller {
 
 		// if there is a create_billing request, create a billing record first
 		if ($create_billing) {
-			$billing_id = create_billing_record($create_billing, $account_number, $DB);
+			$billing_id = $this->billing_model->create_record($create_billing, 
+					$this->account_number);
 		}
 
-		$user_service_id = create_service($account_number, $serviceid, $billing_id,
+		$user_service_id = $this->service_model->create_service($this->account_number, 
+				$serviceid, $billing_id,
 				$usagemultiple, $options_table_name,
 				$fieldlist, $fieldvalues);
 
 
 		// insert any linked_services into the user_services table
 		$query = "SELECT * FROM linked_services WHERE linkfrom = $serviceid";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		while ($myresult = $result->FetchRow()) {
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		foreach($result->result_array() AS $myresult) {
 			$linkto = $myresult['linkto'];
 
-			create_service($account_number, $linkto, $billing_id,
+			$this->service_model->create_service($this->account_number, $linkto, $billing_id,
 					$usagemultiple, NULL, NULL, NULL);
 		}	
 
 		// add an entry to the customer_history to the activate_notify user
-		service_message('added', $account_number, $serviceid,
+		$this->service_model->service_message('added', $this->account_number, $serviceid,
 				$user_service_id, NULL, NULL);
 
 		// add a log entry that this service was added
