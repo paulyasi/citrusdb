@@ -88,7 +88,13 @@ class Services extends App_Controller {
 	}
 
 
-	public function add_service($serviceid)
+	/*
+	 * ------------------------------------------------------------------------
+	 *  take input from the service add_options_form and make a new service
+	 *  with those attributes
+	 * ------------------------------------------------------------------------
+	 */
+	public function add_service()
 	{
 		// GET Variables
 		//$this->id = $this->input->post('id');

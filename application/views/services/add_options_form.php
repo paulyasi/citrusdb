@@ -1,7 +1,7 @@
 <?php
 // list the service options after they clicked on the add button.
 echo "<a href=\"".$this->url_prefix."index.php/services\">
-[ ". lang('undochanges') ."</a>";
+[ ". lang('undochanges') ."</a> ]";
 $myresult = $this->service_model->service_with_org($serviceid);
 $servicename = $myresult['service_description'];
 $options_table_name = $myresult['options_table'];
@@ -18,8 +18,8 @@ window.open("newurl");
 </script>	
 
 <h4><?php echo lang('addingservice');?>: <?php echo $servicename?> (<?php echo $service_org_name?>)</h4>
-<form action="<?php echo $this->url_prefix?>index.php/services/add_service" name="AddService" 
-method=post> <table width=720 cellpadding=5 cellspacing=1 border=0>
+<form action="<?php echo $this->url_prefix?>index.php/services/add_service" name="AddService" method=post> 
+<table width=720 cellpadding=5 cellspacing=1 border=0>
 <input type=hidden name=options_table_name value=<?=$options_table_name?>>
 <input type=hidden name=serviceid value=<?=$serviceid?>>
 
@@ -130,7 +130,7 @@ if (!$result || $result->num_rows() < 1){
 		"<input type=hidden name=create_billing value=$service_org_id>";	
 } else {
 	echo "<select name=billing_id>";
-	foreach ($result->row_array() as $myresult) 
+	foreach ($result->result_array() as $myresult) 
 	{
 		$billing_id = $myresult['id'];
 		$org_name = $myresult['org_name'];
