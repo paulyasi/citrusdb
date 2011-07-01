@@ -75,14 +75,8 @@ echo "<tr onMouseOver='h(this);' onmouseout='deh(this);' onmouseup='window.locat
 	if ($service_organization_id <> $billing_organization_id) {
 		print "<b>" . lang('orgmismatch') . "</b>";
 	}
-	print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-	print "<input type=hidden name=load value=services>";
-	print "<input type=hidden name=type value=module>";
-	print "<input type=hidden name=edit value=on>";
-	print "<input type=hidden name=userserviceid value=\"$id\">";
-	print "<input type=hidden name=servicedescription value=\"$service_description\">";
-	print "<input type=hidden name=optionstable value=\"$options_table\">";
-	print "<input name=editbutton type=submit value=\"". lang('edit') . "\" ".
+	print "<form style=\"margin-bottom:0;\" action=\"services/edit/$id\" method=get>";
+	print "<input type=submit value=\"". lang('edit') . "\" ".
        "class=smallbutton></form>";
 
 	print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";

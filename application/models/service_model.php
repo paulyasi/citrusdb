@@ -173,6 +173,25 @@ class Service_model extends CI_Model
 		return $myresult;
 	}
 
+
+	function org_and_options($userserviceid)
+	{
+		// get the organization_id and options_table and name and details for this service
+		$query = "SELECT ms.organization_id, ms.options_table, ".
+			"ms.service_description, ms.support_notify, g.org_name, us.removed, ".
+			"date(us.end_datetime) AS end_datetime, ".
+			"date(us.start_datetime) AS start_datetime ".
+			"FROM user_services us ".
+			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+			"LEFT JOIN general g ON g.id = ms.organization_id ".
+			"WHERE us.id = '$userserviceid'";
+		$orgresult = $this->db->query($query) or die ("$l_queryfailed");
+		$myorgresult = $orgresult->row_array();
+
+		return $myorgresult;
+	}
+
+
 	function service_categories($account_number)
 	{
 		$query = "SELECT DISTINCT category FROM user_services AS user, ".

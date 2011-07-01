@@ -19,6 +19,8 @@ class Services extends App_Controller {
 	 */
 	public function index()
 	{
+
+		echo "blah";
 		// check permissions
 		$permission = $this->module_model->permission($this->user, 'services');
 		if ($permission['view'])
@@ -36,17 +38,17 @@ class Services extends App_Controller {
 			$this->load->view('messagetabs');
 			
 			$this->load->view('buttonbar');
-			
+
 			$data['categories'] = $this->service_model->service_categories($this->account_number);
 			$this->load->view('services/heading', $data);
-						
+
 			// output the list of services
 			$data['services'] = $this->service_model->list_services($this->account_number);
 			$this->load->view('services/index', $data);
-						
+
 			// the history listing tabs
 			$this->load->view('historyframe_tabs');	
-			
+
 			// show html footer
 			$this->load->view('html_footer');
 		}
@@ -54,10 +56,10 @@ class Services extends App_Controller {
 		{
 			$this->module_model->permission_error();
 		}	
-		
+
 	}
-	
-	
+
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  Customer overview of a specified category
@@ -69,30 +71,30 @@ class Services extends App_Controller {
 		$permission = $this->module_model->permission($this->user, 'services');
 		if ($permission['view'])
 		{
-		
+
 			$this->load->view('header_with_sidebar');
-		
+
 			// get the customer title info, name and company
 			$data = $this->customer_model->title($this->account_number);
 			$this->load->view('customer_in_sidebar', $data);
-			
+
 			$this->load->view('moduletabs');
-			
+
 			$this->load->model('ticket_model');
 			$this->load->view('messagetabs');
-			
+
 			$this->load->view('buttonbar');
-			
+
 			$data['categories'] = $this->service_model->service_categories($this->account_number);
 			$this->load->view('services/heading', $data);
-						
+
 			// output the list of services
 			$data['services'] = $this->service_model->list_services($this->account_number, $category);
 			$this->load->view('services/index', $data);
-						
+
 			// the history listing tabs
 			$this->load->view('historyframe_tabs');	
-			
+
 			// show html footer
 			$this->load->view('html_footer');
 		}
@@ -100,12 +102,33 @@ class Services extends App_Controller {
 		{
 			$this->module_model->permission_error();
 		}	
-		
+
 	}
-	
-	public function edit()
+
+
+	public function edit($userserviceid)
 	{
+		$this->load->view('header_with_sidebar');
+
+		// get the customer title info, name and company
+		$data = $this->customer_model->title($this->account_number);
+		$this->load->view('customer_in_sidebar', $data);
+
+		$this->load->view('moduletabs');
+
+		$this->load->model('ticket_model');
+		$this->load->view('messagetabs');
+
+		$this->load->view('buttonbar');
+
+		$data['userserviceid'] = $userserviceid;
 		$this->load->view('services/edit', $data);	
+		
+		// the history listing tabs
+		$this->load->view('historyframe_tabs');	
+
+		// show html footer
+		$this->load->view('html_footer');
 	}
 
 	public function save()
@@ -115,7 +138,7 @@ class Services extends App_Controller {
 		$fieldlist = $this->input->post['fieldlist'];
 
 		$fieldlist = substr($fieldlist, 1); 
-		
+
 		// loop through post_vars associative/hash to get field values
 		$array_fieldlist = explode(",",$fieldlist);
 
@@ -174,6 +197,51 @@ class Services extends App_Controller {
 		redirect('/services');
 	}
 
+
+	public function taxexempt() 
+	{
+		// ask the user for customer tax id, and exempt id expiration date
+		print "<a href=\"index.php?load=services&type=module\">[ $l_undochanges ]</a>";
+		print "<h4>$l_exempt</h4><form action=\"index.php\" method=post>".
+			"<table width=720 cellpadding=5 cellspacing=1 border=0>";
+		print "<input type=hidden name=load value=services>";
+		print "<input type=hidden name=type value=module>";
+		print "<input type=hidden name=edit value=on>";
+		print "<input type=hidden name=taxrate value=\"$tax_rate_id\">";
+		echo "<td bgcolor=\"ccccdd\"width=180><b>$l_taxexemptid</b></td>".
+			"<td bgcolor=\"#ddddee\"><input type=text name=customer_tax_id></td><tr>\n";
+		echo "<td bgcolor=\"ccccdd\"width=180><b>$l_expirationdate</b></td>".
+			"<td bgcolor=\"#ddddee\"><input type=text name=expdate></td><tr>\n";
+		print "<td></td><td><input name=saveexempt type=submit ".
+			"value=\"$l_savechanges\" class=smallbutton></td></table></form>";
+	}
+
+
+	public function savetaxexempt() 
+	{ 
+		// save the tax exempt status information, make the customer tax exempt
+		$query = "INSERT INTO tax_exempt ".
+			"(account_number, tax_rate_id, customer_tax_id, expdate) ". 
+			"VALUES ('$account_number', '$tax_rate_id','$customer_tax_id','$expdate')";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+		// redirect back to the service index
+		print "<script language=\"JavaScript\">window.location.href = ".
+			"\"index.php?load=services&type=module\";</script>";
+	}
+
+
+	public function savenottaxexempt() 
+	{
+		// make the customer tax not-exempt
+		$query = "DELETE FROM tax_exempt WHERE tax_rate_id = '$tax_rate_id' ".
+			"AND account_number = '$account_number'";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+		// redirect back to the service index
+		print "<script language=\"JavaScript\">window.location.href = ".
+			"\"index.php?load=services&type=module\";</script>";
+	}
 
 	/*
 	 * ------------------------------------------------------------------------
@@ -326,7 +394,7 @@ class Services extends App_Controller {
 	public function delete()
 	{
 		$userserviceid = $this->input->post['userserviceid'];
-		
+
 		// figure out the signup anniversary removal date
 		$query = "SELECT signup_date FROM customer 
 			WHERE account_number = '$this->account_number'";
