@@ -9,8 +9,10 @@ class Customer extends App_Controller
 		$this->load->model('module_model');
     }		
 	
-    /**
+    /*
+     * ------------------------------------------------------------------------
      * Customer overview of everything
+     * ------------------------------------------------------------------------
      */
     public function index()
     {

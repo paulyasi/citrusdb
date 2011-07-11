@@ -12,6 +12,7 @@ class Services extends App_Controller {
 		$this->load->model('billing_model');
 	}
 	
+	
 	/*
 	 * ------------------------------------------------------------------------
 	 *  Customer overview of everything
@@ -19,8 +20,6 @@ class Services extends App_Controller {
 	 */
 	public function index()
 	{
-
-		echo "blah";
 		// check permissions
 		$permission = $this->module_model->permission($this->user, 'services');
 		if ($permission['view'])
@@ -121,8 +120,10 @@ class Services extends App_Controller {
 
 		$this->load->view('buttonbar_view');
 
+		
 		$data['userserviceid'] = $userserviceid;
 		$this->load->view('services_edit_view', $data);	
+		
 		
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');	
@@ -365,7 +366,6 @@ class Services extends App_Controller {
 		// go back to the customer's services listing
 		redirect('/services');
 	}
-
 
 	/*
 	 * ------------------------------------------------------------------------
