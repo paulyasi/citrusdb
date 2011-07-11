@@ -18,7 +18,7 @@ class Session extends CI_Controller
   			die;
 		}
 		
-		$this->load->view('loginform');
+		$this->load->view('loginform_view');
 	}
 	
 	function auth()

@@ -9,7 +9,7 @@ class Dashboard extends App_Controller {
 	{
 
 		// show the header common to all dashboard/tool views
-		$this->load->view('dashboard_header');
+		$this->load->view('dashboard_header_view');
 
 		// include module searches below here
 		// TODO: put this into a permission model?
@@ -43,13 +43,13 @@ class Dashboard extends App_Controller {
 			$modulename = $myresult->modulename;
 
 			if (in_array ($modulename, $viewable)) {
-				$viewthis = $modulename . '/search';
+				$viewthis = $modulename . '_search_view';
 				$this->load->view($viewthis);
 			}
 		}
 
 		// show html footer
-		$this->load->view('html_footer');
+		$this->load->view('html_footer_view');
 
 	}
 }

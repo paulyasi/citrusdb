@@ -26,31 +26,31 @@ class Services extends App_Controller {
 		if ($permission['view'])
 		{
 		
-			$this->load->view('header_with_sidebar');
+			$this->load->view('header_with_sidebar_view');
 		
 			// get the customer title info, name and company
 			$data = $this->customer_model->title($this->account_number);
-			$this->load->view('customer_in_sidebar', $data);
+			$this->load->view('customer_in_sidebar_view', $data);
 			
-			$this->load->view('moduletabs');
+			$this->load->view('moduletabs_view');
 			
 			$this->load->model('ticket_model');
-			$this->load->view('messagetabs');
+			$this->load->view('messagetabs_view');
 			
-			$this->load->view('buttonbar');
+			$this->load->view('buttonbar_view');
 
 			$data['categories'] = $this->service_model->service_categories($this->account_number);
-			$this->load->view('services/heading', $data);
+			$this->load->view('services_heading_view', $data);
 
 			// output the list of services
 			$data['services'] = $this->service_model->list_services($this->account_number);
-			$this->load->view('services/index', $data);
+			$this->load->view('services_index_view', $data);
 
 			// the history listing tabs
-			$this->load->view('historyframe_tabs');	
+			$this->load->view('historyframe_tabs_view');	
 
 			// show html footer
-			$this->load->view('html_footer');
+			$this->load->view('html_footer_view');
 		}
 		else
 		{
@@ -72,31 +72,31 @@ class Services extends App_Controller {
 		if ($permission['view'])
 		{
 
-			$this->load->view('header_with_sidebar');
+			$this->load->view('header_with_sidebar_view');
 
 			// get the customer title info, name and company
 			$data = $this->customer_model->title($this->account_number);
-			$this->load->view('customer_in_sidebar', $data);
+			$this->load->view('customer_in_sidebar_view', $data);
 
-			$this->load->view('moduletabs');
+			$this->load->view('moduletabs_view');
 
 			$this->load->model('ticket_model');
-			$this->load->view('messagetabs');
+			$this->load->view('messagetabs_view');
 
-			$this->load->view('buttonbar');
+			$this->load->view('buttonbar_view');
 
 			$data['categories'] = $this->service_model->service_categories($this->account_number);
-			$this->load->view('services/heading', $data);
+			$this->load->view('services_heading_view', $data);
 
 			// output the list of services
 			$data['services'] = $this->service_model->list_services($this->account_number, $category);
-			$this->load->view('services/index', $data);
+			$this->load->view('services_index_view', $data);
 
 			// the history listing tabs
-			$this->load->view('historyframe_tabs');	
+			$this->load->view('historyframe_tabs_view');	
 
 			// show html footer
-			$this->load->view('html_footer');
+			$this->load->view('html_footer_view');
 		}
 		else
 		{
@@ -108,27 +108,27 @@ class Services extends App_Controller {
 
 	public function edit($userserviceid)
 	{
-		$this->load->view('header_with_sidebar');
+		$this->load->view('header_with_sidebar_view');
 
 		// get the customer title info, name and company
 		$data = $this->customer_model->title($this->account_number);
-		$this->load->view('customer_in_sidebar', $data);
+		$this->load->view('customer_in_sidebar_view', $data);
 
-		$this->load->view('moduletabs');
+		$this->load->view('moduletabs_view');
 
 		$this->load->model('ticket_model');
-		$this->load->view('messagetabs');
+		$this->load->view('messagetabs_view');
 
-		$this->load->view('buttonbar');
+		$this->load->view('buttonbar_view');
 
 		$data['userserviceid'] = $userserviceid;
-		$this->load->view('services/edit', $data);	
+		$this->load->view('services_edit_view', $data);	
 		
 		// the history listing tabs
-		$this->load->view('historyframe_tabs');	
+		$this->load->view('historyframe_tabs_view');	
 
 		// show html footer
-		$this->load->view('html_footer');
+		$this->load->view('html_footer_view');
 	}
 
 	public function save()
@@ -273,17 +273,17 @@ class Services extends App_Controller {
 		if ($permission['create'])
 		{
 			// load the module header common to all module views
-			$this->load->view('module_header');
+			$this->load->view('module_header_view');
 
 			// show the services available to add to this customer
 			$data['showall'] = $showall;
-			$this->load->view('services/create', $data);	
+			$this->load->view('services_create_view', $data);	
 
 			// the history listing tabs
-			$this->load->view('historyframe_tabs');	
+			$this->load->view('historyframe_tabs_view');	
 
 			// show html footer
-			$this->load->view('html_footer');
+			$this->load->view('html_footer_view');
 		}
 		else
 		{
@@ -377,18 +377,18 @@ class Services extends App_Controller {
 	public function add_options($serviceid, $detail1 = NULL)
 	{
 		// load the module header common to all module views
-		$this->load->view('module_header');
+		$this->load->view('module_header_view');
 
 		// load the add service options view
 		$data['serviceid'] = $serviceid;
 		$data['detail1'] = $detail1;
-		$this->load->view('services/add_options_form', $data);
+		$this->load->view('services_add_options_form_view', $data);
 
 		// the history listing tabs
-		$this->load->view('historyframe_tabs');	
+		$this->load->view('historyframe_tabs_view');	
 
 		// show html footer
-		$this->load->view('html_footer');
+		$this->load->view('html_footer_view');
 	}
 
 	public function delete()
