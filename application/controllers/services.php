@@ -120,10 +120,12 @@ class Services extends App_Controller {
 
 		$this->load->view('buttonbar_view');
 
+		// load the date helper for use when printing service start/end dates
+		$this->load->helper('date');
 		
+		// TODO: fix this view
 		$data['userserviceid'] = $userserviceid;
 		$this->load->view('services_edit_view', $data);	
-		
 		
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');	

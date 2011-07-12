@@ -15,12 +15,17 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 
 $myorgresult = $this->service_model->org_and_options($userserviceid);
 
+foreach ($myorgresult as $key => $value)
+{
+		echo $key . ":" . $value . "\n";
+}
+
 $service_org_id = $myorgresult['organization_id'];
 $service_org_name = $myorgresult['org_name'];
 $optionstable = $myorgresult['options_table'];
 $servicedescription = $myorgresult['service_description'];
-$creationdate = humandate($myorgresult['start_datetime'], $lang);
-$enddate = humandate($myorgresult['end_datetime'], $lang);
+$creationdate = humandate($myorgresult['start_datetime']);
+$enddate = humandate($myorgresult['end_datetime']);
 $removed = $myorgresult['removed'];
 $support_notify = $myorgresult['support_notify'];
 
