@@ -15,11 +15,6 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 
 $myorgresult = $this->service_model->org_and_options($userserviceid);
 
-foreach ($myorgresult as $key => $value)
-{
-		echo $key . ":" . $value . "\n";
-}
-
 $service_org_id = $myorgresult['organization_id'];
 $service_org_name = $myorgresult['org_name'];
 $optionstable = $myorgresult['options_table'];
@@ -30,11 +25,12 @@ $removed = $myorgresult['removed'];
 $support_notify = $myorgresult['support_notify'];
 
 // check for optionstable, skip this step if there isn't one
-if ($optionstable <> '') {
+if ($optionstable <> '') 
+{
 	$query = "SELECT * FROM $optionstable ".
 		"WHERE user_services = '$userserviceid'";
 	$result = $this->db->query($query) or die ("$l_queryfailed");
-	$myresult = $result->row();
+	$myresult = $result->row_array();
 }
 
 // print form to edit the things in the options table
@@ -46,62 +42,76 @@ if ($removed == 'y') {
 	print lang('active') ."</h4>";
 }
 print "<form action=\"index.php\" method=post><table width=720 ".
-"cellpadding=5 cellspacing=1 border=0>";
-print "<input type=hidden name=load value=services>";
-print "<input type=hidden name=type value=module>";
-print "<input type=hidden name=edit value=on>";
+"cellpadding=5 cellspacing=1 border=0>\n";
+print "<input type=hidden name=load value=services>\n";
+print "<input type=hidden name=type value=module>\n";
+print "<input type=hidden name=edit value=on>\n";
 print "<input type=hidden name=servicedescription ".
-"value=\"$servicedescription\"><input type=hidden name=optionstable ".
+"value=\"$servicedescription\">\n<input type=hidden name=optionstable ".
 "value=$optionstable><input type=hidden name=userserviceid ".
-"value=$userserviceid>";
+"value=$userserviceid>\n";
 
 // check for optionstable, skip this step if there isn't one	
 if ($optionstable <> '') {
 	// list out the fields in the options table for that service
 	$fields = $this->schema_model->columns($this->db->database, $optionstable);
 	
+	// initialize fieldlist
+	$fieldlist = "";
+	
 	$i = 0;
-	foreach($fields as $v) {
+	foreach($fields->result() as $v) {
 		//echo "Name: $v->name ";
 		//echo "Type: $v->type <br>";
 		
 		$fieldname = $v->COLUMN_NAME;
 		$fieldflags = $v->DATA_TYPE;
 		$fieldtype = $v->COLUMN_TYPE; // for enum has value: enum('1','2') etc.
-		
-		if ($fieldname <> "id" AND $fieldname <> "user_services") {
-			if ($fieldflags == "enum") {
+				
+		if ($fieldname <> "id" AND $fieldname <> "user_services") 
+		{			
+			if ($fieldflags == "enum") 
+			{
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
-					"<td bgcolor=\"#ddddee\">";
+					"<td bgcolor=\"#ddddee\">\n";
 				// print all the items listed in the enum
-				$this->schema_model->enum_select($fieldtype, $fieldname, $default_value);
+				$this->schema_model->enum_select($fieldtype, $fieldname, NULL);
 				
 				echo "</td><tr>\n";
-			} elseif ($fieldflags == "text"
+			} 
+			elseif ($fieldflags == "text"
 					OR $fieldflags == "blob"
 					OR $fieldflags == "tinytext"
 					OR $fieldflags == "tinyblob"
 					OR $fieldflags == "mediumblob"
-					OR $fieldflags == "mediumtext") {
+					OR $fieldflags == "mediumtext") 
+			{
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 					"<td bgcolor=\"#ddddee\"><textarea cols=40 rows=6 ".
-					"name=\"$fieldname\">$myresult[$i]</textarea>";
-				echo "</td><tr>";
-			} elseif ($fieldname == "description"){
+					"name=\"$fieldname\">$myresult[$fieldname]</textarea>";
+				echo "</td><tr>\n";
+			} 
+			elseif ($fieldname == "description")
+			{
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 					"<td bgcolor=\"#ddddee\"><input size=40 maxlength=44 type=text name=\"$fieldname\" ".
-					"value=\"$myresult[$i]\">";
-				echo "</td><tr>";
-			} else {
+					"value=\"$myresult[$fieldname]\">";
+				echo "</td><tr>\n";
+			} 
+			else 
+			{				
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 					"<td bgcolor=\"#ddddee\"><input type=text name=\"$fieldname\" ".
-					"value=\"$myresult[$i]\">";
-
+					" value=\"$myresult[$fieldname]\">\n";	
+							
+				/*
+				 * TODO: fix this for multifield with unknown names
 				// list any applicable options url links
 				$query = "SELECT * FROM options_urls WHERE fieldname = '$fieldname'";
 				$urlresult = $this->db->query($query) or die ("URL $l_queryfailed");
 				$j = $i + 1; // to get the next field for multi field queries
-				foreach ($urlresult->result() as $urlmyresult) {	  	    
+				foreach ($urlresult->result() as $urlmyresult) 
+				{	  	    
 					// assign the query from the search to the query string
 					// replace the s1 and s2 place holders with the actual variables
 					$s1 = $myresult[$i];
@@ -114,12 +124,16 @@ if ($optionstable <> '') {
 					$url = str_replace("%s2%", $s2, $url);
 					$url = str_replace("%d1%", $d1, $url);
 					$url = str_replace("%a1%", $a1, $url);
-					if ($url) {
+					if ($url) 
+					{
 						echo "&nbsp;&nbsp; <a href=# ".
 							"onclick=\"popupPage('$url'); return false;\">$urlname</a>";
 					}
 				}
+				*/
+				
 				echo "</td><tr>\n";
+				
 			}
 			$fieldlist .= ',' . $fieldname;
 		}
@@ -127,8 +141,9 @@ if ($optionstable <> '') {
 	}
 	print "<input type=hidden name=fieldlist value=$fieldlist>";
 	print "<td></td><td><input name=save type=submit ".
-		"value=\"$l_savechanges\" class=smallbutton>&nbsp;&nbsp;&nbsp;";
+		"value=\"". lang('savechanges') ."\" class=smallbutton>&nbsp;&nbsp;&nbsp;\n";
 }
+
 
 //
 // check if the service is removed or and not canceled
@@ -145,7 +160,8 @@ if (!isset($myremovedresult['cancel_date'])) {
 }
 $cancel_date = $myremovedresult['cancel_date'];
 
-if ($removed == 'y' AND $cancel_date == '') {
+if ($removed == 'y' AND $cancel_date == '') 
+{
 	// print the undelete button
 	print "</form><p><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
 		"<input type=hidden name=optionstable value=$optionstable>";
@@ -153,11 +169,13 @@ if ($removed == 'y' AND $cancel_date == '') {
 	print "<input type=hidden name=load value=services>";
 	print "<input type=hidden name=type value=module>";
 	print "<input type=hidden name=delete value=on>";
-	print "<input name=undeletenow type=submit value=\" $l_undelete \" ".
+	print "<input name=undeletenow type=submit value=\" ". lang('undelete') . "\" ".
 		"class=smallbutton></form>";
-} else {
+} 
+else 
+{
 	// print the delete button
-	print "<p><input name=delete type=submit value=\"$l_deleteservice\" ".
+	print "<p><input name=delete type=submit value=\"" . lang('deleteservice') . "\" ".
 		"class=smallbutton></form>";
 }
 
@@ -167,10 +185,10 @@ print "<input type=hidden name=load value=support>";
 print "<input type=hidden name=type value=module>";
 print "<input type=hidden name=serviceid value=\"$userserviceid\">";
 if ($support_notify) {
-	print "<input name=openticket type=submit value=\"$l_notify $support_notify\" ".
+	print "<input name=openticket type=submit value=\"".lang('notify')." $support_notify\" ".
 		"class=smallbutton></form></td></table><p></blockquote>";  	
 } else {
-	print "<input name=openticket type=submit value=\"$l_openticket\" ".
+	print "<input name=openticket type=submit value=\"".lang('openticket')."\" ".
 		"class=smallbutton></form></td></table><p></blockquote>";     
 }
 
