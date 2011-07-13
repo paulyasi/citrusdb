@@ -104,24 +104,25 @@ if ($optionstable <> '') {
 					"<td bgcolor=\"#ddddee\"><input type=text name=\"$fieldname\" ".
 					" value=\"$myresult[$fieldname]\">\n";	
 							
-				/*
-				 * TODO: fix this for multifield with unknown names
-				// list any applicable options url links
-				$query = "SELECT * FROM options_urls WHERE fieldname = '$fieldname'";
+				
+				// list any applicable options attribute url links
+				$query = "SELECT * FROM options_urls WHERE fieldname = '$fieldname'";				
 				$urlresult = $this->db->query($query) or die ("URL $l_queryfailed");
 				$j = $i + 1; // to get the next field for multi field queries
-				foreach ($urlresult->result() as $urlmyresult) 
+				foreach ($urlresult->result_array	() as $urlmyresult) 
 				{	  	    
+					$myoptions = $this->service_model->options_attributes($userserviceid, $optionstable);
+					
 					// assign the query from the search to the query string
 					// replace the s1 and s2 place holders with the actual variables
-					$s1 = $myresult[$i];
-					$s2 = $myresult[$j];
-					$d1 = $myresult[2]; // the primary service detail/first attribute
-					$a1 = $account_number; // the services account_number
+					$s1 = $myresult[$fieldname];
+					// TODO how to get this: $s2 = $myresult[$j]; 
+					$d1 = $myoptions[2]; // the primary service detail/first attribute
+					$a1 = $this->account_number; // the services account_number
 					$url = $urlmyresult['url'];
 					$urlname = $urlmyresult['urlname'];
 					$url = str_replace("%s1%", $s1, $url);
-					$url = str_replace("%s2%", $s2, $url);
+					// TODO once fix above: $url = str_replace("%s2%", $s2, $url);
 					$url = str_replace("%d1%", $d1, $url);
 					$url = str_replace("%a1%", $a1, $url);
 					if ($url) 
@@ -130,7 +131,6 @@ if ($optionstable <> '') {
 							"onclick=\"popupPage('$url'); return false;\">$urlname</a>";
 					}
 				}
-				*/
 				
 				echo "</td><tr>\n";
 				
