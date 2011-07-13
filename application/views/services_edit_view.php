@@ -183,13 +183,13 @@ else
 print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
 print "<input type=hidden name=load value=support>";
 print "<input type=hidden name=type value=module>";
-print "<input type=hidden name=serviceid value=\"$userserviceid\">";
+print "<input type=hidden name=serviceid value=\"$userserviceid\">\n";
 if ($support_notify) {
 	print "<input name=openticket type=submit value=\"".lang('notify')." $support_notify\" ".
-		"class=smallbutton></form></td></table><p></blockquote>";  	
+		"class=smallbutton></form></td></table><p></blockquote>\n";  	
 } else {
 	print "<input name=openticket type=submit value=\"".lang('openticket')."\" ".
-		"class=smallbutton></form></td></table><p></blockquote>";     
+		"class=smallbutton></form></td></table><p></blockquote>\n";     
 }
 
 /*----------------------------------------------------------------------*/
@@ -197,7 +197,7 @@ if ($support_notify) {
 // edit the shipping info and return info
 /*----------------------------------------------------------------------*/
 
-print "<table width=720 cellpadding=5 cellspacing=1 border=0>";
+print "<table width=720 cellpadding=5 cellspacing=1 border=0>\n";
 
 $query = "SELECT afa.id, mfa.description, afa.creation_date, afa.serial_number, ".
 "afa.status, afa.sale_type, afa.shipping_tracking_number, afa.shipping_date, ".
@@ -207,9 +207,10 @@ $query = "SELECT afa.id, mfa.description, afa.creation_date, afa.serial_number, 
 "LEFT JOIN user_services us ON us.id = afa.user_services_id ".
 "WHERE us.id = '$userserviceid'";
 
-$result = $this->db->query($query) or die ("$query $l_queryfailed");
+$result = $this->db->query($query) or die ("$query query failed");
 
-foreach ($result->result_array() as $myresult) {
+foreach ($result->result_array() as $myresult) 
+{
 	$item_id = $myresult['id'];
 	$description = $myresult['description'];
 	$creation_date = $myresult['creation_date'];
@@ -233,17 +234,17 @@ foreach ($result->result_array() as $myresult) {
 	}
 
 	print "<tr><td bgcolor=\"$labelcolor\" width=180><b style=\"color:$textcolor;\">$description</b></td>";
-	print "<td bgcolor=\"$valuecolor\"><table><td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">$l_status:</b> $status</td><td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">$l_serialnumber:</b></td><td style=\"color:$textcolor;\"> $serial_number</td>".
-		"<td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">$l_saletype:</b></td> <td style=\"color:$textcolor;\">$sale_type</td> <tr>";
+	print "<td bgcolor=\"$valuecolor\"><table><td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">".lang('status').":</b> $status</td><td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">".lang('serialnumber').":</b></td><td style=\"color:$textcolor;\"> $serial_number</td>".
+		"<td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">".lang('saletype').":</b></td> <td style=\"color:$textcolor;\">$sale_type</td> <tr>";
 	if ($status == 'returned') {
-		print "<td style=\"color:$textcolor;\">$l_returndate: $return_date, $return_notes</td></table>";
+		print "<td style=\"color:$textcolor;\">".lang('returndate').": $return_date, $return_notes</td></table>";
 	} else {
-		print "<td><b>$l_trackingnumber</b></td><td><a href=\"$tracking_url$tracking_number\">$tracking_number</a></td> ".
-			"<td><b>$l_shippingdate:</b></td> <td>$shipping_date</td><td><a href=\"index.php?optionstable=example_options&userserviceid=$userserviceid&load=services&type=module&return=on&fieldassets=on&item_id=$item_id&fieldassets=return\">$l_returndevice</a></td></table>";
+		print "<td><b>".lang('trackingnumber')."</b></td><td><a href=\"$tracking_url$tracking_number\">$tracking_number</a></td> ".
+			"<td><b>".lang('shippingdate').":</b></td> <td>$shipping_date</td><td><a href=\"index.php?optionstable=example_options&userserviceid=$userserviceid&load=services&type=module&return=on&fieldassets=on&item_id=$item_id&fieldassets=return\">".lang('returndevice')."</a></td></table>";
 	}
 }
 
-print "</table>";
+print "</table>\n";
 
 
 /*----------------------------------------------------------------------*/
@@ -256,11 +257,12 @@ $result = $this->db->query($query) or die ("$l_queryfailed");
 $myresult = $result->row_array();
 $category = $myresult['category'];
 
-$query = "SELECT * FROM master_field_assets WHERE status = 'current' AND category = '$category'";
+$query = "SELECT * FROM master_field_assets WHERE status = 'current' ".
+	"AND category = '$category'";
 $result = $this->db->query($query) or die ("$query $l_queryfailed");
 
 // only show choices if field asset items are compatible with the service category
-if ($result->RowCount() > 0) {
+if ($result->num_rows() > 0) {
 
 	print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
 		"<table width=720 cellpadding=5 cellspacing=1 border=0>".
@@ -271,11 +273,11 @@ if ($result->RowCount() > 0) {
 	print "<input type=hidden name=ship value=on>";
 	print "<input type=hidden name=fieldassets value=on>";
 
-	print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$l_shipfieldasset</b></td>";
+	print "<tr><td bgcolor=\"#ccccdd\" width=180><b>".lang('shipfieldasset')."</b></td>";
 
 	// TODO: print drop down menu to pick new field assets from master_field_assets
 	print "<td bgcolor=\"#ddddee\"><select name=master_field_assets_id><option selected>".
-		"$l_choose</option>\n";
+		"".lang('choose')."</option>\n";
 
 	foreach ($result->result_array() as $myresult) {
 		$master_field_assets_id = $myresult['id'];
@@ -286,7 +288,7 @@ if ($result->RowCount() > 0) {
 	echo "</select></td><tr>\n";    
 
 	// print submit button
-	print "<td></td><td><input name=fieldassets type=submit value=\"$l_ship\" ".
+	print "<td></td><td><input name=fieldassets type=submit value=\"".lang('ship')."\" ".
 		"class=smallbutton></td></table></form><p>";
 }
 
@@ -315,11 +317,11 @@ $account_number = $myresult['account_number'];
 if($usage_label) {
 	print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$usage_label</b></td>";
 } else {
-	print "<tr><td bgcolor=\"#ccccdd\" width=180><b>$l_usagemultiple</b></td>";
+	print "<tr><td bgcolor=\"#ccccdd\" width=180><b>".lang('usagemultiple')."</b></td>";
 }
 echo "<td bgcolor=\"#ddddee\"><input type=text name=usage_multiple ".
 "value=$usage_multiple></td><tr>\n";
-print "<td></td><td><input name=usage type=submit value=\"$l_change\" ".
+print "<td></td><td><input name=usage type=submit value=\"". lang('change') ."\" ".
 "class=smallbutton></td></table></form>";
 
 /*----------------------------------------------------------------------*/
@@ -333,7 +335,7 @@ print "<input type=hidden name=servicedescription ".
 "value=\"$servicedescription\">";
 print "<input type=hidden name=optionstable value=$optionstable>";
 print "<input type=hidden name=userserviceid value=$userserviceid>";
-echo "<td bgcolor=\"ccccdd\"width=180><b>$l_billingid</b></td>".
+echo "<td bgcolor=\"ccccdd\"width=180><b>". lang('billingid') ."</b></td>".
 "<td bgcolor=\"#ddddee\">";
 
 $query = "SELECT * FROM user_services WHERE id = '$userserviceid'";
@@ -365,7 +367,7 @@ foreach ($result->result_array() as $myresult) {
 
 echo "</select></td><tr>\n";
 
-print "<td></td><td><input name=billing type=submit value=\"$l_change\" ".
+print "<td></td><td><input name=billing type=submit value=\"". lang('change') ."\" ".
 "class=smallbutton></td></table></form>";
 
 /*----------------------------------------------------------------------*/
@@ -385,7 +387,7 @@ if ($optionstable) {
 	print "<input type=hidden name=userserviceid value=$userserviceid>\n";
 	print "<input type=hidden name=billing_id value=$billing_id>\n";
 	print "<input type=hidden name=usage_multiple value=$usage_multiple>\n";
-	echo "<td bgcolor=\"ccccdd\"width=180><b>$l_changeservice</b></td>".
+	echo "<td bgcolor=\"ccccdd\"width=180><b>". lang('changeservice') ."</b></td>".
 		"<td bgcolor=\"#ddddee\">\n";
 
 	$query = "SELECT * FROM user_services us ".
@@ -399,7 +401,7 @@ if ($optionstable) {
 	// print a list of services that share the same attributes and organization_id
 
 	print "<select name=master_service_id><option selected ".
-		"value=$master_service_id>$service_description ($l_current)</option>\n";
+		"value=$master_service_id>$service_description (".lang('current')."</option>\n";
 
 	$query = "SELECT * FROM master_services ".
 		"WHERE options_table = '$optionstable' AND organization_id = $service_org_id";
@@ -416,7 +418,7 @@ if ($optionstable) {
 	echo "</select></td><tr>\n";
 
 	print "<td></td><td><input name=servicetype type=submit ".
-		"value=\"$l_change\" class=smallbutton></td></table></form>";
+		"value=\"".lang('change')."\" class=smallbutton></td></table></form>";
 } // end if options_table
 
 
@@ -428,17 +430,17 @@ if ($optionstable) {
 /*--------------------------------------------------------------------------*/
 echo "<table cellspacing=0 cellpadding=0 border=0>".
 "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=60>".
-"<b>$l_ticketnumber</b></td>".
+"<b>".lang('ticketnumber')."</b></td>".
 "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=150>".
-"<b>$l_datetime</b></td>".
+"<b>".lang('datetime')."</b></td>".
 "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=70>".
-"<b>$l_createdby</b></td>".
+"<b>".lang('createdby')."</b></td>".
 "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=70>".
-"<b>$l_notify</b></td>".
+"<b>".lang('notify')."</b></td>".
 "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=60>".
-"<b>$l_status</b></td>".
+"<b>".lang('status')."</b></td>".
 "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=261>".
-"<b>$l_service</b></td>";
+"<b>".lang('service')."</b></td>";
 
 $query = "SELECT  ch.id, ch.creation_date, ".
 "ch.created_by, ch.notify, ch.status, ch.description, ch.linkname, ".
@@ -464,16 +466,16 @@ foreach ($result->result_array() as $myresult) {
 	// translate the status
 	switch($status) {
 		case 'automatic':
-			$status = $l_automatic;
+			$status = lang('automatic');
 			break;
 		case 'not done':
-			$status = $l_notdone;
+			$status = lang('notdone');
 			break;
 		case 'pending':
-			$status = $l_pending;
+			$status = lang('pending');
 			break;
 		case 'completed':
-			$status = $l_completed;
+			$status = lang('completed');
 			break;
 	}
 
