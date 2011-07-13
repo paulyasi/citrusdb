@@ -109,20 +109,20 @@ if ($optionstable <> '') {
 				$query = "SELECT * FROM options_urls WHERE fieldname = '$fieldname'";				
 				$urlresult = $this->db->query($query) or die ("URL $l_queryfailed");
 				$j = $i + 1; // to get the next field for multi field queries
-				foreach ($urlresult->result_array	() as $urlmyresult) 
+				foreach ($urlresult->result_array() as $urlmyresult) 
 				{	  	    
 					$myoptions = $this->service_model->options_attributes($userserviceid, $optionstable);
 					
 					// assign the query from the search to the query string
 					// replace the s1 and s2 place holders with the actual variables
-					$s1 = $myresult[$fieldname];
-					// TODO how to get this: $s2 = $myresult[$j]; 
+					$s1 = $myoptions[$i];
+					$s2 = $myoptions[$j]; 
 					$d1 = $myoptions[2]; // the primary service detail/first attribute
 					$a1 = $this->account_number; // the services account_number
 					$url = $urlmyresult['url'];
 					$urlname = $urlmyresult['urlname'];
 					$url = str_replace("%s1%", $s1, $url);
-					// TODO once fix above: $url = str_replace("%s2%", $s2, $url);
+					$url = str_replace("%s2%", $s2, $url);
 					$url = str_replace("%d1%", $d1, $url);
 					$url = str_replace("%a1%", $a1, $url);
 					if ($url) 
