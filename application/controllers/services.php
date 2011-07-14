@@ -398,9 +398,15 @@ class Services extends App_Controller {
 		$this->load->view('html_footer_view');
 	}
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  prompt the user if they are sure they want to delete the service
+	 * ------------------------------------------------------------------------
+	 */
 	public function delete()
 	{
-		$userserviceid = $this->input->post['userserviceid'];
+		$userserviceid = $this->input->post('userserviceid');
+		$servicedescription = $this->input->post('servicedescription');
 
 		// figure out the signup anniversary removal date
 		$query = "SELECT signup_date FROM customer 
@@ -408,7 +414,7 @@ class Services extends App_Controller {
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 		$myresult = $result->row_array();
 		$signup_date = $myresult['signup_date'];
-		list($myyear, $mymonth, $myday) = split('-', $signup_date);
+		list($myyear, $mymonth, $myday) = explode('-', $signup_date);
 		$removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
 		$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
 		if ($removal_date <= $today) {
@@ -417,49 +423,46 @@ class Services extends App_Controller {
 
 		// prompt them to ask if they are sure they want to delete the service
 		print "<br><br>";
-		print "<h4>$l_areyousuredelete: $servicedescription</h4>";
+		print "<h4>".lang('areyousuredelete').": $userserviceid $servicedescription</h4>";
 		print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
 			"<td align=right>";
 
 		// if they hit yes, this will sent them into the delete.php file
 		// and remove the service
 
-		print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
-			"<input type=hidden name=optionstable value=$optionstable>";
+		print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
 		print "<input type=hidden name=userserviceid value=$userserviceid>";
 		print "<input type=hidden name=load value=services>";
 		print "<input type=hidden name=type value=module>";
 		print "<input type=hidden name=delete value=on>";
-		print "<input name=deletenow type=submit value=\" $l_deleteservice_removeuser $removal_date\" ".
+		print "<input name=deletenow type=submit value=\" ".lang('deleteservice_removeuser')." $removal_date\" ".
 			"class=smallbutton></form></td>";
 
-		print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
-			"<input type=hidden name=optionstable value=$optionstable>";
+		print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
 		print "<input type=hidden name=userserviceid value=$userserviceid>";
 		print "<input type=hidden name=load value=services>";
 		print "<input type=hidden name=type value=module>";
 		print "<input type=hidden name=delete value=on>";
-		print "<input name=deletetoday type=submit value=\" $l_deleteservice_removetoday \" ".
+		print "<input name=deletetoday type=submit value=\" ".lang('deleteservice_removetoday')." \" ".
 			"class=smallbutton></form></td>";   
 
 		// if they hit yes without automatic removal, this will sent them into the delete.php file
 		// and remove the service
 
 
-		print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
-			"<input type=hidden name=optionstable value=$optionstable>";
+		print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
 		print "<input type=hidden name=userserviceid value=$userserviceid>";
 		print "<input type=hidden name=load value=services>";
 		print "<input type=hidden name=type value=module>";
 		print "<input type=hidden name=delete value=on>";
-		print "<input name=deletenoauto type=submit value=\" $l_deleteservice_activeuser \" ".
+		print "<input name=deletenoauto type=submit value=\" ".lang('deleteservice_activeuser')." \" ".
 			"class=smallbutton></form></td>"; 
 
 		// if they hit no, send them back to the service edit screen
 
 		print "<td align=left><form style=\"margin-bottom:0;\" ".
 			"action=\"index.php\" method=post>";
-		print "<input name=done type=submit value=\" $l_no \" class=smallbutton>";
+		print "<input name=done type=submit value=\" ".lang('no')." \" class=smallbutton>";
 		print "<input type=hidden name=load value=services>";        
 		print "<input type=hidden name=type value=module>";
 		print "</form></td></table>";

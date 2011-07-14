@@ -138,7 +138,7 @@ if ($optionstable <> '') {
 	}
 	print "<input type=hidden name=fieldlist value=$fieldlist>";
 	print "<td></td><td><input name=save type=submit ".
-		"value=\"". lang('savechanges') ."\" class=smallbutton>&nbsp;&nbsp;&nbsp;\n";
+		"value=\"". lang('savechanges') ."\" class=smallbutton></form>&nbsp;&nbsp;&nbsp;\n";
 }
 
 
@@ -160,7 +160,8 @@ $cancel_date = $myremovedresult['cancel_date'];
 if ($removed == 'y' AND $cancel_date == '') 
 {
 	// print the undelete button
-	print "</form><p><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
+	print "<p><form style=\"margin-bottom:0;\" 
+		action=\"".$this->url_prefix."index.php/services/undelete\" method=post>".
 		"<input type=hidden name=optionstable value=$optionstable>";
 	print "<input type=hidden name=userserviceid value=$userserviceid>";
 	print "<input type=hidden name=load value=services>";
@@ -172,7 +173,11 @@ if ($removed == 'y' AND $cancel_date == '')
 else 
 {
 	// print the delete button
-	print "<p><input name=delete type=submit value=\"" . lang('deleteservice') . "\" ".
+	print "<p><form 
+		action=\"".$this->url_prefix."index.php/services/delete\" method=post>".
+		"<input type=hidden name=servicedescription value=\"$servicedescription\">".
+		"<input type=hidden name=userserviceid value=$userserviceid>".
+		"<input name=delete type=submit value=\"" . lang('deleteservice') . "\" ".
 		"class=smallbutton></form>";
 }
 
