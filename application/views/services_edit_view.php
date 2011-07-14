@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed')
 ?>
-<a href="<?php echo $this->url_prefix; ?>index.php/services\">
+<a href="<?php echo $this->url_prefix; ?>index.php/services">
 <?php 
 echo lang('undochanges') . "</a>";
   
@@ -41,11 +41,8 @@ if ($removed == 'y') {
 } else {
 	print lang('active') ."</h4>";
 }
-print "<form action=\"index.php\" method=post><table width=720 ".
+print "<form action=\"".$this->url_prefix."index.php/services/save\" method=post><table width=720 ".
 "cellpadding=5 cellspacing=1 border=0>\n";
-print "<input type=hidden name=load value=services>\n";
-print "<input type=hidden name=type value=module>\n";
-print "<input type=hidden name=edit value=on>\n";
 print "<input type=hidden name=servicedescription ".
 "value=\"$servicedescription\">\n<input type=hidden name=optionstable ".
 "value=$optionstable><input type=hidden name=userserviceid ".

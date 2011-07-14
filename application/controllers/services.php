@@ -105,6 +105,11 @@ class Services extends App_Controller {
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  show the edit service screen
+	 * ------------------------------------------------------------------------
+	 */
 	public function edit($userserviceid)
 	{
 		$this->load->view('header_with_sidebar_view');
@@ -123,7 +128,6 @@ class Services extends App_Controller {
 		// load the date helper for use when printing service start/end dates
 		$this->load->helper('date');
 		
-		// TODO: fix this view
 		$data['userserviceid'] = $userserviceid;
 		$this->load->view('services_edit_view', $data);	
 		
@@ -136,9 +140,9 @@ class Services extends App_Controller {
 
 	public function save()
 	{
-		$userserviceid = $this->input->post['userserviceid'];
-		$optionstable = $this->input->post['optionstable'];
-		$fieldlist = $this->input->post['fieldlist'];
+		$userserviceid = $this->input->post('userserviceid');
+		$optionstable = $this->input->post('optionstable');
+		$fieldlist = $this->input->post('fieldlist');
 
 		$fieldlist = substr($fieldlist, 1); 
 
@@ -148,8 +152,9 @@ class Services extends App_Controller {
 		// initialize fieldvalue variable
 		$fieldvalues = "";
 
-		foreach ($array_fieldlist as $myfield) {
-			$fieldvalues .= ',\'' . $this->input->post($myfield) . '\'';
+		foreach ($array_fieldlist as $myfield) 
+		{
+			$fieldvalues .= ', ' . $myfield . ' = \'' . $this->input->post($myfield) . '\'';
 		}
 
 		$fieldvalues = substr($fieldvalues, 1);
