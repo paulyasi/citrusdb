@@ -192,10 +192,10 @@ class Services extends App_Controller {
 	 *  take input to change the billing id for the service
 	 * ------------------------------------------------------------------------
 	 */
-	public function changebilling()
+	public function changebillingid()
 	{
-		$userserviceid = $this->input->post['userserviceid'];
-		$billing_id = $this->input->post['billing_id'];
+		$userserviceid = $this->input->post('userserviceid');
+		$billing_id = $this->input->post('billing_id');
 
 		$this->service_module->change_billing($userservicesid, $usage_multiple);
 		// add a log entry that this service was edited
@@ -470,7 +470,7 @@ class Services extends App_Controller {
 
 	}
 
-	public function fieldassets()
+	public function shipfieldassets()
 	{
 		if ($pallow_remove) {
 			include('./modules/customer/fieldassets');

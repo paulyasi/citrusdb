@@ -182,9 +182,7 @@ else
 }
 
 // print the open ticket button
-print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-print "<input type=hidden name=load value=support>";
-print "<input type=hidden name=type value=module>";
+print "<form style=\"margin-bottom:0;\" action=\"".$this->url_prefix."index.php/support/openticket\" method=post>";
 print "<input type=hidden name=serviceid value=\"$userserviceid\">\n";
 if ($support_notify) {
 	print "<input name=openticket type=submit value=\"".lang('notify')." $support_notify\" ".
@@ -235,14 +233,25 @@ foreach ($result->result_array() as $myresult)
 		$textcolor = "#000000";
 	}
 
-	print "<tr><td bgcolor=\"$labelcolor\" width=180><b style=\"color:$textcolor;\">$description</b></td>";
-	print "<td bgcolor=\"$valuecolor\"><table><td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">".lang('status').":</b> $status</td><td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">".lang('serialnumber').":</b></td><td style=\"color:$textcolor;\"> $serial_number</td>".
-		"<td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">".lang('saletype').":</b></td> <td style=\"color:$textcolor;\">$sale_type</td> <tr>";
+	print "<tr><td bgcolor=\"$labelcolor\" width=180><b style=\"color:$textcolor;\">
+		$description</b></td>";
+	print "<td bgcolor=\"$valuecolor\"><table><td style=\"color:$textcolor;\">
+		<b style=\"color:$textcolor;\">".lang('status').":</b> $status</td>
+		<td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">".
+		lang('serialnumber').":</b></td><td style=\"color:$textcolor;\"> $serial_number</td>".
+		"<td style=\"color:$textcolor;\"><b style=\"color:$textcolor;\">".lang('saletype').":</b></td> 
+		<td style=\"color:$textcolor;\">$sale_type</td> <tr>";
 	if ($status == 'returned') {
-		print "<td style=\"color:$textcolor;\">".lang('returndate').": $return_date, $return_notes</td></table>";
+		print "<td style=\"color:$textcolor;\">".lang('returndate').": 
+		$return_date, $return_notes</td></table>";
 	} else {
-		print "<td><b>".lang('trackingnumber')."</b></td><td><a href=\"$tracking_url$tracking_number\">$tracking_number</a></td> ".
-			"<td><b>".lang('shippingdate').":</b></td> <td>$shipping_date</td><td><a href=\"index.php?optionstable=example_options&userserviceid=$userserviceid&load=services&type=module&return=on&fieldassets=on&item_id=$item_id&fieldassets=return\">".lang('returndevice')."</a></td></table>";
+		print "<td><b>".lang('trackingnumber')."</b></td><td>
+			<a href=\"$tracking_url$tracking_number\">$tracking_number</a></td> ".
+			"<td><b>".lang('shippingdate').":</b></td> <td>$shipping_date</td><td>
+			<a href=\"index.php?optionstable=example_options
+			&userserviceid=$userserviceid&load=services&type=module&return=on
+			&fieldassets=on&item_id=$item_id&fieldassets=return\">".
+			lang('returndevice')."</a></td></table>";
 	}
 }
 
@@ -266,14 +275,11 @@ $result = $this->db->query($query) or die ("$query $l_queryfailed");
 // only show choices if field asset items are compatible with the service category
 if ($result->num_rows() > 0) {
 
-	print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
+	print "<form style=\"margin-bottom:0;\" 
+		action=\"".$this->url_prefix."index.php/services/shipfieldassets\" method=post>".
 		"<table width=720 cellpadding=5 cellspacing=1 border=0>".
 		"<input type=hidden name=optionstable value=$optionstable>";
 	print "<input type=hidden name=userserviceid value=$userserviceid>";
-	print "<input type=hidden name=load value=services>";
-	print "<input type=hidden name=type value=module>";
-	print "<input type=hidden name=ship value=on>";
-	print "<input type=hidden name=fieldassets value=on>";
 
 	print "<tr><td bgcolor=\"#ccccdd\" width=180><b>".lang('shipfieldasset')."</b></td>";
 
@@ -296,10 +302,8 @@ if ($result->num_rows() > 0) {
 
 /*----------------------------------------------------------------------*/
 // print the usage multiple form section
-print "<form action=\"index.php\" method=post><table width=720 cellpadding=5 cellspacing=1 border=0>";
-print "<input type=hidden name=load value=services>";
-print "<input type=hidden name=type value=module>";
-print "<input type=hidden name=edit value=on>";
+print "<form action=\"".$this->url_prefix."index.php/services/usage\" method=post>
+<table width=720 cellpadding=5 cellspacing=1 border=0>";
 print "<input type=hidden name=servicedescription ".
 "value=\"$servicedescription\">";
 print "<input type=hidden name=optionstable value=$optionstable>";
@@ -328,11 +332,8 @@ print "<td></td><td><input name=usage type=submit value=\"". lang('change') ."\"
 
 /*----------------------------------------------------------------------*/
 // change the billing ID	
-print "<form action=\"index.php\" method=post><table width=720 cellpadding=5 ".
-"cellspacing=1 border=0>";
-print "<input type=hidden name=load value=services>";
-print "<input type=hidden name=type value=module>";
-print "<input type=hidden name=edit value=on>";
+print "<form action=\"".$this->url_prefix."index.php/services/changebillingid\" method=post>
+<table width=720 cellpadding=5 cellspacing=1 border=0>";
 print "<input type=hidden name=servicedescription ".
 "value=\"$servicedescription\">";
 print "<input type=hidden name=optionstable value=$optionstable>";
@@ -520,7 +521,9 @@ foreach ($result->result_array() as $myresult) {
 		"padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$status &nbsp;</td>";
 	print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
 		"padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">".
-		"<a href=\"index.php?load=services&type=module&edit=on&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">$serviceid $service_description</a> &nbsp; ";
+		"<a href=\"index.php?load=services&type=module&edit=on
+		&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">
+		$serviceid $service_description</a> &nbsp; ";
 
 	if ($linkurl) {
 		print "<a href=\"$linkurl\">$linkname</a>";
