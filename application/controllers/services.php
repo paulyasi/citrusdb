@@ -197,7 +197,7 @@ class Services extends App_Controller {
 		$userserviceid = $this->input->post('userserviceid');
 		$billing_id = $this->input->post('billing_id');
 
-		$this->service_module->change_billing($userservicesid, $usage_multiple);
+		$this->service_model->change_billing($userserviceid, $billing_id);
 		// add a log entry that this service was edited
 		$this->log_model->activity($this->user,$this->account_number,
 				'edit','service',$userserviceid,'success');    

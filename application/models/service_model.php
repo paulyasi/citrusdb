@@ -81,7 +81,7 @@ class Service_model extends CI_Model
 		// update the database if they changed the billing ID
 		$query = "UPDATE user_services SET billing_id = $billing_id ".
 			"WHERE id = $userserviceid";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("$l_queryfailed");
 	
 	}
 
