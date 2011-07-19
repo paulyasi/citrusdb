@@ -304,9 +304,6 @@ if ($result->num_rows() > 0) {
 // print the usage multiple form section
 print "<form action=\"".$this->url_prefix."index.php/services/usage\" method=post>
 <table width=720 cellpadding=5 cellspacing=1 border=0>";
-print "<input type=hidden name=servicedescription ".
-"value=\"$servicedescription\">";
-print "<input type=hidden name=optionstable value=$optionstable>";
 print "<input type=hidden name=userserviceid value=$userserviceid>";
 
 $query = "SELECT * FROM user_services u ".

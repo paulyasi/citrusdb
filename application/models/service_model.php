@@ -67,7 +67,7 @@ class Service_model extends CI_Model
 		// update the database if they changed the usage_multiple
 		$query = "UPDATE user_services SET usage_multiple = $usage_multiple ".
 			"WHERE id = $userserviceid";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("$l_queryfailed");
 	}
 
 

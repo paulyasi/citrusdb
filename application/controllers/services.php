@@ -176,10 +176,10 @@ class Services extends App_Controller {
 	 */
 	public function usage()
 	{
-		$userserviceid = $this->input->post['userserviceid'];
-		$usage_multiple = $this->input->post['usage_multiple'];
+		$userserviceid = $this->input->post('userserviceid');
+		$usage_multiple = $this->input->post('usage_multiple');
 
-		$this->service_module->change_usage($userservicesid, $usage_multiple);
+		$this->service_model->change_usage($userserviceid, $usage_multiple);
 		// add a log entry that this service was edited
 		$this->log_model->activity($this->user,$this->account_number,
 				'edit','service',$userserviceid,'success');    
