@@ -376,7 +376,8 @@ print "<td></td><td><input name=billing type=submit value=\"". lang('change') ."
 
 if ($optionstable) {
 
-	print "<form action=\"index.php\" method=post><table width=720 cellpadding=5 ".
+	print "<form action=\"".$this->url_prefix."index.php/services/changeservicetype\" method=post>
+		<table width=720 cellpadding=5 ".
 		"cellspacing=1 border=0>\n";
 	print "<input type=hidden name=load value=services>\n";
 	print "<input type=hidden name=type value=module>\n";

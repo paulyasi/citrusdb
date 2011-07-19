@@ -94,35 +94,42 @@ class Service_model extends CI_Model
 	function change_servicetype($userserviceid, $master_service_id)
 	{
 		// get the old master service id
-		$query = "SELECT master_service_id FROM user_services ".
+		$query = "SELECT billing_id, usage_multiple, master_service_id ".
+			"FROM user_services ".
 			"WHERE id = $userserviceid";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		$oldmasterresult = $result->fields;
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$oldmasterresult = $result->row_array();
 		$old_master_service_id = $oldmasterresult['master_service_id'];
+		$billing_id = $oldmasterresult['billing_id'];
+		$usage_multiple = $oldmasterresult['usage_multiple'];
 
 		// get the name of the options table, always the same
 		$query = "SELECT options_table FROM master_services ".
 			"WHERE id = $master_service_id";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		$master_service_results = $result->fields;
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$master_service_results = $result->row_array();
 		$options_table_name = $master_service_results['options_table'];
 
 		// get the field names and values from the options_table
-		$fields = $DB->MetaColumns($options_table_name);
-		foreach($fields as $f) {
-			$fieldname = $f->name;
+		$fields = $this->schema_model->columns($this->db->database, $options_table_name);
+		
+		// initialize fieldlist
+		$fieldlist = '';
+		$fieldvalues = '';
+		
+		foreach($fields->result() as $f) {
+			$fieldname = $f->COLUMN_NAME;
 			if ($fieldname <> "id" AND $fieldname <> "user_services") {
 				$fieldlist .= ',' . $fieldname;
 			}
 		}
 		$fieldlist = substr($fieldlist, 1);
 
-
 		// get the values out of those fields from the options table
 		$query = "SELECT $fieldlist from $options_table_name ".
 			"WHERE user_services = $userserviceid";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		$options_table_result = $result->fields;
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$options_table_result = $result->row_array();
 
 		$array_fieldlist = explode(",",$fieldlist);
 		foreach($array_fieldlist as $myfield) {
@@ -134,16 +141,16 @@ class Service_model extends CI_Model
 
 
 		// TODO: make a new service with the new information from above
-		$new_user_service_id = create_service($account_number, $master_service_id,
+		$new_user_service_id = $this->create_service($this->account_number, $master_service_id,
 				$billing_id, $usage_multiple, 
 				$options_table_name,
 				$fieldlist, $fieldvalues);
 
 		// delete the old service but with no removal date and no delete message
-		delete_service($userserviceid, 'change', '');
+		$this->delete_service($userserviceid, 'change', '');
 
 		// add an entry to the customer_history to modify_notify for the new service
-		service_message('change', $account_number,
+		$this->service_message('change', $this->account_number,
 				$old_master_service_id, $userserviceid, 
 				$master_service_id, $new_user_service_id);
 
@@ -151,8 +158,7 @@ class Service_model extends CI_Model
 		$query = "UPDATE customer_history ".
 			"SET user_services_id = '$new_user_service_id' ".
 			"WHERE user_services_id = '$userserviceid'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$updateresult = $DB->Execute($query) or die ("$query $l_queryfailed");
+		$updateresult = $this->db->query($query) or die ("$query $l_queryfailed");
 
 
 	}
@@ -445,7 +451,7 @@ class Service_model extends CI_Model
 			$master_service_id, $user_service_id,
 			$new_master_service_id, $new_user_service_id)
 
-	{
+	{			
 		/*- Service Notify Types -*/
 		// added
 		// change - uses both user_service_id and new_user_service_id
@@ -572,7 +578,8 @@ class Service_model extends CI_Model
 		}
 
 		// create the ticket with the service message
-		$this->ticket_model->create_ticket($user, $notify, $account_number, $status, $description, NULL, NULL, NULL, $user_service_id);
+		$this->ticket_model->create_ticket($this->user, $notify, $this->account_number, 
+			$status, $description, NULL, NULL, NULL, $user_service_id);
 	}
 
 }

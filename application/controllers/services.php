@@ -256,17 +256,20 @@ class Services extends App_Controller {
 	 *  take input to change the service type
 	 * ------------------------------------------------------------------------
 	 */
-	public function servicetype() 
+	public function changeservicetype() 
 	{
-		$userserviceid = $this->input->post['userserviceid'];
-		$master_service_id = $this->input->post['master_service_id'];
+		// load the ticket model to save a note about this
+		$this->load->model('ticket_model');
+		
+		$userserviceid = $this->input->post('userserviceid');
+		$master_service_id = $this->input->post('master_service_id');
 
 		$this->service_model->change_servicetype($userserviceid, $master_service_id);
 
 		// log an entry for a create and delete of the service as part of the change
-		log_activity($this->user,$this->account_number,
+		$this->log_model->activity($this->user,$this->account_number,
 				'create','service',$new_user_service_id,'success');
-		log_activity($this->user,$this->account_number,
+		$this->log_model->activity($this->user,$this->account_number,
 				'delete','service',$userserviceid,'success');  
 
 		redirect('/services');

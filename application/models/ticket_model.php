@@ -159,8 +159,11 @@ class Ticket_Model extends CI_Model
 		else 
 		{
 			// we are notifying an individual user
-			$this->enotify($notify, $message, $ticketnumber, $user, $notify, 
+			if ($notify <> '')
+			{
+				$this->enotify($notify, $message, $ticketnumber, $user, $notify, 
 					$description);
+			}
 		} // end if result
 
 		return $ticketnumber;
