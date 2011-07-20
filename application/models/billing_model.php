@@ -75,6 +75,93 @@ class Billing_Model extends CI_Model
 
 		return $myinsertid;
 	}
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the default billing id for this account
+	 * ------------------------------------------------------------------------
+	 */
+	public function default_billing_id($account_number)
+	{
+		$query = "SELECT default_billing_id FROM customer ".
+			"WHERE account_number = $account_number";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myresult = $result->row();	
+		
+		return $myresult->default_billing_id;
+	}
+	
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  return information from the billing record
+	 * ------------------------------------------------------------------------
+	 */
+	public function record($billing_id)
+	{
+		$query = "SELECT b.id b_id, b.name b_name, b.company b_company, b.street ".
+			"b_street, b.city b_city, b.state b_state, b.zip b_zip, b.phone ".
+			"b_phone, b.fax b_fax, b.country b_country, b.contact_email b_email, ".
+			"b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp, ".
+			"b.billing_status b_status, b.billing_type b_type, ".
+			"b.next_billing_date b_next_billing_date, ".
+			"b.prev_billing_date b_prev_billing_date, b.from_date b_from_date, ".
+			"b.to_date b_to_date, b.payment_due_date b_payment_due_date, ".
+			"b.rerun_date b_rerun_date, b.po_number b_po_number, b.notes b_notes, ".
+			"b.organization_id b_organization_id,  t.id t_id, t.name t_name ".
+			"FROM billing b ".
+			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+			"WHERE b.id = '$billing_id'";
+
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myresult = $result->row_array();
+
+		$data['billing_id'] = $myresult['b_id'];
+		$data['name'] = $myresult['b_name'];
+		$data['company'] = $myresult['b_company'];
+		$data['street'] = $myresult['b_street'];
+		$data['city'] = $myresult['b_city'];
+		$data['state'] = $myresult['b_state'];
+		$data['zip'] = $myresult['b_zip'];
+		$data['country'] = $myresult['b_country'];
+		$data['phone'] = $myresult['b_phone'];
+		$data['fax'] = $myresult['b_fax'];
+		$data['contact_email'] = $myresult['b_email'];
+		$data['billing_type'] = $myresult['t_name'];
+		$data['creditcard_number'] = $myresult['b_ccnum'];
+		$data['creditcard_expire'] = $myresult['b_ccexp'];
+		$data['billing_status'] = $myresult['b_status'];
+		$data['next_billing_date'] = $myresult['b_next_billing_date'];
+		$data['prev_billing_date'] = $myresult['b_prev_billing_date'];
+		$data['from_date'] = $myresult['b_from_date'];
+		$data['to_date'] = $myresult['b_to_date'];
+		$data['payment_due_date'] = $myresult['b_payment_due_date'];
+		$data['rerun_date'] = $myresult['b_rerun_date'];
+		$data['notes'] = $myresult['b_notes'];
+		$data['po_number'] = $myresult['b_po_number'];
+		$data['organization_id'] = $myresult['b_organization_id'];
+
+		// if the card number is not blank, wipe out the middle of the card number
+		if ($data['creditcard_number'] <> '') {
+			$length = strlen($data['creditcard_number']);
+			$firstdigit = substr($data['creditcard_number'], 0,1);
+			$lastfour = substr($data['creditcard_number'], -4);
+			$data['creditcard_number'] = "$firstdigit" . "***********" . "$lastfour";
+		}
+		
+		// get the billing status for this record
+		$data['mystatus'] = $this->billingstatus($billing_id);		
+
+		// get the organization info
+		$query = "SELECT org_name FROM general WHERE id = $organization_id LIMIT 1";
+		$orgresult = $this->db->query($query) or die ("$l_queryfailed");
+		$myorgresult = $orgresult->row();
+		$data['organization_name'] = $myorgresult->org_name;
+		
+		return $data;
+
+	}
 
 
 	public function record_list($account_number)
