@@ -5,6 +5,7 @@ class Billing extends App_Controller
 	function __construct()
 	{
 		parent::__construct();
+		$this->load->model('customer_model');
 		$this->load->model('billing_model');
 		$this->load->model('module_model');
     }		

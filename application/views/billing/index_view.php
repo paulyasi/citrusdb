@@ -49,17 +49,17 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 </td>
 <td valign=top width=360>		
 	<table cellpadding=5 border=0 cellspacing=1 width=360>
-	<td bgcolor=\"#ccccdd\"><b>$l_billingstatus</b></td><td bgcolor=\"#ddddee\"><b>$mystatus</b></td><tr>
-	<td bgcolor=\"#ccccdd\" width=180><b>$l_billingtype</b></td><td bgcolor=\"#ddddee\" width=180>$billing_type</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_ccnumber</b></td><td bgcolor=\"#ddddee\">$creditcard_number</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_ccexpire</b></td><td bgcolor=\"#ddddee\">$creditcard_expire</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_nextbillingdate</b></td><td bgcolor=\"#ddddee\">$next_billing_date</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_from $l_date</b></td><td bgcolor=\"#ddddee\">$from_date</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_to $l_date</b></td><td bgcolor=\"#ddddee\">$to_date</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_paymentduedate</b></td><td bgcolor=\"#ddddee\">$payment_due_date</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_rerun $l_date</b></td><td bgcolor=\"#ddddee\">$rerun_date</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_po_number</b></td><td bgcolor=\"#ddddee\">$po_number</td><tr>
-	<td bgcolor=\"#ccccdd\"><b>$l_notes</b></td><td bgcolor=\"#ddddee\">$notes</td>
+	<td bgcolor="#ccccdd"><b><?php echo lang('billingstatus')?></b></td><td bgcolor="#ddddee"><b><?php echo $mystatus;?></b></td><tr>
+	<td bgcolor="#ccccdd" width=180><b><?php echo lang('billingtype')?></b></td><td bgcolor="#ddddee" width=180><?php echo $billing_type;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('ccnumber')?></b></td><td bgcolor="#ddddee"><?php echo $creditcard_number;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('ccexpire')?></b></td><td bgcolor="#ddddee"><?php echo $creditcard_expire;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('nextbillingdate')?></b></td><td bgcolor="#ddddee"><?php echo $next_billing_date;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('from')." ".lang('date');?></b></td><td bgcolor="#ddddee"><?php echo $from_date;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('to')." ".lang('date');?></b></td><td bgcolor="#ddddee"><?php echo $to_date;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('paymentduedate')?></b></td><td bgcolor="#ddddee"><?php echo $payment_due_date;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('rerun')." ".lang('date');?></b></td><td bgcolor="#ddddee"><?php echo $rerun_date;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('po_number')?></b></td><td bgcolor="#ddddee"><?php echo $po_number;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('notes')?></b></td><td bgcolor="#ddddee"><?php echo $notes;?></td>
 	</table>
 </td>
 </table>
