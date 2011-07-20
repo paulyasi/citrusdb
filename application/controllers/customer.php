@@ -26,23 +26,23 @@ class Customer extends App_Controller
 			
 			// show the customer information (name, address, etc)
 			$data = $this->customer_model->record($this->account_number);
-			$this->load->view('customer_index_view', $data);
+			$this->load->view('customer/index_view', $data);
 
 			// show a small preview of billing info
 			$this->load->model('billing_model');
 			$data['record'] = $this->billing_model->record_list($this->account_number);
-			$this->load->view('billing_mini_index_view', $data);
+			$this->load->view('billing/mini_index_view', $data);
 
 			// show the services that they have assigned to them
 			$this->load->model('service_model');			
 			$data['categories'] = $this->service_model->service_categories(
 					$this->account_number);
-			$this->load->view('services_heading_view', $data);
+			$this->load->view('services/heading_view', $data);
 			
 			// output the list of services
 			$data['services'] = $this->service_model->list_services(
 					$this->account_number);
-			$this->load->view('services_index_view', $data);
+			$this->load->view('services/index_view', $data);
 			
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');			
@@ -72,7 +72,7 @@ class Customer extends App_Controller
 			
 			// show the edit customer form
 			$data = $this->customer_model->record($this->account_number);
-			$this->load->view('customer_edit_view', $data);
+			$this->load->view('customer/edit_view', $data);
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');			
@@ -585,7 +585,7 @@ class Customer extends App_Controller
 
 		// get the customer_history
 		$data['history'] = $this->ticket_model->customer_history($this->account_number);
-		$this->load->view('customer_history_view', $data);
+		$this->load->view('customer/history_view', $data);
 	}
 
 

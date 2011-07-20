@@ -39,11 +39,11 @@ class Services extends App_Controller {
 			$this->load->view('buttonbar_view');
 
 			$data['categories'] = $this->service_model->service_categories($this->account_number);
-			$this->load->view('services_heading_view', $data);
+			$this->load->view('services/heading_view', $data);
 
 			// output the list of services
 			$data['services'] = $this->service_model->list_services($this->account_number);
-			$this->load->view('services_index_view', $data);
+			$this->load->view('services/index_view', $data);
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');	
@@ -85,11 +85,11 @@ class Services extends App_Controller {
 			$this->load->view('buttonbar_view');
 
 			$data['categories'] = $this->service_model->service_categories($this->account_number);
-			$this->load->view('services_heading_view', $data);
+			$this->load->view('services/heading_view', $data);
 
 			// output the list of services
 			$data['services'] = $this->service_model->list_services($this->account_number, $category);
-			$this->load->view('services_index_view', $data);
+			$this->load->view('services/index_view', $data);
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');	
@@ -129,7 +129,7 @@ class Services extends App_Controller {
 		$this->load->helper('date');
 		
 		$data['userserviceid'] = $userserviceid;
-		$this->load->view('services_edit_view', $data);	
+		$this->load->view('services/edit_view', $data);	
 		
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');	
@@ -288,7 +288,7 @@ class Services extends App_Controller {
 
 			// show the services available to add to this customer
 			$data['showall'] = $showall;
-			$this->load->view('services_create_view', $data);	
+			$this->load->view('services/create_view', $data);	
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');	

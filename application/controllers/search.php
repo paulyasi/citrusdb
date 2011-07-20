@@ -238,7 +238,7 @@ class Search extends App_Controller {
     	echo "<hr noshde>";
     	$load = "customer"; // allow load of customer record
     	$type = "module";
-    	$this->load->view('customer_index_view');
+    	$this->load->view('customer/index_view');
     	$load = "dosearch"; // allow search result load after
     	$type = "fs";   
     	echo '</table>'; 

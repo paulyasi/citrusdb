@@ -43,7 +43,7 @@ class Dashboard extends App_Controller {
 			$modulename = $myresult->modulename;
 
 			if (in_array ($modulename, $viewable)) {
-				$viewthis = $modulename . '_search_view';
+				$viewthis = $modulename . '/search_view';
 				$this->load->view($viewthis);
 			}
 		}
