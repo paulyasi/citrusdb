@@ -5,27 +5,27 @@
 index.php/billing/edit/<?php echo $billing_id;?>">
 [ <?php echo lang('editdefaultbilling');?> ]</a>
 
-<a href=index.php?load=billing&type=module&resetaddr=on&account_number=$account_number>[ $l_resetaddresstocustomer ]</a>
-<a href=index.php?load=billing&type=module&rerun=on&billing_id=$billing_id>[ $l_rerun ]</a>
+<a href=index.php?load=billing&type=module&resetaddr=on&account_number=$account_number>[ <?php echo lang('resetaddresstocustomer');?> ]</a>
+<a href=index.php?load=billing&type=module&rerun=on&billing_id=$billing_id>[ <?php echo lang('rerun');?> ]</a>
 
 <?php
 // query user properties
-$query = "SELECT * FROM user WHERE username='$user' LIMIT 1";
+$query = "SELECT * FROM user WHERE username='$this->user' LIMIT 1";
 $userresult = $this->db->query($query) or die ("$l_queryfailed");
 $myuserresult = $userresult->row_array();
 if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
-	echo "<br><a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | 
-	<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">$l_refundreport</a> | 
-	<a href=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">$l_turnoff</a> | 
-	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">$l_waiting</a> |
-	<a href=\"index.php?load=billing&type=module&authorized=on&billing_id=$billing_id\">$l_authorized</a> | 
-	<a href=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">$l_cancelwithfee</a> |
-<a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">$l_collections</a> |
+	echo "<br><a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">".lang('invoicemaintenance')."</a> | 
+	<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">".lang('refundreport')."</a> | 
+	<a href=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">".lang('turnoff')."</a> | 
+	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">".lang('waiting')."</a> |
+	<a href=\"index.php?load=billing&type=module&authorized=on&billing_id=$billing_id\">".lang('authorized')."</a> | 
+	<a href=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">".lang('cancelwithfee')."</a> |
+<a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">".lang('collections')."</a> |
 
-	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">$l_createinvoice</a> | 
-	<a href=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">$l_cancel_notice</a> | 
-	<a href=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">$l_shutoff_notice</a> | 
-	<a href=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">$l_collections_notice</a>
+	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">".lang('createinvoice')."</a> | 
+	<a href=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">".lang('cancel_notice')."</a> | 
+	<a href=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">".lang('shutoff_notice')."</a> | 
+	<a href=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">".lang('collections_notice')."</a>
 ";
 }
 ?>
@@ -64,66 +64,4 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 </td>
 </table>
 <p>
-[ <a href="<?php echo $this->ssl_url_prefix; ?>index.php/billing/create">
-<?php echo lang('addaltbilling');?></a> ]<br>
 
-<?php 
-// print a list of alternate billing id's if any
-$query = "SELECT b.id b_id, g.org_name g_org_name, t.name t_name 
-FROM billing b 
-LEFT JOIN billing_types t ON b.billing_type = t.id 
-LEFT JOIN general g ON b.organization_id = g.id 
-WHERE b.id != $default_billing_id AND b.account_number = $account_number";
-$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-$result = $DB->Execute($query) or die ("$l_queryfailed");
-
-echo '<table width=720><tr bgcolor="#ddddee">';
-while ($myresult = $result->FetchRow())
-{
-        $billing_id = $myresult['b_id'];
-        $billing_type = $myresult['t_name'];
-	$billing_orgname = $myresult['g_org_name'];
-
-	$mystatus = billingstatus($billing_id);
-
-	$alternate_billing_id_url = "$ssl_url_prefix" . "index.php?load=billing&type=module&edit=on&billing_id=$billing_id";
-
-	print "<td><b>$billing_orgname</b> &nbsp;<a
-href=\"$alternate_billing_id_url\">$billing_id</a></td><td>$billing_type</td><td>$mystatus</td>";
-
-if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
-  echo "<td>".
-    "<a href=\"index.php?load=billing&type=module&rerun=on&billing_id=$billing_id\">$l_rerun</a> | ".
-    "<a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | ".
-    "<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">$l_refund</a>".
-    "</td><td>".
-    "<form name=status$billing_id style=\"margin-bottom:0;\" method=post>".
-    "<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.status$billing_id.menu.options[document.status$billing_id.menu.selectedIndex].value;\" value=GO>".
-    "<option value=\"\">$l_changestatus</option>".
-    "<option value=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">- $l_turnoff</option>".
-    "<option value=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">- $l_waiting</optoin>".
-    "<option value=\"index.php?load=billing&type=module&authorized=on&billing_id=$billing_id\">- $l_authorized</option>".
-    "<option value=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">- $l_cancelwithfee</option>".
-    "<option value=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">- $l_collections</option>".    
-    "</select></form>".
-    "</td><td>".
-    "<form name=notice$billing_id style=\"margin-bottom:0;\" method=post>".
-    "<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.notice$billing_id.menu.options[document.notice$billing_id.menu.selectedIndex].value;\" value=GO>".
-    "<option value=\"\">$l_invoiceornotice</option>".
-    "<option value=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">- $l_createinvoice</option> | ".
-    "<option value=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">- $l_cancel_notice</option> | ".
-    "<option value=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">- $l_shutoff_notice</option> | ".
-    "<option value=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">- $l_collections_notice</option>".
-    "</select></form>".
-    "</td>";
-}
-
-echo "<tr bgcolor=\"#ddddee\">";
-
-}
-
-echo '</table>';
-
-
-} else permission_error();
-?>

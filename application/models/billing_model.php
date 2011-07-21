@@ -85,11 +85,30 @@ class Billing_Model extends CI_Model
 	{
 		$query = "SELECT default_billing_id FROM customer ".
 			"WHERE account_number = $account_number";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 		$myresult = $result->row();	
 		
 		return $myresult->default_billing_id;
+	}
+	
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get alternate billing types
+	 * ------------------------------------------------------------------------
+	 */
+	public function alternates($account_number, $billing_id)
+	{
+		// print a list of alternate billing id's if any
+		$query = "SELECT b.id b_id, g.org_name g_org_name, t.name t_name ".
+			"FROM billing b ".	
+			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+			"LEFT JOIN general g ON b.organization_id = g.id ".
+			"WHERE b.id != $billing_id AND b.account_number = $this->account_number";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		
+		return $result->result_array();
+	
 	}
 	
 	
@@ -154,7 +173,7 @@ class Billing_Model extends CI_Model
 		$data['mystatus'] = $this->billingstatus($billing_id);		
 
 		// get the organization info
-		$query = "SELECT org_name FROM general WHERE id = $organization_id LIMIT 1";
+		$query = "SELECT org_name FROM general WHERE id = ".$data['organization_id']." LIMIT 1";
 		$orgresult = $this->db->query($query) or die ("$l_queryfailed");
 		$myorgresult = $orgresult->row();
 		$data['organization_name'] = $myorgresult->org_name;

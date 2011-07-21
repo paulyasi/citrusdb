@@ -25,14 +25,16 @@ class Billing extends App_Controller
 			// load the module header common to all module views
 			$this->load->view('module_header_view');
 			
+			// get the billing id
+			$billing_id = $this->billing_model->default_billing_id($this->account_number);
+			
 			// show the billing information (name, address, etc)
 			$data = $this->billing_model->record($billing_id);
 			$this->load->view('billing/index_view', $data);
 			
 			// show any alternate billing types
-			$data['billing_types'] = $this->billing_model->alternates(
-					$this->account_number);
-			$this->load->view('billing/alternates_view', $data);
+			$data['alternate'] = $this->billing_model->alternates($this->account_number, $billing_id);
+			$this->load->view('billing/alternate_view', $data);
 			
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');			
