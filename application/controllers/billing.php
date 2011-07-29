@@ -8,7 +8,7 @@ class Billing extends App_Controller
 		$this->load->model('customer_model');
 		$this->load->model('billing_model');
 		$this->load->model('module_model');
-    }		
+	}		
 	
     /*
      * ------------------------------------------------------------------------
@@ -52,10 +52,10 @@ class Billing extends App_Controller
 		
 	}
 	
-	public function edit()
+	public function edit($billing_id)
 	{
 		// check permissions
-		$permission = $this->module_model->permission($this->user, 'customer');
+		$permission = $this->module_model->permission($this->user, 'billing');
 		
 		if ($permission['modify'])
 		{
@@ -63,8 +63,8 @@ class Billing extends App_Controller
 			$this->load->view('module_header_view');
 			
 			// show the edit customer form
-			$data = $this->customer_model->record($this->account_number);
-			$this->load->view('customer/edit_view', $data);
+			$data = $this->billing_model->record($billing_id);
+			$this->load->view('billing/edit_view', $data);
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');			
@@ -78,88 +78,118 @@ class Billing extends App_Controller
 		}
 	}
 
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  save the input from the edit billing view
+	 * ------------------------------------------------------------------------
+	 */
 	public function save()
 	{
-		// GET Variables into array to send to save record function
-		//$this->id = $this->input->post('id');
+		// check if there is a non-masked credit card number in the input
+		// if the second cararcter is a * then it's already masked
 
-		$customer_data = array(
+		$newcc = FALSE; // set to false so we don't replace it unnecessarily
+
+		// get some inputs that we need to process this input
+		$billing_id = $this->input->post('billing_id');
+		$billing_type = $this->input->post('billing_type');
+		$from_date = $this->input->post('from_date');
+		$creditcard_number = $this->input->post('creditcard_number');
+		
+		// check if the credit card entered already masked and not blank
+		// eg: a replacement was not entered
+		if ($creditcard_number[1] <> '*' AND $creditcard_number <> '')
+		{			
+			// destroy the output array before we use it again
+			unset($encrypted);
+
+			// load the encryption helper for use when calling gpg things
+			$this->load->helper('encryption');
+
+			// run the gpg command
+			$encrypted = encrypt_command($this->config->item('gpg_command'), $creditcard_number);
+
+			// if there is a gpg error, stop here
+			if (substr($encrypted,0,5) == "error")
+			{				
+				die ("Credit Card Encryption Error: $encrypted");
+			}
+
+			// change the ouput array into ascii ciphertext block
+			$encrypted_creditcard_number = $encrypted;
+
+			// wipe out the middle of the creditcard_number before it gets inserted
+			$length = strlen($creditcard_number);
+			$firstdigit = substr($creditcard_number, 0,1);
+			$lastfour = substr($creditcard_number, -4);
+			$creditcard_number = "$firstdigit" . "***********" . "$lastfour";
+			
+			$newcc = TRUE;
+		}
+		
+		// fill in the billing data array with new info
+		$billing_data = array(
 			'name' => $this->input->post('name'),
 			'company' => $this->input->post('company'),
 			'street' => $this->input->post('street'),
 			'city' => $this->input->post('city'),
-			'state' => $this->input->post('state'),
-			'country' => $this->input->post('country'),
+			'state'=> $this->input->post('state'),
 			'zip' => $this->input->post('zip'),
+			'country' => $this->input->post('country'),
 			'phone' => $this->input->post('phone'),
-			'alt_phone' => $this->input->post('alt_phone'),
 			'fax' => $this->input->post('fax'),
-			'source' => $this->input->post('source'),
-			'contact_email' => $this->input->post('contact_email'),
-			'secret_question' => $this->input->post('secret_question'),
-			'secret_answer' => $this->input->post('secret_answer'),
-			'cancel_date' => $this->input->post('cancel_date'),
-			'cancel_reason' => $this->input->post('cancel_reason'),
-			'notes' => $this->input->post('notes')
-		);
+			'billing_type' => $this->input->post('billing_type'),
+			'creditcard_expire'=> $this->input->post('creditcard_expire'),
+			'next_billing_date' => $this->input->post('next_billing_date'),
+			'from_date' => $this->input->post('from_date'),
+			'payment_due_date' => $this->input->post('payment_due_date'),
+			'notes' => $this->input->post('notes'),
+			'pastdue_exempt' => $this->input->post('pastdue_exempt'),
+			'po_number'=> $this->input->post('po_number'),
+			'automatic_receipt' => $this->input->post('automatic_receipt'), 
+			'contact_email' => $this->input->post('contact_email')
+			);
 
-		$old_street = $this->input->post('old_street');
-		$old_city = $this->input->post('old_city');
-		$old_state = $this->input->post('old_state');
-		$old_zip = $this->input->post('old_zip');	
-		$old_country = $this->input->post('old_country');
-		$old_phone = $this->input->post('old_phone');
-		$old_fax = $this->input->post('old_fax');
-		$old_contact_email = $this->input->post('old_contact_email');
-
+		// check if rerun_date should be NULL or not
+		$rerun_date = $this->input->post('rerun_date');
+		if ($rerun_date == "0000-00-00")
+		{
+			// rerun date is null
+			$billing_data['rerun_date'] = NULL;
+		}		
+		else
+		{
+			// rerun date has something in it
+			$billing_data['rerun_date'] = $rerun_date;
+		}
+		
+		if ($newcc == TRUE)
+		{
+			// insert with a new credit card and encrypted ciphertext
+			$billing_data['encrypted_creditcard_number'] = $encrypted_creditcard_number;
+			$billing_data['creditcard_number'] = $this->input->post('creditcard_number');
+			$billing_data['creditcard_expire'] = $this->input->post('creditcard_expire');
+		}
+		elseif ($creditcard_number == '')
+		{
+			$billing_data['encrypted_creditcard_number'] = NULL;
+			$billing_data['creditcard_number'] = NULL;
+			$billing_data['creditcard_expire'] = NULL;		
+		}
+		
 		// save the data to the customer record
-		$data = $this->customer_model->save_record(
-				$this->account_number, $customer_data);
-  
-		// add a log entry that this customer record was viewed
-		$this->log_model->activity($this->user,$this->account_number,'edit',
-				'customer',0,'success');
+		$data = $this->billing_model->save_record($billing_id, $billing_data);			
+
+		// set the to_date automatically
+		$this->billing_model->automatic_to_date($from_date, $billing_type, $billing_id);
+
+		// add a log entry that this billing record was edited
+		$this->log_model->activity($this->user,$this->account_number,'edit','billing',$billing_id,'success');
 
 		print "<h3>". lang('changessaved') ."<h3>";
 
-		// if the name, company, street, city, state, zip, phone, fax, or contact_email 		// changed, ask if they want to update 
-		// the default billing record address also.
-		if ( ($customer_data['street'] != $old_street) 
-				OR ($customer_data['city'] != $old_city)
-				OR ($customer_data['state'] != $old_state) 
-				OR ($customer_data['zip'] != $old_zip) 
-				OR ($customer_data['country'] != $old_country) 
-				OR ($customer_data['phone'] != $old_phone)
-				OR ($customer_data['fax'] != $old_fax) 
-				OR ($customer_data['contact_email'] != $old_contact_email)) 
-		{
-			// TODO: put this stuff below in a view with proper html headers etc.
-			echo lang('addresschange') ."<p>";
-
-			print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
-				"<td align=right width=360>";
-
-			// if they hit yes, this will sent them into the billingaddress update
-
-			print "<form style=\"margin-bottom:0;\" action=\"".
-				$this->url_prefix . "index.php/customer/updatebillingaddress\" 
-				method=post>";
-			print "<input name=billingaddress type=submit value=\"" . lang('yes') . 
-				"\"class=smallbutton></form></td>";
-
-			// if they hit no, send them back to the service edit screen
-
-			print "<td align=left width=360><form style=\"margin-bottom:0;\" ".
-				"action=\"" . $this->url_prefix . "index.php/customer\" method=post>";
-			print "<input name=done type=submit value=\"" . lang('no') . 
-				"\"class=smallbutton>";
-			print "</form></td></table>";
-			print "</blockquote>";
-		} 
-		else 
-		{
-			redirect('/customer');
-		}
+		redirect('/billing');
 	}
 
 

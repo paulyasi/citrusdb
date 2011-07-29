@@ -7,7 +7,7 @@ class Billing_Model extends CI_Model
 	 *  Create Billing Record
 	 * ---------------------------------------------------------------------------
 	 */
-	function create__record($organization_id, $my_account_number)
+	function create_record($organization_id, $my_account_number)
 	{
 		// query the customer record for the default billing id
 		$query = "SELECT default_billing_id FROM customer 
@@ -110,6 +110,18 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	
 	}
+
+	/*
+	 * -------------------------------------------------------------------------
+	 *  save record information
+	 * -------------------------------------------------------------------------
+	 */
+	public function save_record($billing_id, $billing_data)
+	{
+		// using active record, yipee
+		$this->db->where('id', $billing_id);
+		$this->db->update('billing', $billing_data);
+	}
 	
 	
 	/*
@@ -124,16 +136,17 @@ class Billing_Model extends CI_Model
 			"b_phone, b.fax b_fax, b.country b_country, b.contact_email b_email, ".
 			"b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp, ".
 			"b.billing_status b_status, b.billing_type b_type, ".
-			"b.next_billing_date b_next_billing_date, ".
+			"b.next_billing_date b_next_billing_date, b.pastdue_exempt b_pastdue_exempt, ".
 			"b.prev_billing_date b_prev_billing_date, b.from_date b_from_date, ".
 			"b.to_date b_to_date, b.payment_due_date b_payment_due_date, ".
 			"b.rerun_date b_rerun_date, b.po_number b_po_number, b.notes b_notes, ".
+		  "b.automatic_receipt b_automatic_receipt, ".
 			"b.organization_id b_organization_id,  t.id t_id, t.name t_name ".
 			"FROM billing b ".
 			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
 			"WHERE b.id = '$billing_id'";
 
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("queryfailed");
 		$myresult = $result->row_array();
 
 		$data['billing_id'] = $myresult['b_id'];
@@ -159,6 +172,8 @@ class Billing_Model extends CI_Model
 		$data['rerun_date'] = $myresult['b_rerun_date'];
 		$data['notes'] = $myresult['b_notes'];
 		$data['po_number'] = $myresult['b_po_number'];
+		$data['pastdue_exempt'] = $myresult['b_pastdue_exempt'];
+		$data['automatic_receipt'] = $myresult['b_automatic_receipt'];		
 		$data['organization_id'] = $myresult['b_organization_id'];
 
 		// if the card number is not blank, wipe out the middle of the card number
@@ -174,7 +189,7 @@ class Billing_Model extends CI_Model
 
 		// get the organization info
 		$query = "SELECT org_name FROM general WHERE id = ".$data['organization_id']." LIMIT 1";
-		$orgresult = $this->db->query($query) or die ("$l_queryfailed");
+		$orgresult = $this->db->query($query) or die ("queryfailed");
 		$myorgresult = $orgresult->row();
 		$data['organization_name'] = $myorgresult->org_name;
 		
@@ -340,7 +355,7 @@ class Billing_Model extends CI_Model
 		// get the two latest payment_history status values
 		$query="SELECT * FROM payment_history 
 			WHERE billing_id = '$billing_id' ORDER BY id DESC LIMIT 2";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("queryfailed");
 
 		//"New", - new account with no billing details	
 		$rowcount = $result->num_rows();
