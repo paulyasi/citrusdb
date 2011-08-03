@@ -194,14 +194,51 @@ class Billing extends App_Controller
 
 
 	/*
+	 * -------------------------------------------------------------------------
+	 *  add billing function, ask if the user wants to add a billing record
+	 *  with a specific organization id
+	 * -------------------------------------------------------------------------
+	 */
+	public function addbilling()
+	{
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'billing');
+		
+		if ($permission['modify'])
+		{
+			// the module header common to all module views
+			$this->load->view('module_header_view');
+			
+			// show the add billing record form
+			$this->load->view('billing/add_billing_record_view');
+
+			// the history listing tabs
+			$this->load->view('historyframe_tabs_view');			
+			
+			// show html footer
+			$this->load->view('html_footer_view');
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}
+	}
+
+	
+
+	/*
 	 * ------------------------------------------------------------------------
-	 *  called by the new form to insert/create a new customer record
+	 *  create a new billing record, called by the prompt that asks if they
+	 *  want to create a new billing record under a specific organization id
 	 * ------------------------------------------------------------------------
 	 */
 	public function create()
 	{
 		// check permissions
 		$permission = $this->module_model->permission($this->user, 'customer');
+
+		$organization_id = $this->input->post('organization_id');
+		
 		
 		if ($permission['create'])
 		{

@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
-[ <a href="<?php echo $this->ssl_url_prefix; ?>index.php/billing/create">
+[ <a href="<?php echo $this->url_prefix; ?>index.php/billing/addbilling">
 <?php echo lang('addaltbilling');?></a> ]<br>
 
 <table width=720><tr bgcolor="#ddddee">

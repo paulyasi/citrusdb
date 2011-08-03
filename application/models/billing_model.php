@@ -118,7 +118,7 @@ class Billing_Model extends CI_Model
 	 */
 	public function save_record($billing_id, $billing_data)
 	{
-		// using active record, yipee
+		// using active record, yipee!
 		$this->db->where('id', $billing_id);
 		$this->db->update('billing', $billing_data);
 	}
