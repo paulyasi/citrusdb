@@ -10,7 +10,7 @@ foreach ($alternate as $myresult)
 	$billing_type = $myresult['t_name'];
 	$billing_orgname = $myresult['g_org_name'];
 
-	$mystatus = $this->billing_model->billingstatus($billig_id);
+	$mystatus = $this->billing_model->billingstatus($billing_id);
 
 	$alternate_billing_id_url = "$ssl_url_prefix" . "index.php?load=billing&type=module&edit=on&billing_id=$billing_id";
 
