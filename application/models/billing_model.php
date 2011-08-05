@@ -493,8 +493,14 @@ class Billing_Model extends CI_Model
 			WHERE default_billing_id = '$billing_id' LIMIT 1";
 		$result = $this->db->query($query) or die("$l_queryfailed");;
 		$myresult = $result->row();
-		if (!isset($myresult->cancel_date)) { $myresult->cancel_date = "";}	
-		$cancel_date = $myresult->cancel_date;
+		if (!isset($myresult->cancel_date))
+		{
+			$cancel_date = NULL;
+		}
+		else
+		{
+			$cancel_date = $myresult->cancel_date;
+		}
 
 		if ($cancel_date) 
 		{

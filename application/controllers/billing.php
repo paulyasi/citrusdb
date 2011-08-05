@@ -223,7 +223,6 @@ class Billing extends App_Controller
 			$this->module_model->permission_error();
 		}
 	}
-
 	
 
 	/*
@@ -235,36 +234,18 @@ class Billing extends App_Controller
 	public function create()
 	{
 		// check permissions
-		$permission = $this->module_model->permission($this->user, 'customer');
+		$permission = $this->module_model->permission($this->user, 'billing');
 
-		$organization_id = $this->input->post('organization_id');
-		
+		$organization_id = $this->input->post('organization_id');		
 		
 		if ($permission['create'])
 		{
-
-			$customer_data = array(
-					'name' => $this->input->post('name'),
-					'company' => $this->input->post('company'),
-					'street' => $this->input->post('street'),
-					'city' => $this->input->post('city'),
-					'state' => $this->input->post('state'),
-					'country' => $this->input->post('country'),
-					'zip' => $this->input->post('zip'),
-					'phone' => $this->input->post('phone'),
-					'fax' => $this->input->post('fax'),
-					'source' => $this->input->post('source'),
-					'contact_email' => $this->input->post('contact_email'),
-					'secret_question' => $this->input->post('secret_question'),
-					'secret_answer' => $this->input->post('secret_answer')
-					);
-
-			// put the data in a new customer record
-			$data = $this->customer_model->create_record($customer_data);		
+			// create the billing record
+			$this->billing_model->create_record($organization_id, $this->account_number);
 
 			// log this record creation
 			$this->log_model->activity($this->user,$this->account_number,'create',
-					'customer',0,'success');
+					'billing',0,'success');
 
 		}
 		else
