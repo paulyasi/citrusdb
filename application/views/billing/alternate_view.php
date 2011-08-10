@@ -12,11 +12,12 @@ foreach ($alternate as $myresult)
 
 	$mystatus = $this->billing_model->billingstatus($billing_id);
 
-	$alternate_billing_id_url = "$ssl_url_prefix" . "index.php?load=billing&type=module&edit=on&billing_id=$billing_id";
+	$alternate_billing_id_url = $this->ssl_url_prefix . "index.php/billing/edit/$billing_id";
 
 	print "<td><b>$billing_orgname</b> &nbsp;<a
 href=\"$alternate_billing_id_url\">$billing_id</a></td><td>$billing_type</td><td>$mystatus</td>";
 
+	// TODO: check if they are billing or manager and show the maintenance and rerun type links
 if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
   echo "<td>".
     "<a href=\"index.php?load=billing&type=module&rerun=on&billing_id=$billing_id\">$l_rerun</a> | ".
