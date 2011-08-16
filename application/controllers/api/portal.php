@@ -3,15 +3,10 @@
 /**
  * Portal API Controller
  *
- * This is uses an example of a few basic user interaction methods you could use
- * all done with a hardcoded array.
+ * This is the portal API that allows the customer self-service portal to
+ * communicate with the main citrusdb system
  *
- * @package		CodeIgniter
- * @subpackage	Rest Server
- * @category	Controller
- * @author		Phil Sturgeon
- * @link		http://philsturgeon.co.uk/code/
-*/
+ */
 
 // This can be removed if you use __autoload() in config.php OR use Modular Extensions
 require APPPATH.'/libraries/REST_Controller.php';

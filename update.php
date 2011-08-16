@@ -991,7 +991,19 @@ if ($base->input['submit'] == "Update")
 		
 		// drop old session table used by adodb
 		$query = "DROP TABLE session2";
+
+		// add new api_keys table
+		$query = "CREATE TABLE `api_keys` (".
+			"`id` int(11) NOT NULL AUTO_INCREMENT,".
+			"`key` varchar(40) NOT NULL,".
+			"`level` int(2) NOT NULL,".
+			"`ignore_limits` tinyint(1) NOT NULL DEFAULT '0',".
+			"`date_created` int(11) NOT NULL,".
+			"PRIMARY KEY (`id`)".
+			") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+		
 	}
+		
 	
 	echo "<center><h2>Database Updated</h2></center>";
 }
