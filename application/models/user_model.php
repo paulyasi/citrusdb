@@ -33,6 +33,19 @@ class User_Model extends CI_Model {
     	);
     $this->load->library('PasswordHash', $config);    
   }
+
+
+  /*
+   * ---------------------------------------------------------------------------
+   *  Check the privileges for this user, whether they have admin or manage etc.
+   * ---------------------------------------------------------------------------
+   */
+  function user_privileges($username)
+  {
+	  $query = "SELECT admin,manager,email_notify,screenname_notify FROM user WHERE username = '$username' LIMIT 1";
+	  $result = $this->db->query($query);
+	  return $result->result_array();	  
+  }
   
   	/*--------------------------------------------------------------------*/
 	// check for too many login falures

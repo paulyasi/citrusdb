@@ -8,6 +8,7 @@ class Billing extends App_Controller
 		$this->load->model('customer_model');
 		$this->load->model('billing_model');
 		$this->load->model('module_model');
+		$this->load->model('user_model');
 	}		
 	
     /*
@@ -34,6 +35,7 @@ class Billing extends App_Controller
 			
 			// show any alternate billing types
 			$data['alternate'] = $this->billing_model->alternates($this->account_number, $billing_id);
+			$data['userprivileges'] = $this->user_model->user_privileges($this->user);
 			$this->load->view('billing/alternate_view', $data);
 			
 			// the history listing tabs

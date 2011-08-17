@@ -3,7 +3,7 @@
 <?php echo lang('addaltbilling');?></a> ]<br>
 
 <table width=720><tr bgcolor="#ddddee">
-<?php 
+<?php
 foreach ($alternate as $myresult)
 {
 	$billing_id = $myresult['b_id'];
@@ -14,41 +14,43 @@ foreach ($alternate as $myresult)
 
 	$alternate_billing_id_url = $this->ssl_url_prefix . "index.php/billing/edit/$billing_id";
 
-	print "<td><b>$billing_orgname</b> &nbsp;<a
-href=\"$alternate_billing_id_url\">$billing_id</a></td><td>$billing_type</td><td>$mystatus</td>";
+	print "<td><b>$billing_orgname</b> &nbsp;<a href=\"$alternate_billing_id_url\">".
+	"$billing_id</a></td><td>$billing_type</td><td>$mystatus</td>";
 
-	// TODO: check if they are billing or manager and show the maintenance and rerun type links
-if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
-  echo "<td>".
-    "<a href=\"index.php?load=billing&type=module&rerun=on&billing_id=$billing_id\">$l_rerun</a> | ".
-    "<a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">$l_invoicemaintenance</a> | ".
-    "<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">$l_refund</a>".
-    "</td><td>".
-    "<form name=status$billing_id style=\"margin-bottom:0;\" method=post>".
-    "<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.status$billing_id.menu.options[document.status$billing_id.menu.selectedIndex].value;\" value=GO>".
-    "<option value=\"\">$l_changestatus</option>".
-    "<option value=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">- $l_turnoff</option>".
-    "<option value=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">- $l_waiting</optoin>".
-    "<option value=\"index.php?load=billing&type=module&authorized=on&billing_id=$billing_id\">- $l_authorized</option>".
-    "<option value=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">- $l_cancelwithfee</option>".
-    "<option value=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">- $l_collections</option>".    
-    "</select></form>".
-    "</td><td>".
-    "<form name=notice$billing_id style=\"margin-bottom:0;\" method=post>".
-    "<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.notice$billing_id.menu.options[document.notice$billing_id.menu.selectedIndex].value;\" value=GO>".
-    "<option value=\"\">$l_invoiceornotice</option>".
-    "<option value=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">- $l_createinvoice</option> | ".
-    "<option value=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">- $l_cancel_notice</option> | ".
-    "<option value=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">- $l_shutoff_notice</option> | ".
-    "<option value=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">- $l_collections_notice</option>".
-    "</select></form>".
-    "</td>";
+	// check if they are billing or manager and show the maintenance and rerun type links
+	if (($userprivileges[0]['manager'] == 'y') OR ($userprivileges[0]['admin'] == 'y')) {
+		echo "<td>".
+			"<a href=\"index.php/billing/rerund/$billing_id\">".
+			lang('rerun')."</a> | ".
+			"<a href=\"index.php/billing/invmaint/$billing_id&submit=Submit\">".
+			lang('invoicemaintenance')."</a> | ".
+			"<a href=\"index.php/billing/refund/$billing_id&submit=Submit\">".
+			lang('refund')."</a>".
+			"</td><td>".
+			"<form name=status$billing_id style=\"margin-bottom:0;\" method=post>".
+			"<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.status".
+			"$billing_id.menu.options[document.status$billing_id.menu.selectedIndex].value;\" value=GO>".
+			"<option value=\"\">".lang('changestatus')."</option>".
+			"<option value=\"index.php/billing/turnoff/$billing_id\">- ".lang('turnoff')."</option>".
+			"<option value=\"index.php/billing/waiting/$billing_id\">- ".lang('waiting')."</optoin>".
+			"<option value=\"index.php/billing/authorized/$billing_id\">- ".lang('authorized')."</option>".
+			"<option value=\"index.php?load=billing/cancelwfee/$billing_id\">- ".lang('cancelwithfee')."</option>".
+			"<option value=\"index.php?load=billing/collections/$billing_id\">- ".lang('collections')."</option>".    
+			"</select></form>".
+			"</td><td>".
+			"<form name=notice$billing_id style=\"margin-bottom:0;\" method=post>".
+			"<select style=\"font-size: 80%;\" name=menu onChange=\"location=document.notice$billing_id.menu.".
+			"options[document.notice$billing_id.menu.selectedIndex].value;\" value=GO>".
+			"<option value=\"\">".lang('invoiceornotice')."</option>".
+			"<option value=\"index.php?load=billing/createinvoice/$billing_id\">- ".lang('createinvoice')."</option> | ".
+			"<option value=\"index.php?load=billing/cancelnotice/$billing_id\">- ".lang('cancel_notice')."</option> | ".
+			"<option value=\"index.php?load=billing/shutoffnotice/$billing_id\">- ".lang('shutoff_notice')."</option> | ".
+			"<option value=\"index.php?load=billing/collectionsnotice/$billing_id\">- ".lang('collections_notice')."</option>".
+			"</select></form>".
+			"</td>";
+	}
+	
+	echo "<tr bgcolor=\"#ddddee\">";	
 }
-
-echo "<tr bgcolor=\"#ddddee\">";
-
-}
-
-echo '</table>';
-
 ?>
+</table>
