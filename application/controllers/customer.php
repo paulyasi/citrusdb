@@ -259,7 +259,11 @@ class Customer extends App_Controller
 		if ($permission['remove'])
 		{
 			// load the service model to check carrier dependent
-			$this->load->model('service_model');			
+			$this->load->model('service_model');
+			$this->load->model('user_model');
+
+			// the module header common to all module views
+			$this->load->view('module_header_view');
 
 			// check if the services on the account are carrier_dependent
 			// if it is carrier dependent, then send user to the
@@ -282,43 +286,21 @@ class Customer extends App_Controller
 			}
 
 			// check if the user has manager privileges
-			$result = $this->db->get_where('user', array('username' => $this->user), 1);
-			//$query = "SELECT * FROM user WHERE username='$user'";
-			//$result = $DB->Execute($query) or die ("$l_queryfailed");
-			$myresult = $result->row();
-			$manager = $myresult->manager;
+			$privileges = $this->user_model->user_privileges($this->user);
 
-			if ($dependent == false OR $manager == 'y') {
+			if ($dependent == false OR $privileges['manager'] == 'y') {
 				// show the regular cancel form for non carrier dependent and for managers
 				// ask if they are sure they want to cancel this customer
-				print "<br><br>";
-				print "<h4>" . lang('areyousurecancel') .": $this->account_number</h4>";
-				print "<table cellpadding=15 cellspacing=0 border=0 width=720>";
-				print "<td align=right width=240>";
 
-				// if they hit yes, this will sent them into the delete.php file and remove the service on their next billing anniversary
+				$this->load->view('customer/cancel_view.php');
 
-				print "<form style=\"margin-bottom:0;\" action=\"" . $this->url_prefix . "index.php/customer/whycancel\" method=post>";
-				print "<input name=whycancel type=submit value=\"". lang('yes') . "\" class=smallbutton></form></td>";
-
-				// if they hit no, send them back to the service edit screen
-
-				print "<td align=left width=240>";
-				print "<form style=\"margin-bottom:0;\" action=\"" . $this->url_prefix . "index.php/customer\" method=post>";
-				print "<input name=done type=submit value=\" ". lang('no') . " \" class=smallbutton>";
-				print "</form></td>";
-
-				// if they hit Remove Now, send them to delete.php and remove the 
-				// service on the next available work date, the next valid billing date
-
-				print "<td align=left width=240>";
-				print "<form style=\"margin-bottom:0;\" action=\"" . $this->url_prefix . "index.php/customer/whycancel/now\" method=post>";
-				print "<input name=whycancel type=submit value=\"". lang('remove_now') . "\" class=smallbutton>";  
-				print "</form></td>";
-
-				print "</table>";
-				print "</blockquote>";
 			}
+
+			// the history listing tabs
+			$this->load->view('historyframe_tabs_view');			
+			
+			// show html footer
+			$this->load->view('html_footer_view');
 
 		}
 		else 

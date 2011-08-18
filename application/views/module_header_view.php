@@ -8,7 +8,7 @@ $data = $this->customer_model->title($this->account_number);
 $this->load->view('customer_in_sidebar_view', $data);
 
 // show the module tab listing (customer, services, billing, etc.)
-$this->load->view('moduletabs_view');
+//$this->load->view('moduletabs_view');
 
 // show the tickets messages tabs for this user 
 $this->load->model('ticket_model');
