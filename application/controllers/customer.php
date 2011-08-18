@@ -271,29 +271,23 @@ class Customer extends App_Controller
 			$dependent = $this->service_model->carrier_dependent($this->account_number);
 
 			if ($dependent == true) {
-				// print a message that this customer is carrier dependent
-				echo "<h3>" . lang('carrierdependentmessage') . "</h3><p align=center>";
+				// load the settings model and then check the dependent url
+				$this->load->model('settings_model');				
+				$data['dependent_cancel_url'] = $this->settings_model->dependent_cancel_url();
 
-				// get the dependent_cancel_url from the settings table
-				$query = "SELECT dependent_cancel_url FROM settings WHERE id = 1";
-				$result = $this->db->query($query) or die ("$l_queryfailed");
-				$myresult = $result->row();
-				$dependent_cancel_url = $myresult->dependent_cancel_url;
-
-				// print a link to the url to fill out the carrier dependent cancel form
-				print "<a href=\"$dependent_cancel_url$this->account_number\" target=\"_BLANK\">" . lang('cancelcustomer') . "</a></p>";
+				// show the dependent url view
+				$this->load->view('customer/dependent_cancel_view', $data);
 
 			}
 
 			// check if the user has manager privileges
 			$privileges = $this->user_model->user_privileges($this->user);
 
-			if ($dependent == false OR $privileges['manager'] == 'y') {
+			if ($dependent == false OR $privileges['manager'] == 'y')
+			{
 				// show the regular cancel form for non carrier dependent and for managers
 				// ask if they are sure they want to cancel this customer
-
 				$this->load->view('customer/cancel_view.php');
-
 			}
 
 			// the history listing tabs

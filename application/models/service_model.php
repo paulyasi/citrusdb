@@ -55,7 +55,7 @@ class Service_model extends CI_Model
 		$query = "UPDATE $optionstable SET $fieldvalues ".
 			"WHERE user_services = $userserviceid";
 		$result = $this->db->query($query) or die ("save_changes query failed");
-	}
+	}	
 
 	/*
 	 * ------------------------------------------------------------------------
@@ -162,6 +162,7 @@ class Service_model extends CI_Model
 
 
 	}
+	
 
 	/*
 	 * ------------------------------------------------------------------------

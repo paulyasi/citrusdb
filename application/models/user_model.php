@@ -44,7 +44,8 @@ class User_Model extends CI_Model {
   {
 	  $query = "SELECT admin,manager,email_notify,screenname_notify FROM user WHERE username = '$username' LIMIT 1";
 	  $result = $this->db->query($query);
-	  return $result->result_array();	  
+	  
+	  return $result->row_array();
   }
   
   	/*--------------------------------------------------------------------*/

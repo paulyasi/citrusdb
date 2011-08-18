@@ -18,7 +18,7 @@ foreach ($alternate as $myresult)
 	"$billing_id</a></td><td>$billing_type</td><td>$mystatus</td>";
 
 	// check if they are billing or manager and show the maintenance and rerun type links
-	if (($userprivileges[0]['manager'] == 'y') OR ($userprivileges[0]['admin'] == 'y')) {
+	if (($userprivileges['manager'] == 'y') OR ($userprivileges['admin'] == 'y')) {
 		echo "<td>".
 			"<a href=\"index.php/billing/rerund/$billing_id\">".
 			lang('rerun')."</a> | ".
