@@ -214,6 +214,8 @@ class Customer extends App_Controller
 		
 		if ($permission['create'])
 		{
+			// load the billing model too so we can create a billing record with create record
+			$this->load->model('billing_model');			
 
 			$customer_data = array(
 					'name' => $this->input->post('name'),
@@ -228,7 +230,8 @@ class Customer extends App_Controller
 					'source' => $this->input->post('source'),
 					'contact_email' => $this->input->post('contact_email'),
 					'secret_question' => $this->input->post('secret_question'),
-					'secret_answer' => $this->input->post('secret_answer')
+					'secret_answer' => $this->input->post('secret_answer'),
+					'organization_id' => $this->input->post('organization_id')
 					);
 
 			// put the data in a new customer record
@@ -238,6 +241,7 @@ class Customer extends App_Controller
 			$this->log_model->activity($this->user,$this->account_number,'create',
 					'customer',0,'success');
 
+			redirect('customer');
 		}
 		else
 		{

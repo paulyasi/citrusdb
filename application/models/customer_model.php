@@ -130,16 +130,16 @@ class Customer_Model extends CI_Model
 			'$secret_question','$secret_answer','$source')";
 		$result = $this->db->query($query) or die ("query failed");
 
-		$myinsertid = $this->db->insert_it();  
+		$myinsertid = $this->db->insert_id();  
 	
 		// set the active session account number to the one just created
-		$this->account_number=$myinsertid;
+		$account_number=$myinsertid;
 
 		// start the session variables to hold the account number
-		$_SESSION['account_number'] = $account_number;
+		$this->session->set_userdata('account_number', $account_number);
 
 		// get the next billing date value
-		$mydate = get_nextbillingdate();
+		$mydate = $this->billing_model->get_nextbillingdate();
 
 		// make a new billing record
 		// set the next billing date and from date to the date determined from above 
@@ -157,7 +157,6 @@ class Customer_Model extends CI_Model
 			"WHERE account_number = $account_number";
 		$result = $this->db->query($query) or die ("query failed");
 
-		print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=customer&type=module\";</script>";
 	}
 
 

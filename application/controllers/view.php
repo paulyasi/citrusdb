@@ -13,7 +13,8 @@ class View extends App_Controller
 	public function account($account_number)
 	{
 		//$_SESSION['account_number'] = $account_number;
-		$this->account_number = $account_number;
+		$this->session->set_userdata('account_number', $account_number);
+		//$this->account_number = $account_number;
 		
 		// log this account view
 		$this->log_model->activity($this->user, $this->account_number, 'view', 'customer', 0, 'success');

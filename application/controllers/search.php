@@ -75,7 +75,7 @@ class Search extends App_Controller {
   			$numpages = $pager->numPages;
   			$pagedquery = $query . " limit $offset, $limit"; 
   			$this->result = $this->db->query($pagedquery) or die ("this $l_queryfailed");
-  			echo "$l_page $page $l_of $numpages | ";
+  			echo lang('page') . " " . $page . " " . lang('of') . " " . $numpages . " | ";
   
   			if($page == 1)
    			{
@@ -197,16 +197,14 @@ class Search extends App_Controller {
     			// check if this is a service item and link to the service item
     			if ($serviceid) 
     			{
-      				echo "<tr style=\"$rowstyle\"><td><a href=\"$this->url_prefix/index.php?load=viewservice&".
-					"type=fs&userserviceid=$serviceid&acnum=$acnum\">$l_view: $l_service</a></td>";
-      				if ($pagetype == "record") { echo "</table>"; }
+      				echo "<tr style=\"$rowstyle\"><td><a href=\"$this->url_prefix/index.php/view/service&".
+					"$serviceid\">$l_view: $l_service</a></td>";
     			} 
     			else 
     			{      
       				// else just link to the account by account number
-      				echo "<tr style=\"$rowstyle\"><td><a href=\"$this->url_prefix/index.php?load=viewaccount&".
-					"type=fs&acnum=$acnum\">$l_view: $l_account</a></td>";
-      				if ($pagetype == "record") { echo "</table>"; }
+      				echo "<tr style=\"$rowstyle\"><td><a href=\"$this->url_prefix/index.php/view/account".
+						"/$acnum\">". lang('view') . ": " . lang('account') ."</a></td>";
     			}
   			}
 			    
