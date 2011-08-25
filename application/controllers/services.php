@@ -386,7 +386,7 @@ class Services extends App_Controller {
 	 */
 	public function add_options($serviceid, $detail1 = NULL)
 	{
-		// load the module header common to all module views
+		// show the header for module views
 		$this->load->view('module_header_view');
 
 		// load the add service options view
@@ -408,9 +408,6 @@ class Services extends App_Controller {
 	 */
 	public function delete()
 	{
-		$userserviceid = $this->input->post('userserviceid');
-		$servicedescription = $this->input->post('servicedescription');
-
 		// figure out the signup anniversary removal date
 		$query = "SELECT signup_date FROM customer 
 			WHERE account_number = '$this->account_number'";
@@ -424,54 +421,87 @@ class Services extends App_Controller {
 			$removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
 		}
 
-		// prompt them to ask if they are sure they want to delete the service
-		print "<br><br>";
-		print "<h4>".lang('areyousuredelete').": $userserviceid $servicedescription</h4>";
-		print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
-			"<td align=right>";
+		// show the header for module views
+		$this->load->view('module_header_view');
 
-		// if they hit yes, this will sent them into the delete.php file
-		// and remove the service
+		// delete service prompt
+		$data['userserviceid'] = $this->input->post('userserviceid');
+		$data['servicedescription'] = $this->input->post('servicedescription');
+		$data['removal_date'] = $removal_date;
+		$this->load->view('services/delete_prompt', $data);
+		
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');	
 
-		print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-		print "<input type=hidden name=userserviceid value=$userserviceid>";
-		print "<input type=hidden name=load value=services>";
-		print "<input type=hidden name=type value=module>";
-		print "<input type=hidden name=delete value=on>";
-		print "<input name=deletenow type=submit value=\" ".lang('deleteservice_removeuser')." $removal_date\" ".
-			"class=smallbutton></form></td>";
-
-		print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-		print "<input type=hidden name=userserviceid value=$userserviceid>";
-		print "<input type=hidden name=load value=services>";
-		print "<input type=hidden name=type value=module>";
-		print "<input type=hidden name=delete value=on>";
-		print "<input name=deletetoday type=submit value=\" ".lang('deleteservice_removetoday')." \" ".
-			"class=smallbutton></form></td>";   
-
-		// if they hit yes without automatic removal, this will sent them into the delete.php file
-		// and remove the service
-
-
-		print "<td align=left><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-		print "<input type=hidden name=userserviceid value=$userserviceid>";
-		print "<input type=hidden name=load value=services>";
-		print "<input type=hidden name=type value=module>";
-		print "<input type=hidden name=delete value=on>";
-		print "<input name=deletenoauto type=submit value=\" ".lang('deleteservice_activeuser')." \" ".
-			"class=smallbutton></form></td>"; 
-
-		// if they hit no, send them back to the service edit screen
-
-		print "<td align=left><form style=\"margin-bottom:0;\" ".
-			"action=\"index.php\" method=post>";
-		print "<input name=done type=submit value=\" ".lang('no')." \" class=smallbutton>";
-		print "<input type=hidden name=load value=services>";        
-		print "<input type=hidden name=type value=module>";
-		print "</form></td></table>";
-		print "</blockquote>";
-
+		// show html footer
+		$this->load->view('html_footer_view');
 	}
+
+
+	/*
+	 * -------------------------------------------------------------------------
+	 *  delete the service on normal removal date
+	 * -------------------------------------------------------------------------
+	 */
+	public function deletenow()
+	{
+		// figure out the signup anniversary removal date
+		$removal_date = $this->customer_model->get_anniversary_removal_date(
+				$account_number);
+
+		// delete the service and do other notifications
+		$this->service_model->delete_service($userserviceid, 'removed', $removal_date);
+
+		// add a log entry that this service was deleted
+		$this->log_model->activity($user,$account_number,'delete','service',
+				$userserviceid,'success');	
+
+		redirect('/services');
+	}	
+
+
+	/*
+	 * -------------------------------------------------------------------------
+	 *  delete the service with removal date of today
+	 * -------------------------------------------------------------------------
+	 */
+	public function deletetoday()
+	{
+
+
+		if ($deletetoday) {
+			// delete the service today, not on billing anniversary
+			$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
+
+			$this->service_model->delete_service($userserviceid, 'removed', $today);
+
+			// add to log that the service was removed
+			$this->log_model->activity($DB,$user,$account_number,'delete','service',$userserviceid,'success');	  
+
+			print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
+		}
+
+	}	
+
+
+	/*
+	 * -------------------------------------------------------------------------
+	 *  delete the service without automatic removal date set
+	 * -------------------------------------------------------------------------
+	 */
+	public function deletenoauto()
+	{
+
+
+		if ($deletenoauto) {
+			// delete the service without an automatic removal dateand do other notifications
+			$this->service_model->delete_service($userserviceid, 'removed', '');
+
+			print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
+		}
+
+	}	
+
 
 	public function shipfieldassets()
 	{
@@ -496,5 +526,5 @@ class Services extends App_Controller {
 
 }
 
-/* End of file customer */
-/* Location: ./application/controllers/customer.php */
+/* End of file services */
+/* Location: ./application/controllers/services.php */

@@ -14,74 +14,74 @@ class Customer_Model extends CI_Model
 	{
 		parent::__construct();
 	}
-    
-    function title($account_number)
-    {
-    	// get the customer name, and company
+
+	function title($account_number)
+	{
+		// get the customer name, and company
 		$query = "SELECT name,company FROM customer ".
-	  		"WHERE account_number = $this->account_number";
+			"WHERE account_number = $this->account_number";
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 		$myresult = $result->row();
 		$data['account_number'] = $this->account_number;
 		$data['acct_name'] = $myresult->name;
 		$data['acct_company'] = $myresult->company;
-		
+
 		return $data;
 	}
-    
+
 	function record($account_number)
 	{
 		// get the all customer record information
-  		$query = "SELECT * FROM customer WHERE account_number = $account_number";
-  		$result = $this->db->query($query) or die ("customer info $l_queryfailed");
-  		$myresult = $result->row();	
-  		
-    	// get the cancel reason text
-  		if ($myresult->cancel_reason > 0)
-  		{
-    		$query = "SELECT reason FROM cancel_reason ".
+		$query = "SELECT * FROM customer WHERE account_number = $account_number";
+		$result = $this->db->query($query) or die ("customer info $l_queryfailed");
+		$myresult = $result->row();	
+
+		// get the cancel reason text
+		if ($myresult->cancel_reason > 0)
+		{
+			$query = "SELECT reason FROM cancel_reason ".
 				"WHERE id = $myresult->cancel_reason";
-    		$cancelreasonresult = $this->db->query($query) or die ("query failed");
-    		$mycancelreasonresult = $cancelreasonresult->row();
+			$cancelreasonresult = $this->db->query($query) or die ("query failed");
+			$mycancelreasonresult = $cancelreasonresult->row();
 			if ($cancelreasonresult->num_rows() > 0)
 			{
-    			$cancel_reason = $mycancelreasonresult->reason;
+				$cancel_reason = $mycancelreasonresult->reason;
 			}
 			else
 			{
 				$cancel_reason = NULL;
 			}
-  		} 
-  		else 
-  		{
-   			$cancel_reason = "";
-  		}
-  		
-  		// Put values into an array to return
+		} 
+		else 
+		{
+			$cancel_reason = "";
+		}
 
-  		return array (
-  		'signup_date' => $myresult->signup_date,
-  		'name' => $myresult->name,
-  		'company' => $myresult->company,
-  		'street' => $myresult->street,
-  		'city' => $myresult->city,
-  		'state' => $myresult->state,
-  		'zip' => $myresult->zip,
-  		'country' => $myresult->country,
-  		'phone' => $myresult->phone,
-  		'alt_phone' => $myresult->alt_phone,
-  		'fax' => $myresult->fax,
-  		'source' => $myresult->source,
-  		'contactemail' => $myresult->contact_email,
-  		'secret_question' => $myresult->secret_question,
-  		'secret_answer' => $myresult->secret_answer,
-		'default_billing_id' => $myresult->default_billing_id,
-		'cancel_date' => $myresult->cancel_date,
-		'account_manager_password' => $myresult->account_manager_password,
-  		'cancel_reason_id' => $myresult->cancel_reason,
-  		'notes' => $myresult->notes,
-  		'cancel_reason' => $cancel_reason);	
-    }
+		// Put values into an array to return
+
+		return array (
+				'signup_date' => $myresult->signup_date,
+				'name' => $myresult->name,
+				'company' => $myresult->company,
+				'street' => $myresult->street,
+				'city' => $myresult->city,
+				'state' => $myresult->state,
+				'zip' => $myresult->zip,
+				'country' => $myresult->country,
+				'phone' => $myresult->phone,
+				'alt_phone' => $myresult->alt_phone,
+				'fax' => $myresult->fax,
+				'source' => $myresult->source,
+				'contactemail' => $myresult->contact_email,
+				'secret_question' => $myresult->secret_question,
+				'secret_answer' => $myresult->secret_answer,
+				'default_billing_id' => $myresult->default_billing_id,
+				'cancel_date' => $myresult->cancel_date,
+				'account_manager_password' => $myresult->account_manager_password,
+				'cancel_reason_id' => $myresult->cancel_reason,
+				'notes' => $myresult->notes,
+				'cancel_reason' => $cancel_reason);	
+	}
 
 	public function save_record($account_number, $customer_data)
 	{
@@ -95,7 +95,7 @@ class Customer_Model extends CI_Model
 			$this->db->where('account_number', $account_number);
 			$this->db->update('customer', $customer_data); 
 
-  		} else {
+		} else {
 			// there is a cancel date, so put everything in there
 			$this->db->where('account_number', $account_number);
 			$this->db->update('customer', $customer_data); 
@@ -106,7 +106,7 @@ class Customer_Model extends CI_Model
 	public function create_record($customer_data)
 	{
 		// customer_data in an assoc array with these values
-	    $name = $customer_data['name'];
+		$name = $customer_data['name'];
 		$company = $customer_data['company'];
 		$street = $customer_data['street'];
 		$city = $customer_data['city'];
@@ -125,13 +125,13 @@ class Customer_Model extends CI_Model
 		$query = "INSERT into customer (signup_date, name, company, street, city, 
 			state, country, zip, phone, fax, contact_email, secret_question, 
 			secret_answer, source) 
-			VALUES (CURRENT_DATE, '$name', '$company', '$street', '$city', '$state', 
-			'$country', '$zip', '$phone', '$fax', '$contact_email', 
-			'$secret_question','$secret_answer','$source')";
+				VALUES (CURRENT_DATE, '$name', '$company', '$street', '$city', '$state', 
+						'$country', '$zip', '$phone', '$fax', '$contact_email', 
+						'$secret_question','$secret_answer','$source')";
 		$result = $this->db->query($query) or die ("query failed");
 
 		$myinsertid = $this->db->insert_id();  
-	
+
 		// set the active session account number to the one just created
 		$account_number=$myinsertid;
 
@@ -146,9 +146,9 @@ class Customer_Model extends CI_Model
 		$query = "INSERT into billing (account_number,next_billing_date,from_date,
 			payment_due_date,name,company,street,city,state,country,zip,phone,fax,
 			contact_email,organization_id) 
-			VALUES ('$account_number','$mydate','$mydate','$mydate','$name','$company',
-			'$street','$city','$state','$country','$zip','$phone','$fax',
-			'$contact_email','$organization_id')";
+				VALUES ('$account_number','$mydate','$mydate','$mydate','$name','$company',
+						'$street','$city','$state','$country','$zip','$phone','$fax',
+						'$contact_email','$organization_id')";
 		$result = $this->db->query($query) or die ("query failed");	
 
 		// set the default billing ID for the customer record
@@ -222,5 +222,29 @@ class Customer_Model extends CI_Model
 			return FALSE; 
 		}
 	}
+
+
+	public function get_anniversary_removal_date($account_number)
+	{
+		// figure out the signup anniversary removal date
+		$query = "SELECT signup_date FROM customer 
+			WHERE account_number = '$account_number'";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myresult = $result->row_array();	
+		$signup_date = $myresult['signup_date'];
+		list($myyear, $mymonth, $myday) = split('-', $signup_date);
+		$removal_date  = date("Y-m-d", 
+				mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
+		$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
+	
+		if ($removal_date <= $today) 
+		{
+        	$removal_date  = date("Y-m-d", 
+					mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
+        }
+
+		return $removal_date;
+	}
+	
 
 }
