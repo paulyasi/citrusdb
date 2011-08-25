@@ -409,17 +409,8 @@ class Services extends App_Controller {
 	public function delete()
 	{
 		// figure out the signup anniversary removal date
-		$query = "SELECT signup_date FROM customer 
-			WHERE account_number = '$this->account_number'";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
-		$myresult = $result->row_array();
-		$signup_date = $myresult['signup_date'];
-		list($myyear, $mymonth, $myday) = explode('-', $signup_date);
-		$removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
-		$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
-		if ($removal_date <= $today) {
-			$removal_date  = date("Y-m-d", mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
-		}
+		$removal_date = $this->customer_model->get_anniversary_removal_date(
+				$this->account_number);
 
 		// show the header for module views
 		$this->load->view('module_header_view');
@@ -443,17 +434,20 @@ class Services extends App_Controller {
 	 *  delete the service on normal removal date
 	 * -------------------------------------------------------------------------
 	 */
-	public function deletenow()
+	public function deletenow($userserviceid)
 	{
+		// load the ticket model so that the delete service can leave a note
+		$this->load->model('ticket_model');
+
 		// figure out the signup anniversary removal date
 		$removal_date = $this->customer_model->get_anniversary_removal_date(
-				$account_number);
+				$this->account_number);
 
 		// delete the service and do other notifications
 		$this->service_model->delete_service($userserviceid, 'removed', $removal_date);
 
 		// add a log entry that this service was deleted
-		$this->log_model->activity($user,$account_number,'delete','service',
+		$this->log_model->activity($this->user,$this->account_number,'delete','service',
 				$userserviceid,'success');	
 
 		redirect('/services');
@@ -465,22 +459,21 @@ class Services extends App_Controller {
 	 *  delete the service with removal date of today
 	 * -------------------------------------------------------------------------
 	 */
-	public function deletetoday()
+	public function deletetoday($userserviceid)
 	{
+		// load the ticket model so that the delete service can leave a note
+		$this->load->model('ticket_model');
 
+		// delete the service today, not on billing anniversary
+		$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
 
-		if ($deletetoday) {
-			// delete the service today, not on billing anniversary
-			$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
+		$this->service_model->delete_service($userserviceid, 'removed', $today);
 
-			$this->service_model->delete_service($userserviceid, 'removed', $today);
+		// add to log that the service was removed
+		$this->log_model->activity($this->user,$this->account_number,'delete',
+				'service', $userserviceid,'success');	  
 
-			// add to log that the service was removed
-			$this->log_model->activity($DB,$user,$account_number,'delete','service',$userserviceid,'success');	  
-
-			print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
-		}
-
+		redirect('/services');
 	}	
 
 
@@ -489,17 +482,15 @@ class Services extends App_Controller {
 	 *  delete the service without automatic removal date set
 	 * -------------------------------------------------------------------------
 	 */
-	public function deletenoauto()
+	public function deletenoauto($userserviceid)
 	{
+		// load the ticket model so that the delete service can leave a note
+		$this->load->model('ticket_model');
 
+		// delete the service without an automatic removal dateand do other notifications
+		$this->service_model->delete_service($userserviceid, 'removed', '');
 
-		if ($deletenoauto) {
-			// delete the service without an automatic removal dateand do other notifications
-			$this->service_model->delete_service($userserviceid, 'removed', '');
-
-			print "<script language=\"JavaScript\">window.location.href = \"index.php?load=services&type=module\";</script>";
-		}
-
+		redirect('/services');
 	}	
 
 

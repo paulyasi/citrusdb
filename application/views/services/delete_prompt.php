@@ -12,7 +12,7 @@ class=smallbutton></form></td>
 <td align=left><form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>index.php/services/deletetoday/<?php echo $userserviceid?>" method=post>
 <input name=deletetoday type=submit value="<?php echo lang('deleteservice_removetoday') ?>" class=smallbutton></form></td>   
 
-<td align=left><form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>index.php/services/deletenoauto<?php echo $userserviceid?>" method=post>
+<td align=left><form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>index.php/services/deletenoauto/<?php echo $userserviceid?>" method=post>
 <input name=deletenoauto type=submit value="<?php echo lang('deleteservice_activeuser')?> " class=smallbutton></form></td> 
 
 <td align=left><form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>index.php/customer" method=post>

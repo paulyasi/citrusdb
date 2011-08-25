@@ -232,7 +232,7 @@ class Customer_Model extends CI_Model
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 		$myresult = $result->row_array();	
 		$signup_date = $myresult['signup_date'];
-		list($myyear, $mymonth, $myday) = split('-', $signup_date);
+		list($myyear, $mymonth, $myday) = preg_split("/-/", $signup_date);
 		$removal_date  = date("Y-m-d", 
 				mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
 		$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
