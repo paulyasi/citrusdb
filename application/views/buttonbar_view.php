@@ -1,4 +1,4 @@
-</div><div id="header">		
+</div><div id="header" style="background-color: #BBB; width: 100%;">		
 <table cellpadding=0 cellspacing=0 border=0 width=720>
 
 <td width="20%" align=center>

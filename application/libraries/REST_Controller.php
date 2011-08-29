@@ -30,6 +30,7 @@ class REST_Controller extends CI_Controller {
 	{
 		parent::__construct();
 
+
 		// Lets grab the config and get ready to party
 		$this->load->config('rest');
 		
@@ -589,6 +590,20 @@ class REST_Controller extends CI_Controller {
 			return FALSE;
 		}
 
+		// added for citrus authentication modification
+		$CI =& get_instance();
+		$CI->load->model('user_model');
+  		if($CI->user_model->user_login($username,$password))
+		{
+			return TRUE;
+		}
+		else
+		{
+			// TODO stop accepting attempts after a few failures?
+			return FALSE;
+		}
+
+		/*
 		$valid_logins = & $this->config->item('rest_valid_logins');
 
 		if (!array_key_exists($username, $valid_logins))
@@ -603,6 +618,7 @@ class REST_Controller extends CI_Controller {
 		}
 
 		return TRUE;
+		*/
 	}
 
 	private function _prepare_basic_auth()
@@ -631,7 +647,7 @@ class REST_Controller extends CI_Controller {
 			$this->_force_login();
 		}
 	}
-
+	
 	private function _prepare_digest_auth()
 	{
 		$uniqid = uniqid(""); // Empty argument for backward compatibility
