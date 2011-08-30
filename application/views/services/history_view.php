@@ -1,7 +1,7 @@
 <?php   
 ?>
 <h3><?php echo lang('service') . " " . lang('history');?></h3>
-<a href="index.php/services">[ <?php echo lang('back');?> ]</a>
+<a href="<?php echo $this->url_prefix?>index.php/services">[ <?php echo lang('back');?> ]</a>
 <table cellpadding=0 border=0 cellspacing=0 width=720><td valign=top>		
 	<table cellpadding=5 cellspacing=1 border=0 width=720>
 	<td bgcolor="#ccccdd"><b><?php echo lang('id');?></b></td>
@@ -69,17 +69,11 @@ foreach ($services->result_array() as $myresult)
 	<td>$optiondetails</td>
 	<td>$start_datetime</td>
 	<td>$end_datetime</td>
-	<td><a href=\"index.php?load=services&type=module&history=on&serviceid=$id&editremovaldate=on&removaldate=$removal_date\">$removal_date</a></td>
+	<td><a href=\"".$this->url_prefix."index.php/services/editremovaldate/$id/$removal_date\">$removal_date</a></td>
 	<td>$billing_id</td>
 	<td>$totalprice</td>
 <td>
-<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>
-<input type=hidden name=load value=services>
-<input type=hidden name=type value=module>
-<input type=hidden name=edit value=on>
-<input type=hidden name=userserviceid value=\"$id\">
-   <input type=hidden name=servicedescription value=\"$service_description\">
-<input type=hidden name=optionstable value=\"$options_table\">
+<form style=\"margin-bottom:0;\" action=\"".$this->url_prefix."index.php/services/edit/$id\" method=post>
 <input name=editbutton type=submit value=\"".lang('edit')."\" class=smallbutton></form>
 </td>
 	</td></tr>";
