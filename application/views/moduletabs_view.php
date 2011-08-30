@@ -26,9 +26,9 @@ foreach($result->result() as $myresult)
     if (in_array ($modulename, $viewable))
     {
 		if ($myuri == $modulename) {
-			echo "<div><a class=\"active\" href=\"" . $this->url_prefix . "index.php/$modulename\">$commonname</a></div>";
+			echo "<div><a class=\"active\" href=\"" . $this->url_prefix . "/index.php/$modulename\">$commonname</a></div>";
 		} else {
-			echo "<div><a href=\"" . $this->url_prefix . "index.php/$modulename\">$commonname</a></div>";
+			echo "<div><a href=\"" . $this->url_prefix . "/index.php/$modulename\">$commonname</a></div>";
 		}
     }
 	

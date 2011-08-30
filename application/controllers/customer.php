@@ -161,7 +161,7 @@ class Customer extends App_Controller
 			// if they hit yes, this will sent them into the billingaddress update
 
 			print "<form style=\"margin-bottom:0;\" action=\"".
-				$this->url_prefix . "index.php/customer/updatebillingaddress\" 
+				$this->url_prefix . "/index.php/customer/updatebillingaddress\" 
 				method=post>";
 			print "<input name=billingaddress type=submit value=\"" . lang('yes') . 
 				"\"class=smallbutton></form></td>";
@@ -169,7 +169,7 @@ class Customer extends App_Controller
 			// if they hit no, send them back to the service edit screen
 
 			print "<td align=left width=360><form style=\"margin-bottom:0;\" ".
-				"action=\"" . $this->url_prefix . "index.php/customer\" method=post>";
+				"action=\"" . $this->url_prefix . "/index.php/customer\" method=post>";
 			print "<input name=done type=submit value=\"" . lang('no') . 
 				"\"class=smallbutton>";
 			print "</form></td></table>";
@@ -319,7 +319,7 @@ class Customer extends App_Controller
 		// ask what reason they are canceling
 		print lang('whycanceling') . "<p>";
 		print "<form style=\"margin-bottom:0;\" ".
-			"action=\"" . $this->url_prefix . "index.php/customer/delete/$now\" ".
+			"action=\"" . $this->url_prefix . "/index.php/customer/delete/$now\" ".
 			"name=\"cancelform\" method=post>";
 
 		// print list of reasons to choose from
@@ -494,13 +494,13 @@ class Customer extends App_Controller
 		// if they hit yes, this will sent them into the undelete.php file
 		// and remove the service on their next billing anniversary
 
-		print "<form style=\"margin-bottom:0;\" action=\"". $this->url_prefix . "index.php/customer/undelete\" method=post>";
+		print "<form style=\"margin-bottom:0;\" action=\"". $this->url_prefix . "/index.php/customer/undelete\" method=post>";
 		print "<input name=undeletenow type=submit value=\"". lang('yes') . " \" class=smallbutton></form></td>";
 
 		// if they hit no, send them back to the service edit screen
 
 		print "<td align=left width=240>";
-		print "<form style=\"margin-bottom:0;\" action=\"". $this->url_prefix ."index.php/customer\" method=post>";
+		print "<form style=\"margin-bottom:0;\" action=\"". $this->url_prefix ."/index.php/customer\" method=post>";
 		print "<input name=done type=submit value=\"" . lang('no') . " \" class=smallbutton>";
 		print "</form></td>";
 

@@ -61,11 +61,11 @@ if ($rerun_date == "")
 }
 
 
-echo "<a href=\"" . $this->url_prefix . "index.php/billing\">[ " . lang('undochanges') . " ]</a>";
+echo "<a href=\"" . $this->url_prefix . "/index.php/billing\">[ " . lang('undochanges') . " ]</a>";
 
 echo "<h3>".lang('organizationname').": $organization_name</h3>";
 
-$billing_form_url = "$this->ssl_url_prefix" . "index.php/billing/save";
+$billing_form_url = "$this->ssl_url_prefix" . "/index.php/billing/save";
 
 ?>
 <table cellpadding=0 border=0 cellspacing=0 width=720>

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed')
 ?>
-<a href="<?php echo $this->url_prefix; ?>index.php/services">
+<a href="<?php echo $this->url_prefix; ?>/index.php/services">
 <?php 
 echo lang('undochanges') . "</a>";
   
@@ -41,7 +41,7 @@ if ($removed == 'y') {
 } else {
 	print lang('active') ."</h4>";
 }
-print "<form action=\"".$this->url_prefix."index.php/services/save\" method=post><table width=720 ".
+print "<form action=\"".$this->url_prefix."/index.php/services/save\" method=post><table width=720 ".
 "cellpadding=5 cellspacing=1 border=0>\n";
 print "<input type=hidden name=servicedescription ".
 "value=\"$servicedescription\">\n<input type=hidden name=optionstable ".
@@ -161,7 +161,7 @@ if ($removed == 'y' AND $cancel_date == '')
 {
 	// print the undelete button
 	print "<p><form style=\"margin-bottom:0;\" 
-		action=\"".$this->url_prefix."index.php/services/undelete\" method=post>".
+		action=\"".$this->url_prefix."/index.php/services/undelete\" method=post>".
 		"<input type=hidden name=optionstable value=$optionstable>";
 	print "<input type=hidden name=userserviceid value=$userserviceid>";
 	print "<input type=hidden name=load value=services>";
@@ -174,7 +174,7 @@ else
 {
 	// print the delete button
 	print "<p><form 
-		action=\"".$this->url_prefix."index.php/services/delete\" method=post>".
+		action=\"".$this->url_prefix."/index.php/services/delete\" method=post>".
 		"<input type=hidden name=servicedescription value=\"$servicedescription\">".
 		"<input type=hidden name=userserviceid value=$userserviceid>".
 		"<input name=delete type=submit value=\"" . lang('deleteservice') . "\" ".
@@ -182,7 +182,7 @@ else
 }
 
 // print the open ticket button
-print "<form style=\"margin-bottom:0;\" action=\"".$this->url_prefix."index.php/support/openticket\" method=post>";
+print "<form style=\"margin-bottom:0;\" action=\"".$this->url_prefix."/index.php/support/openticket\" method=post>";
 print "<input type=hidden name=serviceid value=\"$userserviceid\">\n";
 if ($support_notify) {
 	print "<input name=openticket type=submit value=\"".lang('notify')." $support_notify\" ".
@@ -276,7 +276,7 @@ $result = $this->db->query($query) or die ("$query $l_queryfailed");
 if ($result->num_rows() > 0) {
 
 	print "<form style=\"margin-bottom:0;\" 
-		action=\"".$this->url_prefix."index.php/services/shipfieldassets\" method=post>".
+		action=\"".$this->url_prefix."/index.php/services/shipfieldassets\" method=post>".
 		"<table width=720 cellpadding=5 cellspacing=1 border=0>".
 		"<input type=hidden name=optionstable value=$optionstable>";
 	print "<input type=hidden name=userserviceid value=$userserviceid>";
@@ -302,7 +302,7 @@ if ($result->num_rows() > 0) {
 
 /*----------------------------------------------------------------------*/
 // print the usage multiple form section
-print "<form action=\"".$this->url_prefix."index.php/services/usage\" method=post>
+print "<form action=\"".$this->url_prefix."/index.php/services/usage\" method=post>
 <table width=720 cellpadding=5 cellspacing=1 border=0>";
 print "<input type=hidden name=userserviceid value=$userserviceid>";
 
@@ -329,7 +329,7 @@ print "<td></td><td><input name=usage type=submit value=\"". lang('change') ."\"
 
 /*----------------------------------------------------------------------*/
 // change the billing ID	
-print "<form action=\"".$this->url_prefix."index.php/services/changebillingid\" method=post>
+print "<form action=\"".$this->url_prefix."/index.php/services/changebillingid\" method=post>
 <table width=720 cellpadding=5 cellspacing=1 border=0>";
 print "<input type=hidden name=servicedescription ".
 "value=\"$servicedescription\">";
@@ -376,7 +376,7 @@ print "<td></td><td><input name=billing type=submit value=\"". lang('change') ."
 
 if ($optionstable) {
 
-	print "<form action=\"".$this->url_prefix."index.php/services/changeservicetype\" method=post>
+	print "<form action=\"".$this->url_prefix."/index.php/services/changeservicetype\" method=post>
 		<table width=720 cellpadding=5 ".
 		"cellspacing=1 border=0>\n";
 	print "<input type=hidden name=load value=services>\n";

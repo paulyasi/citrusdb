@@ -1,6 +1,6 @@
 <?php
 // list the service options after they clicked on the add button.
-echo "<a href=\"".$this->url_prefix."index.php/services\">
+echo "<a href=\"".$this->url_prefix."/index.php/services\">
 [ ". lang('undochanges') ."</a> ]";
 $myresult = $this->service_model->service_with_org($serviceid);
 $servicename = $myresult['service_description'];
@@ -18,7 +18,7 @@ window.open("newurl");
 </script>	
 
 <h4><?php echo lang('addingservice');?>: <?php echo $servicename?> (<?php echo $service_org_name?>)</h4>
-<form action="<?php echo $this->url_prefix?>index.php/services/add_service" name="AddService" method=post> 
+<form action="<?php echo $this->url_prefix?>/index.php/services/add_service" name="AddService" method=post> 
 <table width=720 cellpadding=5 cellspacing=1 border=0>
 <input type=hidden name=options_table_name value=<?=$options_table_name?>>
 <input type=hidden name=serviceid value=<?=$serviceid?>>

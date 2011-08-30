@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
-[ <a href="<?php echo $this->url_prefix; ?>index.php/billing/addbilling">
+[ <a href="<?php echo $this->url_prefix; ?>/index.php/billing/addbilling">
 <?php echo lang('addaltbilling');?></a> ]<br>
 
 <table width=720><tr bgcolor="#ddddee">
@@ -12,7 +12,7 @@ foreach ($alternate as $myresult)
 
 	$mystatus = $this->billing_model->billingstatus($billing_id);
 
-	$alternate_billing_id_url = $this->ssl_url_prefix . "index.php/billing/edit/$billing_id";
+	$alternate_billing_id_url = $this->ssl_url_prefix . "/index.php/billing/edit/$billing_id";
 
 	print "<td><b>$billing_orgname</b> &nbsp;<a href=\"$alternate_billing_id_url\">".
 	"$billing_id</a></td><td>$billing_type</td><td>$mystatus</td>";

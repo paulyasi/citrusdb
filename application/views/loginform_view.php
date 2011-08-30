@@ -10,7 +10,7 @@
 	<div id=loginbox>
 		<center><table><td valign=top><img src="../../images/my-logo.png">
 		<P>
-		<form action = <?php echo $this->config->item('ssl_base_url') . "index.php/session/auth" ?> 
+		<form action = <?php echo $this->config->item('ssl_base_url') . "/index.php/session/auth" ?> 
 			autocomplete=off method=post>
 		<B><?php echo lang('username', 'user_name'); ?></B><BR>
 		<INPUT TYPE="TEXT" id="user_name" NAME="user_name" VALUE="" SIZE="15" MAXLENGTH="15">

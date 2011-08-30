@@ -2,7 +2,7 @@
 ?>
 
 <a href="<?php echo $this->ssl_url_prefix; ?>
-index.php/billing/edit/<?php echo $billing_id;?>">
+/index.php/billing/edit/<?php echo $billing_id;?>">
 [ <?php echo lang('editdefaultbilling');?> ]</a>
 
 <a href=index.php?load=billing&type=module&resetaddr=on&account_number=$account_number>[ <?php echo lang('resetaddresstocustomer');?> ]</a>

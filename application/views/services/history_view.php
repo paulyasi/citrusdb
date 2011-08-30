@@ -1,7 +1,7 @@
 <?php   
 ?>
 <h3><?php echo lang('service') . " " . lang('history');?></h3>
-<a href="<?php echo $this->url_prefix?>index.php/services">[ <?php echo lang('back');?> ]</a>
+<a href="<?php echo $this->url_prefix?>/index.php/services">[ <?php echo lang('back');?> ]</a>
 <table cellpadding=0 border=0 cellspacing=0 width=720><td valign=top>		
 	<table cellpadding=5 cellspacing=1 border=0 width=720>
 	<td bgcolor="#ccccdd"><b><?php echo lang('id');?></b></td>
@@ -69,11 +69,11 @@ foreach ($services->result_array() as $myresult)
 	<td>$optiondetails</td>
 	<td>$start_datetime</td>
 	<td>$end_datetime</td>
-	<td><a href=\"".$this->url_prefix."index.php/services/editremovaldate/$id/$removal_date\">$removal_date</a></td>
+	<td><a href=\"".$this->url_prefix."/index.php/services/editremovaldate/$id/$removal_date\">$removal_date</a></td>
 	<td>$billing_id</td>
 	<td>$totalprice</td>
 <td>
-<form style=\"margin-bottom:0;\" action=\"".$this->url_prefix."index.php/services/edit/$id\" method=post>
+<form style=\"margin-bottom:0;\" action=\"".$this->url_prefix."/index.php/services/edit/$id\" method=post>
 <input name=editbutton type=submit value=\"".lang('edit')."\" class=smallbutton></form>
 </td>
 	</td></tr>";

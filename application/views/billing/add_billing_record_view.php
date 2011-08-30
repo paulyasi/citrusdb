@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 ?>
-<a href=\"index.php?load=billing&type=module\">[ <?php echo lang('undochanges');?> ]</a>
+<a href="<?php echo $this->url_prefix;?>/index.php/billing">[ <?php echo lang('undochanges');?> ]</a>
 <p>
 <?php echo lang('areyousureadd') . " " . $account_number; ?>
 <p>
-<form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>index.php/billing/create" name="form1" method=post>
+<form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>/index.php/billing/create" name="form1" method=post>
 
 <?php								  
 // print list of organizations to choose from

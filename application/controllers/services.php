@@ -392,7 +392,7 @@ class Services extends App_Controller {
 		// load the add service options view
 		$data['serviceid'] = $serviceid;
 		$data['detail1'] = $detail1;
-		$this->load->view('services_add_options_form_view', $data);
+		$this->load->view('services/add_options_form_view', $data);
 
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');	

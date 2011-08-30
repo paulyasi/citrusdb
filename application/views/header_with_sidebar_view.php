@@ -1,7 +1,7 @@
 <html>
 <head>
 <title><?php echo lang('title');?></title>
-<LINK href="<?php echo $this->url_prefix;?>citrus.css" type=text/css rel=STYLESHEET>
+<LINK href="<?php echo $this->url_prefix;?>/citrus.css" type=text/css rel=STYLESHEET>
 <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
 <script language="JavaScript">
 	function h(oR) {

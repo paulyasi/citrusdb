@@ -309,13 +309,13 @@ class Billing extends App_Controller
 
 				// if they hit yes, this will sent them into the delete.php file and remove the service on their next billing anniversary
 
-				print "<form style=\"margin-bottom:0;\" action=\"" . $this->url_prefix . "index.php/customer/whycancel\" method=post>";
+				print "<form style=\"margin-bottom:0;\" action=\"" . $this->url_prefix . "/index.php/customer/whycancel\" method=post>";
 				print "<input name=whycancel type=submit value=\"". lang('yes') . "\" class=smallbutton></form></td>";
 
 				// if they hit no, send them back to the service edit screen
 
 				print "<td align=left width=240>";
-				print "<form style=\"margin-bottom:0;\" action=\"" . $this->url_prefix . "index.php/customer\" method=post>";
+				print "<form style=\"margin-bottom:0;\" action=\"" . $this->url_prefix . "/index.php/customer\" method=post>";
 				print "<input name=done type=submit value=\" ". lang('no') . " \" class=smallbutton>";
 				print "</form></td>";
 
@@ -323,7 +323,7 @@ class Billing extends App_Controller
 				// service on the next available work date, the next valid billing date
 
 				print "<td align=left width=240>";
-				print "<form style=\"margin-bottom:0;\" action=\"" . $this->url_prefix . "index.php/customer/whycancel/now\" method=post>";
+				print "<form style=\"margin-bottom:0;\" action=\"" . $this->url_prefix . "/index.php/customer/whycancel/now\" method=post>";
 				print "<input name=whycancel type=submit value=\"". lang('remove_now') . "\" class=smallbutton>";  
 				print "</form></td>";
 
