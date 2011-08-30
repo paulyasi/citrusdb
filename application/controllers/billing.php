@@ -488,29 +488,62 @@ class Billing extends App_Controller
 	public function turnoff()
 	{
 		
-	if ($pallow_modify)    
-	{       
-		include('./modules/billing/turnoff.php');    
-	}  else permission_error();
 	}
-
-	
-	/*
-	 * --------------------------------------------------------------------------------
-	 *  perform the uncancel by undeleting the customer record and associated things
-	 * --------------------------------------------------------------------------------
-	 */
 
 
 	public function resetaddr()
 	{
-		// reset the address to the current customer address
-	    if ($pallow_modify)
-    	{
-       		include('./modules/billing/resetaddr.php');
-    	} else permission_error();
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		// load the reset addr view prompt
+		$this->load->view('billing/resetaddr_view');
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
 	}
-	
+
+	public function saveresetaddr()
+	{
+		// get the customer information
+		$query = "SELECT * FROM customer WHERE account_number = $this->account_number";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myresult = $result->row_array();
+
+		$name = $myresult['name'];
+		$company = $myresult['company'];
+		$street = $myresult['street'];
+		$city = $myresult['city'];
+		$state = $myresult['state'];
+		$zip = $myresult['zip'];
+		$country = $myresult['country'];
+		$phone = $myresult['phone'];
+		$fax = $myresult['fax'];
+		$contact_email = $myresult['contact_email'];
+		$default_billing_id = $myresult['default_billing_id'];	
+
+		// save billing address
+		$query = "UPDATE billing 
+			SET name = '$name',
+				company = '$company',
+				street = '$street',
+				city = '$city',
+				state = '$state',
+				zip = '$zip',
+				country = '$country',
+				phone = '$phone',
+				fax = '$fax',
+				contact_email = '$contact_email' WHERE id = $default_billing_id";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		print "<h3>".lang('changessaved')."<h3>";
+		
+		redirect ('/billing');	
+	}
+
 
 
 	public function cancelwfee()

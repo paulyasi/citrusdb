@@ -5,7 +5,7 @@
 /index.php/billing/edit/<?php echo $billing_id;?>">
 [ <?php echo lang('editdefaultbilling');?> ]</a>
 
-<a href=index.php?load=billing&type=module&resetaddr=on&account_number=$account_number>[ <?php echo lang('resetaddresstocustomer');?> ]</a>
+<a href="<?php echo $this->url_prefix?>/index.php/billing/resetaddr/<?php echo $this->account_number;?>">[ <?php echo lang('resetaddresstocustomer');?> ]</a>
 <a href=index.php?load=billing&type=module&rerun=on&billing_id=$billing_id>[ <?php echo lang('rerun');?> ]</a>
 
 <?php
