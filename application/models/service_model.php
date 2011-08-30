@@ -241,6 +241,22 @@ class Service_model extends CI_Model
 		return $result;
 	}
 
+
+	function list_history($account_number)
+	{
+
+		$query = "SELECT user.*, master.service_description, master.options_table, 
+			master.pricerate, master.frequency 
+			FROM user_services AS user, master_services AS master 
+			WHERE user.master_service_id = master.id 
+			AND user.account_number = '$account_number' AND user.removed = 'y' 
+			ORDER BY user.usage_multiple DESC, master.pricerate DESC";
+		$result = $this->db->query($query) or die ("queryfailed");
+
+		return $result;
+	}
+
+
 	function list_services_in_category($account_number, $category)
 	{
 		$query = "SELECT user.*, master.service_description, master.options_table, ".
@@ -257,18 +273,21 @@ class Service_model extends CI_Model
 	{
 		$query = "SELECT * FROM $options_table WHERE user_services = '$service_id'";
 		$optionsresult = $this->db->query($query) or die ("$l_queryfailed");
-		$myoptions = $optionsresult->row_array();
-
-		// convert the associative array into a numbered array
-		// since we don't know the names of customer attribute fields
-		$i = 0;
-		foreach($myoptions AS $myfieldname)
+		if ($optionsresult->num_rows() > 0)
 		{
-			$data[$i] = $myfieldname;
-			$i++;
-		}
+			$myoptions = $optionsresult->row_array();
 
-		return $data;
+			// convert the associative array into a numbered array
+			// since we don't know the names of customer attribute fields
+			$i = 0;
+			foreach($myoptions AS $myfieldname)
+			{
+				$data[$i] = $myfieldname;
+				$i++;
+			}
+
+			return $data;
+		}
 	}
 
 
@@ -580,7 +599,7 @@ class Service_model extends CI_Model
 
 		// create the ticket with the service message
 		$this->ticket_model->create_ticket($this->user, $notify, $this->account_number, 
-			$status, $description, NULL, NULL, NULL, $user_service_id);
+				$status, $description, NULL, NULL, NULL, $user_service_id);
 	}
 
 }

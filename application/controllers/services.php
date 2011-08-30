@@ -503,11 +503,74 @@ class Services extends App_Controller {
 
 	public function history()
 	{
-		if ($pallow_remove) {
-			include('./modules/customer/history');
-		} else permission_error();
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'services');
+		if ($permission['view'])
+		{
+			// load the module header common to all module views
+			$this->load->view('module_header_view');
+
+			// show the services history for this customer
+			$data['services'] = $this->service_model->list_history($this->account_number);
+			$this->load->view('services/history_view', $data);	
+
+			// the history listing tabs
+			$this->load->view('historyframe_tabs_view');	
+
+			// show html footer
+			$this->load->view('html_footer_view');
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}
 	}
 
+
+	function editremovaldate() 
+	{
+		// prompt to change the removal date
+
+		$editremovaldate = $base->input['editremovaldate'];
+		$saveremovaldate = $base->input['saveremovaldate'];
+		$removaldate = $base->input['removaldate'];
+		$serviceid = $base->input['serviceid'];
+
+		echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">".
+			"<input type=hidden name=load value=services>".
+			"<input type=hidden name=type value=module>".
+			"<input type=hidden name=history value=on>".
+			"<input type=hidden name=saveremovaldate value=\"on\">".     
+			"<input type=hidden name=serviceid value=\"$serviceid\">".
+			"<table>".
+			"<td>$l_new $l_removaldate:</td><td><input type=text name=removaldate ".
+			"value=\"$removaldate\"></td><tr>".
+			"<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" ".
+			"value=\"$l_submitrequest\"></td>".
+			"</form>";
+	}
+
+	function saveremovaldate() 
+	{
+		// TODO: check that the new date entered is blank or today or in the future, not the past
+		// allow blank to be inserted that will make it so there is no removal, eg NULL?
+
+		$editremovaldate = $base->input['editremovaldate'];
+		$saveremovaldate = $base->input['saveremovaldate'];
+		$removaldate = $base->input['removaldate'];
+		$serviceid = $base->input['serviceid'];
+
+		$query = "UPDATE user_services SET removal_date = '$removaldate' ".
+			"WHERE id = '$serviceid'";
+		$result = $DB->Execute($query) or die ("due date update $l_queryfailed");
+
+		// redirect back to the service history for their account
+		echo "<script language=\"JavaScript\">window.location.href ".
+			"= \"index.php?load=services&type=module&history=on\";</script>";
+
+	}
+
+	// print the history
 	public function vendor()
 	{
 		if ($pallow_remove) {
