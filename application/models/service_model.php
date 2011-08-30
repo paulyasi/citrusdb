@@ -462,6 +462,14 @@ class Service_model extends CI_Model
 	} // end delete_service
 
 
+	function update_removal_date($serviceid, $removaldate)
+	{
+		$query = "UPDATE user_services SET removal_date = '$removaldate' ".
+			"WHERE id = '$serviceid'";
+		$result = $this->db->query($query) or die ("due date update $l_queryfailed");
+	}
+
+
 	/*	
 	 * -------------------------------------------------------------------------------
 	 *  add a service message ticket for new, modified, or shutoff services
