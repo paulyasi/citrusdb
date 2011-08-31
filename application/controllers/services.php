@@ -33,7 +33,7 @@ class Services extends App_Controller {
 			
 			$this->load->view('moduletabs_view');
 			
-			$this->load->model('ticket_model');
+			$this->load->model('support_model');
 			$this->load->view('messagetabs_view');
 			
 			$this->load->view('buttonbar_view');
@@ -79,7 +79,7 @@ class Services extends App_Controller {
 
 			$this->load->view('moduletabs_view');
 
-			$this->load->model('ticket_model');
+			$this->load->model('support_model');
 			$this->load->view('messagetabs_view');
 
 			$this->load->view('buttonbar_view');
@@ -120,7 +120,7 @@ class Services extends App_Controller {
 
 		$this->load->view('moduletabs_view');
 
-		$this->load->model('ticket_model');
+		$this->load->model('support_model');
 		$this->load->view('messagetabs_view');
 
 		$this->load->view('buttonbar_view');
@@ -259,7 +259,7 @@ class Services extends App_Controller {
 	public function changeservicetype() 
 	{
 		// load the ticket model to save a note about this
-		$this->load->model('ticket_model');
+		$this->load->model('support_model');
 		
 		$userserviceid = $this->input->post('userserviceid');
 		$master_service_id = $this->input->post('master_service_id');
@@ -311,7 +311,7 @@ class Services extends App_Controller {
 	 */
 	public function add_service()
 	{
-		$this->load->model('ticket_model');
+		$this->load->model('support_model');
 
 		// GET Variables
 		//$this->id = $this->input->post('id');
@@ -437,7 +437,7 @@ class Services extends App_Controller {
 	public function deletenow($userserviceid)
 	{
 		// load the ticket model so that the delete service can leave a note
-		$this->load->model('ticket_model');
+		$this->load->model('support_model');
 
 		// figure out the signup anniversary removal date
 		$removal_date = $this->customer_model->get_anniversary_removal_date(
@@ -462,7 +462,7 @@ class Services extends App_Controller {
 	public function deletetoday($userserviceid)
 	{
 		// load the ticket model so that the delete service can leave a note
-		$this->load->model('ticket_model');
+		$this->load->model('support_model');
 
 		// delete the service today, not on billing anniversary
 		$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
@@ -485,7 +485,7 @@ class Services extends App_Controller {
 	public function deletenoauto($userserviceid)
 	{
 		// load the ticket model so that the delete service can leave a note
-		$this->load->model('ticket_model');
+		$this->load->model('support_model');
 
 		// delete the service without an automatic removal dateand do other notifications
 		$this->service_model->delete_service($userserviceid, 'removed', '');

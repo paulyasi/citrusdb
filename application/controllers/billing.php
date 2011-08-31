@@ -362,7 +362,7 @@ class Billing extends App_Controller
 		{
 			// load the models for functions we use
 			$this->load->model('billing_model');			
-			$this->load->model('ticket_model');			
+			$this->load->model('support_model');			
 			$this->load->model('log_model');			
 			$this->load->model('service_model');			
 
@@ -440,7 +440,7 @@ class Billing extends App_Controller
 			// if they are carrier dependent, send a note to
 			// the billing_noti
 			$desc = lang('canceled') . ": $cancel_reason_text";
-			$this->ticket_model->create_ticket($this->user, NULL, 
+			$this->support_model->create_ticket($this->user, NULL, 
 					$this->account_number, 'automatic', $desc);
 
 			// get the billing_id for the customer's payment_history

@@ -9,7 +9,7 @@ if (!isset($_COOKIE[$ticketdatetime])) {
 $usernamedatetime = $_COOKIE[$ticketdatetime];
 
 // lookup the ticket count for this user
-$data = $this->ticket_model->user_count($this->user);
+$data = $this->support_model->user_count($this->user);
 $created = $data['created'];
 $num_rows = $data['num_rows'];
 
@@ -49,7 +49,7 @@ foreach ($query->result() as $row) {
   }
   $groupnamedatetime = $_COOKIE[$ticketdatetime];
   
-	$data = $this->ticket_model->group_count($groupname);
+	$data = $this->support_model->group_count($groupname);
 	$created = $data['created'];
 	$num_rows = $data['num_rows'];	
 

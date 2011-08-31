@@ -360,7 +360,7 @@ class Customer extends App_Controller
 		{
 			// load the models for functions we use
 			$this->load->model('billing_model');			
-			$this->load->model('ticket_model');			
+			$this->load->model('support_model');			
 			$this->load->model('log_model');			
 			$this->load->model('service_model');			
 
@@ -438,7 +438,7 @@ class Customer extends App_Controller
 			// if they are carrier dependent, send a note to
 			// the billing_noti
 			$desc = lang('canceled') . ": $cancel_reason_text";
-			$this->ticket_model->create_ticket($this->user, NULL, 
+			$this->support_model->create_ticket($this->user, NULL, 
 					$this->account_number, 'automatic', $desc);
 
 			// get the billing_id for the customer's payment_history
@@ -561,10 +561,10 @@ class Customer extends App_Controller
 	public function history()
 	{
 		// load the ticket model
-		$this->load->model('ticket_model');
+		$this->load->model('support_model');
 
 		// get the customer_history
-		$data['history'] = $this->ticket_model->customer_history($this->account_number);
+		$data['history'] = $this->support_model->customer_history($this->account_number);
 		$this->load->view('customer/history_view', $data);
 	}
 

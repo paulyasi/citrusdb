@@ -10,7 +10,7 @@ $this->session->userdata('user_name')
 );
 $this->load->view('recently_viewed_view', $data);
 
-$this->load->model('ticket_model');
+$this->load->model('support_model');
 $this->load->view('messagetabs_view');
 
 $this->load->view('buttonbar_view');
