@@ -82,20 +82,20 @@ class Support extends App_Controller {
 	 */
 
 
-	public function editticket($id)
-	{
-		if ($pallow_modify)
-		{
-			include('./modules/support/editticket.php');
-		} else permission_error();
-	}
-
-
 	public function create()
 	{
-		if ($pallow_create)
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'support');
+		if ($permission['create'])
 		{
-			$newticketnumber = create_ticket($DB, $user, $notify, $account_number,
+			$notify = $this->input->post('notify');
+			$status = $this->input->post('status');
+			$description = $this->input->post('description');
+			$reminderdate = $this->input->post('reminderdate');
+			$user_services_id = $this->input->post('user_services_id');
+
+			$newticketnumber = $this->support_model->create_ticket(
+					$this->user, $notify, $this->account_number,
 					$status, $description, NULL, NULL, $reminderdate,
 					$user_services_id);
 
@@ -108,7 +108,21 @@ class Support extends App_Controller {
 				$result = $DB->Execute($query) or die ("closed by $l_queryfailed"); 
 			}
 
-			print "<script language=\"JavaScript\">window.location.href = \"index.php?load=customer&type=module\";</script>";
+			redirect('/customer');	
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}	
+
+	}
+
+
+	public function editticket($id)
+	{
+		if ($pallow_modify)
+		{
+			include('./modules/support/editticket.php');
 		} else permission_error();
 	}
 

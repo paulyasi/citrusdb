@@ -9,7 +9,7 @@
 <td bgcolor="#ddddee"><?php echo $user_services_id . " " . $service_description;?></td><tr>
 <td bgcolor="#ccccdd"><b><?php echo lang('notify');?></b></td>
 <td bgcolor="#ddddee">
-<form style="margin-bottom:0;" action="index.php" name="form1" method=post>
+<form style="margin-bottom:0;" action="<?php echo $this->url_prefix;?>/index.php/support/create" name="form1" method=post>
 <select name="notify">\n";
 <option value="<?php echo $support_notify?>"><?php echo $support_notify?></option>\n";
 <option value="nobody"><?php echo lang('nobody');?></option>\n";
@@ -63,9 +63,6 @@ print "</optgroup></select>\n";
 <tr>
 <td colspan=2 align=center>
 <input type=hidden name=serviceid value=<?php echo $user_services_id?>>
-<input type=hidden name=load value=support>
-<input type=hidden name=type value=module>
-<input type=hidden name=create value=on>
 <input name=addnow type=submit value="<?php echo lang('add');?>" class=smallbutton>
 </td>
 </table>
