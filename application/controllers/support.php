@@ -32,8 +32,18 @@ class Support extends App_Controller {
 			$this->load->view('module_header_view');
 		
 			// show the support note form
-			$data = $this->support_model->get_service_desc_and_notify($serviceid);
-			$this->load->view('support/index_view', $data);
+			if ($serviceid)
+			{
+				$data = $this->support_model->get_service_desc_and_notify($serviceid);
+				$this->load->view('support/index_view', $data);
+			}
+			else
+			{
+				$data['user_services_id'] = NULL;
+				$data['service_description'] = NULL;
+				$data['support_notify'] = NULL;
+				$this->load->view('support/index_view', $data);
+			}
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');	

@@ -4,14 +4,14 @@
 [ <?php echo lang('checknotes')?> ]</a>
 <table cellpadding=5 border=0 cellspacing=1 width=720>
 <td bgcolor="#ccccdd"><b><?php echo lang('createdby');?></b></td>
-<td bgcolor="#ddddee">$this->user</td><tr>
+<td bgcolor="#ddddee"><?php echo $this->user;?></td><tr>
 <td bgcolor="#ccccdd"><b><?php echo lang('service');?></b></td>
-<td bgcolor="#ddddee">$user_services_id $service_description</td><tr>
+<td bgcolor="#ddddee"><?php echo $user_services_id . " " . $service_description;?></td><tr>
 <td bgcolor="#ccccdd"><b><?php echo lang('notify');?></b></td>
 <td bgcolor="#ddddee">
 <form style="margin-bottom:0;" action="index.php" name="form1" method=post>
 <select name="notify">\n";
-<option value="$support_notify">$support_notify</option>\n";
+<option value="<?php echo $support_notify?>"><?php echo $support_notify?></option>\n";
 <option value="nobody"><?php echo lang('nobody');?></option>\n";
 <optgroup label="<?php echo lang('groups');?>">\n";
 <?php
@@ -43,7 +43,7 @@ print "</optgroup></select>\n";
 
 ?>
 </td><tr>
-<td bgcolor="#ccccdd"><b>$l_status</b></td><td bgcolor="#ddddee">
+<td bgcolor="#ccccdd"><b><?php echo lang('status');?></b></td><td bgcolor="#ddddee">
 <select name="status">
 <option value=""></option>
 <option value="not done" selected><?php echo lang('notdone');?></option>
@@ -53,7 +53,7 @@ print "</optgroup></select>\n";
 </td><tr>
 <td bgcolor="#ccccdd"><b><?php echo lang('description');?></b></td>
 <td bgcolor="#ddddee">
-<textarea name="description" rows=8 cols=50>$dtext</textarea></td><tr>
+<textarea name="description" rows=8 cols=50><?php echo $dtext?></textarea></td><tr>
 
 <td bgcolor="ccccdd"><b><?php echo lang('reminderdate');?></b></td><td bgcolor="#ddddee">
 <input name="reminderdate" type=text value="$reminderdate" size=12>
@@ -63,7 +63,7 @@ print "</optgroup></select>\n";
 
 <tr>
 <td colspan=2 align=center>
-<input type=hidden name=serviceid value=$user_services_id>
+<input type=hidden name=serviceid value=<?php echo $user_services_id?>>
 <input type=hidden name=load value=support>
 <input type=hidden name=type value=module>
 <input type=hidden name=create value=on>
