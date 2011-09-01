@@ -53,10 +53,10 @@ print "</optgroup></select>\n";
 </td><tr>
 <td bgcolor="#ccccdd"><b><?php echo lang('description');?></b></td>
 <td bgcolor="#ddddee">
-<textarea name="description" rows=8 cols=50><?php echo $dtext?></textarea></td><tr>
+<textarea name="description" rows=8 cols=50></textarea></td><tr>
 
 <td bgcolor="ccccdd"><b><?php echo lang('reminderdate');?></b></td><td bgcolor="#ddddee">
-<input name="reminderdate" type=text value="$reminderdate" size=12>
+<input name="reminderdate" type=text size=12>
 <A HREF="#" onClick="cal.select(document.forms['form1'].reminderdate,'anchor1','yyyy-MM-dd'); return false;"NAME="anchor1" ID="anchor1" style="color:blue">[
 <?php echo lang('select');?>]</A>&nbsp; 
 </td>
@@ -68,6 +68,6 @@ print "</optgroup></select>\n";
 <input type=hidden name=type value=module>
 <input type=hidden name=create value=on>
 <input name=addnow type=submit value="<?php echo lang('add');?>" class=smallbutton>
-n</td>
+</td>
 </table>
 </form>

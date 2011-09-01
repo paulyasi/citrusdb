@@ -79,9 +79,7 @@ echo "<tr onMouseOver='h(this);' onmouseout='deh(this);' onmouseup='window.locat
 	print "<input type=submit value=\"". lang('edit') . "\" ".
        "class=smallbutton></form>";
 
-	print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-	print "<input type=hidden name=load value=support>";
-	print "<input type=hidden name=type value=module>";
+	print "<form style=\"margin-bottom:0;\" action=\"".$this->url_prefix."/index.php/support\" method=post>";
 	print "<input type=hidden name=serviceid value=\"$id\">";
 	if ($support_notify) {
 		print "<input name=openticket type=submit value=\"" . lang('notify') . " $support_notify\" ".

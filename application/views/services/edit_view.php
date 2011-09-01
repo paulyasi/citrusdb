@@ -182,7 +182,7 @@ else
 }
 
 // print the open ticket button
-print "<form style=\"margin-bottom:0;\" action=\"".$this->url_prefix."/index.php/support/openticket\" method=post>";
+print "<form style=\"margin-bottom:0;\" action=\"".$this->url_prefix."/index.php/support/\" method=post>";
 print "<input type=hidden name=serviceid value=\"$userserviceid\">\n";
 if ($support_notify) {
 	print "<input name=openticket type=submit value=\"".lang('notify')." $support_notify\" ".
