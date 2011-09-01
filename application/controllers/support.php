@@ -25,6 +25,9 @@ class Support extends App_Controller {
 		$permission = $this->module_model->permission($this->user, 'support');
 		if ($permission['view'])
 		{
+			// load user model so can show list of users to send note to	
+			$this->load->model('user_model');
+
 			// get the variables for service id if some were passed to us	
 			$serviceid = $this->input->post('serviceid');
 
@@ -34,7 +37,7 @@ class Support extends App_Controller {
 			// show the support note form
 			if ($serviceid)
 			{
-				$data = $this->support_model->get_service_desc_and_notify($serviceid);
+				$data = $this->service_model->get_service_desc_and_notify($serviceid);
 				$this->load->view('support/index_view', $data);
 			}
 			else

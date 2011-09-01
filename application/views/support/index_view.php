@@ -16,10 +16,12 @@
 <optgroup label="<?php echo lang('groups');?>">\n";
 <?php
 // print the list of groups
-$query = "SELECT DISTINCT groupname FROM groups ORDER BY groupname";
-$result = $this->db->query($query) or die ("query failed");
+//$query = "SELECT DISTINCT groupname FROM groups ORDER BY groupname";
+//$result = $this->db->query($query) or die ("query failed");
 
-foreach ($result->result_array() as $myresult)
+$result = $this->user_model->list_groups();
+
+foreach ($result as $myresult)
 {
 	$groupname = $myresult['groupname'];          
 	print "<option>$groupname</option>\n";
@@ -28,12 +30,9 @@ foreach ($result->result_array() as $myresult)
 // print a seperator
 print "</optgroup><optgroup label=\"$l_users\">\n"; 
 
+$result = $this->user_model->list_users();
 
-// print the list of users
-$query = "SELECT username FROM user ORDER BY username";
-$result = $this->db->query($query) or die ("query failed");
-
-foreach ($result->result_array() as $myresult)
+foreach ($result as $myresult)
 {
 	$username = $myresult['username'];
 	print "<option>$username</option>\n";

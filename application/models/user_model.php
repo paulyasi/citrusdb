@@ -310,218 +310,236 @@ class User_Model extends CI_Model {
   /*--------------------------------------------------------------------*/
   // Change the password for the user
   /*--------------------------------------------------------------------*/
-  function user_change_password ($new_password1,$new_password2,$change_user_name,$old_password) {
-  	
-  	// load the PasswordHash library
-  	//require_once('application/libraries/PasswordHash.php');  	
-  	
-    global $feedback, $DB;
-    //new passwords present and match?
-    if ($new_password1 && ($new_password1==$new_password2)) {
-      //is this password long enough?
-      //if (account_pwvalid($new_password1)) {
-      //all vars are present?
-      if ($change_user_name && $old_password) {
-	//lower case everything
-	$change_user_name=strtolower($change_user_name);
-	//$old_password=strtolower($old_password);
-	//$new_password1=strtolower($new_password1);
+  function user_change_password ($new_password1,$new_password2,
+		  $change_user_name,$old_password) {
 
-	// check that old password is valid
-	//$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
-	
-	$sql="SELECT password FROM user WHERE username='$change_user_name' LIMIT 1";
-	$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result=$this->db->query($sql) or die ("Query Failed");
-	$mypassresult = $result->fields;
-	$checkhash = $mypassresult['password'];
-	
-	if (!$result || $result->num_rows() < 1 
-		|| !$this->passwordhash->CheckPassword($old_password, $checkhash)) {
-	  $feedback .= " User not found or bad password";
-	  return false;	  
-	} else {
-	  $newhash = $this->passwordhash->HashPassword($new_password1);
-	  if (strlen($newhash) < 20) {
-	    $feedback .= "Failed to hash new password";
-	    return false;
+	  // load the PasswordHash library
+	  //require_once('application/libraries/PasswordHash.php');  	
+
+	  global $feedback, $DB;
+	  //new passwords present and match?
+	  if ($new_password1 && ($new_password1==$new_password2)) 
+	  {
+		  if ($change_user_name && $old_password) {
+			  //lower case everything
+			  $change_user_name=strtolower($change_user_name);
+			  //$old_password=strtolower($old_password);
+			  //$new_password1=strtolower($new_password1);
+
+			  // check that old password is valid
+			  //$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
+
+			  $sql="SELECT password FROM user WHERE username='$change_user_name' LIMIT 1";
+			  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+			  $result=$this->db->query($sql) or die ("Query Failed");
+			  $mypassresult = $result->fields;
+			  $checkhash = $mypassresult['password'];
+
+			  if (!$result || $result->num_rows() < 1 
+					  || !$this->passwordhash->CheckPassword($old_password, $checkhash)) {
+				  $feedback .= " User not found or bad password";
+				  return false;	  
+			  } else {
+				  $newhash = $this->passwordhash->HashPassword($new_password1);
+				  if (strlen($newhash) < 20) {
+					  $feedback .= "Failed to hash new password";
+					  return false;
+				  }
+
+				  $sql="UPDATE user SET password='$newhash' ".
+					  "WHERE username='$change_user_name'";
+				  $result=$this->db->query($sql) or die ("Query Failed");
+				  $feedback .= ' Password Changed ';
+				  return true;
+			  }
+		  } else {
+			  $feedback .= ' Must Provide User Name And Old Password ';
+			  return false;
+		  }
+	  } else {
+		  return false;
+		  $feedback .= ' New Passwords Must Match ';
 	  }
-	  
-	  $sql="UPDATE user SET password='$newhash' ".
-	    "WHERE username='$change_user_name'";
-	  $result=$this->db->query($sql) or die ("Query Failed");
-	  $feedback .= ' Password Changed ';
-	  return true;
-	}
-      } else {
-	$feedback .= ' Must Provide User Name And Old Password ';
-	return false;
-      }
-    } else {
-      return false;
-      $feedback .= ' New Passwords Must Match ';
-    }
-  }
-	
+  } // end user_change_password function
+
   /*--------------------------------------------------------------------*/
   // Register a new user
   /*--------------------------------------------------------------------*/
   function user_register($user_name,$password1,$password2,$real_name,$admin,$manager) {
-    global $feedback,$hidden_hash_var,$DB;
-    
-    // load the PasswordHash library
-    //require_once('application/libraries/PasswordHash.php');    
+	  global $feedback,$hidden_hash_var,$DB;
 
-    global $ldap_enable;
-    global $ldap_host;
-    global $ldap_dn;
-    global $ldap_protocol_version;
-    global $ldap_uid_field;
+	  // load the PasswordHash library
+	  //require_once('application/libraries/PasswordHash.php');    
 
-    //all vars present and passwords match?
-    if ($user_name && ($ldap_enable || ($password1 && $password1==$password2))) {
-      //name is valid?
-      if ($this->account_namevalid($user_name)) {
-	$user_name=strtolower($user_name);
-	//$password1=strtolower($password1);
-	
-	//does the name exist in the database?
-	$sql="SELECT * FROM user WHERE username='$user_name'";
-	$result=$this->db->query($sql);
-	if ($result && $result->num_rows() > 0) {
-	  $feedback .=  ' ERROR - USER NAME EXISTS ';
-	  return false;
-	} else {
-	  // make a new password hash	  
-	  //$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
-	  $hash = $this->passwordhash->HashPassword($password1);
-	  if (strlen($hash) < 20 ) {
-	    // hash length always greater than 20, if not then something went wrong
-	    $feedback .= "Failed to hash new password";
-	    return false;
-	  }
-	  unset ($hasher);
-	  
-	  // then insert it into the database
-	  $sql="INSERT INTO user (username,real_name,password,remote_addr,admin,manager) ".
-	    "VALUES ('$user_name','$real_name','$hash','$GLOBALS[REMOTE_ADDR]','$admin','$manager')";
-	  $result=$this->db->query($sql) or die ("Insert Query Failed");
-	  if (!$result) {
-	    $feedback .= ' ERROR - '.db_error();
-	    return false;
+	  global $ldap_enable;
+	  global $ldap_host;
+	  global $ldap_dn;
+	  global $ldap_protocol_version;
+	  global $ldap_uid_field;
+
+	  //all vars present and passwords match?
+	  if ($user_name && ($ldap_enable || ($password1 && $password1==$password2))) {
+		  //name is valid?
+		  if ($this->account_namevalid($user_name)) {
+			  $user_name=strtolower($user_name);
+			  //$password1=strtolower($password1);
+
+			  //does the name exist in the database?
+			  $sql="SELECT * FROM user WHERE username='$user_name'";
+			  $result=$this->db->query($sql);
+			  if ($result && $result->num_rows() > 0) {
+				  $feedback .=  ' ERROR - USER NAME EXISTS ';
+				  return false;
+			  } else {
+				  // make a new password hash	  
+				  //$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
+				  $hash = $this->passwordhash->HashPassword($password1);
+				  if (strlen($hash) < 20 ) {
+					  // hash length always greater than 20, if not then something went wrong
+					  $feedback .= "Failed to hash new password";
+					  return false;
+				  }
+				  unset ($hasher);
+
+				  // then insert it into the database
+				  $sql="INSERT INTO user (username,real_name,password,remote_addr,admin,manager) ".
+					  "VALUES ('$user_name','$real_name','$hash','$GLOBALS[REMOTE_ADDR]','$admin','$manager')";
+				  $result=$this->db->query($sql) or die ("Insert Query Failed");
+				  if (!$result) {
+					  $feedback .= ' ERROR - '.db_error();
+					  return false;
+				  } else {
+					  $feedback .= ' Successfully Registered. ';
+					  return true;
+				  }
+			  }
+		  } else {
+			  $feedback .=  ' Account Name or Password Invalid ';
+			  return false;
+		  }
 	  } else {
-	    $feedback .= ' Successfully Registered. ';
-	    return true;
+		  $feedback .=  ' ERROR - Must Fill In User Name, and Matching Passwords ';
+		  return false;
 	  }
-	}
-      } else {
-	$feedback .=  ' Account Name or Password Invalid ';
-	return false;
-      }
-    } else {
-      $feedback .=  ' ERROR - Must Fill In User Name, and Matching Passwords ';
-      return false;
-    }
   }
 
-  
+
   /*--------------------------------------------------------------------*/
   // Get their user id
   /*--------------------------------------------------------------------*/
   function user_getid() {
-    global $G_USER_RESULT;
-    //see if we have already fetched this user from the db, if not, fetch it
-    if (!$G_USER_RESULT) {
-      $G_USER_RESULT=db_query("SELECT * FROM user WHERE username='" . $this->user_getname() . "'");
-    }
-    if ($G_USER_RESULT && db_numrows($G_USER_RESULT) > 0) {
-      return db_result($G_USER_RESULT,0,'user_id');
-    } else {	
-      return false;
-    }
+	  global $G_USER_RESULT;
+	  //see if we have already fetched this user from the db, if not, fetch it
+	  if (!$G_USER_RESULT) {
+		  $G_USER_RESULT=db_query("SELECT * FROM user WHERE username='" . $this->user_getname() . "'");
+	  }
+	  if ($G_USER_RESULT && db_numrows($G_USER_RESULT) > 0) {
+		  return db_result($G_USER_RESULT,0,'user_id');
+	  } else {	
+		  return false;
+	  }
   }
 
   /*--------------------------------------------------------------------*/
   // Get their real name
   /*--------------------------------------------------------------------*/
   function user_getrealname() {
-    global $DB;
-    $myusername = $this->user_getname();
-    $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-    $query = "SELECT * FROM user WHERE username = '$myusername'";
-    $result = $this->db->query($query) or die ("Query Failed");
-    $myresult = $result->fields;
-    $real_name = $myresult['real_name'];
-    return $real_name;
+	  global $DB;
+	  $myusername = $this->user_getname();
+	  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
+	  $query = "SELECT * FROM user WHERE username = '$myusername'";
+	  $result = $this->db->query($query) or die ("Query Failed");
+	  $myresult = $result->fields;
+	  $real_name = $myresult['real_name'];
+	  return $real_name;
   }
 
   /*--------------------------------------------------------------------*/
   // Get their email address
   /*--------------------------------------------------------------------*/
   function user_getemail() {
-    global $G_USER_RESULT;
-    //see if we have already fetched this user from the db, if not, fetch it
-    if (!$G_USER_RESULT) {
-      $G_USER_RESULT=db_query("SELECT * FROM user WHERE username='" . $this->user_getname() . "'");
-    }
-    if ($G_USER_RESULT && db_numrows($G_USER_RESULT) > 0) {
-      return db_result($G_USER_RESULT,0,'email');
-    } else {
-      return false;
-    }
+	  global $G_USER_RESULT;
+	  //see if we have already fetched this user from the db, if not, fetch it
+	  if (!$G_USER_RESULT) {
+		  $G_USER_RESULT=db_query("SELECT * FROM user WHERE username='" . $this->user_getname() . "'");
+	  }
+	  if ($G_USER_RESULT && db_numrows($G_USER_RESULT) > 0) {
+		  return db_result($G_USER_RESULT,0,'email');
+	  } else {
+		  return false;
+	  }
   }
 
-  
+
   /*--------------------------------------------------------------------*/
   // Get their username
   /*--------------------------------------------------------------------*/
   function user_getname() {
-    if ($this->user_isloggedin()) {
-      return $_COOKIE['user_name'];
-    } else {
-      //look up the user some day when we need it
-      return ' ERROR - Not Logged In ';
-    }
+	  if ($this->user_isloggedin()) {
+		  return $_COOKIE['user_name'];
+	  } else {
+		  //look up the user some day when we need it
+		  return ' ERROR - Not Logged In ';
+	  }
   }
-  
+
   /*--------------------------------------------------------------------*/
   // Check if the account username they entered is valid
   /*--------------------------------------------------------------------*/
   function account_namevalid($name) {	
-    global $feedback;
-    // no spaces
-    if (strrpos($name,' ') > 0) {
-      $feedback .= " There cannot be any spaces in the login name. ";
-      return false;
-    }
-    
-    // must have at least one character
-    if (strspn($name,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
-      $feedback .= "There must be at least one character.";
-      return false;
-    }
-    
-    // must contain all legal characters
-    if (strspn($name,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
-	!= strlen($name)) {
-      $feedback .= " Illegal character in name. ";
-      return false;
-    }
-    
-    // min and max length
-    if (strlen($name) < 2) {
-      $feedback .= " Name is too short. It must be at least 2 characters. ";
-      return false;
-    }
-    if (strlen($name) > 60) {
-      $feedback .= "Name is too long. It must be less than 60 characters.";
-      return false;
-    }
-    
-    return true;
+	  global $feedback;
+	  // no spaces
+	  if (strrpos($name,' ') > 0) {
+		  $feedback .= " There cannot be any spaces in the login name. ";
+		  return false;
+	  }
+
+	  // must have at least one character
+	  if (strspn($name,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") == 0) {
+		  $feedback .= "There must be at least one character.";
+		  return false;
+	  }
+
+	  // must contain all legal characters
+	  if (strspn($name,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
+			  != strlen($name)) {
+		  $feedback .= " Illegal character in name. ";
+		  return false;
+	  }
+
+	  // min and max length
+	  if (strlen($name) < 2) {
+		  $feedback .= " Name is too short. It must be at least 2 characters. ";
+		  return false;
+	  }
+	  if (strlen($name) > 60) {
+		  $feedback .= "Name is too long. It must be less than 60 characters.";
+		  return false;
+	  }
+
+	  return true;
   }
-  
-  
-  } // end class
+
+
+  function list_groups()
+  {
+	  // print the list of groups
+	  $query = "SELECT DISTINCT groupname FROM groups ORDER BY groupname";
+	  $result = $this->db->query($query) or die ("query failed");
+
+	  return $result->result_array();
+  }
+
+
+  function list_users()
+  {
+	  // print the list of users
+	  $query = "SELECT username FROM user ORDER BY username";
+	  $result = $this->db->query($query) or die ("query failed");
+
+	  return $result->result_array();
+  }
+
+} // end class
 
 ?>

@@ -610,4 +610,19 @@ class Service_model extends CI_Model
 				$status, $description, NULL, NULL, NULL, $user_service_id);
 	}
 
+
+	public function get_service_desc_and_notify($user_services_id)
+	{	
+		// to prepare support note form get the service description and support_notify
+		$query = "SELECT us.id user_services_id, us.master_service_id, ms.id, ".
+			"ms.service_description, ms.support_notify ".
+			"FROM user_services us ".
+			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+			"WHERE us.id = '$user_services_id' LIMIT 1";
+		$result = $this->db->query($query) 
+			or die ("get service desc and notify queryfailed");
+		
+		return $result->row_array();
+	}	 
+
 }
