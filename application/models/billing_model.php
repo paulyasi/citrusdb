@@ -779,5 +779,21 @@ class Billing_Model extends CI_Model
 		}
 	}
 
+	
+	function rerunitems ($billing_id)
+	{
+		// select the billing detail items that are unpaid
+		$query = "SELECT bd.id bd_id, bd.user_services_id, bd.billed_amount, ".
+			"bd.original_invoice_number, ".
+			"bd.creation_date, bd.paid_amount, us.id us_id, ms.service_description ".
+			"FROM billing_details bd ".
+			"LEFT JOIN user_services us ON us.id = bd.user_services_id ".
+			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+			"WHERE bd.billing_id = '$billing_id' ".
+			"AND bd.billed_amount > bd.paid_amount";
+		$result = $this->db->query($query) or die ("Detail Query Failed"); 
+
+		return $result->result_array();
+	}
 
 }

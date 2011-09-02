@@ -472,32 +472,15 @@ class Billing extends App_Controller
 
 	}
 
-	public function rerun()
-	{
-	if ($pallow_modify)    
-	{       
-		include('./modules/billing/rerun.php');    
-	}  else permission_error();
-	}
 
-	/*
-	 * --------------------------------------------------------------------------------
-	 *  ask the user if they are sure they want to uncancel this customer
-	 * --------------------------------------------------------------------------------
-	 */
-	public function turnoff()
-	{
-		
-	}
-
-
-	public function resetaddr()
+	public function rerun($billing_id)
 	{
 		// load the module header common to all module views
 		$this->load->view('module_header_view');
 
 		// load the reset addr view prompt
-		$this->load->view('billing/resetaddr_view');
+		$data = $this->billing_model->rerunitems($billing_id);	
+		$this->load->view('billing/rerun_view', $data);
 
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');			
@@ -507,154 +490,240 @@ class Billing extends App_Controller
 
 	}
 
-	public function saveresetaddr()
+
+	public function savererun()
 	{
-		// get the customer information
-		$query = "SELECT * FROM customer WHERE account_number = $this->account_number";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
-		$myresult = $result->row_array();
+		// GET Variables
+		$billing_id = $base->input['billing_id'];
+		$fieldlist = $base->input['fieldlist'];
 
-		$name = $myresult['name'];
-		$company = $myresult['company'];
-		$street = $myresult['street'];
-		$city = $myresult['city'];
-		$state = $myresult['state'];
-		$zip = $myresult['zip'];
-		$country = $myresult['country'];
-		$phone = $myresult['phone'];
-		$fax = $myresult['fax'];
-		$contact_email = $myresult['contact_email'];
-		$default_billing_id = $myresult['default_billing_id'];	
+		// set the rerun date to the next available billing date
+		$mydate = get_nextbillingdate();
 
-		// save billing address
-		$query = "UPDATE billing 
-			SET name = '$name',
-				company = '$company',
-				street = '$street',
-				city = '$city',
-				state = '$state',
-				zip = '$zip',
-				country = '$country',
-				phone = '$phone',
-				fax = '$fax',
-				contact_email = '$contact_email' WHERE id = $default_billing_id";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
-		print "<h3>".lang('changessaved')."<h3>";
-		
-		redirect ('/billing');	
+		// make sure the rerun date is not set to the same as the next_billing_date
+		$query = "SELECT next_billing_date FROM billing WHERE id = '$billing_id'";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$myresult = $result->fields;	
+		$next_billing_date = $myresult['next_billing_date'];
+
+		if ($next_billing_date == $mydate) {
+			echo "<h3>$l_rerundateerror</h3>".
+				"<center><form style=\"margin-bottom:0;\" action=\"index.php\">".
+				"<input name=done type=submit value=\" $l_ok  \" class=smallbutton>".
+				"<p></center>";
+		} else {
+			$query = "UPDATE billing SET rerun_date = '$mydate' ".
+				"WHERE id = '$billing_id'";
+			$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+			// parse the fieldlist to set the rerun flag for the items chosen     
+			// add the services to the user_services table and the options table
+			$fieldlist = substr($fieldlist, 1); 
+
+			// loop through post_vars associative/hash to get field values
+			$array_fieldlist = explode(",",$fieldlist);
+
+			foreach ($base->input as $mykey => $myvalue) {
+				foreach ($array_fieldlist as $myfield) {
+					//print "$mykey<br>";
+					if ($myfield == $mykey) {
+						$fieldvalues .= ',\'' . $myvalue . '\'';
+						// set the rerun flag for this billing_detail id value to 'y'
+						$query = "UPDATE billing_details SET rerun = 'y' ".
+							"WHERE id = '$myvalue'";
+						$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+						// TODO: do I need to unset all the other things rerun items too?  
+
+					}
+				}
+			}
+
+			print "<h3>$l_changessaved<h3>";
+			redirect('/billing');
+
+		}
 	}
 
 
 
-	public function cancelwfee()
-	{
-		if ($pallow_modify)
+
+		/*
+		 * --------------------------------------------------------------------------------
+		 *  ask the user if they are sure they want to uncancel this customer
+		 * --------------------------------------------------------------------------------
+		 */
+		public function turnoff()
 		{
-			include('./modules/billing/cancelwfee.php');
-		}  else permission_error();
-	}
+
+		}
 
 
-	public function collections()
-	{
-		if ($pallow_modify)
+		public function resetaddr()
 		{
-			include('./modules/billing/collections.php');
-		}  else permission_error();
-	}
+			// load the module header common to all module views
+			$this->load->view('module_header_view');
 
+			// load the reset addr view prompt
+			$this->load->view('billing/resetaddr_view');
 
-	public function waiting()
-	{
-		if ($pallow_modify)
+			// the history listing tabs
+			$this->load->view('historyframe_tabs_view');			
+
+			// the html page footer
+			$this->load->view('html_footer_view');
+
+		}
+
+		public function saveresetaddr()
 		{
-			include('./modules/billing/waiting.php');
-		}  else permission_error();
-	}
+			// get the customer information
+			$query = "SELECT * FROM customer WHERE account_number = $this->account_number";
+			$result = $this->db->query($query) or die ("$l_queryfailed");
+			$myresult = $result->row_array();
+
+			$name = $myresult['name'];
+			$company = $myresult['company'];
+			$street = $myresult['street'];
+			$city = $myresult['city'];
+			$state = $myresult['state'];
+			$zip = $myresult['zip'];
+			$country = $myresult['country'];
+			$phone = $myresult['phone'];
+			$fax = $myresult['fax'];
+			$contact_email = $myresult['contact_email'];
+			$default_billing_id = $myresult['default_billing_id'];	
+
+			// save billing address
+			$query = "UPDATE billing 
+				SET name = '$name',
+					company = '$company',
+					street = '$street',
+					city = '$city',
+					state = '$state',
+					zip = '$zip',
+					country = '$country',
+					phone = '$phone',
+					fax = '$fax',
+					contact_email = '$contact_email' WHERE id = $default_billing_id";
+			$result = $this->db->query($query) or die ("$l_queryfailed");
+			print "<h3>".lang('changessaved')."<h3>";
+
+			redirect ('/billing');	
+		}
 
 
-	public function authorized()
-	{
-		if ($pallow_modify)
+
+		public function cancelwfee()
 		{
-			include('./modules/billing/authorized.php');
-		}  else permission_error();
-	}
+			if ($pallow_modify)
+			{
+				include('./modules/billing/cancelwfee.php');
+			}  else permission_error();
+		}
 
 
-	public function asciiarmor()
-	{
-		if ($pallow_modify)
+		public function collections()
 		{
-			include('./modules/billing/asciiarmor.php');
-		}  else permission_error();
-	}
+			if ($pallow_modify)
+			{
+				include('./modules/billing/collections.php');
+			}  else permission_error();
+		}
 
 
-	public function nsf()
-	{
-		if ($pallow_modify)
+		public function waiting()
 		{
-			include('./modules/billing/nsf.php');
-		}  else permission_error();
-	}
+			if ($pallow_modify)
+			{
+				include('./modules/billing/waiting.php');
+			}  else permission_error();
+		}
 
 
-	public function receipt()
-	{
-		if ($pallow_modify)
+		public function authorized()
 		{
-			include('./modules/billing/receipt.php');
-		}  else permission_error();
-	}
+			if ($pallow_modify)
+			{
+				include('./modules/billing/authorized.php');
+			}  else permission_error();
+		}
 
-	public function deletepayment()
-	{
-		if ($pallow_modify)
+
+		public function asciiarmor()
 		{
-			include('./modules/billing/deletepayment.php');
-		}  else permission_error();
-	}
+			if ($pallow_modify)
+			{
+				include('./modules/billing/asciiarmor.php');
+			}  else permission_error();
+		}
 
 
-	public function createinvoice()
-	{
-		if ($pallow_modify)
+		public function nsf()
 		{
-			include('./modules/billing/createinvoice.php');
-		}  else permission_error();
-	}
+			if ($pallow_modify)
+			{
+				include('./modules/billing/nsf.php');
+			}  else permission_error();
+		}
 
 
-	public function cancelnotice()
-	{
-		if ($pallow_modify)
+		public function receipt()
 		{
-			include('./modules/billing/cancelnotice.php');
-		}  else permission_error();
-	}
+			if ($pallow_modify)
+			{
+				include('./modules/billing/receipt.php');
+			}  else permission_error();
+		}
 
-
-	public function shutoffnotice()
-	{
-		if ($pallow_modify)
+		public function deletepayment()
 		{
-			include('./modules/billing/shutoffnotice.php');
-		}  else permission_error();
-	}
+			if ($pallow_modify)
+			{
+				include('./modules/billing/deletepayment.php');
+			}  else permission_error();
+		}
 
 
-	public function collectionsnotice()
-	{
-		if ($pallow_modify)
+		public function createinvoice()
 		{
-			include('./modules/billing/collectionsnotice.php');
-		}  else permission_error();
+			if ($pallow_modify)
+			{
+				include('./modules/billing/createinvoice.php');
+			}  else permission_error();
+		}
+
+
+		public function cancelnotice()
+		{
+			if ($pallow_modify)
+			{
+				include('./modules/billing/cancelnotice.php');
+			}  else permission_error();
+		}
+
+
+		public function shutoffnotice()
+		{
+			if ($pallow_modify)
+			{
+				include('./modules/billing/shutoffnotice.php');
+			}  else permission_error();
+		}
+
+
+		public function collectionsnotice()
+		{
+			if ($pallow_modify)
+			{
+				include('./modules/billing/collectionsnotice.php');
+			}  else permission_error();
+		}
+
+
+
 	}
 
-
-
-}
-
-/* End of file customer */
-/* Location: ./application/controllers/customer.php */
+	/* End of file customer */
+	/* Location: ./application/controllers/customer.php */

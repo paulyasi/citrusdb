@@ -15,7 +15,7 @@ $userresult = $this->db->query($query) or die ("$l_queryfailed");
 $myuserresult = $userresult->row_array();
 if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 	echo "<br><a href=\"index.php?load=invmaint&type=tools&billingid=$billing_id&submit=Submit\">".lang('invoicemaintenance')."</a> | 
-	<a href=\"index.php?load=refund&type=tools&billingid=$billing_id&submit=Submit\">".lang('refundreport')."</a> | 
+	<a href=\"index.php/billing/refund/$billing_id\">".lang('refundreport')."</a> | 
 	<a href=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">".lang('turnoff')."</a> | 
 	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">".lang('waiting')."</a> |
 	<a href=\"index.php?load=billing&type=module&authorized=on&billing_id=$billing_id\">".lang('authorized')."</a> | 

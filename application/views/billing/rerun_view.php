@@ -1,107 +1,38 @@
-<?php   
-// Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb.org)
-// read the README file for more information
-
-/*----------------------------------------------------------------------------*/
-// Check for authorized accesss
-/*----------------------------------------------------------------------------*/
-if(constant("INDEX_CITRUS") <> 1){
-  echo "You must be logged in to run this.  Goodbye.";
-  exit;	
-}
-
-if (!defined("INDEX_CITRUS")) {
-  echo "You must be logged in to run this.  Goodbye.";
-  exit;
-}
-
-// GET Variables
-$billing_id = $base->input['billing_id'];
-$fieldlist = $base->input['fieldlist'];
-
-if ($save) {
-  // set the rerun date to the next available billing date
-  $mydate = get_nextbillingdate();
-  
-  // make sure the rerun date is not set to the same as the next_billing_date
-  $query = "SELECT next_billing_date FROM billing WHERE id = '$billing_id'";
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
-  $myresult = $result->fields;	
-  $next_billing_date = $myresult['next_billing_date'];
-  
-  if ($next_billing_date == $mydate) {
-    echo "<h3>$l_rerundateerror</h3>".
-      "<center><form style=\"margin-bottom:0;\" action=\"index.php\">".
-      "<input name=done type=submit value=\" $l_ok  \" class=smallbutton>".
-      "<p></center>";
-  } else {
-    $query = "UPDATE billing SET rerun_date = '$mydate' ".
-      "WHERE id = '$billing_id'";
-    $result = $DB->Execute($query) or die ("$l_queryfailed");
-
-    // parse the fieldlist to set the rerun flag for the items chosen     
-    // add the services to the user_services table and the options table
-    $fieldlist = substr($fieldlist, 1); 
-    
-    // loop through post_vars associative/hash to get field values
-    $array_fieldlist = explode(",",$fieldlist);
-    
-    foreach ($base->input as $mykey => $myvalue) {
-      foreach ($array_fieldlist as $myfield) {
-	//print "$mykey<br>";
-	if ($myfield == $mykey) {
-	  $fieldvalues .= ',\'' . $myvalue . '\'';
-	  // set the rerun flag for this billing_detail id value to 'y'
-	  $query = "UPDATE billing_details SET rerun = 'y' ".
-	    "WHERE id = '$myvalue'";
-	  $result = $DB->Execute($query) or die ("$l_queryfailed");
-
-	  // TODO: do I need to unset all the other things rerun items too?  
-	  
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+?>
+<script language="JavaScript">
+	function checkitems(fieldArray)
+	{
+		for (i = 0; i < fieldArray.length; i++)
+		{
+			if (fieldArray[i].checked == true) 
+			{
+				field[i].checked = false;
+			} 
+			else 
+			{
+				field[i].checked = true ;
+			}
+		}
 	}
-      }
-    }
-    
-    print "<h3>$l_changessaved<h3>";
-    print "<script language=\"JavaScript\">window.location.href = ".
-      "\"index.php?load=billing&type=module\";</script>";
-    
-  }
-
-     
- } else {
+</script>
   
-
-  print "<br><br>";
-  print "<h4>$l_areyousurereruncreditcard</h4>";
-  
+<br><br>
+<h4><?php lang('areyousurereruncreditcard');?></h4>
+ <?-- 
   // TODO:
   // show all items from billing details that are unpaid
   // that would be run when a rerun is done
   // and allow one to check or uncheck which ones they want
   // to be rerun
+-->
+<form style="margin-bottom:0;" action="<?php echo $this->url_prefix;?>/index.php/billing/savererun" name="rerunform" method=post>
 
-  // select the billing detail items that are unpaid
-  $query = "SELECT bd.id bd_id, bd.user_services_id, bd.billed_amount, ".
-    "bd.original_invoice_number, ".
-    "bd.creation_date, bd.paid_amount, us.id us_id, ms.service_description ".
-    "FROM billing_details bd ".
-    "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
-    "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-    "WHERE bd.billing_id = '$billing_id' ".
-    "AND bd.billed_amount > bd.paid_amount";
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);        
-  $result = $DB->Execute($query) or die ("Detail Query Failed"); 
-  $i = 0;
+<blockquote><table border=0 cellspacing=0 cellpadding=3>
 
-  print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>\n";
-
-  echo "<blockquote><table border=1 cellpadding=1>\n";
-
-  // TODO: print a table column heading
-  echo "<td></td><td>$l_invoice</td><td>$l_id</td><td>$l_date</td>".
-    "<td>$l_service</td><td>$l_price</td><tr>";
+<td></td><td><?php echo lang('invoice');?></td>
+<td><?php echo lang('id');?></td><td><?php echo lang('date');?></td>
+<td><?php echo lang('service');?></td><td><?php echo lang('price');?></td><tr>
   
   // clear the rerun date in the billing record to get ready to reset it  
   $query = "UPDATE billing SET ".
@@ -110,6 +41,10 @@ if ($save) {
 
   // initialize rerun items to check later
   $rerunitems = 0;
+
+  $current_invoice_line = 0;
+  $current_invoice_total = 0;
+  $bgcolor = "#EEEEEE";
     
   while ($myresult = $result->FetchRow()) {
     $detail_id = $myresult['bd_id'];
@@ -120,6 +55,29 @@ if ($save) {
     $detail_total = sprintf("%.2f",$myresult['billed_amount'] - $myresult['paid_amount']);
     $description = $myresult['service_description'];
 
+    // check if we are on a new invoice line item that needs a heading for this invoice
+    // to seperate them from the other invoice line items in the view
+    if ($current_invoice_line <> $original_invoice_number) {
+      if ($current_invoice_total <> 0) {
+	// print a line with the previous invoices current total before resetting it
+	echo "<td bgcolor=\"$bgcolor\" colspan=6 align=right style=\"border-bottom: 1px solid black;\"><b>". sprintf("%.2f",$current_invoice_total) ."</b></td><tr>";
+      }
+
+      // reset the bgcolor
+      if ($bgcolor == "#EEEEEE") {
+	$bgcolor = "#FFFFFF";
+      } else {
+	$bgcolor = "#EEEEEE";
+      }
+      
+      $current_invoice_total = 0;
+      echo "<td colspan=6 bgcolor=\"$bgcolor\"><b>".
+		  //"<input type=checkbox onmouseup=\"checkitems(document.rerunform.invoice_$original_invoice_number)\" ".
+		  //"name=\"all_$original_invoice_number\">".
+		  "&nbsp; $l_invoice: $original_invoice_number ".
+		  "</b></td><tr>";
+    }	 	 
+
     // clear the rerun flag on all the items shown before you allow setting
     // of new rerun flags
 
@@ -129,14 +87,20 @@ if ($save) {
 
     // print the detail items that are unpaid and can be rerun
 
-    echo "<td><input checked type=checkbox name=rerun_service_$detail_id value=\"$detail_id\"></td>\n";
-    echo "<td>$original_invoice_number</td>\n";
-    echo "<td>$service_id</td>\n";
-    echo "<td>$creation_date</td>\n";
-    echo "<td>$description</td>\n";
-    echo "<td>$detail_total</td>\n";
+    echo "<td bgcolor=\"$bgcolor\"><input type=checkbox name=\"rerun_service_$detail_id\" value=\"$detail_id\"></td>\n";
+    echo "<td bgcolor=\"$bgcolor\">$original_invoice_number</td>\n";
+    echo "<td bgcolor=\"$bgcolor\">$service_id</td>\n";
+    echo "<td bgcolor=\"$bgcolor\">$creation_date</td>\n";
+    echo "<td bgcolor=\"$bgcolor\">$description</td>\n";
+    echo "<td bgcolor=\"$bgcolor\">$detail_total</td>\n";
     
     echo "<tr>\n";
+
+    // set the current invoice line to the original invoice number of this item
+    $current_invoice_line = $original_invoice_number;
+
+    // update the current invoice total with this new item
+    $current_invoice_total = $current_invoice_total + $detail_total;
 
     $fieldname = "rerun_service_$detail_id";
 
@@ -145,6 +109,9 @@ if ($save) {
     // add to the number of items rerun
     $rerunitems++;
   }
+  
+  // print the last line with the previous invoices current total before resetting it
+  echo "<td colspan=6 align=right bgcolor=\"$bgcolor\"><b>". sprintf("%.2f",$current_invoice_total) ."</b></td><tr>";
 
   print "<input type=hidden name=fieldlist value=$fieldlist>";
 
@@ -177,4 +144,3 @@ if ($save) {
     
   }
  }
-?>
