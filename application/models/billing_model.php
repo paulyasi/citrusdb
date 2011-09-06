@@ -796,4 +796,21 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	function clearrerundate($billing_id)
+	{
+		// clear the rerun date in the billing record to get ready to reset it  
+		$query = "UPDATE billing SET ".
+			"rerun_date = NULL WHERE id = '$billing_id'";
+		$updatedetail = $this->db->query($query) or die ("Detail Update Failed");
+	}
+
+
+	function clearrerunflag($detail_id)
+	{
+		$query = "UPDATE billing_details SET ".
+			"rerun = 'n' WHERE id = '$detail_id'";
+		$updatedetail = $this->db->query($query) or die ("Detail Update Failed");
+	}
+
 }

@@ -478,8 +478,11 @@ class Billing extends App_Controller
 		// load the module header common to all module views
 		$this->load->view('module_header_view');
 
+		// clear any rerun date so it's ready for a new one	
+		$data = $this->billing_model->clearrerundate($billing_id);	
+	
 		// load the reset addr view prompt
-		$data = $this->billing_model->rerunitems($billing_id);	
+		$data['rerunitems'] = $this->billing_model->rerunitems($billing_id);	
 		$this->load->view('billing/rerun_view', $data);
 
 		// the history listing tabs
@@ -639,6 +642,20 @@ class Billing extends App_Controller
 			{
 				include('./modules/billing/waiting.php');
 			}  else permission_error();
+		}
+		
+
+		public function savewaiting()
+		{			
+			// set the account payment_history to waiting
+			$query = "INSERT INTO payment_history ".
+				"(creation_date, billing_id, status) ".
+				"VALUES (CURRENT_DATE,'$billing_id','waiting')";
+			$paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
+			
+			print "<script language=\"JavaScript\">window.location.href = ".
+				"\"index.php?load=billing&type=module\";</script>";
+			
 		}
 
 
