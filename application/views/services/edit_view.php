@@ -402,10 +402,12 @@ if ($optionstable) {
 	// print a list of services that share the same attributes and organization_id
 
 	print "<select name=master_service_id><option selected ".
-		"value=$master_service_id>$service_description (".lang('current')."</option>\n";
+		"value=$master_service_id>$service_description (".lang('current').")</option>\n";
 
 	$query = "SELECT * FROM master_services ".
-		"WHERE options_table = '$optionstable' AND organization_id = $service_org_id";
+		"WHERE options_table = '$optionstable' ".
+		"AND selling_active = 'y' ".
+		"AND organization_id = $service_org_id";
 	$result = $this->db->query($query) or die ("$l_queryfailed");
 	foreach ($result->result_array() as $myresult) {
 		$new_master_service_id = $myresult['id'];

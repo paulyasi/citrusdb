@@ -813,4 +813,45 @@ class Billing_Model extends CI_Model
 		$updatedetail = $this->db->query($query) or die ("Detail Update Failed");
 	}
 
+	/*
+	 * -------------------------------------------------------------------------
+	 *  Show the invoices that belong to that billing id
+	 * -------------------------------------------------------------------------
+	 */
+	function list_invoices($billingid,$showall)
+	{
+		if ($showall) 
+		{
+			$query = "SELECT h.id h_id, h.billing_date h_billing_date, h.from_date 
+				h_from_date, h.to_date h_to_date, h.payment_due_date h_due_date, 
+				h.new_charges h_new_charges, h.total_due h_total_due,
+				h.billing_type h_billing_type, 
+				b.name b_name, b.company b_company, d.invoice_number, 
+				SUM(d.paid_amount) as normal_paid_amount 
+					FROM billing_history h
+					LEFT JOIN billing b ON h.billing_id = b.id 
+					LEFT JOIN billing_details d ON h.id = d.invoice_number 
+					WHERE h.billing_id  = '$billingid' GROUP BY h.id 
+					ORDER BY h.id DESC";
+		} 
+		else 
+		{
+			$query = "SELECT h.id h_id, h.billing_date h_billing_date, h.from_date 
+				h_from_date, h.to_date h_to_date, h.payment_due_date h_due_date, 
+				h.new_charges h_new_charges, h.total_due h_total_due,
+				h.billing_type h_billing_type, 
+				b.name b_name, b.company b_company, d.invoice_number, 
+				SUM(d.paid_amount) as normal_paid_amount 
+					FROM billing_history h
+					LEFT JOIN billing b ON h.billing_id = b.id 
+					LEFT JOIN billing_details d ON h.id = d.invoice_number 
+					WHERE h.billing_id  = '$billingid' GROUP BY h.id 
+					ORDER BY h.id DESC LIMIT 6";     
+		}
+
+		$result = $this->db->query($query) or die ("query failed");
+
+		return $result->result_array();
+	}
+
 }
