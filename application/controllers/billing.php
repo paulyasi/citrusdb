@@ -763,6 +763,109 @@ class Billing extends App_Controller
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  call the invoice model to delete the indicated invoice
+	 * ------------------------------------------------------------------------
+	 */
+	function deleteinvoice() 
+	{
+		// get the invoicenum input
+		$invoicenum = $this->input->post('invoicenum');
+
+		// Delete the invoice, delete from billing history where id = $invoicenum
+		$query = "DELETE FROM billing_history WHERE id = $invoicenum";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+		// delete from billing_details where invoice_number = $invoicenum
+		$query = "DELETE FROM billing_details ".
+			"WHERE invoice_number = $invoicenum";                                          
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+		print "$l_deleted $invoicenum";
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Prompt the user to ask if they are sure they want to remove the invoice
+	 * ------------------------------------------------------------------------
+	 */
+	function removeinvoice() 
+	{
+		// Ask if they want to remove the invoice, print the yes/no form
+		print "<b>$l_areyousureyouwanttoremoveinvoice $invoicenum</b>";
+
+		print "<table cellpadding=15 cellspacing=0 border=0 width=720><td align=right width=360>";
+		print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
+		print "<input type=hidden name=load value=invmaint>";
+		print "<input type=hidden name=type value=tools>";
+		print "<input type=hidden name=invoicenum value=$invoicenum>";
+		print "<input type=hidden name=delete value=on>";
+		print "<input name=deletenow type=submit value=\"  $l_yes  \" class=smallbutton></form></td>";
+		print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
+		print "<input type=hidden name=type value=tools>";
+		print "<input name=done type=submit value=\"  $l_no  \" class=smallbutton>";
+		print "<input type=hidden name=load value=invmaint>";
+		print "</form></td></table>";
+
+	}
+
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Prompt the user to change the due date of the invoice
+	 * ------------------------------------------------------------------------
+	 */
+	function editinvoiceduedate() 
+	{
+		// to change the payment due date when a partial payment is made
+		// and the customer wants to push their due date ahead
+		// ask what they want to change the payment due date to
+
+		echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">".
+			"<input type=hidden name=load value=invmaint>".
+			"<input type=hidden name=type value=tools>".
+			"<input type=hidden name=invoicenum value=\"$invoicenum\">".
+			"<input type=hidden name=saveduedate value=\"on\">".     
+			"<input type=hidden name=billingid value=\"$billingid\">".
+			"<table>".
+			"<td>$l_new $l_duedate:</td><td><input type=text name=duedate ".
+			"value=\"$duedate\"></td><tr>".
+			"<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" ".
+			"value=\"$l_submitrequest\"></td>".
+			"</form>";
+
+	}
+
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  save the new due date invoice for that invoice number
+	 * ------------------------------------------------------------------------
+	 */
+	function saveinvoiceduedate() 
+	{
+		// get the invoicenum input, and billing id
+		$invoicenum = $this->input->post('invoicenum');
+		$billingid = $this->input->post('billingid');
+
+		// TODO: save the new due date that was entered into the
+		// billing_history.payment_due_date field
+
+		$query = "UPDATE billing_history SET payment_due_date = '$duedate' ".
+			"WHERE id = '$invoicenum'";
+		$result = $DB->Execute($query) or die ("due date update $l_queryfailed");
+
+		// redirect back to the services record for their account
+		echo "<script language=\"JavaScript\">window.location.href ".
+			"= \"index.php?load=invmaint&type=tools&billingid=$billingid&submit=Submit\";</script>";
+		redirect('/invmaint/index/$billingid');
+
+	}
+
 
 }
 
