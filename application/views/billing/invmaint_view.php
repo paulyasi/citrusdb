@@ -6,18 +6,18 @@
 
 [ <a href="<?php echo $this->url_prefix?>/index.php/billing"><?php echo lang('back')?></a> ]
 
-<table cellpadding=5 cellspacing=1><tr bgcolor=\"#dddddd\">";
-<td>$l_invoicenumber</td>
-<td>$l_billingdate</td>
-<td>$l_name</td>
-<td>$l_company</td>
-<td>$l_from</td>
-<td>$l_to</td>
-<td>$l_duedate</td>
-<td>$l_newcharges</td>
-<td>$l_total</td>
-<td>$l_billingtype</td>
-<td></td><td></td><td></td><td></td><td></td>";
+<table cellpadding=5 cellspacing=1><tr bgcolor="#dddddd">
+<td><?php echo lang('invoicenumber');?></td>
+<td><?php echo lang('billingdate');?></td>
+<td><?php echo lang('name');?></td>
+<td><?php echo lang('company');?></td>
+<td><?php echo lang('from');?></td>
+<td><?php echo lang('to');?></td>
+<td><?php echo lang('$l_duedate');?></td>
+<td><?php echo lang('newcharges');?></td>
+<td><?php echo lang('total');?></td>
+<td><?php echo lang('billingtype');?></td>
+<td></td><td></td><td></td><td></td><td></td>
 
 <?php
 foreach ($invoicelist as $myresult) 
@@ -69,23 +69,10 @@ foreach ($invoicelist as $myresult)
 }
 
 print "<td bgcolor=\"#dddddd\" colspan=16>";
-if (!$showall) { echo "<a href=\"index.php?load=invmaint&type=tools&billingid=$billingid&submit=Submit&showall=true\">$l_showall</a>"; }
+if (!$showall) 
+{ 
+	echo "<a href=\"index.php/billing/invmaint/$billingid/showall\">
+	<?php echo lang('showall');?></a>"; 
+}
 print "</td></table>";
 
-}
-else {
-	//
-	// ask for the billing date that they want to invoice
-	//
-	echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">
-		<input type=hidden name=load value=invmaint>
-		<input type=hidden name=type value=tools>
-		<table>
-		<td>$l_billingid:</td><td><input type=text name=billingid></td><tr>
-		<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\"></td>
-		</form>";
-}
-
-?>
-</body>
-</html>

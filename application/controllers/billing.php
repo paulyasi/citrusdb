@@ -745,13 +745,16 @@ class Billing extends App_Controller
 	 *  shows list of customer invoices and links to print, delete, and pay
 	 * ------------------------------------------------------------------------
 	 */
-	public function invmaint($billing_id)
+	public function invmaint($billing_id, $showall = NULL)
 	{
 		// load the module header common to all module views
 		$this->load->view('module_header_view');
 
 		// load the reset addr view prompt
-		$data['invoicelist'] = $this->billing_model->list_invoices($billing_id);	
+		$data['invoicelist'] = 
+			$this->billing_model->list_invoices($billing_id, $showall);	
+		$data['billingid'] = $billing_id;
+		$data['showall'] = $showall;
 		$this->load->view('billing/invmaint_view', $data);
 
 		// the history listing tabs
