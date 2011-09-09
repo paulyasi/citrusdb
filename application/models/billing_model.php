@@ -854,4 +854,36 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	function billing_details($billingid)
+	{
+		//
+		// Show the billing details that belong to that billing id:
+		//
+		$query = "SELECT d.id d_id, d.billing_id d_billing_id, 
+			d.creation_date d_creation_date, d.user_services_id d_user_services_id, 	
+			d.taxed_services_id d_taxed_services_id, 
+			d.invoice_number d_invoice_number, d.billed_amount d_billed_amount, 
+			d.paid_amount d_paid_amount, d.refund_amount d_refund_amount, 
+			d.refunded d_refunded, d.refund_date d_refund_date,  
+			m.service_description m_description, 
+			r.description r_description, 
+			b.billing_type b_billing_type, bt.method bt_method 
+				FROM billing_details d
+				LEFT JOIN billing b ON b.id = d.billing_id 	
+				LEFT JOIN user_services u ON u.id = d.user_services_id 
+				LEFT JOIN master_services m ON m.id = u.master_service_id
+				LEFT JOIN taxed_services t ON t.id = d.taxed_services_id
+				LEFT JOIN tax_rates r ON t.tax_rate_id = r.id
+				LEFT JOIN billing_types bt ON b.billing_type = bt.id  
+				WHERE d.billing_id = '$billingid' ORDER BY d.id DESC";
+
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+
+		return $result->result_array();
+
+		return $result->result_array();
+
+	}
+
 }
