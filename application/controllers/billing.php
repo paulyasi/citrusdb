@@ -881,70 +881,40 @@ class Billing extends App_Controller
 	 *  prompt the customer for the amount to refund for the chosen item
 	 * ------------------------------------------------------------------------ 
 	 */
-	function refunditem() 
-	{
-		$query = "SELECT d.id d_id, d.billing_id d_billing_id, 
-			d.creation_date d_creation_date, d.user_services_id d_user_services_id, 	d.taxed_services_id d_taxed_services_id, 
-			d.invoice_number d_invoice_number, d.billed_amount d_billed_amount, 
-			d.paid_amount d_paid_amount, d.refund_amount d_refund_amount, 
-			d.refunded d_refunded, b.creditcard_number,   
-			m.service_description m_description, 
-			r.description r_description
-				FROM billing_details d
-				LEFT JOIN billing b ON b.id = d.billing_id 	
-				LEFT JOIN user_services u ON u.id = d.user_services_id 
-				LEFT JOIN master_services m ON m.id = u.master_service_id
-				LEFT JOIN taxed_services t ON t.id = d.taxed_services_id
-				LEFT JOIN tax_rates r ON t.tax_rate_id = r.id
-				WHERE d.id = '$detailid'";
-
+	function refunditem($detailitem, $method, $billingid) 
+	{	
 		if ($method <> 'creditcard') {
 			echo "<h2 style=\"color: red;\">$l_method_warning</h2>";
 		}
+
+		$data['detailid'] = $detailid;
+		$data['method'] = $method;
+		$data['billingid'] = $billingid;
+
+		// get the list of billing items that could be refunded
+		$myresult = $this->billing_model->billing_detail_item($detailid);
 
 		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 		$result = $DB->Execute($query) or die ("$l_queryfailed");
 		$myresult = $result->fields;
 
-		$id = $myresult['d_id'];
-		$date = $myresult['d_creation_date'];
+		$data['id'] = $myresult['d_id'];
+		$data['date'] = $myresult['d_creation_date'];
 		if ($myresult['d_taxed_services_id']) { 
 			// it's a tax
-			$description = $myresult['r_description'];
+			$data['description'] = $myresult['r_description'];
 		} else {
 			// it's a service
-			$description = $myresult['m_description'];
+			$data['description'] = $myresult['m_description'];
 		}
-		$invoice = $myresult['d_invoice_number'];
-		$billedamount = $myresult['d_billed_amount'];
-		$paidamount = $myresult['d_paid_amount'];
-		$refundamount = $myresult['d_refund_amount'];
-		$refunded = $myresult['d_refunded'];
+		$data['invoice'] = $myresult['d_invoice_number'];
+		$data['billedamount'] = $myresult['d_billed_amount'];
+		$data['paidamount'] = $myresult['d_paid_amount'];
+		$data['refundamount'] = $myresult['d_refund_amount'];
+		$data['refunded'] = $myresult['d_refunded'];
 
-		// print refund form
-		echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">
-			<input type=hidden name=load value=refund>
-			<input type=hidden name=type value=tools>
-			<input type=hidden name=refundnow value=on>
-			<input type=hidden name=method value=\"$method\">
-			<input type=hidden name=detailid value=\"$detailid\">
-			<input type=hidden name=billingid value=\"$billingid\">";
-
-		echo "
-			<p><table>
-			<td><b>$l_id</b></td><td>$id</td><tr>
-			<td><b>$l_date</b></td><td>$date</td><tr>
-			<td><b>$l_description</b></td><td>$description</td><tr>
-			<td><b>$l_invoice</b></td><td>$invoice</td><tr>
-			<td><b>$l_billedamount</b></td><td>$billedamount</td><tr>
-			<td><b>$l_paidamount</b></td><td>$paidamount</td></tr>
-			<td><b>$l_refundamount</b></td>
-			<td><input type=text name=\"refundamount\" value=\"$refundamount\">
-			</td><tr>	
-			<td></td>
-			<td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" value=\"$l_submitrequest\"></td>
-			</table></form>";
-
+		// show refund item view
+		$this->load->view('billing/refund_item_view', $data);
 	}
 
 
@@ -988,10 +958,9 @@ class Billing extends App_Controller
 
 		}
 
-		print "<h3>$l_changessaved<h3>";
+		print "<h3>".lang('changessaved')."<h3>";
 
-		print "<script language=\"JavaScript\">window.location.href = ".
-			"\"$url_prefix/index.php?load=refund&type=tools&billingid=$billingid&submit=Submit\";</script>";
+		redirect("/billing/refund/$billingid");
 
 	}
 

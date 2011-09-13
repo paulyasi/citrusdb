@@ -2,7 +2,7 @@
 <body bgcolor="#ffffff">
 <h3><?php echo lang('refundreport');?></h3>
 
-[ <a href="<?php echo $this->url_prefix;?>/index.php/billing"><?php echo lang('back');?></a> ]";
+[ <a href="<?php echo $this->url_prefix;?>/index.php/billing"><?php echo lang('back');?></a> ]
 <table cellspacing=0 cellpadding=4 border=0>
 <td bgcolor="#dddddd" width=100><b><?php echo lang('id');?></b></td>
 <td bgcolor="#dddddd" width=130><b><?php echo lang('date');?></b></td>
@@ -12,7 +12,7 @@
 <td bgcolor="#dddddd" width=150><b><?php echo lang('paidamount');?></b></td>
 <td bgcolor="#dddddd" width=150><b><?php echo lang('refundamount');?></b></td>
 <td bgcolor="#dddddd" width=150><b><?php echo lang('refunddate');?></b></td>
-<td bgcolor="#dddddd" width=150><b><?php echo lang('refunded');?></b></td>";	
+<td bgcolor="#dddddd" width=150><b><?php echo lang('refunded');?></b></td>	
 
 <?php
 // print the column rows	
@@ -59,7 +59,7 @@ foreach ($details as $myresult)
 	print "<td style=\"border-top: 1px solid grey;\">
 		$refunded &nbsp;";
 	if ($refunded <> 'y' AND $paidamount > 0) {
-		echo "[ <a href=\"index.php?load=refund&type=tools&detailid=$id&refund=on&method=$method&billingid=$billingid\">$l_refund</a> ]";
+		echo "[ <a href=\"$this->url_prefix/index.php/refunditem/$id/$method/$billingid\">".lang('refund')."</a> ]";
 	}	
 	echo "</td>";
 
