@@ -609,12 +609,42 @@ class Billing extends App_Controller
 
 	/*
 	 * --------------------------------------------------------------------------------
-	 *  ask the user if they are sure they want to uncancel this customer
+	 *  ask the user if they are sure they want to turnoff this customer
 	 * --------------------------------------------------------------------------------
 	 */
-	public function turnoff()
+	public function turnoff($billing_id)
 	{
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
 
+		$data['billingid'] = $billing_id;
+		$this->load->view('billing/turnoff_view', $data);
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
+	}
+
+
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  set the account to the turnoff status when that is chosen
+	 * --------------------------------------------------------------------------------
+	 */
+	public function saveturnoff()
+	{
+		$billing_id = $this->input->post('billing_id');
+
+		// set the account payment_history to turnedoff
+		$query = "INSERT INTO payment_history 
+			(creation_date, billing_id, status) 
+			VALUES (CURRENT_DATE,'$billing_id','turnedoff')";
+		$paymentresult = $this->db->query($query) or die ("query failed");
+
+		redirect('/billing');
 	}
 
 

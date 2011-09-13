@@ -16,16 +16,16 @@ $myuserresult = $userresult->row_array();
 if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 	echo "<br><a href=\"$this->url_prefix/index.php/billing/invmaint/$billing_id\">".lang('invoicemaintenance')."</a> | 
 	<a href=\"$this->url_prefix/index.php/billing/refund/$billing_id\">".lang('refundreport')."</a> | 
-	<a href=\"index.php?load=billing&type=module&turnoff=on&billing_id=$billing_id\">".lang('turnoff')."</a> | 
-	<a href=\"index.php?load=billing&type=module&waiting=on&billing_id=$billing_id\">".lang('waiting')."</a> |
-	<a href=\"index.php?load=billing&type=module&authorized=on&billing_id=$billing_id\">".lang('authorized')."</a> | 
-	<a href=\"index.php?load=billing&type=module&cancelwfee=on&billing_id=$billing_id\">".lang('cancelwithfee')."</a> |
-<a href=\"index.php?load=billing&type=module&collections=on&billing_id=$billing_id\">".lang('collections')."</a> |
+	<a href=\"$this->url_prefix/index.php/billing/turnoff/$billing_id\">".lang('turnoff')."</a> | 
+	<a href=\"$this->url_prefix/index.php/billing/waiting/$billing_id\">".lang('waiting')."</a> |
+	<a href=\"$this->url_prefix/index.php/billing/authorized/$billing_id\">".lang('authorized')."</a> | 
+	<a href=\"$this->url_prefix/index.php/billing/cancelwfee/$billing_id\">".lang('cancelwithfee')."</a> |
+<a href=\"$this->url_prefix/index.php/billing/collections/$billing_id\">".lang('collections')."</a> |
 
-	<a href=\"index.php?load=billing&type=module&createinvoice=on&billing_id=$billing_id\">".lang('createinvoice')."</a> | 
-	<a href=\"index.php?load=billing&type=module&cancelnotice=on&billing_id=$billing_id\">".lang('cancel_notice')."</a> | 
-	<a href=\"index.php?load=billing&type=module&shutoffnotice=on&billing_id=$billing_id\">".lang('shutoff_notice')."</a> | 
-	<a href=\"index.php?load=billing&type=module&collectionsnotice=on&billing_id=$billing_id\">".lang('collections_notice')."</a>
+	<a href=\"$this->url_prefix/index.php/billing/createinvoice/$billing_id\">".lang('createinvoice')."</a> | 
+	<a href=\"$this->url_prefix/index.php/cancelnotice/$billing_id\">".lang('cancel_notice')."</a> | 
+	<a href=\"$this->url_prefix/index.php/shutoffnotice/$billing_id\">".lang('shutoff_notice')."</a> | 
+	<a href=\"$this->url_prefix/index.php/billing/collectionsnotice/$billing_id\">".lang('collections_notice')."</a>
 ";
 }
 ?>
