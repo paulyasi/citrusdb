@@ -1,3 +1,4 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed')?>
 <br><br>
 <h4><?php echo lang('areyousureturnedoff');?></h4>
 <table cellpadding=15 cellspacing=0 border=0 width=720><td align=right width=360>

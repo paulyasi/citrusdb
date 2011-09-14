@@ -636,16 +636,54 @@ class Billing extends App_Controller
 	 */
 	public function saveturnoff()
 	{
+		// get id input from form
 		$billing_id = $this->input->post('billing_id');
-
-		// set the account payment_history to turnedoff
-		$query = "INSERT INTO payment_history 
-			(creation_date, billing_id, status) 
-			VALUES (CURRENT_DATE,'$billing_id','turnedoff')";
-		$paymentresult = $this->db->query($query) or die ("query failed");
+	
+		// set the payment history to turnoff
+		$this->billing_model->turnoff($billing_id);	
 
 		redirect('/billing');
 	}
+
+
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  ask the user if they are sure they want to set this status to waiting
+	 * --------------------------------------------------------------------------------
+	 */
+	public function waiting($billing_id)
+	{
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		$data['billingid'] = $billing_id;
+		$this->load->view('billing/waiting_view', $data);
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
+	}
+
+
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  set the account to the waiting status when that is chosen
+	 * --------------------------------------------------------------------------------
+	 */
+	public function savewaiting()
+	{
+		// get the it from the input form
+		$billing_id = $this->input->post('billing_id');
+
+		// set the payment history to waiting
+		$this->billing_model->waiting($billing_id);	
+
+		redirect('/billing');
+	}
+
 
 
 	public function cancelwfee()
@@ -663,29 +701,6 @@ class Billing extends App_Controller
 		{
 			include('./modules/billing/collections.php');
 		}  else permission_error();
-	}
-
-
-	public function waiting()
-	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/waiting.php');
-		}  else permission_error();
-	}
-
-
-	public function savewaiting()
-	{			
-		// set the account payment_history to waiting
-		$query = "INSERT INTO payment_history ".
-			"(creation_date, billing_id, status) ".
-			"VALUES (CURRENT_DATE,'$billing_id','waiting')";
-		$paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
-
-		print "<script language=\"JavaScript\">window.location.href = ".
-			"\"index.php?load=billing&type=module\";</script>";
-
 	}
 
 

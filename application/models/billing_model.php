@@ -906,6 +906,24 @@ class Billing_Model extends CI_Model
 
 		return $result->row_array();
 
+	}
+
+	function turnoff($billing_id)
+	{
+		$query = "INSERT INTO payment_history 
+			(creation_date, billing_id, status) 
+			VALUES (CURRENT_DATE,'$billing_id','turnedoff')";
+		$paymentresult = $this->db->query($query) or die ("query failed");
+
+	}
+
+
+	function waiting($billing_id)
+	{
+		$query = "INSERT INTO payment_history 
+			(creation_date, billing_id, status) 
+			VALUES (CURRENT_DATE,'$billing_id','waiting')";
+		$paymentresult = $this->db->query($query) or die ("query failed");
 
 	}
 
