@@ -908,7 +908,7 @@ class Billing_Model extends CI_Model
 
 	}
 
-	function turnoff($billing_id)
+	function turnedoff_status($billing_id)
 	{
 		$query = "INSERT INTO payment_history 
 			(creation_date, billing_id, status) 
@@ -918,11 +918,41 @@ class Billing_Model extends CI_Model
 	}
 
 
-	function waiting($billing_id)
+	function waiting_status($billing_id)
 	{
 		$query = "INSERT INTO payment_history 
 			(creation_date, billing_id, status) 
 			VALUES (CURRENT_DATE,'$billing_id','waiting')";
+		$paymentresult = $this->db->query($query) or die ("query failed");
+
+	}
+
+
+	function authorized_status($billing_id)
+	{
+		$query = "INSERT INTO payment_history 
+			(creation_date, billing_id, status) 
+			VALUES (CURRENT_DATE,'$billing_id','authorized')";
+		$paymentresult = $this->db->query($query) or die ("query failed");
+
+	}
+
+
+	function cancelwfee_status($billing_id)
+	{
+		$query = "INSERT INTO payment_history 
+			(creation_date, billing_id, status) 
+			VALUES (CURRENT_DATE,'$billing_id','cancelwfee')";
+		$paymentresult = $this->db->query($query) or die ("query failed");
+
+	}
+
+
+	function collections_status($billing_id)
+	{
+		$query = "INSERT INTO payment_history 
+			(creation_date, billing_id, status) 
+			VALUES (CURRENT_DATE,'$billing_id','collections')";
 		$paymentresult = $this->db->query($query) or die ("query failed");
 
 	}

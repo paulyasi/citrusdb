@@ -640,7 +640,7 @@ class Billing extends App_Controller
 		$billing_id = $this->input->post('billing_id');
 	
 		// set the payment history to turnoff
-		$this->billing_model->turnoff($billing_id);	
+		$this->billing_model->turnedoff_status($billing_id);	
 
 		redirect('/billing');
 	}
@@ -679,38 +679,51 @@ class Billing extends App_Controller
 		$billing_id = $this->input->post('billing_id');
 
 		// set the payment history to waiting
-		$this->billing_model->waiting($billing_id);	
+		$this->billing_model->waiting_status($billing_id);	
 
 		redirect('/billing');
 	}
 
 
 
-	public function cancelwfee()
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  ask the user if they are sure they want to set authorized this customer
+	 * --------------------------------------------------------------------------------
+	 */
+	public function authorized($billing_id)
 	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/cancelwfee.php');
-		}  else permission_error();
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		$data['billingid'] = $billing_id;
+		$this->load->view('billing/authorized_view', $data);
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
 	}
 
 
-	public function collections()
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  set the account to the authorized status when that is chosen
+	 * --------------------------------------------------------------------------------
+	 */
+	public function saveauthorized()
 	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/collections.php');
-		}  else permission_error();
+		// get id input from form
+		$billing_id = $this->input->post('billing_id');
+	
+		// set the payment history to turnoff
+		$this->billing_model->authorized_status($billing_id);	
+
+		redirect('/billing');
 	}
 
-
-	public function authorized()
-	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/authorized.php');
-		}  else permission_error();
-	}
 
 
 	public function asciiarmor()

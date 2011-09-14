@@ -1,4 +1,4 @@
-<?php   
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed')?>
 // Copyright (C) 2008  Paul Yasi (paul at citrusdb.org)
 // read the README file for more information
 
