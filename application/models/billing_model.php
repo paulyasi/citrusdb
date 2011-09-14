@@ -938,6 +938,19 @@ class Billing_Model extends CI_Model
 	}
 
 
+	function check_canceled($account_number)
+	{
+		// check that the account is canceled first before allowing it to be marked
+		// with this type of message
+		$query = "SELECT cancel_date FROM customer ".
+			"WHERE account_number = $account_number";
+		$result = $this->db->query($query) or die ("query failed");
+		$myresult = $result->row_array();
+
+		return $myresult['cancel_date'];
+	}
+
+
 	function cancelwfee_status($billing_id)
 	{
 		$query = "INSERT INTO payment_history 

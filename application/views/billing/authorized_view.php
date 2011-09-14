@@ -5,7 +5,7 @@
 <td align=right width=360>
 <form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>/index.php/billing/saveauthorized" method=POST>
 <input type=hidden name=authorized value=on>
-<input type=hidden name=billing_id value=$billing_id>
+<input type=hidden name=billing_id value=<?php echo $billing_id?>>
 <input name=save type=submit value=" <?php echo lang('yes');?> " class=smallbutton></form></td>
 <td align=left width=360><form style="margin-bottom:0;" "action="<?php echo $this->url_prefix?>/index.php/billing" method=post>
 <input name=done type=submit value=" <?php echo lang('no');?>  " class=smallbutton>

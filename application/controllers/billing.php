@@ -617,7 +617,7 @@ class Billing extends App_Controller
 		// load the module header common to all module views
 		$this->load->view('module_header_view');
 
-		$data['billingid'] = $billing_id;
+		$data['billing_id'] = $billing_id;
 		$this->load->view('billing/turnoff_view', $data);
 
 		// the history listing tabs
@@ -656,7 +656,7 @@ class Billing extends App_Controller
 		// load the module header common to all module views
 		$this->load->view('module_header_view');
 
-		$data['billingid'] = $billing_id;
+		$data['billing_id'] = $billing_id;
 		$this->load->view('billing/waiting_view', $data);
 
 		// the history listing tabs
@@ -696,7 +696,7 @@ class Billing extends App_Controller
 		// load the module header common to all module views
 		$this->load->view('module_header_view');
 
-		$data['billingid'] = $billing_id;
+		$data['billing_id'] = $billing_id;
 		$this->load->view('billing/authorized_view', $data);
 
 		// the history listing tabs
@@ -724,6 +724,90 @@ class Billing extends App_Controller
 		redirect('/billing');
 	}
 
+
+
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  ask the user if they are sure they want to set authorized this customer
+	 * --------------------------------------------------------------------------------
+	 */
+	public function cancelwfee($billing_id)
+	{
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		$data['cancel_date'] = $this->billing_model->check_canceled($this->account_number);
+		$data['billing_id'] = $billing_id;
+
+		$this->load->view('billing/cancelwfee_view', $data);
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
+	}
+
+
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  set the account to the authorized status when that is chosen
+	 * --------------------------------------------------------------------------------
+	 */
+	public function savecancelwfee()
+	{
+		// get id input from form
+		$billing_id = $this->input->post('billing_id');
+	
+		// set the payment history to cancelwfee
+		$this->billing_model->cancelwfee_status($billing_id);	
+
+		redirect('/billing');
+	}
+
+
+
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  ask the user if they are sure they want to set collections this customer
+	 * --------------------------------------------------------------------------------
+	 */
+	public function collections($billing_id)
+	{
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		$data['cancel_date'] = $this->billing_model->check_canceled($this->account_number);
+		$data['cancel_date'] = "2011-11-11";
+		$data['billing_id'] = $billing_id;
+
+		$this->load->view('billing/collections_view', $data);
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
+	}
+
+
+	/*
+	 * --------------------------------------------------------------------------------
+	 *  set the account to the collections status when that is chosen
+	 * --------------------------------------------------------------------------------
+	 */
+	public function savecollections()
+	{
+		// get id input from form
+		$billing_id = $this->input->post('billing_id');
+	
+		// set the payment history to cancelwfee
+		$this->billing_model->collections_status($billing_id);	
+
+		redirect('/billing');
+	}
 
 
 	public function asciiarmor()
