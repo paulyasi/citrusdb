@@ -777,6 +777,9 @@ class Billing extends App_Controller
 	 */
 	public function invmaint($billing_id, $showall = NULL)
 	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
 		// load the reset addr view prompt
 		$data['invoicelist'] = 
 			$this->billing_model->list_invoices($billing_id, $showall);	
@@ -898,6 +901,9 @@ class Billing extends App_Controller
 	 */
 	function refund($billing_id)
 	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
 		$data['details'] = 
 			$this->billing_model->billing_details($billing_id);	
 		$data['billingid'] = $billing_id;

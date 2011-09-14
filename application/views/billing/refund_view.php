@@ -1,3 +1,4 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed')?>
 <html>
 <body bgcolor="#ffffff">
 <h3><?php echo lang('refundreport');?></h3>

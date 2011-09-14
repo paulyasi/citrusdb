@@ -1,3 +1,4 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed')?>
 <FORM ACTION="<?php echo $this->url_prefix;?>/index.php/saverefunditem" METHOD="POST">
 <input type=hidden name=load value=refund>
 <input type=hidden name=type value=tools>
