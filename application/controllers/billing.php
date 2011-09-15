@@ -845,12 +845,49 @@ class Billing extends App_Controller
 	}
 
 
-	public function createinvoice()
+	public function createinvoice($billing_id)
 	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/createinvoice.php');
-		}  else permission_error();
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		$data['billing_id'] = $billing_id;
+
+		$this->load->view('billing/createinvoice_view', $data);
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
+	}
+
+	public function savecreateinvoice()
+	{
+		// get id input from form
+		$billing_id = $this->input->post('billing_id');
+
+		$method = $this->billing_model->get_billing_method($billing_id);
+
+		/*--------------------------------------------------------------------*/
+		// Create the billing data
+		/*--------------------------------------------------------------------*/
+
+		// determine the next available batch number
+		$batchid = $this->billing_model->get_nextbatchnumber();
+
+		$numtaxes = $this->billing_model->add_taxdetails(NULL, $billing_id,
+				$method, $batchid, NULL);
+		$numservices = $this->billing_model->add_servicedetails(NULL, $billing_id,
+				$method, $batchid, NULL);
+
+		// create billinghistory
+		$this->billing_model->create_billinghistory($batchid, $method, $this->user);	
+
+		echo lang('createdinvoice') . " $billing_id";
+
+		redirect('/billing');
+
 	}
 
 

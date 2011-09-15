@@ -970,4 +970,645 @@ class Billing_Model extends CI_Model
 
 	}
 
+	
+	function get_billing_method($billing_id)
+	{
+		// figure out the billing method so that this can make invoices for any method
+
+		$query = "SELECT t.method FROM billing b LEFT JOIN billing_types t ".
+			"ON t.id = b.billing_type WHERE b.id = $billing_id";
+		$result = $this->db->query($query) or die ("Method Query Failed");
+		$myresult = $result->row_array();	
+		
+		return $myresult['method'];
+	}
+
+
+	function get_nextbatchnumber() 
+	{	
+		/*--------------------------------------------------------------------*/
+		// determine the next available batch number
+		/*--------------------------------------------------------------------*/
+		// insert empty into the batch to generate next value
+		$query = "INSERT INTO batch () VALUES ()";
+		$batchquery = $this->db->query($query) or die ("Batch ID Query Failed");
+		// get the value just inserted
+		$batchid = $this->db->insert_id();
+		return $batchid;
+	}
+
+
+
+	function add_taxdetails($billingdate, $bybillingid, $billingmethod, 
+			$batchid, $organization_id) 
+	{
+		/*--------------------------------------------------------------------*/
+		// Add taxes to the bill
+		// database connector, billing date, billing method (invoice, prepay , 
+		// creditcard etc.), batch id
+		// do this before services to make sure one time services get taxed
+		// before they are removed
+		/*--------------------------------------------------------------------*/
+
+		//
+		// query for taxed services that are billed on the specified date
+		// or a specific billing id
+		//
+		if ($bybillingid == NULL) {
+			$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+				"ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+				"ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+				"ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+				"tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+				"tr.percentage_or_fixed tr_percentage_or_fixed, ".
+				"us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
+				"us.removed us_removed, us.account_number us_account_number, ". 
+				"us.usage_multiple us_usage_multiple,  ".
+				"te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
+				"b.id b_id, b.billing_type b_billing_type, ".
+				"t.id t_id, t.frequency t_freq, t.method t_method ".
+				"FROM taxed_services ts ".
+				"LEFT JOIN user_services us ON ".
+				"us.master_service_id = ts.master_services_id ".
+				"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+				"LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+				"LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+				"AND te.tax_rate_id = tr.id ".
+				"LEFT JOIN billing b ON us.billing_id = b.id ".
+				"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+				"WHERE b.next_billing_date = '$billingdate' ".
+				"AND b.organization_id = '$organization_id' ".
+				"AND t.method = '$billingmethod' AND us.removed <> 'y'";
+		} else {
+			$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+				"ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+				"ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+				"ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+				"tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+				"tr.percentage_or_fixed tr_percentage_or_fixed, ". 
+				"us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
+				"us.removed us_removed, us.account_number us_account_number, ".
+				"us.usage_multiple us_usage_multiple, ".
+				"te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
+				"b.id b_id, b.billing_type b_billing_type, ". 
+				"t.id t_id, t.frequency t_freq, t.method t_method ".
+				"FROM taxed_services ts ".
+				"LEFT JOIN user_services us ".
+				"ON us.master_service_id = ts.master_services_id ".
+				"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+				"LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+				"LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+				"AND te.tax_rate_id = tr.id ".
+				"LEFT JOIN billing b ON us.billing_id = b.id ".
+				"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+				"WHERE b.id = '$bybillingid' AND t.method = '$billingmethod' ".
+				"AND us.removed <> 'y'";
+		}	
+		$taxresult = $this->db->query($query) or die ("Taxes Query Failed");
+
+		// count the number of taxes
+		$i = 0;
+
+		foreach ($taxresult->result_array() as $mytaxresult) 
+		{
+			$billing_id = $mytaxresult['b_id'];
+			$taxed_services_id = $mytaxresult['ts_id'];
+			$user_services_id = $mytaxresult['us_id'];
+			$service_freq = $mytaxresult['ms_freq'];
+			$billing_freq = $mytaxresult['t_freq'];	
+			$if_field = $mytaxresult['tr_if_field'];
+			$if_value = $mytaxresult['tr_if_value'];
+			$percentage_or_fixed = $mytaxresult['tr_percentage_or_fixed'];
+			$my_account_number = $mytaxresult['us_account_number'];
+			$usage_multiple = $mytaxresult['us_usage_multiple'];
+			$pricerate = $mytaxresult['ms_pricerate'];
+			$taxrate = $mytaxresult['tr_rate'];
+			$tax_rate_id = $mytaxresult['tr_id'];
+			$tax_exempt_rate_id = $mytaxresult['te_tax_rate_id'];
+
+			// check that they are not exempt
+			if ($tax_exempt_rate_id <> $tax_rate_id) 
+			{
+				// check the if_field before adding to see if 
+				// the tax applies to this customer
+				if ($if_field <> '') 
+				{
+					$ifquery = "SELECT $if_field FROM customer ".
+						"WHERE account_number = '$my_account_number'";
+					$ifresult = $this->db->query($ifquery) or die ("Query Failed");	
+					$myifresult = $ifresult->row_array();
+					$checkvalue = $myifresult[0];
+				} else {
+					$checkvalue = TRUE;
+					$if_value = TRUE;
+				}
+
+				// check for any case, so lower them here
+				$checkvalue = strtolower($checkvalue);
+				$if_value = strtolower($if_value);
+
+				if (($checkvalue == $if_value) AND ($billing_freq > 0)) 
+				{
+					if ($percentage_or_fixed == 'percentage') 
+					{
+						if ($service_freq > 0) 
+						{
+							$servicecost = sprintf("%.2f",$taxrate * $pricerate);
+							$tax_amount = sprintf("%.2f",$servicecost * $billing_freq * $service_freq * $usage_multiple); 
+						} 
+						else 
+						{
+							$servicecost = $pricerate * $usage_multiple;
+							$tax_amount = $taxrate * $servicecost;
+						}
+					} 
+					else 
+					{
+						// fixed fee amount does not depend on price or usage
+						$tax_amount = $taxrate * $billing_freq;
+					}
+
+					// round the tax to two decimal places
+					$tax_amount = sprintf("%.2f", $tax_amount);
+
+					//
+					// Insert tax result into billing_details
+					//
+					$query = "INSERT INTO billing_details (billing_id, creation_date, ".
+						"user_services_id, taxed_services_id, billed_amount, batch) ".
+						"VALUES ('$billing_id',CURRENT_DATE, '$user_services_id',".
+						"'$taxed_services_id','$tax_amount','$batchid')";
+					$invoiceresult = $this->db->query($query) or die ("Query Failed");
+					$i++;
+				} //endif if_field/billing_freq
+			} // endif exempt
+		}
+
+		return $i; // send back number of taxes found
+	}
+
+
+	function add_servicedetails($billingdate, $bybillingid, $billingmethod, 
+			$batchid, $organization_id) 
+	{
+		/*--------------------------------------------------------------------*/
+		// Add services to the bill
+		/*--------------------------------------------------------------------*/
+		// join the user_services, billing, billing_types, and master_services 
+		// together to find what to put into billing_details
+		if ($bybillingid == NULL) {
+			$query = "SELECT u.id u_id, u.account_number u_ac, 
+				u.master_service_id u_msid, u.billing_id u_bid, 
+				u.removed u_rem, u.usage_multiple u_usage, 
+				b.next_billing_date b_next_billing_date, b.id b_id, 
+				b.billing_type b_type, 
+				t.id t_id, t.frequency t_freq, t.method t_method, 
+				m.id m_id, m.pricerate m_pricerate, m.frequency m_freq 
+					FROM user_services u
+					LEFT JOIN master_services m ON u.master_service_id = m.id
+					LEFT JOIN billing b ON u.billing_id = b.id
+					LEFT JOIN billing_types t ON b.billing_type = t.id
+					WHERE b.next_billing_date = '$billingdate' 
+					AND b.organization_id = '$organization_id' 
+					AND t.method = '$billingmethod' AND u.removed <> 'y'";
+		} else {
+			$query = "SELECT u.id u_id, u.account_number u_ac, 
+				u.master_service_id u_msid, u.billing_id u_bid, 
+				u.removed u_rem, u.usage_multiple u_usage, 
+				b.next_billing_date b_next_billing_date, b.id b_id, 
+				b.billing_type b_type, 
+				t.id t_id, t.frequency t_freq, t.method t_method, 
+				m.id m_id, m.pricerate m_pricerate, m.frequency m_freq 
+					FROM user_services u
+					LEFT JOIN master_services m ON u.master_service_id = m.id
+					LEFT JOIN billing b ON u.billing_id = b.id
+					LEFT JOIN billing_types t ON b.billing_type = t.id
+					WHERE b.id = '$bybillingid' 
+					AND t.method = '$billingmethod' AND u.removed <> 'y'";
+		}
+		$result = $this->db->query($query) or die ("Services Query Failed");
+
+		$i = 0; // count the billing services
+		foreach ($result->result_array() as $myresult)
+		{
+			$billing_id = $myresult['u_bid'];
+			$user_services_id = $myresult['u_id'];
+			$pricerate = $myresult['m_pricerate'];
+			$usage_multiple = $myresult['u_usage'];
+			$service_freq = $myresult['m_freq'];
+			$billing_freq = $myresult['t_freq'];
+
+			if ($billing_freq > 0) 
+			{
+				if ($service_freq > 0)
+				{
+					$billed_amount = ($billing_freq/$service_freq)
+						*($pricerate*$usage_multiple);
+				}
+				else
+				{
+					// Remove one time services
+					$billed_amount = ($pricerate*$usage_multiple);
+					$today = date("Y-m-d");
+					delete_service($user_services_id, 'onetime', $today);
+				} // end if
+			}
+
+			// insert this into the billing_details
+			$query = "INSERT INTO billing_details (billing_id, 
+				creation_date, user_services_id, billed_amount, batch) 
+				VALUES ('$billing_id',CURRENT_DATE,'$user_services_id',
+						'$billed_amount','$batchid')";
+			$invoiceresult = $this->db->query($query) or die ("Query Failed");
+
+			$i ++;
+		} // end while
+
+		//echo "$i services for found!<br>";
+		return $i; 
+		// return the number of services found
+	}
+
+
+	function create_billinghistory($batchid, $billingmethod, $user)
+	{
+		// go through a list of billing_id's that are to be billed in today's batch
+		$query = "SELECT DISTINCT billing_id FROM billing_details ".
+			"WHERE batch = '$batchid'";
+		$distinctresult = $this->db->query($query) or die ("Query Failed");
+
+		// set billingdate as today for checking rerun dates and stuff
+		$billingdate = date("Y-m-d");
+
+		// make a new billing_history record for each billing id group 
+		// use the billing_history_id as the invoice number
+		foreach ($distinctresult->result_array() as $myresult) 
+		{
+			$mybilling_id = $myresult['billing_id'];
+			$query = "INSERT INTO billing_history ".
+				"(billing_date, created_by, record_type, billing_type, ".
+				"billing_id) ".
+				"VALUES (CURRENT_DATE,'$user','bill','$billingmethod', ".
+				"'$mybilling_id')";
+			$historyresult = $this->db->query($query) or die ("Query Failed");	
+
+			// set the invoice number for billing_details that have 
+			// the corresponding billing_id 
+			// and haven't been assigned an invoice number yet
+			$myinsertid = $this->db->insert_id();
+			$invoice_number=$myinsertid;
+			$query = "UPDATE billing_details ".
+				"SET invoice_number = '$invoice_number' ".
+				"WHERE billing_id = '$mybilling_id' ".
+				"AND invoice_number IS NULL";
+			$invnumresult = $this->db->query($query) or die ("Query Failed");
+
+			// set the original_invoice_number here for billing_details with a
+			// null original_invoice_number (eg: a brand new one)
+			// NOTE: recent changes 1/27/2011 make the original_invoice_number obsolete
+			// but it is still printed and required for old items to look the same
+			$query = "UPDATE billing_details SET ".
+				"original_invoice_number = '$invoice_number' ".
+				"WHERE invoice_number = '$invoice_number' ".
+				"AND original_invoice_number IS NULL";
+			$originalinvoice = $this->db->query($query) or die ("Query Failed");
+
+			// set the recent_invoice_number here for billing_details with a
+			// null recent_invoice_number, items included as new charges or pastdue on that most recent invoice
+			// used for credit card imports to assign payments to hightest recent_invoice number
+			$query = "UPDATE billing_details ".
+				"SET recent_invoice_number = '$invoice_number' ".
+				"WHERE billing_id = '$mybilling_id' ".
+				"AND batch = '$batchid' ". 
+				"AND recent_invoice_number IS NULL";
+			$recentinvoice = $this->db->query($query) or die ("Query Failed");
+
+			//
+			// Apply Credits
+			// check if they have any credits and apply as payments
+			//
+			$creditsapplied = $this->apply_credits($mybilling_id, $invoice_number);            
+
+			// get the data for the service charges still pending 
+			// and what services they have
+
+			$query = "SELECT d.billing_id d_billing_id, ".
+				"d.creation_date d_creation_date, ".
+				"d.user_services_id d_user_services_id, ".
+				"d.invoice_number d_invoice_number, ".
+				"d.paid_amount d_paid_amount, d.billed_amount d_billed_amount, ".
+				"d.taxed_services_id d_taxed_services_id, ".
+				"b.rerun_date b_rerun_date, ".
+				"u.id u_id, u.account_number u_account_number, ".
+				"m.id m_id, m.service_description m_description, ".
+				"m.options_table m_options_table, ".
+				"ts.id ts_id, ts.master_services_id ".
+				"ts_master_services_id, ts.tax_rate_id ts_tax_rate_id, ".
+				"tr.id tr_id, tr.description tr_description ".
+				"FROM billing_details d ".
+				"LEFT JOIN billing b ON d.billing_id = b.id ".
+				"LEFT JOIN user_services u ON d.user_services_id = u.id ".
+				"LEFT JOIN master_services m ON u.master_service_id = m.id ".
+				"LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
+				"LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
+				"WHERE d.billing_id = $mybilling_id ".
+				"AND ".
+				"((d.paid_amount != d.billed_amount AND b.rerun_date IS NULL) ".
+				"OR (d.rerun = 'y' AND d.rerun_date = b.rerun_date)) ".
+				"ORDER BY d.taxed_services_id";
+
+			$invoiceresult = $this->db->query($query) or die ("Query Failed"); 
+			// used to show the invoice
+
+			// get the data for the billing dates from the billing table
+			$query = "SELECT * FROM billing WHERE id = $mybilling_id";
+			$billingresult = $this->db->query($query) or die ("Query Failed");
+
+			$myresult = $billingresult->row_array();
+			$billing_name = $myresult['name'];
+			$billing_company = $myresult['company'];
+			$billing_street = $myresult['street'];
+			$billing_zip = $myresult['zip'];
+			$billing_acctnum = $myresult['account_number'];
+			$billing_ccnum = $myresult['creditcard_number'];
+			$billing_ccexp = $myresult['creditcard_expire'];
+			$billing_fromdate = $myresult['from_date'];
+			$billing_todate = $myresult['to_date'];
+			$billing_payment_due_date = $myresult['payment_due_date'];
+			$billing_rerun_date = $myresult['rerun_date'];
+			$billing_notes = $myresult['notes'];	
+			$invoicetotal = 0;
+
+			// if this is a rerun, then set the payment_due_date to today for history
+			if ($billing_rerun_date == $billingdate) 
+			{
+				$billing_payment_due_date = $billing_rerun_date;
+				$billing_fromdate = $billing_rerun_date;
+				$billing_todate = $billing_rerun_date;
+			}
+
+			//
+			// calculate amounts for history
+			//
+
+			// initialize past amounts
+			$pastdue = 0;
+			$new_charges = 0;
+			$tax_due = 0;
+
+			foreach($invoiceresult->result_array() as $myinvresult) 
+			{
+				$user_services_id = $myinvresult['d_user_services_id'];	
+				$currinvoicenumber = $myinvresult['d_invoice_number'];
+				$billing_id = $myinvresult['d_billing_id'];
+				$creation_date = $myinvresult['d_creation_date'];
+				$service = $myinvresult['m_description'];
+				$taxdescription = $myinvresult['tr_description'];
+				$billed_amount = $myinvresult['d_billed_amount'];
+				$paid_amount = $myinvresult['d_paid_amount'];
+
+				// get the difference between billed and paid amount
+				$billed_amount = $billed_amount - $paid_amount;
+
+				if ($currinvoicenumber == $invoice_number) 
+				{
+					// new charges
+					$billed_amount = sprintf("%.2f",$billed_amount);
+					$new_charges = $new_charges + $billed_amount;
+					// new taxes
+					if ($taxdescription <> NULL) 
+					{
+						$tax_due = $tax_due + $billed_amount;
+					}
+				} 
+				else 
+				{
+					// past due charges
+					$pastdue = $pastdue + $billed_amount;
+				} // end if
+
+				// add to the running total
+				//$invoicetotal = $billed_amount + $invoicetotal;
+
+			} // end while
+
+			//calculate the invoicetotal after credits applied
+			$new_charges = sprintf("%.2f",$new_charges);
+			$pastdue = sprintf("%.2f",$pastdue);
+			$tax_due = sprintf("%.2f",$tax_due);
+
+			// calculate total due
+			// if new_charges is negative don't reduce pastdue with it
+			if ($new_charges < 0) 
+			{
+				$total_due = sprintf("%.2f",$pastdue);
+			} 
+			else 
+			{
+				$total_due = sprintf("%.2f",$pastdue+$new_charges);
+			}
+
+			// check the pastdue status to see what note to include
+			$status = $this->billingstatus($mybilling_id);
+
+			// get the invoice notes from general
+			$query = "SELECT g.default_invoicenote, g.pastdue_invoicenote, ".
+				"g.turnedoff_invoicenote, g.collections_invoicenote ".
+				"FROM billing b ".
+				"LEFT JOIN general g ON g.id = b.organization_id ".
+				"WHERE b.id = $mybilling_id";
+			$generalresult = $this->db->query($query) or die ("query failed");
+
+			$mygenresult = $generalresult->row_array();
+			$default_invoicenote = $mygenresult['default_invoicenote'];
+			$pastdue_invoicenote = $mygenresult['pastdue_invoicenote'];
+			$turnedoff_invoicenote = $mygenresult['turnedoff_invoicenote'];
+			$collections_invoicenote = $mygenresult['collections_invoicenote'];
+
+
+			// if the individual customer's billing notes are blank
+			// then use the automatic invoice notes from general config
+			if (empty($billing_notes)) 
+			{
+				if ($status == $l_pastdue) 
+				{
+					$billing_notes = $pastdue_invoicenote;
+				} 
+				elseif ($status == $l_turnedoff) 
+				{
+					$billing_notes = $turnedoff_invoicenote;
+				} 
+				elseif ($status == $l_collections) 
+				{
+					$billing_notes = $collections_invoicenote;
+				} 
+				else 
+				{
+					$billing_notes = $default_invoicenote;
+				}  
+			}
+
+			// update the billing history record	
+			$query = "UPDATE billing_history SET ".
+				"from_date = '$billing_fromdate', ".
+				"to_date = '$billing_todate', ".
+				"payment_due_date = '$billing_payment_due_date', ".
+				"new_charges = '$new_charges', ".
+				"past_due = '$pastdue', ".
+				"credit_applied = '$creditsapplied', ".
+				"late_fee = '0', ".
+				"tax_due = '$tax_due', ".
+				"total_due = '$total_due', ".
+				"notes = '$billing_notes' ".
+				"WHERE id = '$invoice_number'";
+			$historyresult = $this->db->query($query) or die("history update failed");
+
+			if ($billing_rerun_date <> $billingdate) 
+			{      
+				//// update the Next Billing Date to whatever 
+				// the billing type dictates +1 +2 +6 etc.			
+				// get the current billing type
+				$query = "SELECT b.billing_type b_billing_type, ".
+					"b.next_billing_date b_next_billing_date, ".
+					"b.from_date b_from_date, b.to_date b_to_date, ".
+					"t.id t_id, t.frequency t_frequency, ".
+					"t.method t_method ".
+					"FROM billing b ".
+					"LEFT JOIN billing_types t ".
+					"ON b.billing_type = t.id ".
+					"WHERE b.id = '$mybilling_id'";		
+				$billingqueryresult = $this->db->query($query) or die ("Query Failed");
+
+				$billingresult = $billingqueryresult->row_array();
+				$method = $billingresult['t_method'];
+
+				// update the next billing dates for anything not a prepay
+				if ($method <> 'prepaycc' & $method <> 'prepay') 
+				{
+					$mybillingdate = $billingresult['b_next_billing_date'];
+					$myfromdate = $billingresult['b_from_date'];
+					$mytodate = $billingresult['b_to_date'];
+					$mybillingfreq = $billingresult['t_frequency'];
+
+					// double frequency to add to the to_date
+					$doublefreq = $mybillingfreq * 2;
+
+					// insert the new next_billing_date, from_date, 
+					// to_date, and payment_due_date to next from_date
+					$query = "UPDATE billing ".
+						"SET next_billing_date =  DATE_ADD('$mybillingdate', ".
+						"INTERVAL '$mybillingfreq' MONTH), ".
+						"from_date = DATE_ADD('$myfromdate', ". 
+						"INTERVAL '$mybillingfreq' MONTH), ".
+						"to_date = DATE_ADD('$myfromdate', ". 
+						"INTERVAL '$doublefreq' MONTH), ".
+						"payment_due_date = DATE_ADD('$myfromdate', ".	
+						"INTERVAL '$mybillingfreq' MONTH) ".
+						"WHERE id = '$mybilling_id'";		
+					$updateresult = $this->db->query($query) or die ("Query Failed");
+
+				} // endif prepaycc
+
+			} // endif billing rerun
+
+			// set the rerun date back to NULL now that we are done with it
+			if ($billing_rerun_date) 
+			{
+				$query = "UPDATE billing SET rerun_date = NULL ".
+					"WHERE id = '$mybilling_id'";
+				$billing_rerun_null_result = $this->db->query($query)
+					or die ("Rerun NULL Update Failed");      
+			}
+
+		} // end while
+
+	} // end create_billinghistory function
+
+
+	/*----------------------------------------------------------------------------*/
+	// Apply Credits
+	/*----------------------------------------------------------------------------*/
+	function apply_credits($billing_id, $invoicenumber)
+	{
+		$total_credit_applied = 0;
+
+		// find the credits
+		$query = "SELECT * from billing_details ". 
+			"WHERE paid_amount > billed_amount ".
+			"AND billing_id = '$billing_id'";
+		$creditresult = $this->db->query($query) or die ("query failed");
+
+		foreach ($creditresult->result_array() $mycreditresult) 
+		{
+			$credit_id = $mycreditresult['id'];
+			$credit_billed_amount = $mycreditresult['billed_amount'];
+			$credit_paid_amount = $mycreditresult['paid_amount']; 
+
+			//
+			// apply those credits towards amounts owed
+			//
+
+			// calculate credit amount
+			$credit_amount = abs($credit_billed_amount - $credit_paid_amount);
+			$amount = $credit_amount;	
+
+			// find things to credit, apply only to items on current invoice with largest billed amount first
+			$query = "SELECT * FROM billing_details ".
+				"WHERE paid_amount < billed_amount AND invoice_number = $invoicenumber ORDER BY billed_amount DESC";
+			$findresult = $this->db->query($query) or die ("query failed");
+
+			while (($myfindresult = $findresult->result_array()) and ($amount > 0)) 
+			{	
+				$id = $myfindresult['id'];
+				$paid_amount = $myfindresult['paid_amount'];
+				$billed_amount = $myfindresult['billed_amount'];
+
+				$owed = $billed_amount - $paid_amount;		
+
+				// TODO the queries below should update the payment_applied date
+				// for that item being paid for by the credit amount
+
+				if ($amount >= $owed) 
+				{
+					$amount = $amount - $owed;
+					$fillamount = $owed + $paid_amount;
+					$query = "UPDATE billing_details ".
+						"SET paid_amount = '$fillamount', ".
+						"payment_applied = CURRENT_DATE ".
+						"WHERE id = $id";
+					$greaterthanresult = $this->db->query($query) or die ("query failed");
+				} 
+				else 
+				{ 
+					// amount is  less than owed
+					$available = $amount;
+					$amount = 0;
+					$fillamount = $available + $paid_amount;
+					$query = "UPDATE billing_details ".
+						"SET paid_amount = '$fillamount', ".
+						"payment_applied = CURRENT_DATE ".
+						"WHERE id = $id";
+					$lessthenresult = $this->db->query($query) or die ("query failed");
+				}
+			}
+
+			//
+			// reduce the amount of the credit left by the amount applied
+
+			// TODO: I think this query should also update the payment_applied date
+			// for the credit amount
+
+			$credit_applied = $credit_amount - $amount;
+			$credit_paid_total = $credit_paid_amount - $credit_applied;
+			$query = "UPDATE billing_details ".
+				"SET paid_amount = '$credit_paid_total', ".
+				"payment_applied = CURRENT_DATE ".      
+				"WHERE id = '$credit_id'";	
+			$totalcreditresult = $this->db->query($query) or die ("query failed");
+
+			$total_credit_applied = $total_credit_applied + $credit_applied;
+		}
+		return $total_credit_applied;
+	}
+
 }
