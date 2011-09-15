@@ -1538,7 +1538,7 @@ class Billing_Model extends CI_Model
 			"AND billing_id = '$billing_id'";
 		$creditresult = $this->db->query($query) or die ("query failed");
 
-		foreach ($creditresult->result_array() $mycreditresult) 
+		foreach ($creditresult->result_array() as $mycreditresult) 
 		{
 			$credit_id = $mycreditresult['id'];
 			$credit_billed_amount = $mycreditresult['billed_amount'];
