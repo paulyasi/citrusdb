@@ -42,18 +42,18 @@ foreach ($invoicelist as $myresult)
 		<td>$company</td>
 		<td>$from_date</td>
 		<td>$to_date</td>
-		<td><a href=\"index.php?load=invmaint&invoicenum=$invoice_number&editduedate=on&type=tools&duedate=$due_date&billingid=$billingid\">$due_date</a></td>
+		<td><a href=\"$this->url_prefix/index.php/billing/editinvoiceduedate/$billingid/$invoice_number/$due_date\">$due_date</a></td>
 		<td>$new_charges</td>
 		<td>$total_due</td>
 		<td>$billing_type</td>
-		<td>[<a href=\"index.php?load=tools/printpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=dl&submit=on\">".lang('pdf')."</a>]</td>
+		<td>[<a href=\"$this->url_prefix/index.php/tools/printpreviousinvoice/$billingid/$invoice_number\">".lang('pdf')."</a>]</td>
 
-		<td>[<a href=\"index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=fs&submit=on\" target=\"_blank\">".lang('html')."</a>]</td>
+		<td>[<a href=\"$this->url_prefix/index.php/tools/htmlpreviousinvoice/$billingid/$invoice_number\" target=\"_blank\">".lang('html')."</a>]</td>
 
-		<td>[<a href=\"index.php?load=tools/modules/billing/extendedpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=fs&submit=on\" target=\"_blank\">".lang('extended')."</a>]</td>
+		<td>[<a href=\"$this->url_prefix/index.php/tools/extendedpreviousinvoice/$billingid/$invoice_number\" target=\"_blank\">".lang('extended')."</a>]</td>
 
 		<td>[<a
-		href=\"index.php?load=tools/modules/billing/emailpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=dl&submit=on\">".lang('email')."</a>]</td>";
+		href=\"$this->url_prefix/index.php/tools/emailpreviousinvoice/$billingid/$invoice_number\">".lang('email')."</a>]</td>";
 	if ($normal_sum == 0) {
 		echo "<td>[<a href=\"index.php?load=invmaint&invoicenum=$invoice_number&remove=on&type=tools&submit=on\">".lang('remove')."</a>]</td>";
 	} else {
@@ -62,8 +62,8 @@ foreach ($invoicelist as $myresult)
 	// print payment link with prefilled in information if there are new charges to pay to this invoice
 	echo "<td>";
 	if ($new_charges > 0) {
-		echo "<a href=# onclick=\"popupPage('index.php?".
-			"load=payment&type=tools&invoice_number=$invoice_number&amount=$new_charges'); return false;\">".lang('enterpayments')."</a>";
+		echo "<a href=# onclick=\"popupPage('$this->url_prefix/index.php?/tools/payment/$invoice_number/$new_charges".
+			"'); return false;\">".lang('enterpayments')."</a>";
 	}
 	echo "</td><tr>";
 }
@@ -71,7 +71,7 @@ foreach ($invoicelist as $myresult)
 print "<td bgcolor=\"#dddddd\" colspan=16>";
 if (!$showall) 
 { 
-	echo "<a href=\"index.php/billing/invmaint/$billingid/showall\">
+	echo "<a href=\"$this->url_prefix/index.php/billing/invmaint/$billingid/showall\">
 	<?php echo lang('showall');?></a>"; 
 }
 print "</td></table>";

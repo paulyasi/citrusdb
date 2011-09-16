@@ -994,25 +994,17 @@ class Billing extends App_Controller
 	 *  Prompt the user to change the due date of the invoice
 	 * ------------------------------------------------------------------------
 	 */
-	function editinvoiceduedate() 
+	function editinvoiceduedate($billingid, $invoicenum, $duedate) 
 	{
-		// to change the payment due date when a partial payment is made
-		// and the customer wants to push their due date ahead
-		// ask what they want to change the payment due date to
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
 
-		echo "<FORM ACTION=\"index.php\" METHOD=\"POST\">".
-			"<input type=hidden name=load value=invmaint>".
-			"<input type=hidden name=type value=tools>".
-			"<input type=hidden name=invoicenum value=\"$invoicenum\">".
-			"<input type=hidden name=saveduedate value=\"on\">".     
-			"<input type=hidden name=billingid value=\"$billingid\">".
-			"<table>".
-			"<td>$l_new $l_duedate:</td><td><input type=text name=duedate ".
-			"value=\"$duedate\"></td><tr>".
-			"<td></td><td><INPUT TYPE=\"SUBMIT\" NAME=\"submit\" ".
-			"value=\"$l_submitrequest\"></td>".
-			"</form>";
+		// get the invoicenum input, and billing id
+		$data['billingid'] = $billingid;
+		$data['invoicenum'] = $invoicenum;
+		$data['duedate'] = $duedate;
 
+		$this->load->view('billing/editinvoiceduedate_view', $data);
 	}
 
 
