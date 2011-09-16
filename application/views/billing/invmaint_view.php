@@ -55,7 +55,7 @@ foreach ($invoicelist as $myresult)
 		<td>[<a
 		href=\"$this->url_prefix/index.php/tools/emailpreviousinvoice/$billingid/$invoice_number\">".lang('email')."</a>]</td>";
 	if ($normal_sum == 0) {
-		echo "<td>[<a href=\"index.php?load=invmaint&invoicenum=$invoice_number&remove=on&type=tools&submit=on\">".lang('remove')."</a>]</td>";
+		echo "<td>[<a href=\"$this->url_prefix/index.php/billing/removeinvoice/$invoice_number\">".lang('remove')."</a>]</td>";
 	} else {
 		echo "<td>$normal_sum ".lang('paid')."</td>";
 	}

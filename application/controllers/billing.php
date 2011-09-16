@@ -967,26 +967,16 @@ class Billing extends App_Controller
 	 *  Prompt the user to ask if they are sure they want to remove the invoice
 	 * ------------------------------------------------------------------------
 	 */
-	function removeinvoice() 
+	function removeinvoice($invoicenum) 
 	{
-		// Ask if they want to remove the invoice, print the yes/no form
-		print "<b>$l_areyousureyouwanttoremoveinvoice $invoicenum</b>";
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
 
-		print "<table cellpadding=15 cellspacing=0 border=0 width=720><td align=right width=360>";
-		print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-		print "<input type=hidden name=load value=invmaint>";
-		print "<input type=hidden name=type value=tools>";
-		print "<input type=hidden name=invoicenum value=$invoicenum>";
-		print "<input type=hidden name=delete value=on>";
-		print "<input name=deletenow type=submit value=\"  $l_yes  \" class=smallbutton></form></td>";
-		print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-		print "<input type=hidden name=type value=tools>";
-		print "<input name=done type=submit value=\"  $l_no  \" class=smallbutton>";
-		print "<input type=hidden name=load value=invmaint>";
-		print "</form></td></table>";
+		// get the invoicenum input
+		$data['invoicenum'] = $invoicenum;
 
+		$this->load->view('billing/removeinvoice_view', $data);
 	}
-
 
 
 	/*
