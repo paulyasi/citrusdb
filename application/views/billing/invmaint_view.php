@@ -13,7 +13,7 @@
 <td><?php echo lang('company');?></td>
 <td><?php echo lang('from');?></td>
 <td><?php echo lang('to');?></td>
-<td><?php echo lang('$l_duedate');?></td>
+<td><?php echo lang('duedate');?></td>
 <td><?php echo lang('newcharges');?></td>
 <td><?php echo lang('total');?></td>
 <td><?php echo lang('billingtype');?></td>
@@ -46,24 +46,24 @@ foreach ($invoicelist as $myresult)
 		<td>$new_charges</td>
 		<td>$total_due</td>
 		<td>$billing_type</td>
-		<td>[<a href=\"index.php?load=tools/printpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=dl&submit=on\">$l_pdf</a>]</td>
+		<td>[<a href=\"index.php?load=tools/printpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=dl&submit=on\">".lang('pdf')."</a>]</td>
 
-		<td>[<a href=\"index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=fs&submit=on\" target=\"_blank\">$l_html</a>]</td>
+		<td>[<a href=\"index.php?load=tools/modules/billing/htmlpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=fs&submit=on\" target=\"_blank\">".lang('html')."</a>]</td>
 
-		<td>[<a href=\"index.php?load=tools/modules/billing/extendedpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=fs&submit=on\" target=\"_blank\">$l_extended</a>]</td>
+		<td>[<a href=\"index.php?load=tools/modules/billing/extendedpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=fs&submit=on\" target=\"_blank\">".lang('extended')."</a>]</td>
 
 		<td>[<a
-		href=\"index.php?load=tools/modules/billing/emailpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=dl&submit=on\">$l_email</a>]</td>";
+		href=\"index.php?load=tools/modules/billing/emailpreviousinvoice&billingid=$billingid&invoiceid=$invoice_number&details=on&type=dl&submit=on\">".lang('email')."</a>]</td>";
 	if ($normal_sum == 0) {
-		echo "<td>[<a href=\"index.php?load=invmaint&invoicenum=$invoice_number&remove=on&type=tools&submit=on\">$l_remove</a>]</td>";
+		echo "<td>[<a href=\"index.php?load=invmaint&invoicenum=$invoice_number&remove=on&type=tools&submit=on\">".lang('remove')."</a>]</td>";
 	} else {
-		echo "<td>$normal_sum $l_paid</td>";
+		echo "<td>$normal_sum ".lang('paid')."</td>";
 	}
 	// print payment link with prefilled in information if there are new charges to pay to this invoice
 	echo "<td>";
 	if ($new_charges > 0) {
 		echo "<a href=# onclick=\"popupPage('index.php?".
-			"load=payment&type=tools&invoice_number=$invoice_number&amount=$new_charges'); return false;\">$l_enterpayments</a>";
+			"load=payment&type=tools&invoice_number=$invoice_number&amount=$new_charges'); return false;\">".lang('enterpayments')."</a>";
 	}
 	echo "</td><tr>";
 }
