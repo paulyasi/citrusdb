@@ -1019,18 +1019,13 @@ class Billing extends App_Controller
 		// get the invoicenum input, and billing id
 		$invoicenum = $this->input->post('invoicenum');
 		$billingid = $this->input->post('billingid');
-
-		// TODO: save the new due date that was entered into the
-		// billing_history.payment_due_date field
-
-		$query = "UPDATE billing_history SET payment_due_date = '$duedate' ".
-			"WHERE id = '$invoicenum'";
-		$result = $DB->Execute($query) or die ("due date update $l_queryfailed");
+		$duedate = $this->input->post('duedate');
+	
+		// update the invoice due date for this invoice
+		$this->billing_model->update_invoice_duedate($duedate, $invoicenum);
 
 		// redirect back to the services record for their account
-		echo "<script language=\"JavaScript\">window.location.href ".
-			"= \"index.php?load=invmaint&type=tools&billingid=$billingid&submit=Submit\";</script>";
-		redirect('/invmaint/index/$billingid');
+		redirect("/billing/invmaint/$billingid");
 
 	}
 

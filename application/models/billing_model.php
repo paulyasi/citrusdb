@@ -1611,4 +1611,13 @@ class Billing_Model extends CI_Model
 		return $total_credit_applied;
 	}
 
+
+	function update_invoice_duedate($duedate, $invoicenum)
+	{
+		$query = "UPDATE billing_history SET payment_due_date = '$duedate' ".
+			"WHERE id = '$invoicenum'";
+		$result = $this->db->query($query) or die ("due date update query failed");
+
+	}
+
 }

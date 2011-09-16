@@ -6,7 +6,7 @@
 
 [ <a href="<?php echo $this->url_prefix?>/index.php/billing"><?php echo lang('back')?></a> ]
 
-<FORM ACTION="index.php/billing/saveinvoiceduedate" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/billing/saveinvoiceduedate" METHOD="POST">
 <input type=hidden name=invoicenum value="<?php echo $invoicenum?>">
 <input type=hidden name=billingid value="<?php echo $billingid?>">
 <table>
