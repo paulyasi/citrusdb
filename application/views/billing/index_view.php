@@ -23,8 +23,8 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 <a href=\"$this->url_prefix/index.php/billing/collections/$billing_id\">".lang('collections')."</a> |
 
 	<a href=\"$this->url_prefix/index.php/billing/createinvoice/$billing_id\">".lang('createinvoice')."</a> | 
-	<a href=\"$this->url_prefix/index.php/cancelnotice/$billing_id\">".lang('cancel_notice')."</a> | 
-	<a href=\"$this->url_prefix/index.php/shutoffnotice/$billing_id\">".lang('shutoff_notice')."</a> | 
+	<a href=\"$this->url_prefix/index.php/billing/cancelnotice/$billing_id\">".lang('cancel_notice')."</a> | 
+	<a href=\"$this->url_prefix/index.php/billing/shutoffnotice/$billing_id\">".lang('shutoff_notice')."</a> | 
 	<a href=\"$this->url_prefix/index.php/billing/collectionsnotice/$billing_id\">".lang('collections_notice')."</a>
 ";
 }

@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed')?>
 // Copyright (C) 2002-2009  Paul Yasi (paul at citrusdb dot org)
 // read the README file for more information
 /*----------------------------------------------------------------------------*/
@@ -43,23 +43,6 @@ if ($save) {
   //  print "<script language=\"JavaScript\">window.location.href = \"index.php?load=billing&type=module\";</script>";
   
  } else {
-
-  // calculate their cancel_date
-
-  $query = "SELECT bi.id, bi.account_number, bh.payment_due_date, 
-  DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_canceled DAY) AS cancel_date 
-  FROM billing_details bd 
-  LEFT JOIN billing bi ON bd.billing_id = bi.id 
-  LEFT JOIN billing_history bh ON bh.id = bd.invoice_number 
-  LEFT JOIN general g ON bi.organization_id = g.id 
-  WHERE bd.billed_amount > bd.paid_amount AND bd.billing_id = '$billing_id' GROUP BY bi.id";
-  
-  $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-  $result = $DB->Execute($query) or die ("$l_queryfailed");
-  $myresult = $result->fields;
-  $cancel_date = $myresult['cancel_date'];
-
-  $human_cancel = humandate($cancel_date, $lang);
     
   // print the yes/no confirmation form
   print "<br><br>";

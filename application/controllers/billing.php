@@ -891,12 +891,53 @@ class Billing extends App_Controller
 	}
 
 
-	public function cancelnotice()
+	public function cancelnotice($billing_id)
 	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/cancelnotice.php');
-		}  else permission_error();
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		$data['billing_id'] = $billing_id;
+
+		// load the date helper for human format dates	
+		$this->load->helper('date');
+
+		$data['cancel_date'] = humandate($this->billing_model->
+			cancel_notice_canceldate($billing_id));
+
+		$this->load->view('billing/cancelnotice_view', $data);
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
+	}
+
+	public function savecancelnotice()
+	{
+		// get input from form
+		$billing_id = $this->input->post('billing_id');
+		$cancel_date = $this->input->post('cancel_date');
+
+		// load the PasswordHash library
+		$config = array (
+				'notice_type' => 'cancel', 
+				'billing_id' => $billing_id, 
+				'method' => 'both', 
+				'payment_due_date' => $cancel_date, 
+				'turnoff_date' => $cancel_date, 
+				'cancel_date' => $cancel_date
+				);
+		$this->load->library('Notice', $config);    
+
+		// print link to the pdf to download
+		$linkname = $this->notice->pdfname;
+		$contactemail = $this->notice->contactemail;
+		$linkurl = "index.php/tools/downloadfile/$linkname";
+
+		echo "<p>".lang('sent_cancel_notice')." $contactemail</p>";
+		echo "<p>".lang('download_pdf').": <a href=\"$linkurl\">$linkname</a></p>";
 	}
 
 
@@ -1010,7 +1051,7 @@ class Billing extends App_Controller
 		$invoicenum = $this->input->post('invoicenum');
 		$billingid = $this->input->post('billingid');
 		$duedate = $this->input->post('duedate');
-	
+
 		// update the invoice due date for this invoice
 		$this->billing_model->update_invoice_duedate($duedate, $invoicenum);
 
