@@ -987,7 +987,7 @@ class Billing extends App_Controller
 
 	}
 
-	public function collectionsnotice()
+	public function collectionsnotice($billing_id)
 	{
 		// load the module header common to all module views
 		$this->load->view('module_header_view');
