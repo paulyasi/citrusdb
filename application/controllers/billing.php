@@ -901,8 +901,10 @@ class Billing extends App_Controller
 		// load the date helper for human format dates	
 		$this->load->helper('date');
 
-		$data['cancel_date'] = humandate($this->billing_model->
-			cancel_notice_canceldate($billing_id));
+		$data['cancel_date'] = $this->billing_model->
+			cancel_notice_canceldate($billing_id);
+
+		$data['human_cancel_date'] = humandate($data['cancel_date']);
 
 		$this->load->view('billing/cancelnotice_view', $data);
 
@@ -920,7 +922,9 @@ class Billing extends App_Controller
 		$billing_id = $this->input->post('billing_id');
 		$cancel_date = $this->input->post('cancel_date');
 
-		// load the PasswordHash library
+		echo $cancel_date;
+
+		// load the Notice library
 		$config = array (
 				'notice_type' => 'cancel', 
 				'billing_id' => $billing_id, 

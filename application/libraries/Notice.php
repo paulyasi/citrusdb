@@ -15,11 +15,16 @@ class Notice
 	private $turnoff_date;
 	private $cancel_date;
 
-	/*---------------------------------------------------------------------------*/
+	/*------------------------------------------------------------------------*/
 	// construct notice message
-	/*---------------------------------------------------------------------------*/
+	/*------------------------------------------------------------------------*/
 
 	function Notice($config = array()) {
+
+		// load the CodeIgniter instance and human date helper
+		$this->CI=& get_instance();
+		$this->CI->load->database();
+		$this->CI->load->helper('date');
 
 		$this->notice_type = $config['notice_type'];
 		$this->billing_id = $config['billing_id'];
@@ -52,23 +57,21 @@ class Notice
 	} // end constructor
 
 
-	/*--------------------------------------------------------------------------*/
+	/*-----------------------------------------------------------------------*/
 	// create notice
 	//
 	// by email or make a pdf link for billing to print out and send
 	// method is 'email', 'pdf', or 'both'
 	// notice type is 'pastdue', 'shutoff', 'turnoff', 'cancel', 'cancelwfee'
 	//
-	/*--------------------------------------------------------------------------*/
+	/*-----------------------------------------------------------------------*/
 	public function create () {
-		// globals
-		global $DB, $lang;
-		require('./include/fpdf.php');
-
+		require('fpdf.php');
+		
 		// convert the dates into normal human readable format instead of ISO
-		$payment_due_date = humandate($this->payment_due_date, $lang);
-		$turnoff_date = humandate($this->turnoff_date, $lang);
-		$cancel_date = humandate($this->cancel_date, $lang);
+		$payment_due_date = humandate($this->payment_due_date);
+		$turnoff_date = humandate($this->turnoff_date);
+		$cancel_date = humandate($this->cancel_date);
 
 
 		// get the info for the middle body of the message:
@@ -94,8 +97,8 @@ class Notice
 			"AND bh.payment_due_date < '$this->today' ".
 			"AND bi.id = $this->billing_id";
 
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("Send Notice Query Failed");
+		$result = $this->CI->db->query($query) 
+			or die ("Send Notice Query Failed");
 		// initialize variables
 		$total_owed = 0;
 
@@ -291,9 +294,6 @@ class Notice
 
 
 	private function send_email() {
-		// globals
-		global $DB, $lang;
-		include ("$lang");
 
 		// Create Email Headers
 		$headers = "From: $this->billingemail\n";
@@ -309,17 +309,12 @@ class Notice
 	}
 
 	private function print_pdf() {
-		// globals
-		global $DB, $lang;
-		include ("$lang");
-		require('./include/fpdf.php');
+		require('./fpdf.php');
 
 		// select the path_to_ccfile from settings
 		$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$ccfileresult = $DB->Execute($query) 
-			or die ("$l_queryfailed");
-		$myccfileresult = $ccfileresult->fields;
+		$ccfileresult = $this->CI->db->query($query) or die ("query failed");
+		$myccfileresult = $ccfileresult->row_array();
 		$path_to_ccfile = $myccfileresult['path_to_ccfile'];
 
 		$this->pdfname = "$this->notice_type"."$this->billing_id"."-"."$this->today".".pdf";
