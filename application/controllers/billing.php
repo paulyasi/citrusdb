@@ -901,8 +901,10 @@ class Billing extends App_Controller
 		// load the date helper for human format dates	
 		$this->load->helper('date');
 
-		$data['cancel_date'] = $this->billing_model->
-			cancel_notice_canceldate($billing_id);
+		// returns cancel_date and turnoff_date
+		$myresult = $this->billing_model->notice_dates($billing_id);
+
+		$data['cancel_date'] = $myresult['cancel_date'];
 
 		$data['human_cancel_date'] = humandate($data['cancel_date']);
 
@@ -921,8 +923,6 @@ class Billing extends App_Controller
 		// get input from form
 		$billing_id = $this->input->post('billing_id');
 		$cancel_date = $this->input->post('cancel_date');
-
-		echo $cancel_date;
 
 		// load the Notice library
 		$config = array (
@@ -945,21 +945,91 @@ class Billing extends App_Controller
 	}
 
 
-	public function shutoffnotice()
+	public function shutoffnotice($billing_id)
 	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/shutoffnotice.php');
-		}  else permission_error();
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		$data['billing_id'] = $billing_id;
+
+		// load the date helper for human format dates	
+		$this->load->helper('date');
+
+		// returns cancel_date and turnoff_date
+		$myresult = $this->billing_model->notice_dates($billing_id);
+
+		$data['cancel_date'] = $myresult['cancel_date'];
+		$data['turnoff_date'] = $myresult['turnoff_date'];
+
+		$data['human_cancel_date'] = humandate($data['cancel_date']);
+
+		$this->load->view('billing/shutoffnotice_view', $data);
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
 	}
 
+	public function saveshutoffnotice()
+	{
+		$mynotice = new notice('shutoff',$billing_id, 'both', $turnoff_date, $turnoff_date, $cancel_date);
+
+		// print link to the pdf to download
+		$linkname = $mynotice->pdfname;
+		$contactemail = $mynotice->contactemail;
+		$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+
+		echo "<p>$l_sent_shutoff_notice_answer $contactemail</p>";
+		echo "<p>$l_download_pdf: <a href=\"$linkurl\">$linkname</a></p>";
+
+	}
 
 	public function collectionsnotice()
 	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/collectionsnotice.php');
-		}  else permission_error();
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		$data['billing_id'] = $billing_id;
+
+		// load the date helper for human format dates	
+		$this->load->helper('date');
+
+		// returns cancel_date and turnoff_date
+		$myresult = $this->billing_model->notice_dates($billing_id);
+
+		$data['cancel_date'] = $myresult['cancel_date'];
+		$data['turnoff_date'] = $myresult['turnoff_date'];
+
+		$data['human_cancel_date'] = humandate($data['cancel_date']);
+
+		$this->load->view('billing/collectionsnotice_view', $data);
+
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
+	}
+
+	public function savecollectionsnotice()
+	{
+
+		echo "<pre>";
+		$mynotice = new notice('collections',$billing_id, 'both', $turnoff_date, $turnoff_date, $cancel_date);
+		echo "</pre>";
+
+		// print link to the pdf to download
+		$linkname = $mynotice->pdfname;
+		$contactemail = $mynotice->contactemail;
+		$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+
+		echo "<p>$l_sent_collections_notice_answer $contactemail</p>";
+		echo "<p>$l_download_pdf: <a href=\"$linkurl\">$linkname</a></p>";
+
 	}
 
 
@@ -1101,7 +1171,6 @@ class Billing extends App_Controller
 		// get the list of billing items that could be refunded
 		$myresult = $this->billing_model->billing_detail_item($detailid);
 
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 		$result = $DB->Execute($query) or die ("$l_queryfailed");
 		$myresult = $result->fields;
 

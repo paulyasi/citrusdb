@@ -19,9 +19,9 @@ class Notice
 	// construct notice message
 	/*------------------------------------------------------------------------*/
 
-	function Notice($config = array()) {
+	function __construct($config = array()) {
 
-		// load the CodeIgniter instance and human date helper
+		// load the CodeIgniter instance, database and my date helper
 		$this->CI=& get_instance();
 		$this->CI->load->database();
 		$this->CI->load->helper('date');
@@ -103,7 +103,7 @@ class Notice
 		$total_owed = 0;
 
 		// get the items that are past due to print out
-		while ($myresult = $result->FetchRow()) {
+		while ($myresult = $result->result_array()) {
 			// organization info
 			$org_name = $myresult['org_name'];
 			$org_street = $myresult['org_street'];
@@ -145,21 +145,19 @@ class Notice
 		// set the message body
 		$total_owed = sprintf("%.2f", $total_owed);
 
-		// include the language file here now that the notice_text variables are set
-		include ("$lang");
-
-		$message_body = "$l_account: $billing_account_number\n".
-			"$l_invoice: $invoice_number\n".
-			"$l_amount_due: $total_owed\n";
+		$message_body = lang('account') ." " . $billing_account_number. "\n".
+			lang('invoice'). ": " . $invoice_number . "\n".
+			lang('amount_due') . ": " $total_owed . "\n";
 
 		// look for notice type and create proper message
 		switch($this->notice_type) {
 			case 'pastdue':
 				// create the notice text with embedded information
+				$l_notice_text_pastdue = lang('notice_text_pastdue');
 				eval ("\$notice_text = \"$l_notice_text_pastdue\";");
 
 				// create body of message, header, footer, and content
-				$this->noticeheading = "$org_name\n$l_pastdue_notice\n";
+				$this->noticeheading = "$org_name\n". lang('pastdue_notice') ."\n";
 
 				$this->message .= "$message_body\n\n";
 
@@ -176,10 +174,10 @@ class Notice
 
 				$this->message .= "$notice_text\n\n";
 
-				$this->message .= "$l_pastdue_heading:\n";
+				$this->message .= lang('pastdue_heading').":\n";
 				$this->message .= "$service_list\n\n";
 
-				$this->message .= "$l_notice_text_footer\n\n";
+				$this->message .= lang('notice_text_footer') ."\n\n";
 
 				$this->message .= "$org_name\n";
 				$this->message .= "$org_street\n";
@@ -189,11 +187,14 @@ class Notice
 
 			case 'shutoff':
 				// create the notice text with embedded information
+				$l_notice_text_shutoff = lang('notice_text_shutoff');
 				eval ("\$notice_text = \"$l_notice_text_shutoff\";");
+
+				$l_notice_footer_shutoff = lang('notice_footer_shutoff');
 				eval ("\$notice_footer_shutoff = \"$l_notice_footer_shutoff\";");            
 
 				// create body of message, header, footer, and content
-				$this->noticeheading = "$org_name\n$l_shutoff_notice\n";
+				$this->noticeheading = "$org_name\n". lang('shutoff_notice') ."\n";
 
 				$this->message .= "$message_body\n\n";
 
@@ -210,10 +211,10 @@ class Notice
 
 				$this->message .= "$notice_text\n\n";
 
-				$this->message .= "$l_shutoff_heading:\n";
+				$this->message .= lang('shutoff_heading') .":\n";
 				$this->message .= "$service_list\n";
 
-				$this->message .= "$l_notice_text_footer\n\n";     
+				$this->message .= lang('notice_text_footer') ."\n\n";     
 
 				$this->message .= "$org_name\n";
 				$this->message .= "$org_street\n";
@@ -225,10 +226,11 @@ class Notice
 
 			case 'cancel':
 				// create the notice text with embedded information
+				$l_notice_text_cancel = lang('notice_text_cancel');
 				eval ("\$notice_text = \"$l_notice_text_cancel\";");
 
 				// create body of message, header, footer, and content
-				$this->noticeheading = "$org_name\n$l_cancel_notice\n";
+				$this->noticeheading = "$org_name\n".lang('cancel_notice')."\n";
 
 				$this->message .= "$message_body\n\n";
 
@@ -243,10 +245,10 @@ class Notice
 				$this->message .= "$billing_street\n";
 				$this->message .= "$billing_city $billing_state $billing_zip\n\n\n\n";
 
-				$this->message .= "$l_cancel_heading:\n";
+				$this->message .= lang('cancel_heading').":\n";
 				$this->message .= "$service_list\n";
 
-				$this->message .= "$l_notice_text_footer\n\n";
+				$this->message .= lang('notice_text_footer')."\n\n";
 
 				$this->message .= "$notice_text\n\n";
 
@@ -257,10 +259,11 @@ class Notice
 				break;
 			case 'collections':
 				// create the notice text with embedded information
+				$l_notice_text_collections = lang('notice_text_collections');
 				eval ("\$notice_text = \"$l_notice_text_collections\";");
 
 				// create body of message, header, footer, and content
-				$this->noticeheading = "$org_name\n$l_collections_notice\n";
+				$this->noticeheading = "$org_name\n".lang('collections_notice')."\n";
 
 				$this->message .= "$message_body\n\n";
 
@@ -277,10 +280,10 @@ class Notice
 
 				$this->message .= "$notice_text\n\n";
 
-				$this->message .= "$l_collections_heading:\n";
+				$this->message .= lang('collections_heading').":\n";
 				$this->message .= "$service_list\n";
 
-				$this->message .= "$l_collections_notice_text_footer\n\n";
+				$this->message .= lang('collections_notice_text_footer')."\n\n";
 
 				$this->message .= "$org_name\n";
 				$this->message .= "$org_street\n";

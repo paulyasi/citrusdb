@@ -1621,11 +1621,13 @@ class Billing_Model extends CI_Model
 	}
 
 
-	function cancel_notice_canceldate($billing_id)
+	function notice_dates($billing_id)
 	{
-		// calculate their cancel_date
+		// calculate their cancel_date and turnoff date
 
 		$query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_turnoff DAY) ".
+			"AS turnoff_date, ".
 			"DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_canceled DAY) ".
 			"AS cancel_date ".
 			"FROM billing_details bd ".
@@ -1636,8 +1638,8 @@ class Billing_Model extends CI_Model
 			"AND bd.billing_id = '$billing_id' GROUP BY bi.id";
 
 		$result = $this->db->query($query) or die ("query failed");
-		$myresult = $result->row_array();
-		return $myresult['cancel_date'];
+
+		return $result->row_array();
 	}
 
 }
