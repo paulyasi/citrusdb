@@ -23,30 +23,33 @@ class Tools extends App_Controller
 
 		// show user tools that everyone can use
 		$this->load->view('tools/usertools_view');
-		
-		// check which modules we are allowed to view
-		$viewable = $this->module_model->module_permission_list($this->user);
 
-		// get list of the modules that are installed
-		$result = $this->module_model->modulelist();
+		// check for user privileges to see if the are manager or admin
+		$privileges = $this->user_model->user_privileges($this->user);
 
-		foreach($result->result() as $myresult)
+		if (($privileges['manager'] == 'y') OR ($privileges['admin'] == 'y'))
 		{
-			$modulename = $myresult->modulename;
+			// get list of the modules that are installed
+			$result = $this->module_model->modulelist();
 
-			if (in_array ($modulename, $viewable))
+			foreach($result->result() as $myresult)
 			{
+				$modulename = $myresult->modulename;
+
 				// load the tools view for this module
 				// view file in the format modulenametools_view, eg: customertools_view
 				$this->load->view("tools/".$modulename."tools_view");
 			}
 
+			// Show Reports Tools for manager and admin
+			$this->load->view('tools/reporttools_view');
 		}
 
-		// TODO
-		// Show Reports Tools for manager and admin
-		// Show Admin Tools for admin
-		//
+		if ($privileges['admin'] == 'y')
+		{
+			// Show Admin Tools for admin
+			$this->load->view('tools/admintools_view');
+		}
 
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');			
