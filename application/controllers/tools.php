@@ -32,39 +32,21 @@ class Tools extends App_Controller
 
 		foreach($result->result() as $myresult)
 		{
-			$commonname = $myresult->commonname;
 			$modulename = $myresult->modulename;
-
-			// change the commonname for base modules to a language compatible name
-			if ($commonname == "Customer") { $commonname = lang('customer'); }
-			if ($commonname == "Services") { $commonname = lang('services'); }
-			if ($commonname == "Billing") { $commonname = lang('billing'); }
-			if ($commonname == "Support") { $commonname = lang('support'); }
-
-			$myuri = $this->uri->segment(1);
 
 			if (in_array ($modulename, $viewable))
 			{
-				if ($myuri == $modulename) {
-					echo "<div><a class=\"active\" href=\"" . $this->url_prefix . "/index.php/$modulename\">$commonname</a></div>";
-				} else {
-					echo "<div><a href=\"" . $this->url_prefix . "/index.php/$modulename\">$commonname</a></div>";
-				}
+				// load the tools view for this module
+				// view file in the format modulenametools_view, eg: customertools_view
+				$this->load->view("tools/".$modulename."tools_view");
 			}
 
 		}
 
-		// get the billing id
-		$billing_id = $this->billing_model->default_billing_id($this->account_number);
-
-		// show the billing information (name, address, etc)
-		$data = $this->billing_model->record($billing_id);
-		$this->load->view('tools/index_view', $data);
-
-		// show any alternate billing types
-		$data['alternate'] = $this->billing_model->alternates($this->account_number, $billing_id);
-		$data['userprivileges'] = $this->user_model->user_privileges($this->user);
-		$this->load->view('billing/alternate_view', $data);
+		// TODO
+		// Show Reports Tools for manager and admin
+		// Show Admin Tools for admin
+		//
 
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');			
