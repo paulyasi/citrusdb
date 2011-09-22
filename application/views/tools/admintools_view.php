@@ -1,64 +1,55 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 ?>
-
-
-/*----------------------------------------------------------------------------*/
-// Show Admin Functions
-/*----------------------------------------------------------------------------*/
-if ($myresult['admin'] == 'y')
-{
-echo "<div class=toolblock style=\"height: 180px;\">
-<b>$l_admin</b>
+<div class=toolblock style="height: 180px;">
+<b><?php echo lang('admin')?></b>
 <br>
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=general&type=tools'); return false;\">
-<img border=0 src=\"images/icons/citrus_config.png\">
-$l_generalconfiguration</a></li>
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/general'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_config.png">
+<?php echo lang('generalconfiguration')?></a></li>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=settings&type=tools'); return false;\">
-<img border=0 src=\"images/icons/citrus_config.png\">
-$l_settings</a></li>
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/settings'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_config.png">
+<?php echo lang('settings')?></a></li>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=users&type=tools'); return false;\">
-<img border=0 src=\"images/icons/citrus_users.png\"><br>
-$l_users</a>
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/users'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_users.png"><br>
+<?php echo lang('users')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=groups&type=tools'); return false;\">
-<img border=0 src=\"images/icons/citrus_groups.png\"><br>
-$l_groups</a>
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/groups'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_groups.png"><br>
+<?php echo lang('groups')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=modules&type=tools'); return false;\">
-<img border=0 src=\"images/icons/citrus_modules.png\"><br>
-$l_editmodules</a>
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/modules'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_modules.png"><br>
+<?php echo lang('editmodules')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick = \"popupPage('index.php?load=billing&tooltype=module&type=tools&billingtypes=on'); return false;\">
-<img border=0 src=\"images/icons/citrus_edit.png\"><br>
-$l_editbillingtypes</a>
+<a href=# onclick = "popupPage('<?php echo $this->url_prefix?>/index.php/tools/billingtypes'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_edit.png"><br>
+<?php echo lang('editbillingtypes')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick = \"popupPage('index.php?load=services&tooltype=module&type=tools'); return false;\">
-<img border=0 src=\"images/icons/citrus_edit.png\"><br>
-$l_editservices</a>
+<a href=# onclick = "popupPage('<?php echo $this->url_prefix?>/index.php/tools/services'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_edit.png"><br>
+<?php echo lang('editservices')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick=\"popupPage('index.php?load=mergeaccounts&type=tools'); return false;\">
-<img border=0 src=\"images/icons/citrus_modules.png\"><br>
-$l_mergeaccounts</a>
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/mergeaccounts'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_modules.png"><br>
+<?php echo lang('mergeaccounts')?></a>
 </div>
 
 </div>
-";
-}
 

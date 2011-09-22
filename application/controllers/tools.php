@@ -51,9 +51,6 @@ class Tools extends App_Controller
 			$this->load->view('tools/admintools_view');
 		}
 
-		// the history listing tabs
-		$this->load->view('historyframe_tabs_view');			
-
 		// the html page footer
 		$this->load->view('html_footer_view');
 
