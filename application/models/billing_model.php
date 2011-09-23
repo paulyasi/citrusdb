@@ -84,8 +84,9 @@ class Billing_Model extends CI_Model
 	public function default_billing_id($account_number)
 	{
 		$query = "SELECT default_billing_id FROM customer ".
-			"WHERE account_number = $account_number";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+			"WHERE account_number = ?";
+		$result = $this->db->query($query, array($account_number))
+			or die ("$l_queryfailed");
 		$myresult = $result->row();	
 		
 		return $myresult->default_billing_id;
@@ -104,8 +105,9 @@ class Billing_Model extends CI_Model
 			"FROM billing b ".	
 			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
 			"LEFT JOIN general g ON b.organization_id = g.id ".
-			"WHERE b.id != $billing_id AND b.account_number = $this->account_number";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+			"WHERE b.id != ? AND b.account_number = ?";
+		$result = $this->db->query($query, array($billing_id, $this->account_number)) 
+			or die ("$l_queryfailed");
 		
 		return $result->result_array();
 	
@@ -1654,24 +1656,25 @@ class Billing_Model extends CI_Model
 		// get the invoice data to print on the bill
 		$invoice_number = $invoiceid;
 
-		$query = "SELECT h.id h_id, h.billing_date h_billing_date, 
-			h.created_by h_created_by, h.billing_id h_billing_id, 
-			h.from_date h_from_date, h.to_date h_to_date, 
-			h.payment_due_date h_payment_due_date, 
-			h.new_charges h_new_charges, h.past_due h_past_due, 
-			h.late_fee h_late_fee, h.tax_due h_tax_due, 
-			h.total_due h_total_due, h.notes h_notes, h.credit_applied h_credit_applied, 
-			b.id b_id, b.name b_name, b.company b_company, 
-			b.street b_street, b.city b_city, b.state b_state, 
-			b.country b_country, b.zip b_zip, b.po_number b_po_number, 
-			b.contact_email b_contact_email, b.account_number b_acctnum, 
-			b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp  
-				FROM billing_history h 
-				LEFT JOIN billing b ON h.billing_id = b.id  
-				WHERE h.id = '$invoice_number'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$invoiceresult = $DB->Execute($query) or die ("$l_queryfailed");	
-		$myinvresult = $invoiceresult->fields;
+		$query = "SELECT h.id h_id, h.billing_date h_billing_date, ".
+			"h.created_by h_created_by, h.billing_id h_billing_id, ".
+			"h.from_date h_from_date, h.to_date h_to_date, ".
+			"h.payment_due_date h_payment_due_date, ".
+			"h.new_charges h_new_charges, h.past_due h_past_due, ".
+			"h.late_fee h_late_fee, h.tax_due h_tax_due, ".
+			"h.total_due h_total_due, h.notes h_notes, ".
+			"h.credit_applied h_credit_applied, ".
+			"b.id b_id, b.name b_name, b.company b_company, ".
+			"b.street b_street, b.city b_city, b.state b_state, ".
+			"b.country b_country, b.zip b_zip, b.po_number b_po_number, ".
+			"b.contact_email b_contact_email, b.account_number b_acctnum, ".
+			"b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp ". 
+			"FROM billing_history h ".
+			"LEFT JOIN billing b ON h.billing_id = b.id ". 
+			"WHERE h.id = ?";
+		$invoiceresult = $this->db->query($query, array($invoice_number)) 
+			or die ("query failed");	
+		$myinvresult = $invoiceresult->row_array();
 		$user = $myinvresult['h_created_by'];
 		$mydate = $myinvresult['h_billing_date'];
 		$mybilling_id = $myinvresult['b_id'];
@@ -1696,12 +1699,14 @@ class Billing_Model extends CI_Model
 		$billing_po_number = $myinvresult['b_po_number'];
 
 		// get the organization info to print on the bill
-		$query = "SELECT g.org_name,g.org_street,g.org_city,g.org_state,g.org_zip,g.phone_billing,g.email_billing,g.invoice_footer,g.einvoice_footer 
-			FROM billing b
-			LEFT JOIN general g ON g.id = b.organization_id 
-			WHERE b.id = $mybilling_id";
-		$generalresult = $DB->Execute($query) or die ("$l_queryfailed");
-		$mygenresult = $generalresult->fields;
+		$query = "SELECT g.org_name,g.org_street,g.org_city,g.org_state,g.org_zip,".
+			"g.phone_billing,g.email_billing,g.invoice_footer,g.einvoice_footer ".
+			"FROM billing b ".
+			"LEFT JOIN general g ON g.id = b.organization_id ".
+			"WHERE b.id = ?";
+		$generalresult = $this->db->query($query, array($mybilling_id)) 
+			or die ("query failed");
+		$mygenresult = $generalresult->row_array();
 		$org_name = $mygenresult['org_name'];
 		$org_street = $mygenresult['org_street'];
 		$org_city = $mygenresult['org_city'];
@@ -1716,15 +1721,22 @@ class Billing_Model extends CI_Model
 		// output the invoice page
 		/*------------------------------------------------------------*/
 
-		// convert dates to human readable form
-		$billing_mydate = humandate($mydate, $lang);
-		$billing_fromdate = humandate($billing_fromdate, $lang);
-		$billing_todate = humandate($billing_todate, $lang);
-		$billing_payment_due_date = humandate($billing_payment_due_date, $lang);
+		// load the html to ascii helper for character conversions	
+		$this->load->helper('htmlascii');
 
-		if ($printtype == "pdf") {
-			require ('./include/fpdf.php');
+		// convert dates to human readable form using my date helper
+		$this->load->helper('date');
+		$billing_mydate = humandate($mydate);
+		$billing_fromdate = humandate($billing_fromdate);
+		$billing_todate = humandate($billing_todate);
+		$billing_payment_due_date = humandate($billing_payment_due_date);
+
+		if ($printtype == "pdf") 
+		{
+			//require ('./include/fpdf.php');
+			$this->load->library('fpdf');    
 			$pdf = $pdfobject;
+
 			// convert html character codes to ascii for pdf
 			$billing_name = html_to_ascii($billing_name);
 			$billing_company = html_to_ascii($billing_company);
@@ -1748,17 +1760,19 @@ class Billing_Model extends CI_Model
 			$pdf->MultiCell(80,4,"$org_street\n$org_city, $org_state $org_zip\n$phone_billing\n$email_billing",0);
 			$pdf->Rect(135,10,1,36,"F");
 
-			//$pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip",0);
 			$pdf->SetXY(140,10);
 			$pdf->SetFontSize(10);
 			$pdf->MultiCell(70,6,"$billing_mydate\n$l_accountnumber: $billing_acctnum\n$l_invoicenumber: $invoiceid\n$billing_fromdate $l_to $billing_todate\n$l_paymentdue: $billing_payment_due_date\n$l_total: $billing_total_due",0);
 			$pdf->SetXY(10,60);
 			$pdf->SetFontSize(10);
 
-			if ($billing_po_number) {
+			if ($billing_po_number) 
+			{
 				// only print the po number if they have one
 				$pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip\n$l_po_number: $billing_po_number",0);
-			} else {
+			} 
+			else 
+			{
 				$pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip\n",0);
 			}
 
@@ -1767,29 +1781,32 @@ class Billing_Model extends CI_Model
 			$pdf->Line(5,102,200,102);
 			$pdf->SetXY(10,103);
 			$pdf->Cell(100,5,"$l_description");
-			//$pdf->SetXY(110,103);
-			//$pdf->Cell(50,5,"$l_details");
 			$pdf->SetXY(160,103);
 			$pdf->Cell(50,5,"$l_amount");
 
-		} else {
-			$output = "$billing_mydate\n$l_accountnumber: $billing_acctnum\n\n";
-			$output .= "$l_invoicenumber: $invoiceid\n";
+		} 
+		else 
+		{
+			$output = "$billing_mydate\n".lang('accountnumber').": $billing_acctnum\n\n";
+			$output .= lang('invoicenumber').": $invoiceid\n";
 			$output .= "$billing_fromdate - $billing_todate \n";
-			$output .= "$l_paymentduedate: $billing_payment_due_date\n";
+			$output .= lang('paymentduedate').": $billing_payment_due_date\n";
 			$output .= "\n\n";
 
-			$output .= "$l_to: $billing_email\n";
+			$output .= lang('to').": $billing_email\n";
 			$output .= "$billing_name $billing_company\n";
 			$output .= "$billing_street ";
 			$output .= "$billing_city $billing_state ";
 
 			$output .= "$billing_zip\n";
 
-			if ($billing_po_number) {
+			if ($billing_po_number) 
+			{
 				// only print the po number if they have one
-				$output .= "$l_po_number: $billing_po_number\n";
-			} else {
+				$output .= lang('po_number').": $billing_po_number\n";
+			} 
+			else 
+			{
 				$output .= "\n";
 			}
 
@@ -1799,26 +1816,27 @@ class Billing_Model extends CI_Model
 		} // end if
 
 		// Select the new charge details for a specific invoice number
-		$query = "SELECT d.user_services_id d_user_services_id, 
-			d.invoice_number d_invoice_number, 
-			d.billed_amount d_billed_amount, 
-			d.billing_id d_billing_id, 
-			d.taxed_services_id d_taxed_services_id, 
-			u.id u_id, u.master_service_id u_master_service_id, 
-			u.usage_multiple u_usage_multiple, 
-			m.options_table m_options_table, 
-			m.id m_id, m.service_description m_service_description, m.pricerate,  
-			ts.id ts_id, ts.master_services_id ts_master_services_id, 
-			ts.tax_rate_id ts_tax_rate_id, tr.id tr_id, 
-			tr.description tr_description
-				FROM billing_details d
-				LEFT JOIN user_services u ON d.user_services_id = u.id
-				LEFT JOIN master_services m ON u.master_service_id = m.id
-				LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id 
-				LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
-				WHERE d.invoice_number = '$invoiceid' ORDER BY u.id DESC, tr.id ASC";
+		$query = "SELECT d.user_services_id d_user_services_id, ".
+			"d.invoice_number d_invoice_number, ".
+			"d.billed_amount d_billed_amount, ".
+			"d.billing_id d_billing_id, ".
+			"d.taxed_services_id d_taxed_services_id, ".
+			"u.id u_id, u.master_service_id u_master_service_id, ".
+			"u.usage_multiple u_usage_multiple, ".
+			"m.options_table m_options_table, ".
+			"m.id m_id, m.service_description m_service_description, m.pricerate, ".
+			"ts.id ts_id, ts.master_services_id ts_master_services_id, ".
+			"ts.tax_rate_id ts_tax_rate_id, tr.id tr_id, ".
+			"tr.description tr_description ".
+			"FROM billing_details d ".
+			"LEFT JOIN user_services u ON d.user_services_id = u.id ".
+			"LEFT JOIN master_services m ON u.master_service_id = m.id ".
+			"LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
+			"LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
+			"WHERE d.invoice_number = ? ORDER BY u.id DESC, tr.id ASC";
 
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query, array($invoiceid)) 
+			or die ("$l_queryfailed");
 
 		/*------------------------------------------------------------*/
 		// Print the invoice line items
@@ -1827,28 +1845,30 @@ class Billing_Model extends CI_Model
 		$lineYoffset = 105;
 		$fillcolor = 200;
 		$lastserviceid = 0;
-		while ($myresult = $result->FetchRow()) {
-
+		foreach($result->result_array() AS $myresult) 
+		{
 			// check if it's a tax with a tax id or service with
 			// no tax idfirst to set detail items
 			$serviceid = $myresult['u_id'];
 			$taxid = $myresult['tr_id'];
-			if ($taxid == NULL) {
+			if ($taxid == NULL) 
+			{
 				// it's a service
 				// select the options_table to get data for the details
 				$options_table = $myresult['m_options_table'];
 				$id = $myresult['u_id'];
-				if ($options_table <> '') {
+				if ($options_table <> '') 
+				{
 					// get the data from the options table 
 					// and put into variables
-					$query = "SELECT * FROM $options_table ". 
-						"WHERE user_services = '$id'";
-					$DB->SetFetchMode(ADODB_FETCH_NUM);
-					$optionsresult = $DB->Execute($query)
+					$query = "SELECT * FROM $options_table WHERE user_services = $id";
+					$optionsresult = $this->db->query($query)
 						or die ("$l_queryfailed");
 					$myoptions = $optionsresult->fields;
 					$optiondetails = $myoptions[2];
-				} else {
+				} 
+				else 
+				{
 					$optiondetails = '';	
 				}
 				$service_description = $myresult['m_service_description'];
@@ -1864,22 +1884,30 @@ class Billing_Model extends CI_Model
 
 			// calculate the month multiple, only print for services, not taxes
 			$pricerate = $myresult['pricerate'];
-			if (($pricerate > 0) AND ($taxid == NULL)) {
+			if (($pricerate > 0) AND ($taxid == NULL)) 
+			{
 				$monthmultiple = $billed_amount/$pricerate;
-			} else {
+			} 
+			else 
+			{
 				$monthmultiple = 0;
 			}
 
-			if ($printtype == "pdf") {
+			if ($printtype == "pdf") 
+			{
 				// printing pdf invoice
 
 				// alternate fill color
-				if ($serviceid <> $lastserviceid) {
+				if ($serviceid <> $lastserviceid) 
+				{
 					$lastserviceid = $serviceid;
-					if ($fillcolor == 200) {
+					if ($fillcolor == 200) 
+					{
 						$fillcolor = 255;
 						$pdf->SetFillColor($fillcolor);
-					} else {
+					} 
+					else 
+					{
 						$fillcolor = 200;
 						$pdf->SetFillColor($fillcolor);
 					}
@@ -1891,9 +1919,12 @@ class Billing_Model extends CI_Model
 				$lineY = $lineYoffset + ($myline*5);
 				$pdf->SetXY(10,$lineY);
 
-				if ($monthmultiple > 1) {
+				if ($monthmultiple > 1) 
+				{
 					$pdf->Cell(151,5,"$serviceid $service_description $tax_description ($pricerate x $monthmultiple) $optiondetails", 0, 0, "L", TRUE);
-				} else {
+				} 
+				else 
+				{
 					$pdf->Cell(151,5,"$serviceid $service_description $tax_description $optiondetails", 0, 0, "L", TRUE);
 				}
 
@@ -1901,11 +1932,16 @@ class Billing_Model extends CI_Model
 				//$pdf->Cell(110,5,"$optiondetails");
 				$pdf->SetXY(160,$lineY);
 				$pdf->Cell(40,5,"$billed_amount", 0, 0, "L", TRUE);
-			} else {
+			} 
+			else 
+			{
 				// printing text invoice
-				if ($monthmultiple > 1) {
+				if ($monthmultiple > 1) 
+				{
 					$output .= "$serviceid \t $service_description $tax_description ($pricerate x $monthmultiple) \t $optiondetails \t $billed_amount\n";
-				} else {
+				} 
+				else 
+				{
 					$output .= "$serviceid \t $service_description $tax_description \t $optiondetails \t $billed_amount\n";
 				}
 			}
@@ -1913,20 +1949,25 @@ class Billing_Model extends CI_Model
 			$myline++;		  
 
 
-			if ($printtype == "pdf") {
+			if ($printtype == "pdf") 
+			{
 				// add a new page if there are many line items
 				// TODO: check for page number here
 				// if page number greater than 1, then myline would be larger
 				// set an invoicestartpage at the start of each invoice for multi invoice batches
 				$pagenumber = $pdf->PageNo();
 
-				if ($pagenumber - $invoicestartpage > 0) {
+				if ($pagenumber - $invoicestartpage > 0) 
+				{
 					$linetotal = 44;
-				} else {
+				} 
+				else 
+				{
 					$linetotal = 27;
 				}
 
-				if ($myline > $linetotal) {
+				if ($myline > $linetotal) 
+				{
 					$pdf->AddPage();
 					$pdf->SetXY(10,20);
 					$myline = 1;
@@ -1934,10 +1975,14 @@ class Billing_Model extends CI_Model
 				}
 			}
 		}
-		if ($printtype == "pdf") {  
+
+		if ($printtype == "pdf") 
+		{  
 			$lineY = $lineYoffset + ($myline*5);
 			$pdf->Line(5,$lineY,200,$lineY);
-		} else {	
+		} 
+		else 
+		{	
 			$output .= "----------------------------------------";
 			$output .= "----------------------------------------\n";
 		}
@@ -1951,7 +1996,8 @@ class Billing_Model extends CI_Model
 			$invoice_footer = $einvoice_footer;
 		}
 
-		if ($printtype == "pdf") {
+		if ($printtype == "pdf") 
+		{
 			// fix html characters
 			$billing_notes = html_to_ascii($billing_notes);
 			$invoice_footer = html_to_ascii($invoice_footer);
@@ -1968,13 +2014,15 @@ class Billing_Model extends CI_Model
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY(10,$lineY);
 			$pdf->MultiCell(110,4,"$invoice_footer");
-		} else {		
+		} 
+		else 
+		{		
 			$output .= "$billing_notes\n";
-			$output .= "$l_credit: $billing_credit_applied\n";
-			$output .= "$l_newcharges: $billing_new_charges\n";
-			$output .= "$l_pastdue: $billing_past_due\n";
-			$output .= "$l_tax: $billing_tax_due\n";
-			$output .= "$l_total: $billing_total_due\n";
+			$output .= lang('credit').": $billing_credit_applied\n";
+			$output .= lang('newcharges').": $billing_new_charges\n";
+			$output .= lang('pastdue').": $billing_past_due\n";
+			$output .= lang('tax').": $billing_tax_due\n";
+			$output .= lang('total').": $billing_total_due\n";
 
 			$output .= "\n$invoice_footer\n";
 
