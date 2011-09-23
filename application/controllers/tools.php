@@ -55,4 +55,17 @@ class Tools extends App_Controller
 		$this->load->view('html_footer_view');
 
 	}
+
+
+	function htmlpreviousinvoice($billingid, $invoiceid)
+	{
+		//GET Variables
+		$invoiceid = $base->input['invoiceid'];
+
+		// print the html invoice
+		$html = $this->billing_model->outputinvoice($invoiceid, "html", NULL);
+
+		echo "<pre>$html</pre>";
+	}
+
 }
