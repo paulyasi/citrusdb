@@ -6,8 +6,8 @@ class Tools extends App_Controller
 	{
 		parent::__construct();
 		$this->load->model('customer_model');
-		$this->load->model('billing_model');
 		$this->load->model('module_model');
+		$this->load->model('billing_model');
 		$this->load->model('user_model');
 	}		
 
@@ -59,6 +59,9 @@ class Tools extends App_Controller
 
 	function htmlpreviousinvoice($billingid, $invoiceid)
 	{
+		// load the service model to query for detail items in outputinvoice
+		$this->load->model('service_model');
+
 		// get the data for the html invoice
 		$html = $this->billing_model->outputinvoice($invoiceid, "html", NULL);
 

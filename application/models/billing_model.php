@@ -1859,13 +1859,14 @@ class Billing_Model extends CI_Model
 				$id = $myresult['u_id'];
 				if ($options_table <> '') 
 				{
-					// get the data from the options table 
-					// and put into variables
-					$query = "SELECT * FROM $options_table WHERE user_services = $id";
-					$optionsresult = $this->db->query($query)
-						or die ("$l_queryfailed");
-					$myoptions = $optionsresult->fields;
-					$optiondetails = $myoptions[2];
+					// get the data from the options table and put into variables
+					$myoptions = $this->service_model->options_attributes($id, $options_table);
+					//echo "$myoptions->username";
+					if (count($myoptions) >= 3) {
+						$optiondetails = $myoptions[2];
+					} else {
+						$optiondetails = '';
+					}
 				} 
 				else 
 				{
