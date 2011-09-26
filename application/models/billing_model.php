@@ -1762,7 +1762,7 @@ class Billing_Model extends CI_Model
 
 			$pdf->SetXY(140,10);
 			$pdf->SetFontSize(10);
-			$pdf->MultiCell(70,6,"$billing_mydate\n$l_accountnumber: $billing_acctnum\n$l_invoicenumber: $invoiceid\n$billing_fromdate $l_to $billing_todate\n$l_paymentdue: $billing_payment_due_date\n$l_total: $billing_total_due",0);
+			$pdf->MultiCell(70,6,"$billing_mydate\n".lang('accountnumber').": $billing_acctnum\n".lang('invoicenumber').": $invoiceid\n$billing_fromdate ".lang('to')." $billing_todate\n".lang('paymentdue').": $billing_payment_due_date\n".lang('total').": $billing_total_due",0);
 			$pdf->SetXY(10,60);
 			$pdf->SetFontSize(10);
 
@@ -1780,9 +1780,9 @@ class Billing_Model extends CI_Model
 
 			$pdf->Line(5,102,200,102);
 			$pdf->SetXY(10,103);
-			$pdf->Cell(100,5,"$l_description");
+			$pdf->Cell(100,5,lang('description'));
 			$pdf->SetXY(160,103);
-			$pdf->Cell(50,5,"$l_amount");
+			$pdf->Cell(50,5,lang('amount'));
 
 		} 
 		else 
@@ -2007,10 +2007,10 @@ class Billing_Model extends CI_Model
 			$pdf->SetXY(10,$lineY);
 			$pdf->MultiCell(100,5,"$billing_notes");
 			$pdf->SetXY(135,$lineY);
-			$pdf->MultiCell(100,5,"$l_credit: $billing_credit_applied\n$l_newcharges: $billing_new_charges\n$l_pastdue: $billing_past_due\n$l_tax: $billing_tax_due\n");
+			$pdf->MultiCell(100,5,lang('credit').": $billing_credit_applied\n".lang('newcharges').": $billing_new_charges\n".lang('pastdue').": $billing_past_due\n".lang('tax').": $billing_tax_due\n");
 			$pdf->SetXY(135,$lineY+20);
 			$pdf->SetFont('Arial','BU',10);
-			$pdf->Cell(100,5,"$l_total: $billing_total_due");
+			$pdf->Cell(100,5,lang('total').": $billing_total_due");
 			$lineY = $lineY + 10;
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY(10,$lineY);

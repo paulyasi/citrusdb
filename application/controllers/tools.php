@@ -68,4 +68,23 @@ class Tools extends App_Controller
 		echo "<pre>$html</pre>";
 	}
 
+
+	function printpreviousinvoice($billingid, $invoiceid)
+	{
+		// load the service model to query for detail items in outputinvoice
+		$this->load->model('service_model');
+
+		//require('./include/fpdf.php');
+		$this->load->library('fpdf');    
+
+		$pdf = new FPDF();
+
+		// print the invoice
+		$pdf = $this->billing_model->outputinvoice($invoiceid, "pdf", $pdf);
+
+		$pdf->Output();
+
+		echo "printing pdf";
+	}
+
 }
