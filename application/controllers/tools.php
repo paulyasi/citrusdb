@@ -57,17 +57,6 @@ class Tools extends App_Controller
 	}
 
 
-	function htmlpreviousinvoice($billingid, $invoiceid)
-	{
-		// load the service model to query for detail items in outputinvoice
-		$this->load->model('service_model');
-
-		// get the data for the html invoice
-		$html = $this->billing_model->outputinvoice($invoiceid, "html", NULL);
-
-		echo "<pre>$html</pre>";
-	}
-
 
 	function printpreviousinvoice($billingid, $invoiceid)
 	{
@@ -85,6 +74,30 @@ class Tools extends App_Controller
 		$pdf->Output();
 
 		echo "printing pdf";
+	}
+
+
+	function htmlpreviousinvoice($billingid, $invoiceid)
+	{
+		// load the service model to query for detail items in outputinvoice
+		$this->load->model('service_model');
+
+		// get the data for the html invoice
+		$html = $this->billing_model->outputinvoice($invoiceid, "html", NULL);
+
+		echo "<pre>$html</pre>";
+	}
+
+
+	function extendedpreviousinvoice($billingid, $invoiceid)
+	{
+		// load the service model to query for detail items in outputinvoice
+		$this->load->model('service_model');
+
+		// get the data for the html invoice
+		$html = $this->billing_model->outputextendedinvoice($invoiceid, "html", NULL);
+
+		echo "<pre>$html</pre>";
 	}
 
 }

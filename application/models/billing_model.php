@@ -2040,4 +2040,348 @@ class Billing_Model extends CI_Model
 		}
 	} // end outputinvoice
 
+
+
+	// output invoices in text or pdf format
+	function outputextendedinvoice($invoiceid, $printtype, $pdfobject) 
+	{
+		// get the invoice data to print on the bill
+		$invoice_number = $invoiceid;
+
+		$query = "SELECT h.id h_id, h.billing_date h_billing_date, 
+			h.created_by h_created_by, h.billing_id h_billing_id, 
+			h.from_date h_from_date, h.to_date h_to_date, 
+			h.payment_due_date h_payment_due_date, 
+			h.new_charges h_new_charges, h.past_due h_past_due, 
+			h.late_fee h_late_fee, h.tax_due h_tax_due, 
+			h.total_due h_total_due, h.notes h_notes, 
+			b.id b_id, b.name b_name, b.company b_company, 
+			b.street b_street, b.city b_city, b.state b_state, 
+			b.country b_country, b.zip b_zip, 
+			b.contact_email b_contact_email, b.account_number b_acctnum, 
+			b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp  
+				FROM billing_history h 
+				LEFT JOIN billing b ON h.billing_id = b.id  
+				WHERE h.id = '$invoice_number'";
+		$invoiceresult = $this->db->query($query) or die ("query failed");	
+		$myinvresult = $invoiceresult->row_array();
+		$user = $myinvresult['h_created_by'];
+		$mydate = $myinvresult['h_billing_date'];
+		$mybilling_id = $myinvresult['b_id'];
+		$billing_name = $myinvresult['b_name'];
+		$billing_company = $myinvresult['b_company'];
+		$billing_street =  $myinvresult['b_street'];
+		$billing_city = $myinvresult['b_city'];
+		$billing_state = $myinvresult['b_state'];
+		$billing_zip = $myinvresult['b_zip'];
+		$billing_acctnum = $myinvresult['b_acctnum'];
+		$billing_fromdate = $myinvresult['h_from_date'];
+		$billing_todate = $myinvresult['h_to_date'];
+		$billing_payment_due_date = $myinvresult['h_payment_due_date'];
+		$billing_notes = $myinvresult['h_notes'];	
+		$billing_new_charges = sprintf("%.2f",$myinvresult['h_new_charges']);
+		$billing_past_due = sprintf("%.2f",$myinvresult['h_past_due']);
+		$billing_late_fee = sprintf("%.2f",$myinvresult['h_late_fee']);
+		$billing_tax_due = sprintf("%.2f",$myinvresult['h_tax_due']);
+		$billing_total_due = sprintf("%.2f",$myinvresult['h_total_due']);	
+		$billing_email = $myinvresult['b_contact_email'];
+
+		// get the organization info to print on the bill
+		$query = "SELECT g.org_name,g.org_street,g.org_city,g.org_state,
+			g.org_zip,g.phone_billing,g.email_billing,g.invoice_footer  
+			FROM billing b
+			LEFT JOIN general g ON g.id = b.organization_id 
+			WHERE b.id = $mybilling_id";
+		$generalresult = $this->db->query($query) or die ("query failed");
+		$mygenresult = $generalresult->row_array();
+		$org_name = $mygenresult['org_name'];
+		$org_street = $mygenresult['org_street'];
+		$org_city = $mygenresult['org_city'];
+		$org_state = $mygenresult['org_state'];
+		$org_zip = $mygenresult['org_zip'];
+		$phone_billing = $mygenresult['phone_billing'];
+		$email_billing = $mygenresult['email_billing'];
+		$invoice_footer = $mygenresult['invoice_footer'];
+
+		/*------------------------------------------------------------*/
+		// output the invoice page
+		/*------------------------------------------------------------*/
+
+		// load the html to ascii helper for character conversions	
+		$this->load->helper('htmlascii');
+
+		// convert dates to human readable form using my date helper
+		$this->load->helper('date');
+		// convert dates to human readable form
+		$billing_mydate = humandate($mydate);
+		$billing_fromdate = humandate($billing_fromdate);
+		$billing_todate = humandate($billing_todate);
+		$billing_payment_due_date = humandate($billing_payment_due_date);
+
+		if ($printtype == "pdf") {
+			//require ('./include/fpdf.php');
+			$this->load->library('fpdf');    
+			$pdf = $pdfobject;
+			// convert html character codes to ascii for pdf
+			$billing_name = html_to_ascii($billing_name);
+			$billing_company = html_to_ascii($billing_company);
+			$billing_street = html_to_ascii($billing_street);
+			$billing_city = html_to_ascii($billing_city);
+			$org_name = html_to_ascii($org_name);
+			$org_street = html_to_ascii($org_street);
+			$org_city = html_to_ascii($org_city);
+
+			//$pdf=new FPDF();
+			$pdf->AddPage();
+
+			// get the page the current invoice in the batch starts on
+			// necessary for batches with multiple invoices
+			$invoicestartpage = $pdf->PageNo();
+
+			$pdf->SetFont('Arial','B',18);
+			$pdf->Cell(60,10,"$org_name",0);    
+			$pdf->SetXY(10,20);
+			$pdf->SetFont('Arial','',9);    
+			$pdf->MultiCell(80,4,"$org_street\n$org_city, $org_state $org_zip\n$phone_billing\n$email_billing",0);
+			$pdf->Rect(135,10,1,30,"F");
+
+			$pdf->SetXY(140,10);
+			$pdf->SetFontSize(10);
+			$pdf->MultiCell(70,6,lang('accountnumber').": $billing_acctnum\n".lang('invoicenumber').": $invoiceid\n$billing_fromdate ".lang('to')." $billing_todate\n".lang('paymentdue').": $billing_payment_due_date\n".lang('total').": $billing_total_due",0);
+			$pdf->SetXY(10,60);
+			$pdf->SetFontSize(10);
+			$pdf->MultiCell(60,5,"$billing_name\n$billing_company\n$billing_street\n$billing_city $billing_state $billing_zip",0);
+
+			$pdf->SetXY(130,60);
+
+			$pdf->Line(5,102,200,102);
+			$pdf->SetXY(10,103);
+			$pdf->Cell(100,5,lang('description'));
+			$pdf->SetXY(160,103);
+			$pdf->Cell(50,5,lang('amount'));
+
+		} else {
+			$output = lang('accountnumber').": $billing_acctnum\n\n";
+			$output .= lang('invoicenumber').": $invoiceid\n";
+			$output .= "$billing_fromdate - $billing_todate \n";
+			$output .= lang('paymentduedate').": $billing_payment_due_date\n";
+			$output .= lang('total').": $billing_total_due\n\n";
+
+			$output .= lang('to').": $billing_email\n";
+			$output .= "$billing_name $billing_company\n";
+			$output .= "$billing_street ";
+			$output .= "$billing_city $billing_state ";
+			$output .= "$billing_zip\n\n";
+
+			$output .= "----------------------------------------";
+			$output .= "----------------------------------------\n";
+
+		} // end if
+
+		// Select the new charge details for a specific invoice number
+		$query = "SELECT d.user_services_id d_user_services_id, 
+			d.invoice_number d_invoice_number, 
+			d.billed_amount d_billed_amount, 
+			d.billing_id d_billing_id, 
+			d.taxed_services_id d_taxed_services_id, 
+			u.id u_id, u.master_service_id u_master_service_id, 
+			u.usage_multiple u_usage_multiple, 
+			m.options_table m_options_table, 
+			m.id m_id, m.service_description m_service_description, m.pricerate,  
+			ts.id ts_id, ts.master_services_id ts_master_services_id, 
+			ts.tax_rate_id ts_tax_rate_id, tr.id tr_id, 
+			tr.description tr_description
+				FROM billing_details d
+				LEFT JOIN user_services u ON d.user_services_id = u.id
+				LEFT JOIN master_services m ON u.master_service_id = m.id
+				LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id 
+				LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
+				WHERE d.invoice_number = '$invoiceid' ORDER BY u.id DESC, tr.id ASC";
+
+		$result = $this->db->query($query) or die ("query failed");
+
+		/*------------------------------------------------------------*/
+		// Print the invoice line items
+		/*------------------------------------------------------------*/
+		$myline = 1;
+		$lineYoffset = 105;
+		$fillcolor = 200;
+		$lastserviceid = 0;
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// check if it's a tax with a tax id or service with
+			// no tax idfirst to set detail items
+			$serviceid = $myresult['u_id'];
+			$taxid = $myresult['tr_id'];
+			if ($taxid == NULL) 
+			{
+				// it's a service
+				// select the options_table to get data for the details
+				$options_table = $myresult['m_options_table'];
+				$id = $myresult['u_id'];
+				if ($options_table <> '') 
+				{
+					// get the data from the options table and put into variables
+					$myoptions = $this->service_model->options_attributes($id, $options_table);
+					//echo "$myoptions->username";
+					if (count($myoptions) >= 3) {
+						$optiondetails1 = $myoptions[2];
+					} else {
+						$optiondetails1 = '';
+					}
+					if (count($myoptions) >= 4) {
+						$optiondetails2 = $myoptions[3];
+					} else {
+						$optiondetails2 = '';
+					}
+					$optiondetails = $optiondetails2 . "\t" . $optiondetails1;
+				} 
+				else 
+				{
+					$optiondetails = '';	
+				}
+				$service_description = $myresult['m_service_description'];
+				$tax_description = '';
+			} else {
+				// it's a tax
+				$tax_description = "     ".$myresult['tr_description'];
+				$service_description = '';
+				$optiondetails = '';
+			}
+
+			$billed_amount = sprintf("%.2f",$myresult['d_billed_amount']);
+
+			// calculate the month multiple, only print for services, not taxes
+			$pricerate = $myresult['pricerate'];
+			if (($pricerate > 0) AND ($taxid == NULL)) {
+				$monthmultiple = $billed_amount/$pricerate;
+			} else {
+				$monthmultiple = 0;
+			}
+
+			if ($printtype == "pdf") {
+				// printing pdf invoice
+
+				// alternate fill color
+				if ($serviceid <> $lastserviceid) {
+					$lastserviceid = $serviceid;
+					if ($fillcolor == 200) {
+						$fillcolor = 255;
+						$pdf->SetFillColor($fillcolor);
+					} else {
+						$fillcolor = 200;
+						$pdf->SetFillColor($fillcolor);
+					}
+				}
+
+				$service_description = html_to_ascii($service_description);
+				$tax_description = html_to_ascii($tax_description);
+				$optiondetails = html_to_ascii($optiondetails);
+				$lineY = $lineYoffset + ($myline*5);
+				$pdf->SetXY(10,$lineY);
+
+				if ($monthmultiple > 1) {
+					$pdf->Cell(151,5,"$serviceid $service_description $tax_description ($pricerate x $monthmultiple) $optiondetails", 0, 0, "L", TRUE);
+				} else {
+					$pdf->Cell(151,5,"$serviceid $service_description $tax_description $optiondetails", 0, 0, "L", TRUE);
+				}
+
+				//$pdf->SetXY(110,$lineY);
+				//$pdf->Cell(110,5,"$optiondetails");
+				$pdf->SetXY(160,$lineY);
+				$pdf->Cell(40,5,"$billed_amount", 0, 0, "L", TRUE);
+			} else {
+				// printing text invoice
+				if ($monthmultiple > 1) {
+					if ($tax_description) {
+						$output .= "$serviceid \t $service_description $tax_description ($pricerate x $monthmultiple) \t $optiondetails \t $billed_amount\n";
+					} else {
+						$output .= "$serviceid \t $service_description $tax_description ($pricerate x $monthmultiple) \t $optiondetails \t \t $billed_amount\n";	  
+					}
+				} else {
+					if ($tax_description) {
+						$output .= "$serviceid \t $service_description $tax_description \t $optiondetails \t \t $billed_amount\n";
+					} else {
+						$output .= "$serviceid \t $service_description $tax_description \t $optiondetails \t $billed_amount\n";	  
+					}
+				}
+			}
+
+			$myline++;		  
+
+
+			if ($printtype == "pdf") {
+				// add a new page if there are many line items
+				// TODO: check for page number here
+				// if page number greater than 1, then myline would be larger
+				// set an invoicestartpage at the start of each invoice for multi invoice batches
+				$pagenumber = $pdf->PageNo();
+
+				if ($pagenumber - $invoicestartpage > 0) {
+					$linetotal = 48;
+				} else {
+					$linetotal = 28;
+				}
+
+				if ($myline > $linetotal) {
+					$pdf->AddPage();
+					$pdf->SetXY(10,20);
+					$myline = 1;
+					$lineYoffset = 20;
+				}
+			}
+		}
+		if ($printtype == "pdf") {  
+			$lineY = $lineYoffset + ($myline*5);
+			$pdf->Line(5,$lineY,200,$lineY);
+		} else {	
+			$output .= "----------------------------------------";
+			$output .= "----------------------------------------\n";
+		}
+
+		/*------------------------------------------------------------*/
+		// print the notes and totals at the bottom of the invoice
+		/*------------------------------------------------------------*/
+		if ($printtype == "pdf") {
+			// fix html characters
+			$billing_notes = html_to_ascii($billing_notes);
+			$invoice_footer = html_to_ascii($invoice_footer);
+
+			$lineY = $lineY + 10;
+			$pdf->SetXY(10,$lineY);
+			$pdf->MultiCell(100,5,"$billing_notes");
+			$pdf->SetXY(135,$lineY);
+			$pdf->MultiCell(100,5,lang('newcharges').": $billing_new_charges\n".lang('pastdue').": $billing_past_due\n".lang('tax').": $billing_tax_due\n");
+			$pdf->SetXY(135,$lineY+15);
+			$pdf->SetFont('Arial','BU',10);
+			$pdf->Cell(100,5,lang('total').": $billing_total_due");
+			$lineY = $lineY + 10;
+			$pdf->SetFont('Arial','',9);
+			$pdf->SetXY(10,$lineY);
+			$pdf->MultiCell(110,4,"$invoice_footer");
+		} else {		
+			$output .= "$billing_notes\n";
+
+			$output .= lang('newcharges').": $billing_new_charges\n";
+			$output .= lang('pastdue').": $billing_past_due\n";
+			$output .= lang('tax').": $billing_tax_due\n";
+			$output .= lang('total').": $billing_total_due\n";
+
+			$output .= "\n$invoice_footer\n";
+
+
+		}
+
+		if ($printtype == "pdf")
+		{	
+			return $pdf;
+		}
+		else
+		{
+			return $output;
+		}
+	} // end outputextendedinvoice
+
+
+
 }
