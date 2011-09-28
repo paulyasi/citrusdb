@@ -100,4 +100,15 @@ class Tools extends App_Controller
 		echo "<pre>$html</pre>";
 	}
 
+	function emailpreviousinvoice($billingid, $invoiceid)
+	{
+		// load the service model to query for detail items in outputinvoice
+		$this->load->model('service_model');
+
+		$contact_email = $this->billing_model->get_billing_email($invoiceid); 
+
+		$this->billing_model->emailinvoice ($invoiceid,$contact_email,$billingid);
+		echo "sent invoice to $contact_email<br>\n";
+	}
+
 }

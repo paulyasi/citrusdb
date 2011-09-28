@@ -2383,5 +2383,126 @@ class Billing_Model extends CI_Model
 	} // end outputextendedinvoice
 
 
+	function get_billing_email($invoice_number) 
+	{
+
+		$query = "SELECT b.contact_email ".
+			"FROM billing_history h ".
+			"LEFT JOIN billing b ON h.billing_id = b.id ".
+			"WHERE h.id = '$invoice_number'";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$myresult = $result->row_array();
+		
+		return $myresult['contact_email'];
+
+	}
+
+
+	function emailinvoice ($invoice_number,$contact_email,$invoice_billing_id) 
+	{
+		/*--------------------------------------------------------------------------*/
+		// Create and send email invoice with pdf attached using swiftmailer
+		/*--------------------------------------------------------------------------*/     
+
+		// include fpdf library and swiftmailer spark
+		$this->load->library('fpdf');    
+
+		// This can be removed if you use __autoload() in config.php OR use Modular Extensions
+		require APPPATH.'/libraries/swift/lib/swift_required.php';
+		// require_once './include/swift/lib/swift_required.php';
+
+		//$this->load->spark('swift-mailer/0.1.5');
+
+		// create a new pdf invoice
+		$pdf = new FPDF();
+
+		// check whether they want a pdf or txt invoice
+		$query = "SELECT einvoice_type FROM billing WHERE id = '$invoice_billing_id'";
+		$type_result = $this->db->query($query) or die ("$query ib query failed");
+		$mytype_result = $type_result->row_array();
+		$einvoice_type = $mytype_result['einvoice_type'];
+
+		if ($einvoice_type == 'txt')
+		{
+			$txt = $this->outputinvoice($invoice_number, "html", $pdf, TRUE);
+		}
+		else
+		{
+			$pdf = $this->outputinvoice($invoice_number, "pdf", $pdf, TRUE);
+			$pdfdata = $pdf->Output("invoice.pdf",'S');
+		}
+
+		// get the org billing email address for from address		
+		$query = "SELECT g.org_name, g.org_street, g.org_city, ".
+			"g.org_state, g.org_zip, g.phone_billing, g.email_billing ".
+			"FROM billing b ".
+			"LEFT JOIN general g ON g.id = b.organization_id  ".
+			"WHERE b.id = $invoice_billing_id";
+		$ib_result = $this->db->query($query) or die ("$query ib query failed");
+		$mybillingresult = $ib_result->row_array();
+		$billing_email = $mybillingresult['email_billing'];
+		$org_name = $mybillingresult['org_name'];
+		$org_street = $mybillingresult['org_street'];
+		$org_city = $mybillingresult['org_city'];
+		$org_state = $mybillingresult['org_state'];
+		$org_zip = $mybillingresult['org_zip'];
+		$phone_billing = $mybillingresult['phone_billing'];
+
+		// get the total due from the billing_history
+		$query = "SELECT total_due FROM billing_history ".
+			"WHERE id = '$invoice_number'";
+		$iv_result = $this->db->query($query) or die ("iv query failed");
+		$myinvoiceresult = $iv_result->row_array();
+		$total_due = sprintf("%.2f",$myinvoiceresult['total_due']);
+
+		// build email message above invoice
+		$email_message = lang('email_heading_thankyou')." $org_name.\n\n".
+			lang('email_heading_presenting') .
+			"$total_due ".lang('to_lc')." \n\n".
+			"$org_name\n".
+			"$org_street\n".
+			"$org_city $org_state $org_zip\n".
+			"$phone_billing\n\n".
+			lang('email_heading_include').".\n\n";
+
+		//Create the message
+		$message = Swift_Message::newInstance();
+
+		//Give the message a subject
+		$message->setSubject(lang('einvoice')." $org_name");
+
+		//Set the From address with an associative array
+		$message->setFrom("$billing_email");
+
+		//Set the To addresses with an associative array
+		$message->setTo("$contact_email");
+
+		if ($einvoice_type == 'txt')
+		{
+			$email_message .= $txt;
+			$message->setBody("$email_message");
+		}
+		else
+		{
+			//Give it a body
+			$message->setBody("$email_message");
+
+			$filename = "invoice$invoice_number.pdf";
+			$attachment = Swift_Attachment::newInstance($pdfdata, "$filename", 'application/pdf');  
+
+			//Attach it to the message
+			$message->attach($attachment);
+		}
+
+		//Create the Transport
+		$transport = Swift_MailTransport::newInstance();
+
+		//Create the Mailer using your created Transport
+		$mailer = Swift_Mailer::newInstance($transport);
+
+		//Send the message
+		$mailresult = $mailer->send($message);
+	}
+
 
 }
