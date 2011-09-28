@@ -62,7 +62,7 @@ foreach ($invoicelist as $myresult)
 	// print payment link with prefilled in information if there are new charges to pay to this invoice
 	echo "<td>";
 	if ($new_charges > 0) {
-		echo "<a href=# onclick=\"popupPage('$this->url_prefix/index.php?/tools/payment/$invoice_number/$new_charges".
+		echo "<a href=# onclick=\"popupPage('$this->url_prefix/index.php/tools/payment/$invoice_number/$new_charges".
 			"'); return false;\">".lang('enterpayments')."</a>";
 	}
 	echo "</td><tr>";

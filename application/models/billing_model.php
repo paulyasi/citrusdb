@@ -2404,14 +2404,11 @@ class Billing_Model extends CI_Model
 		// Create and send email invoice with pdf attached using swiftmailer
 		/*--------------------------------------------------------------------------*/     
 
-		// include fpdf library and swiftmailer spark
+		// include fpdf library and swiftmailer
 		$this->load->library('fpdf');    
 
 		// This can be removed if you use __autoload() in config.php OR use Modular Extensions
 		require APPPATH.'/libraries/swift/lib/swift_required.php';
-		// require_once './include/swift/lib/swift_required.php';
-
-		//$this->load->spark('swift-mailer/0.1.5');
 
 		// create a new pdf invoice
 		$pdf = new FPDF();
@@ -2504,5 +2501,12 @@ class Billing_Model extends CI_Model
 		$mailresult = $mailer->send($message);
 	}
 
+
+	function get_payment_modes()
+	{
+		$query = "SELECT name FROM payment_mode";
+		$result = $this->db->query($query) or die ("query failed");
+		return $result->result_array();
+	}
 
 }
