@@ -307,58 +307,64 @@ class User_Model extends CI_Model {
 		setcookie('id_hash',$id_hash,(time()+36000),'/','',0);
 	}
 
+
 	/*--------------------------------------------------------------------*/
 	// Change the password for the user
 	/*--------------------------------------------------------------------*/
 	function user_change_password ($new_password1,$new_password2,
-			$change_user_name,$old_password) {
-
+			$change_user_name,$old_password) 
+	{
 		// load the PasswordHash library
 		//require_once('application/libraries/PasswordHash.php');  	
 
-		global $feedback, $DB;
 		//new passwords present and match?
 		if ($new_password1 && ($new_password1==$new_password2)) 
 		{
-			if ($change_user_name && $old_password) {
+			if ($change_user_name && $old_password) 
+			{
 				//lower case everything
 				$change_user_name=strtolower($change_user_name);
-				//$old_password=strtolower($old_password);
-				//$new_password1=strtolower($new_password1);
 
 				// check that old password is valid
 				//$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
 
 				$sql="SELECT password FROM user WHERE username='$change_user_name' LIMIT 1";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 				$result=$this->db->query($sql) or die ("Query Failed");
-				$mypassresult = $result->fields;
+				$mypassresult = $result->row_array();
 				$checkhash = $mypassresult['password'];
 
 				if (!$result || $result->num_rows() < 1 
-						|| !$this->passwordhash->CheckPassword($old_password, $checkhash)) {
-					$feedback .= " User not found or bad password";
-					return false;	  
-				} else {
+						|| !$this->passwordhash->CheckPassword($old_password, $checkhash)) 
+				{
+					$feedback = " User not found or bad password";
+					return $feedback;	  
+				} 
+				else 
+				{
 					$newhash = $this->passwordhash->HashPassword($new_password1);
-					if (strlen($newhash) < 20) {
-						$feedback .= "Failed to hash new password";
-						return false;
+					if (strlen($newhash) < 20) 
+					{
+						$feedback = "Failed to hash new password";
+						return $feedback;
 					}
 
 					$sql="UPDATE user SET password='$newhash' ".
 						"WHERE username='$change_user_name'";
 					$result=$this->db->query($sql) or die ("Query Failed");
-					$feedback .= ' Password Changed ';
-					return true;
+					$feedback = ' Password Changed ';
+					return $feedback;
 				}
-			} else {
-				$feedback .= ' Must Provide User Name And Old Password ';
-				return false;
+			} 
+			else 
+			{
+				$feedback = ' Must Provide User Name And Old Password ';
+				return $feedback;
 			}
-		} else {
-			return false;
-			$feedback .= ' New Passwords Must Match ';
+		} 
+		else 
+		{
+			$feedback = ' New Passwords Must Match ';
+			return $feedback;
 		}
 	} // end user_change_password function
 
@@ -443,13 +449,10 @@ class User_Model extends CI_Model {
 	/*--------------------------------------------------------------------*/
 	// Get their real name
 	/*--------------------------------------------------------------------*/
-	function user_getrealname() {
-		global $DB;
-		$myusername = $this->user_getname();
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$query = "SELECT * FROM user WHERE username = '$myusername'";
+	function user_getrealname($username) {
+		$query = "SELECT * FROM user WHERE username = '$username'";
 		$result = $this->db->query($query) or die ("Query Failed");
-		$myresult = $result->fields;
+		$myresult = $result->row_array();
 		$real_name = $myresult['real_name'];
 		return $real_name;
 	}

@@ -114,6 +114,9 @@ class Tools extends App_Controller
 
 	function payment($invoice_number = NULL, $amount = NULL)
 	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
 		// Read the list of payment modes to give the operator for paying the bill
 		$payment_modes = $this->billing_model->get_payment_modes();
 		$payment_options = "";
@@ -183,7 +186,35 @@ class Tools extends App_Controller
 		$data['invoice_number'] = $invoice_number;
 		$data['amount'] = 0;
 
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
 		$this->load->view('tools/payment_view', $data);
+	}
+
+
+	function changepass()
+	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/changepass_view');
+	}
+
+	function savechangepass()
+	{
+		$feedback = $this->input->post('feedback');
+		$new_password1 = $this->input->post('new_password1');
+		$new_password2 = $this->input->post('new_password2');
+		$old_password = $this->input->post('old_password');
+
+		$real_name = $this->user_model->user_getrealname($this->user);
+		echo "$real_name, ".lang('youareloggedinas')." ".$this->user."<br>";
+
+		$feedback = $this->user_model->user_change_password($new_password1,$new_password2,$this->user,$old_password);
+
+		echo '<FONT COLOR="RED"><H2>'.$feedback.'</H2></FONT>';
+
 	}
 
 }
