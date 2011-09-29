@@ -217,4 +217,12 @@ class Tools extends App_Controller
 
 	}
 
+	function version()
+	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/version_view');
+	}
+
 }
