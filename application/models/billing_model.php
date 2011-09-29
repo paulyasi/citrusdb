@@ -2509,4 +2509,207 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 * enter payments for this account, billing id, or invoice number
+	 * returns left of amount and info about what account was paid in an array
+	 * ------------------------------------------------------------------------
+	 */
+	function enter_payment($account_num, $billing_id, $amount, $payment_type, $invoice_number, $check_number)
+	{
+		if ($invoice_number == '') { $invoice_number = 0; }
+
+		// set the payment to the amount entered
+		$payment = $amount;
+
+		/*--------------------------------------------------------------------*/
+		// enter payments by invoice number	
+		/*--------------------------------------------------------------------*/
+		if ($invoice_number > 0) {
+			$query = "SELECT * FROM billing_details ".
+				"WHERE paid_amount < billed_amount AND invoice_number = $invoice_number";
+			$result = $this->db->query($query) or die ("Query Failed");
+			$invoiceresult = $this->db->query($query) or die ("$l_queryfailed");
+
+			// update values with missing information
+			$myresult = $invoiceresult->row_array();
+			$billing_id = $myresult['billing_id'];
+
+			/*--------------------------------------------------------------------*/
+			// enter payments by account number
+			/*--------------------------------------------------------------------*/
+		} 
+		elseif ($account_num > 0) 
+		{
+			$query = "SELECT bd.id, bd.paid_amount, bd.billed_amount, bd.billing_id ".
+				"FROM billing_details bd ".
+				"LEFT JOIN billing bi ON bd.billing_id = bi.id ".
+				"LEFT JOIN customer cu ON bi.id = cu.default_billing_id ".
+				"WHERE bd.paid_amount < bd.billed_amount ".
+				"AND cu.account_number = $account_num";
+			$result = $this->db->query($query) or die ("select acctnum query failed");
+			$accountresult = $this->db->query($query) or die ("select acctnum query failed");
+
+			// update values with missing information
+			$myresult = $accountresult->row_array();
+			$billing_id = $myresult['billing_id'];
+
+			/*--------------------------------------------------------------------*/
+			// enter payments by billing id
+			/*--------------------------------------------------------------------*/
+		} 
+		else 
+		{
+			$query = "SELECT * FROM billing_details ".
+				"WHERE paid_amount < billed_amount AND billing_id = $billing_id";
+			$result = $this->db->query($query) or die ("select detail query failed");	
+		}
+
+		// make sure the result of the above queries returned some rows
+		$myrowcount = $result->num_rows();
+		if ($myrowcount > 0) 
+		{
+			// insert info into the payment history
+			$query = "INSERT INTO payment_history (creation_date, billing_id, ".
+				"billing_amount, status, payment_type, invoice_number, check_number) ".
+				"VALUES (CURRENT_DATE,'$billing_id','$payment',".
+				"'authorized','$payment_type','$invoice_number','$check_number')";
+			$paymentresult = $this->db->query($query) or die ("$query insert history query failed");
+
+			// get the payment history id that will be inserted into the billing_details
+			// items that are paid by this entry
+			$payment_history_id = $this->db->insert_id();
+
+			/*------------------------------------------------------------------------*/
+			// go through the billing details items
+			/*------------------------------------------------------------------------*/  
+			$i = 0;
+			while (($myresult = $result->row_array($i)) and (round($amount,2) > 0)) 
+			{
+				$id = $myresult['id'];
+				$paid_amount = sprintf("%.2f",$myresult['paid_amount']);
+				$billed_amount = sprintf("%.2f",$myresult['billed_amount']);
+
+				// calculate amount owed
+				$owed = round($billed_amount - $paid_amount,2);
+
+				// fix float precision too
+				if (round($amount,2) >= round($owed,2)) {
+					$amount = round($amount - $owed, 2);
+					$fillamount = round($owed + $paid_amount,2);
+
+					$query = "UPDATE billing_details ".
+						"SET paid_amount = '$fillamount', ".
+						"payment_applied = CURRENT_DATE, ".
+						"payment_history_id = '$payment_history_id' ".	    
+						"WHERE id = $id";
+					$greaterthanresult = $this->db->query($query)
+						or die ("detail update query failed");
+				} 
+				else 
+				{ 
+					// amount is  less than owed
+					$available = $amount;
+					$amount = 0;
+					$fillamount = round($available + $paid_amount,2);
+
+					$query = "UPDATE billing_details ".
+						"SET paid_amount = '$fillamount', ".
+						"payment_applied = CURRENT_DATE, ".
+						"payment_history_id = '$payment_history_id' ".	    	
+						"WHERE id = $id";
+					$lessthenresult = $this->db->query($query) or die ("detail update query failed");
+				} // end if amount >= owed
+
+				// increment row counter
+				$i++;
+
+			} // end while myresult and amount > 0
+
+
+			/*--------------------------------------------------------------------*/
+			// If the payment is made towards a prepaid account, then move
+			// the billing and payment dates forward for payment terms
+			/*--------------------------------------------------------------------*/
+
+			//
+			// update the Next Billing Date to whatever the 
+			// billing type dictates +1 +2 +6 etc.
+			// get the current billing type
+			//
+
+			// Also select the customer's billing name, company, and address
+			// here to show up at the end to show what account paid.
+
+			$query = "SELECT b.billing_type b_billing_type, ".
+				"b.next_billing_date b_next_billing_date, ".
+				"b.from_date b_from_date, b.to_date b_to_date, ".
+				"b.name, b.company, b.street, b.city, b.state, ".
+				"b.account_number b_account_number, ".
+				"t.id t_id, t.frequency t_frequency, t.method t_method ".
+				"FROM billing b ".
+				"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+				"WHERE b.id = $billing_id";
+			$result = $this->db->query($query) or die ("select next billing query failed");
+			$billingresult = $result->row_array();
+			$method = $billingresult['t_method'];
+			$billing_name = $billingresult['name'];
+			$billing_company = $billingresult['company'];
+			$billing_street = $billingresult['street'];
+			$billing_city = $billingresult['city'];
+			$billing_state = $billingresult['state'];
+			$billing_account_number = $billingresult['b_account_number'];
+
+			// if they are prepay accounts the update their billing dates
+			if ($method == 'prepay' OR $method == 'prepaycc') 
+			{
+				$mybillingdate = $billingresult['b_next_billing_date'];
+				$myfromdate = $billingresult['b_from_date'];
+				$mytodate = $billingresult['b_to_date'];
+				$mybillingfreq = $billingresult['t_frequency'];
+
+				// to get the to_date, need to double the frequency added
+				$doublefreq = $mybillingfreq * 2;	
+
+				//
+				// insert the new next_billing_date
+				// and a new from_date and to_date 
+				// and payment_due_date based on from_date
+				//
+
+				$query = "UPDATE billing SET ".
+					"next_billing_date = DATE_ADD('$mybillingdate', ".
+					"INTERVAL '$mybillingfreq' MONTH), ".
+					"from_date = DATE_ADD('$myfromdate', ".
+					"INTERVAL '$mybillingfreq' MONTH), ".
+					"to_date = DATE_ADD('$myfromdate', ".
+					"INTERVAL '$doublefreq' MONTH), ".
+					"payment_due_date = DATE_ADD('$myfromdate', ".
+					"INTERVAL '$mybillingfreq' MONTH) ".
+					"WHERE id = '$billing_id'"; 
+				$updateresult = $this->db->query($query) or die ("update query failed");
+			}
+
+
+			// return amount left, zero or more info about who payment was applied to for
+			// confirmation that it was applied to the right account by the user
+			$data['amount'] = $amount;
+			$data['billing_account_number'] = $billing_account_number;
+			$data['billing_name'] = $billing_name;
+			$data['billing_company'] = $billing_company;
+			$data['billing_street'] = $billing_street;
+			$data['billing_city'] = $billing_city;
+			$data['billing_state'] = $billing_state;
+			return $data; 
+
+		} // end if result row_count > 0 
+
+		else 
+		{
+			echo "ERROR: no matching rows, queryfailed";
+		}
+
+	}
+
 }
