@@ -42,7 +42,8 @@ class User_Model extends CI_Model {
 	 */
 	function user_privileges($username)
 	{
-		$query = "SELECT admin,manager,email_notify,screenname_notify FROM user WHERE username = '$username' LIMIT 1";
+		$query = "SELECT admin,manager,email,screenname,email_notify,screenname_notify ".
+			"FROM user WHERE username = '$username' LIMIT 1";
 		$result = $this->db->query($query);
 
 		return $result->row_array();
@@ -543,6 +544,18 @@ class User_Model extends CI_Model {
 		return $result->result_array();
 	}
 
+	function update_usernotifications()
+	{
+		// save user information
+		$query = "UPDATE user ".
+			"SET email = '$email', ".
+			"screenname = '$screenname', ".
+			"email_notify = '$email_notify', ".
+			"screenname_notify = '$screenname_notify' ".
+			"WHERE username = '$this->user'";
+		$result = $this->db->query($query) or die ("query failed");
+
+	}
 } // end class
 
 ?>

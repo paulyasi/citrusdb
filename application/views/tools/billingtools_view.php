@@ -6,7 +6,7 @@
 <br>
 
 <div class=icon>
-<a href=# onclick = "popupPage('index.php/tools/importnew'); return false;">
+<a href=# onclick = "popupPage('<?php echo $this->ssl_url_prefix?>/index.php/tools/importnew'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_importnew.png"><br>
 <?php echo lang('importnewaccounts');?></a></div>
 
