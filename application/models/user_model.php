@@ -544,7 +544,7 @@ class User_Model extends CI_Model {
 		return $result->result_array();
 	}
 
-	function update_usernotifications()
+	function update_usernotifications($email, $screenname, $email_notify, $screenname_notify)
 	{
 		// save user information
 		$query = "UPDATE user ".

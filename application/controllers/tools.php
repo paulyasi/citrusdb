@@ -243,6 +243,7 @@ class Tools extends App_Controller
 		$email_notify = $this->input->post('email_notify');
 		$screenname_notify = $this->input->post('screenname_notify');
 		
+		$this->user_model->update_usernotifications($email, $screenname, $email_notify, $screenname_notify);
 		print "<h3>".lang('changessaved')."</h3>";
 
 		// load the header without the sidebar to get the stylesheet in there
@@ -335,9 +336,7 @@ class Tools extends App_Controller
 
 				$linecount++;
 				echo $linecount;
-			}
 
-			/*
 				if ($linecount == 1) {
 					// make the values in the array safe for import
 
@@ -372,33 +371,33 @@ class Tools extends App_Controller
 						"secret_answer,".
 						"account_manager_password) ".
 						"VALUES (".
-						"'$line[0]',".
+						"$line[0],".
 						"CURRENT_DATE,".
-						"'$line[1]',".
-						"'$line[2]',".
-						"'$line[3]',".
-						"'$line[4]',".
-						"'$line[5]',".
-						"'$line[6]',".
-						"'$line[7]',".
-						"'$line[8]',".
-						"'$line[9]',".
-						"'$line[10]',".
-						"'$line[11]',".
-						"'$line[13]',".
-						"'$line[14]',".
-						"'$line[15]')";
+						"$line[1],".
+						"$line[2],".
+						"$line[3],".
+						"$line[4],".
+						"$line[5],".
+						"$line[6],".
+						"$line[7],".
+						"$line[8],".
+						"$line[9],".
+						"$line[10],".
+						"$line[11],".
+						"$line[13],".
+						"$line[14],".
+						"$line[15])";
 
-					$result = $DB->Execute($query) 
-						or die ("customer insert $l_queryfailed");
+					$result = $this->db->query($query) 
+						or die ("customer insert query failed");
 
 					// get the inserted id of the customer record
-					$myinsertid = $DB->Insert_ID();  
+					$myinsertid = $this->db->insert_id();  
 					$account_number=$myinsertid;
-					echo "$l_id: $account_number<p>";
+					echo lang('id').": $account_number<p>";
 
 					// get the next billing date value
-					$mydate = get_nextbillingdate();
+					$mydate = $this->billing_model->get_nextbillingdate();
 					$from_date = $mydate;
 
 					$organization_id = $line[16];
@@ -406,17 +405,17 @@ class Tools extends App_Controller
 					// make a new default billing record
 					$query = "INSERT into billing ".
 						"(account_number,next_billing_date,from_date, payment_due_date, organization_id) ".
-						"VALUES ('$account_number','$mydate','$mydate','$mydate', '$organization_id')";
-					$result = $DB->Execute($query) or die ("insert billing $l_queryfailed");
+						"VALUES ('$account_number','$mydate','$mydate','$mydate', $organization_id)";
+					$result = $this->db->query($query) or die ("insert billing queryfailed");
 
 					//
 					// set the default billing ID for the customer record
 					//
-					$billingid = $DB->Insert_ID();
+					$billingid = $this->db->insert_id();
 					$query = "UPDATE customer ". 
 						"SET default_billing_id = '$billingid' ".
 						"WHERE account_number = $account_number";
-					$result = $DB->Execute($query)
+					$result = $this->db->query($query)
 						or die ("customer update $l_queryfailed");
 
 					echo "$l_added $l_accountnumber: $account_number<p>";
@@ -430,22 +429,22 @@ class Tools extends App_Controller
 
 					// make the billing record
 					$query = "UPDATE billing ".
-						"SET name = '$line[0]',".
-						"company = '$line[1]',".
-						"street = '$line[2]',".
-						"city = '$line[3]',".
-						"state = '$line[4]',".
-						"country = '$line[5]',".
-						"zip = '$line[6]',".
-						"phone = '$line[7]',".
-						"fax = '$line[8]',".
-						"contact_email = '$line[9]',".
-						"billing_type = '$line[10]',".
-						"creditcard_number = '$line[11]',".
-						"creditcard_expire = '$line[12]' ".
+						"SET name = $line[0],".
+						"company = $line[1],".
+						"street = $line[2],".
+						"city = $line[3],".
+						"state = $line[4],".
+						"country = $line[5],".
+						"zip = $line[6],".
+						"phone = $line[7],".
+						"fax = $line[8],".
+						"contact_email = $line[9],".
+						"billing_type = $line[10],".
+						"creditcard_number = $line[11],".
+						"creditcard_expire = $line[12] ".
 						"WHERE id = $billingid";
 
-					$result = $DB->Execute($query) 
+					$result = $this->db->query($query) 
 						or die ("billing update $l_queryfailed");
 
 					// add the to_date automatically
@@ -471,7 +470,7 @@ class Tools extends App_Controller
 						if ($line[0] == "-----END PGP MESSAGE-----") {
 							// into the billing table encrypted_creditcard_number field
 							$query = "UPDATE billing SET encrypted_creditcard_number = '$armordata' WHERE id = $billingid";
-							$result = $DB->Execute($query) or die ("billing card update $l_queryfailed");  
+							$result = $this->db->query($query) or die ("billing card update $l_queryfailed");  
 							//echo "$armordata";	  
 
 							// reset line count and other markers when done
@@ -510,12 +509,12 @@ class Tools extends App_Controller
 							"salesperson) ".
 							"VALUES ('$account_number', '$serviceid', ".
 							"'$default_billing_id', '$mydate', '$user')";
-						$result = $DB->Execute($query) 
+						$result = $this->db->query($query) 
 							or die ("user_services insert $l_queryfailed");
 
 						// Get the ID of the row the insert was to for 
 						// the options_table query
-						$myinsertid = $DB->Insert_ID();
+						$myinsertid = $this->db->insert_id();
 
 						// insert values into the options table
 						// skip this if there is no options_table_name 
@@ -559,8 +558,6 @@ class Tools extends App_Controller
 				} // end if make service record
 			} // end while	       
 
-			*/
-
 			// close the file
 			@fclose($fp) or die ("$l_cannotclose $myfile");
 
@@ -568,7 +565,7 @@ class Tools extends App_Controller
 			unlink($myfile);
 
 			// log the importing of accounts
-			log_activity($DB,$user,$account_number,'import','customer',0,'success');  
+			$this->log_model->activity($this->user,$this->account_number,'import','customer',0,'success');  
 		}
 	}
 
