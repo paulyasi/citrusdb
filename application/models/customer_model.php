@@ -114,19 +114,21 @@ class Customer_Model extends CI_Model
 		$country = $customer_data['country'];
 		$zip = $customer_data['zip'];
 		$phone = $customer_data['phone'];
+		$alt_phone = $customer_data['alt_phone'];
 		$fax = $customer_data['fax'];
 		$contact_email = $customer_data['contact_email'];
 		$secret_question = $customer_data['secret_question'];
 		$secret_answer = $customer_data['secret_answer'];
 		$source = $customer_data['source'];
 		$organization_id = $customer_data['organization_id'];
+		$account_manager_password = $customer_data['account_manager_password'];
 
 		// insert a new customer record
 		$query = "INSERT into customer (signup_date, name, company, street, city, 
-			state, country, zip, phone, fax, contact_email, secret_question, 
+			state, country, zip, phone, alt_phone, fax, contact_email, secret_question, 
 			secret_answer, source) 
 				VALUES (CURRENT_DATE, '$name', '$company', '$street', '$city', '$state', 
-						'$country', '$zip', '$phone', '$fax', '$contact_email', 
+						'$country', '$zip', '$phone', '$alt_phone','$fax', '$contact_email', 
 						'$secret_question','$secret_answer','$source')";
 		$result = $this->db->query($query) or die ("query failed");
 
@@ -157,6 +159,11 @@ class Customer_Model extends CI_Model
 			"WHERE account_number = $account_number";
 		$result = $this->db->query($query) or die ("query failed");
 
+		// return the account number and default billing id of the new customer
+		$data['account_number'] = $account_number;
+		$data['billingid'] = $billingid;
+		$data['from_date'] = $mydate;
+		return $data;
 	}
 
 
@@ -236,15 +243,15 @@ class Customer_Model extends CI_Model
 		$removal_date  = date("Y-m-d", 
 				mktime(0, 0, 0, date("m")  , date("$myday"), date("Y")));
 		$today  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
-	
+
 		if ($removal_date <= $today) 
 		{
-        	$removal_date  = date("Y-m-d", 
+			$removal_date  = date("Y-m-d", 
 					mktime(0, 0, 0, date("m")+1  , date("$myday"), date("Y")));
-        }
+		}
 
 		return $removal_date;
 	}
-	
+
 
 }

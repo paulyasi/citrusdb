@@ -2712,4 +2712,15 @@ class Billing_Model extends CI_Model
 
 	}
 
+
+	function get_path_to_ccfile()
+	{
+		// get the path_to_citrus
+		$query = "SELECT path_to_ccfile FROM settings WHERE id = 1";
+		$result = $this->db->query($query) or die ("query failed");
+		$myresult = $result->row_array();
+
+		return $myresult['path_to_ccfile'];
+	}
+
 }

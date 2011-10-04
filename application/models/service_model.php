@@ -606,7 +606,7 @@ class Service_model extends CI_Model
 		}
 
 		// create the ticket with the service message
-		$this->ticket_model->create_ticket($this->user, $notify, $this->account_number, 
+		$this->support_model->create_ticket($this->user, $notify, $account_number, 
 				$status, $description, NULL, NULL, NULL, $user_service_id);
 	}
 
@@ -623,6 +623,15 @@ class Service_model extends CI_Model
 			or die ("get service desc and notify queryfailed");
 		
 		return $result->row_array();
-	}	 
+	}
+
+	public function get_service_info($serviceid)
+	{
+		// get the info about the service
+		$query = "SELECT * FROM master_services WHERE id = $serviceid";
+		$result = $this->db->query($query) or die ("$query master_services select $l_queryfailed");
+	
+		return $result->row_array();	
+	}
 
 }

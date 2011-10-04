@@ -120,7 +120,7 @@ class Tools extends App_Controller
 		// Read the list of payment modes to give the operator for paying the bill
 		$payment_modes = $this->billing_model->get_payment_modes();
 		$payment_options = "";
-		
+
 		foreach ($payment_modes AS $mypayresult)
 		{
 			$payment_options = $payment_options . "<option>". $mypayresult['name'] . 
@@ -130,7 +130,7 @@ class Tools extends App_Controller
 		$data['payment_options'] = $payment_options;
 		$data['invoice_number'] = $invoice_number;
 		$data['amount'] = $amount;
-		
+
 		$this->load->view('tools/payment_view', $data);
 
 	}
@@ -242,7 +242,7 @@ class Tools extends App_Controller
 		$screenname = $this->input->post('screenname');
 		$email_notify = $this->input->post('email_notify');
 		$screenname_notify = $this->input->post('screenname_notify');
-		
+
 		$this->user_model->update_usernotifications($email, $screenname, $email_notify, $screenname_notify);
 		print "<h3>".lang('changessaved')."</h3>";
 
@@ -276,14 +276,16 @@ class Tools extends App_Controller
 	 */
 	function uploadnew()
 	{
+		// load the service model to be able to input new services
+		$this->load->model('service_model');
+		$this->load->model('schema_model');
+		$this->load->model('support_model');
+
 		// POST Variables
 		$userfile = $_FILES['userfile']['tmp_name'];
 
-		// get the path_to_citrus
-		$query = "SELECT path_to_ccfile FROM settings WHERE id = 1";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
-		$myresult = $result->row_array();
-		$path_to_ccfile = $myresult['path_to_ccfile'];
+		// get the path where to store the cc data
+		$path_to_ccfile = $this->billing_model->get_path_to_ccfile();
 
 		// upload the file
 		$config['upload_path'] = $path_to_ccfile;
@@ -343,7 +345,7 @@ class Tools extends App_Controller
 					$i = 0;
 					foreach ($line as $key  => $value) {
 						//$line[$key] = import_safe_value($value);
-						$line[$key] = $this->db->escape($value);
+						$line[$key] = $value;
 						$i++;
 					}
 
@@ -352,105 +354,65 @@ class Tools extends App_Controller
 						die ("File Format Error: Wrong number of inputs");
 					}
 
-					// make the customer record	
-					$query = "INSERT into customer (".
-						"source,".
-						"signup_date,".
-						"name,".
-						"company,".
-						"street,".
-						"city,".
-						"state,".
-						"country,".
-						"zip,".
-						"phone,".
-						"alt_phone,".
-						"fax,".
-						"contact_email,".
-						"secret_question,".
-						"secret_answer,".
-						"account_manager_password) ".
-						"VALUES (".
-						"$line[0],".
-						"CURRENT_DATE,".
-						"$line[1],".
-						"$line[2],".
-						"$line[3],".
-						"$line[4],".
-						"$line[5],".
-						"$line[6],".
-						"$line[7],".
-						"$line[8],".
-						"$line[9],".
-						"$line[10],".
-						"$line[11],".
-						"$line[13],".
-						"$line[14],".
-						"$line[15])";
+					// make the customer record	data array
+					$data['source'] = $line[0];
+					$data['name'] = $line[1];
+					$data['company'] = $line[2];
+					$data['street'] = $line[3];
+					$data['city'] = $line[4];
+					$data['state'] = $line[5];
+					$data['country'] = $line[6];
+					$data['zip'] = $line[7];
+					$data['phone'] = $line[8];
+					$data['alt_phone'] = $line[9];
+					$data['fax'] = $line[10];
+					$data['contact_email'] = $line[11];
+					$data['secret_question'] = $line[13];
+					$data['secret_answer'] = $line[14];
+					$data['account_manager_password'] = $line[15];
+					$data['organization_id'] = $line[16];
 
-					$result = $this->db->query($query) 
-						or die ("customer insert query failed");
+					// create the new customer record and set the account_number variable
+					$newdata = $this->customer_model->create_record($data);
+					$account_number = $newdata['account_number'];
+					$billingid = $newdata['billingid'];
+					$from_date = $newdata['from_date'];
 
-					// get the inserted id of the customer record
-					$myinsertid = $this->db->insert_id();  
-					$account_number=$myinsertid;
 					echo lang('id').": $account_number<p>";
 
-					// get the next billing date value
-					$mydate = $this->billing_model->get_nextbillingdate();
-					$from_date = $mydate;
-
-					$organization_id = $line[16];
-
-					// make a new default billing record
-					$query = "INSERT into billing ".
-						"(account_number,next_billing_date,from_date, payment_due_date, organization_id) ".
-						"VALUES ('$account_number','$mydate','$mydate','$mydate', $organization_id)";
-					$result = $this->db->query($query) or die ("insert billing queryfailed");
-
-					//
-					// set the default billing ID for the customer record
-					//
-					$billingid = $this->db->insert_id();
-					$query = "UPDATE customer ". 
-						"SET default_billing_id = '$billingid' ".
-						"WHERE account_number = $account_number";
-					$result = $this->db->query($query)
-						or die ("customer update $l_queryfailed");
-
-					echo "$l_added $l_accountnumber: $account_number<p>";
+					echo lang('added') .": ". lang('accountnumber') .": ". $account_number."<p>";
 				}
-				elseif ($linecount == 2) {
+				elseif ($linecount == 2) 
+				{
 					// make the values in the array safe for import
-					foreach ($line as $key  => $value) {
+					foreach ($line as $key  => $value) 
+					{
 						//$line[$key] = import_safe_value($value);
-						$line[$key] = $this->db->escape($value);
+						$line[$key] = $value;
 					}
 
-					// make the billing record
-					$query = "UPDATE billing ".
-						"SET name = $line[0],".
-						"company = $line[1],".
-						"street = $line[2],".
-						"city = $line[3],".
-						"state = $line[4],".
-						"country = $line[5],".
-						"zip = $line[6],".
-						"phone = $line[7],".
-						"fax = $line[8],".
-						"contact_email = $line[9],".
-						"billing_type = $line[10],".
-						"creditcard_number = $line[11],".
-						"creditcard_expire = $line[12] ".
-						"WHERE id = $billingid";
+					// update the billing record
+					$billing_data = array(
+							'name' => $line[0],
+							'company' => $line[1],
+							'street' => $line[2],
+							'city' => $line[3],
+							'state' => $line[4],
+							'country' => $line[5],
+							'zip' => $line[6],
+							'phone' => $line[7],
+							'fax' => $line[8],
+							'contact_email' => $line[9],
+							'billing_type' => $line[10],
+							'creditcard_number' => $line[11],
+							'creditcard_expire' => $line[12]
+							);
+					$this->billing_model->save_record($billingid, $billing_data);
 
-					$result = $this->db->query($query) 
-						or die ("billing update $l_queryfailed");
-
-					// add the to_date automatically
+					// set the to_date
 					$billing_type = $line[10];
-					automatic_to_date($DB, $from_date, $billing_type, $billingid);
-					echo "$l_added $l_billingid: $billingid<p>";		
+					$this->billing_model->automatic_to_date($from_date, $billing_type, $billingid);
+					echo lang('added')." ". lang('billingid').": ".$billingid."<p>";		
 				} else {
 					// look for the BEGIN PGP MESSAGE block text after all service items
 					if (($line[0] == "-----BEGIN PGP MESSAGE-----") OR ($asciiarmor == TRUE)) {
@@ -469,8 +431,8 @@ class Tools extends App_Controller
 
 						if ($line[0] == "-----END PGP MESSAGE-----") {
 							// into the billing table encrypted_creditcard_number field
-							$query = "UPDATE billing SET encrypted_creditcard_number = '$armordata' WHERE id = $billingid";
-							$result = $this->db->query($query) or die ("billing card update $l_queryfailed");  
+							$card_data['encrypted_creditcard_number'] = $armordata;
+							$this->billing_model->save_record($billingid, $card_data);
 							//echo "$armordata";	  
 
 							// reset line count and other markers when done
@@ -484,82 +446,81 @@ class Tools extends App_Controller
 						// shift everything else up one
 
 						$serviceid = array_shift($line);
+						echo "adding service". $serviceid. "<br>";
 
 						// make fieldvalues string with the rest of the items
 						$fieldvalues = ""; // empty it out
 						foreach ($line as $mykey => $myvalue) {
 							//$myvalue = import_safe_value($myvalue);
 							$myvalue = $this->db->escape($myvalue);
-							$fieldvalues .= ',\'' . $myvalue . '\'';
+							$fieldvalues .= "," . $myvalue;
 						}
 						$fieldvalues = substr($fieldvalues, 1);
+						echo $fieldvalues."<br>";
 
-						//echo "fieldvalules: $fieldvalues<P>";
-						// insert the rest into options_table if necessary
+						// get the services options table name
+						$serviceinfo = $this->service_model->get_service_info($serviceid);	
+						echo $serviceinfo;
+						$servicename = $serviceinfo['service_description'];
+						$activate_notify = $serviceinfo['activate_notify'];
+						$optionstable = $serviceinfo['options_table'];
 
-						// make the creation date YYYY-MM-DD HOUR:MIN:SEC
-						$mydate = date("Y-m-d H:i:s");
+						// list out the fields in the options table for that service
+						$fields = $this->schema_model->columns($this->db->database, $optionstable);
 
-						// get the default billing id
-						$default_billing_id = $billingid;
+						// put the fields into a fieldnames string
+						$fieldnames = "";
+						$i = 0;
+						foreach($fields->result() as $v) 
+						{
+							//echo "Name: $v->name ";
+							//echo "Type: $v->type <br>";
 
-						// insert the new service into user_services table
-						$query = "INSERT into user_services (account_number, ".
-							"master_service_id, billing_id, start_datetime, ".
-							"salesperson) ".
-							"VALUES ('$account_number', '$serviceid', ".
-							"'$default_billing_id', '$mydate', '$user')";
-						$result = $this->db->query($query) 
-							or die ("user_services insert $l_queryfailed");
+							$fieldname = $v->COLUMN_NAME;
+							$fieldflags = $v->DATA_TYPE;
+							$fieldtype = $v->COLUMN_TYPE; // for enum has value: enum('1','2') etc.
 
-						// Get the ID of the row the insert was to for 
-						// the options_table query
-						$myinsertid = $this->db->insert_id();
-
-						// insert values into the options table
-						// skip this if there is no options_table_name 
-						// for this service
-
-						// get the info about the service
-						$query = "SELECT * FROM master_services WHERE id = $serviceid";
-						$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-						$result = $DB->Execute($query) or die ("$query master_services select $l_queryfailed");
-						$myresult = $result->fields;	
-						$servicename = $myresult['service_description'];
-						$activate_notify = $myresult['activate_notify'];
-						$optionstable = $myresult['options_table'];
-
-						// insert data into the options table if there is one
-						if ($optionstable <> '') {
-							$query = "INSERT into $optionstable () ".
-								"VALUES (NULL,$myinsertid,$fieldvalues)";
-							$result = $DB->Execute($query) 
-								or die ("options table insert $l_queryfailed");
+							if ($fieldname <> "id" AND $fieldname <> "user_services") 
+							{		
+								$fieldnames .= "," . $fieldname;
+							}
 						}
+						$fieldnames = substr($fieldnames, 1);
+						echo "fieldnames:".$fieldnames."<br>";
+
+						// create the service
+						$user_service_id = $this->service_model->create_service(
+								$account_number, 
+								$serviceid, 
+								$billingid, 
+								1, 
+								$optionstable,
+								$fieldnames, 
+								$fieldvalues
+								);
 
 						// insert any linked_services into the user_services table
-						$query = "SELECT * FROM linked_services ". 
-							"WHERE linkfrom = $serviceid";
-						$result = $DB->Execute($query) 
-							or die ("$l_queryfailed");
-						while ($myresult = $result->FetchRow()) {
+						$query = "SELECT * FROM linked_services WHERE linkfrom = $serviceid";
+						$result = $this->db->query($query) or die ("$l_queryfailed");
+						foreach($result->result_array() AS $myresult) 
+						{
 							$linkto = $myresult['linkto'];
 							// insert the linked service now
-							$query = "INSERT into user_services (account_number, master_service_id, billing_id, start_datetime, salesperson) VALUES ('$account_number', '$linkto', '$default_billing_id', '$mydate', '$user')";
-							$result = $DB->Execute($query) or die ("linked services insert $l_queryfailed");
+							$this->service_model->create_service($account_number, 
+									$linkto, $billingid, 1, NULL, NULL, NULL);
 						}
 
 						// add an entry to the customer history about service
-						service_message('added', $account_number,
-								$serviceid, $myinsertid, NULL, NULL);
+						$this->service_model->service_message('added', $account_number,
+								$serviceid, $user_service_id, NULL, NULL);
 
-						echo "$l_added $l_service: $serviceid $l_to $account_number<p>";		
+						echo lang('added')." ".lang('service').": ".$serviceid." ".lang('to').$account_number."<p>";		
 					} // end if for "-" line record seperator
 				} // end if make service record
 			} // end while	       
 
 			// close the file
-			@fclose($fp) or die ("$l_cannotclose $myfile");
+			@fclose($fp) or die ("cannot close $myfile");
 
 			// delete the file when we are done
 			unlink($myfile);
