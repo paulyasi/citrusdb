@@ -136,7 +136,7 @@ foreach ($result->result_array() as $myresult){
 alert ('<?php echo lang('notvalid');?>');
 } else { alert('<?php echo lang('valid');?>'); } return false;" NAME="anchor1" ID="anchor1" style="color:blue">
   <?php echo lang('validate')?></a><br>
-  <a href="index.php/billing/asciiarmor/$billing_id"><?php echo lang('ciphertext')?></a>
+  <a href="<?php echo $this->ssl_url_prefix?>/index.php/billing/asciiarmor/<?php echo $billing_id?>"><?php echo lang('ciphertext')?></a>
   </td><tr>
   <td bgcolor="#ccccdd"><b><?php echo lang('ccexpire')?></b></td>
   <td bgcolor="#ddddee">

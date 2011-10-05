@@ -810,41 +810,6 @@ class Billing extends App_Controller
 	}
 
 
-	public function asciiarmor()
-	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/asciiarmor.php');
-		}  else permission_error();
-	}
-
-
-	public function nsf()
-	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/nsf.php');
-		}  else permission_error();
-	}
-
-
-	public function receipt()
-	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/receipt.php');
-		}  else permission_error();
-	}
-
-	public function deletepayment()
-	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/deletepayment.php');
-		}  else permission_error();
-	}
-
-
 	public function createinvoice($billing_id)
 	{
 		// load the module header common to all module views
@@ -1238,6 +1203,39 @@ class Billing extends App_Controller
 
 		redirect("/billing/refund/$billingid");
 
+	}
+
+
+	public function asciiarmor()
+	{
+
+		$this->load->view('billing/asciiarmor_view', $data);
+	}
+
+
+	public function nsf()
+	{
+		if ($pallow_modify)
+		{
+			include('./modules/billing/nsf.php');
+		}  else permission_error();
+	}
+
+
+	public function receipt()
+	{
+		if ($pallow_modify)
+		{
+			include('./modules/billing/receipt.php');
+		}  else permission_error();
+	}
+
+	public function deletepayment()
+	{
+		if ($pallow_modify)
+		{
+			include('./modules/billing/deletepayment.php');
+		}  else permission_error();
 	}
 
 }
