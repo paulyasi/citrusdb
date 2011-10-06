@@ -2713,14 +2713,136 @@ class Billing_Model extends CI_Model
 	}
 
 
-	function get_path_to_ccfile()
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the credit card export variables and file prefix
+	 * ------------------------------------------------------------------------
+	 */
+	function ccexportvars($organization_id)
 	{
-		// get the path_to_citrus
-		$query = "SELECT path_to_ccfile FROM settings WHERE id = 1";
-		$result = $this->db->query($query) or die ("query failed");
-		$myresult = $result->row_array();
-
-		return $myresult['path_to_ccfile'];
+		// select the info from general to get the export variables
+		$query = "SELECT ccexportvarorder,exportprefix FROM general WHERE id = '$organization_id'";
+		$ccvarresult = $this->db->query($query) or die ("query failed");
+		
+		return $ccvarresult->row_array();
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  export credit card batch, print the credit card billing to a file
+	 * ------------------------------------------------------------------------
+	 */
+	function export_card_batch($batchid, $path_to_ccfile)
+	{
+		// get the card export variables and filename prefix
+		$myccvarresult = $this->ccexportvars($organization_id);
+		$ccexportvarorder = $myccvarresult['ccexportvarorder'];
+		$exportprefix = $myccvarresult['exportprefix'];	
+
+		// convert the $ccexportvarorder &#036; dollar signs back to actual dollar signs and &quot; back to quotes
+		$ccexportvarorder = str_replace( "&#036;"           , "$"        , $ccexportvarorder );
+		$ccexportvarorder = str_replace( "&quot;"           , "\\\""        , $ccexportvarorder );
+
+		// open the file
+		$filename = "$path_to_ccfile" . "/" . "$exportprefix" . "export" . "$batchid.csv";
+		$handle = fopen($filename, 'w') or die ("cannot open $filename"); // open the file
+
+		// query the batch for the invoices to do
+		$query = "SELECT DISTINCT d.recent_invoice_number FROM billing_details d 
+			WHERE batch = '$batchid'";
+		$result = $this->db->query($query) or die ("query failed");
+
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// get the recent invoice data to process now
+			$invoice_number = $myresult['recent_invoice_number'];
+
+			$query = "SELECT h.id h_id, h.billing_date h_billing_date, 
+				h.created_by h_created_by, h.billing_id h_billing_id, 
+				h.from_date h_from_date, h.to_date h_to_date, 
+				h.payment_due_date h_payment_due_date, 
+				h.new_charges h_new_charges, h.past_due h_past_due, 
+				h.late_fee h_late_fee, h.tax_due h_tax_due, 
+				h.total_due h_total_due, h.notes h_notes, 
+				b.id b_id, b.name b_name, b.company b_company, 
+				b.street b_street, b.city b_city, b.state b_state, 
+				b.country b_country, b.zip b_zip, 
+				b.contact_email b_contact_email, b.account_number b_acctnum, 
+				b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp,
+				b.encrypted_creditcard_number b_enc_ccnum 
+					FROM billing_history h 
+					LEFT JOIN billing b ON h.billing_id = b.id  
+					WHERE h.id = '$invoice_number'";
+			$invoiceresult = $this->db->query($query) or die ("query failed");	
+			$myinvresult = $invoiceresult->row_array();
+			$user = $myinvresult['h_created_by'];
+			$mydate = $myinvresult['h_billing_date'];
+			$mybilling_id = $myinvresult['b_id'];
+			$billing_name = $myinvresult['b_name'];
+			$billing_company = $myinvresult['b_company'];
+			$billing_street =  $myinvresult['b_street'];
+			$billing_city = $myinvresult['b_city'];
+			$billing_state = $myinvresult['b_state'];
+			$billing_zip = $myinvresult['b_zip'];
+			$billing_acctnum = $myinvresult['b_acctnum'];
+			$billing_ccnum = $myinvresult['b_ccnum'];
+			$billing_ccexp = $myinvresult['b_ccexp'];
+			$billing_fromdate = $myinvresult['h_from_date'];
+			$billing_todate = $myinvresult['h_to_date'];
+			$billing_payment_due_date = $myinvresult['h_payment_due_date'];
+			$precisetotal = $myinvresult['h_total_due'];
+			$encrypted_creditcard_number = $myinvresult['b_enc_ccnum'];
+
+			// get the absolute value of the total
+			$abstotal = abs($precisetotal);
+
+			// decrypt the encrypted_creditcard and replace the billing_ccnum value with it
+			// write the encrypted_creditcard_number to a temporary file
+			// and decrypt that file to stdout to get the CC
+
+			// get the path where to store the cc data
+			$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
+
+			// open the file
+			$cipherfilename = "$path_to_ccfile/ciphertext.tmp";
+			$cipherhandle = fopen($cipherfilename, 'w') or die ("cannot open $cipherfilename");
+
+			// write the ciphertext we want to decrypt into the file
+			fwrite($cipherhandle, $encrypted_creditcard_number);
+
+			// close the file
+			fclose($cipherhandle);
+
+			// destroy the output array before we use it again
+			unset($decrypted);
+
+			$gpgcommandline = $this->config->item('gpg_decrypt')." $cipherfilename";
+			$decrypted = decrypt_command($gpgcommandline, $passphrase);
+
+			// if there is a gpg error, stop here
+			if (substr($decrypted,0,5) == "error") 
+			{
+				die ("Credit Card Encryption Error: $decrypted ".lang('billingid').": $mybilling_id");
+			}
+
+			// set the billing_ccnum to the decrypted_creditcard_number
+			$decrypted_creditcard_number = $decrypted;
+			$billing_ccnum = $decrypted_creditcard_number;		
+
+			// determine the variable export order values
+			eval ("\$exportstring = \"$ccexportvarorder\";");
+
+			// print the line in the exported data file
+			// don't print them to billing if the amount is less than or equal to zero
+			if ($precisetotal > 0) 
+			{
+				$newline = "\"CHARGE\",$exportstring\n";
+				fwrite($handle, $newline); // write to the file
+			}
+		} // end while
+
+		// close the file
+		fclose($handle); // close the file
+	}		
 }

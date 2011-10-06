@@ -5,7 +5,7 @@
 // sends data to encrypt to stdin, returns result code
 //
 // expects a gpg command like
-// /usr/bin/gpg --homedir /home/www-data/.gnupg --armor --batch -e -r 'CitrusDB'
+// /usr/bin/gpg --homedir /home/www-data/.gnupg --armor --batch -e -r 'USERNAME'
 //
 /*---------------------------------------------------------------------------*/
 function encrypt_command ($gpg_command, $data)

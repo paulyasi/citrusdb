@@ -280,12 +280,13 @@ class Tools extends App_Controller
 		$this->load->model('service_model');
 		$this->load->model('schema_model');
 		$this->load->model('support_model');
+		$this->load->model('settings_model');
 
 		// POST Variables
 		$userfile = $_FILES['userfile']['tmp_name'];
 
 		// get the path where to store the cc data
-		$path_to_ccfile = $this->billing_model->get_path_to_ccfile();
+		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
 
 		// upload the file
 		$config['upload_path'] = $path_to_ccfile;
@@ -562,277 +563,144 @@ class Tools extends App_Controller
 	 */
 	function saveexportcc()
 	{
-		//GET Variables
-		if (!isset($base->input['billingdate'])) { $base->input['billingdate'] = ""; }
-		if (!isset($base->input['organization_id'])) { $base->input['organization_id'] = ""; }
-		if (!isset($base->input['billingdate1'])) { $base->input['billingdate1'] = ""; }
-		if (!isset($base->input['billingdate2'])) { $base->input['billingdate2'] = ""; }
-		if (!isset($base->input['passphrase'])) { $base->input['passphrase'] = ""; }
+		// load the settings model for later use
+		$this->load->model('settings_model');
 
-		$submit = $base->input['submit'];
-		$billingdate = $base->input['billingdate'];
-		$organization_id = $base->input['organization_id'];
-		$billingdate1 = $base->input['billingdate1'];
-		$billingdate2 = $base->input['billingdate2'];
-		$passphrase = $base->input['passphrase'];
+		$billingdate = $this->input->post('billingdate');
+		$organization_id = $this->input->post('organization_id');
+		$billingdate1 = $this->input->post('billingdate1');
+		$billingdate2 = $this->input->post('billingdate2');
+		$passphrase = $this->input->post('passphrase');
 
 		print "$billingdate";
 
-		// make sure the user is in a group that is allowed to run this
+		/*--------------------------------------------------------------------------*/
+		// TODO: make a file and sign it first to verify the passphrase entered
+		// before we start making a new batch for them
+		/*--------------------------------------------------------------------------*/
+		// get the path where to store the cc data
+		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
+		
+		// make a file to sign
+		$signfilename = "$path_to_ccfile/signtext.tmp";
+		$signhandle = fopen($signfilename, 'w') or die ("cannot open $signfilename");
 
-		if ($submit) {
+		// write some example text to sign with a private key
+		$signtext = "Sign this";
+		fwrite($signhandle, $signtext);
 
-			//$DB->debug = true;
+		// close the file
+		fclose($signhandle);
 
-			/*--------------------------------------------------------------------------*/
-			// TODO: make a file and sign it first to verify the passphrase entered
-			// before we start making a new batch for them
-			/*--------------------------------------------------------------------------*/
-			// select the path_to_ccfile from settings
-			$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
-			$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-			$ccfileresult = $DB->Execute($query)
-				or die ("$l_queryfailed");
-			$myccfileresult = $ccfileresult->fields;
-			$path_to_ccfile = $myccfileresult['path_to_ccfile'];  
+		// load the encryption helper for use when calling gpg things
+		$this->load->helper('encryption');
+		
+		$gpgsigncommand = $this->config->item('gpg_sign')." $signfilename";
+		$signed = sign_command($gpgsigncommand, $passphrase);
 
-			// make a file to sign
-			$signfilename = "$path_to_ccfile/signtext.tmp";
-			$signhandle = fopen($signfilename, 'w') or die ("cannot open $signfilename");
+		// if there is a gpg error, stop here
+		if (substr($signed,0,5) == "error") 
+		{
+			die ("Signature Error: $signed");
+		}      
 
-			// write some example text to sign with a private key
-			$signtext = "Sign this";
-			fwrite($signhandle, $signtext);
+		/*--------------------------------------------------------------------*/
+		// Create the billing data
+		/*--------------------------------------------------------------------*/
 
-			// close the file
-			fclose($signhandle);
+		// determine the next available batch number
+		$batchid = $this->billing_model->get_nextbatchnumber();
+		echo lang('batch').": $batchid<p>\n";
 
-			$gpgsigncommand = "$gpg_sign $signfilename";
-			$signed = sign_command($gpgsigncommand, $passphrase);
+		//
+		// Check if they are doing a billing date range or just one date
+		//
 
-			// if there is a gpg error, stop here
-			if (substr($signed,0,5) == "error") {
-				die ("Signature Error: $signed");
-			}      
+		$totalall = 0;
 
-			/*--------------------------------------------------------------------*/
-			// Create the billing data
-			/*--------------------------------------------------------------------*/
+		if ($billingdate2) 
+		{
+			$startdate = $billingdate1;
+			$enddate = $billingdate2;
+			$mydate = $startdate;
+			echo "Date Range: $startdate - $enddate<p>\n";
+			while ($mydate <= $enddate) 
+			{
+				echo "Processing $mydate<br>\n";
 
-			// determine the next available batch number
-			$batchid = get_nextbatchnumber($DB);
-			echo "$l_batch: $batchid<p>\n";
-
-			//
-			// Check if they are doing a billing date range or just one date
-			//
-
-			$totalall = 0;
-
-			if ($billingdate2) {
-				$startdate = $billingdate1;
-				$enddate = $billingdate2;
-				$mydate = $startdate;
-				echo "Date Range: $startdate - $enddate<p>\n";
-				while ($mydate <= $enddate) {
-					echo "Processing $mydate<br>\n";
-
-					// Add creditcard taxes and services to the bill
-					$numtaxes = add_taxdetails($DB, $mydate, NULL, 
-							'creditcard', $batchid, $organization_id);
-					$numservices = add_servicedetails($DB, $mydate, NULL, 
-							'creditcard', $batchid, $organization_id);
-					echo "$l_creditcard: $numtaxes $l_added, 
-						$numservices $l_added<p>\n";
-
-					// Add prepaycc taxes and services to the bill
-					$numpptaxes = add_taxdetails($DB, $mydate, NULL, 
-							'prepaycc', $batchid, $organization_id);
-					$numppservices = add_servicedetails($DB, $mydate, NULL,
-							'prepaycc', $batchid, $organization_id);
-					echo "$l_prepay $l_creditcard: $numpptaxes $l_added, 
-						$numppservices $l_added<p>\n";
-
-					// Update Reruns to the bill
-					$numreruns = update_rerundetails($DB, $mydate, 
-							$batchid, $organization_id);
-					echo "$numreruns $l_rerun<p>\n";
-
-					// make the next date to check	
-					list($myyear, $mymonth, $myday) = split('-', $mydate);
-					$nextday = date("Y-m-d", mktime(0, 0, 0, $mymonth, $myday+1, $myyear));
-					$totalall = $numreruns + $numservices + $numtaxes + $numpptaxes + $numppservices + $totalall;
-					$mydate = $nextday;
-				} // end while	
-			} else {
-				// for a single date run
 				// Add creditcard taxes and services to the bill
-				$numtaxes = add_taxdetails($DB, $billingdate, NULL, 
+				$numtaxes = $this->billing_model->add_taxdetails($mydate, NULL, 
 						'creditcard', $batchid, $organization_id);
-				$numservices = add_servicedetails($DB, $billingdate, NULL, 
+				$numservices = $this->billing_model->add_servicedetails($mydate, NULL, 
 						'creditcard', $batchid, $organization_id);
-				echo "$l_creditcard: $numtaxes $l_added, 
-					$numservices $l_added<p>\n";
+				echo lang('creditcard').": $numtaxes ".lang('added').", 
+					$numservices ".lang('added')."<p>\n";
 
 				// Add prepaycc taxes and services to the bill
-				$numpptaxes = add_taxdetails($DB, $billingdate, NULL, 
+				$numpptaxes = $this->billing_model->add_taxdetails($mydate, NULL, 
 						'prepaycc', $batchid, $organization_id);
-				$numppservices = add_servicedetails($DB, $billingdate, NULL,  
+				$numppservices = $this->billing_model->add_servicedetails($mydate, NULL,
 						'prepaycc', $batchid, $organization_id);
-				echo "$l_prepay $l_creditcard: $numpptaxes $l_added, 
-					$numppservices $l_added<p>\n";
+				echo lang('prepay')." ".lang('creditcard').": $numpptaxes ".lang('added').", 
+					$numppservices ".lang('added')."<p>\n";
 
 				// Update Reruns to the bill
-				$numreruns = update_rerundetails($DB, $billingdate, 
+				$numreruns = $this->billing_model->update_rerundetails($mydate, 
 						$batchid, $organization_id);
-				echo "$numreruns $l_rerun<p>\n";
+				echo "$numreruns ".lang('rerun')."<p>\n";
 
+				// make the next date to check	
+				list($myyear, $mymonth, $myday) = split('-', $mydate);
+				$nextday = date("Y-m-d", mktime(0, 0, 0, $mymonth, $myday+1, $myyear));
 				$totalall = $numreruns + $numservices + $numtaxes + $numpptaxes + $numppservices + $totalall;
-			} // endif for billingdate range
+				$mydate = $nextday;
+			} // end while	
+		} 
+		else 
+		{
+			// for a single date run
+			// Add creditcard taxes and services to the bill
+			$numtaxes = $this->billing_model->add_taxdetails($billingdate, NULL, 
+					'creditcard', $batchid, $organization_id);
+			$numservices = $this->billing_model->add_servicedetails($billingdate, NULL, 
+					'creditcard', $batchid, $organization_id);
+			echo lang('creditcard').": $numtaxes ".lang('_added').", 
+				$numservices ".lang('added')."<p>\n";
 
-			// show message if no records have been found
-			if ($totalall == 0) {
-				echo "<b>$l_sorrynorecordsfound<b><p>\n";
-			} else {
+			// Add prepaycc taxes and services to the bill
+			$numpptaxes = $this->billing_model->add_taxdetails($billingdate, NULL, 
+					'prepaycc', $batchid, $organization_id);
+			$numppservices = $this->billing_model->add_servicedetails($billingdate, NULL,  
+					'prepaycc', $batchid, $organization_id);
+			echo lang('prepay')." ".lang('creditcard').": $numpptaxes ".lang('added').", 
+				$numppservices ".lang('added')."<p>\n";
 
-				// create billinghistory
-				create_billinghistory($DB, $batchid, 'creditcard', $user);
+			// Update Reruns to the bill
+			$numreruns = $this->billing_model->update_rerundetails($billingdate, 
+					$batchid, $organization_id);
+			echo "$numreruns ".lang('rerun')."<p>\n";
 
-				/*--------------------------------------------------------------------*/
-				// print the credit card billing to a file
-				/*--------------------------------------------------------------------*/
+			$totalall = $numreruns + $numservices + $numtaxes + $numpptaxes + $numppservices + $totalall;
+		} // endif for billingdate range
 
-				// select the info from general to get the export variables
-				$query = "SELECT ccexportvarorder,exportprefix FROM general WHERE id = '$organization_id'";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$ccvarresult = $DB->Execute($query) 
-					or die ("$l_queryfailed");
-				$myccvarresult = $ccvarresult->fields;
-				$ccexportvarorder = $myccvarresult['ccexportvarorder'];
-				$exportprefix = $myccvarresult['exportprefix'];	
+		// show message if no records have been found
+		if ($totalall == 0) 
+		{
+			echo "<b>".lang('sorrynorecordsfound')."<b><p>\n";
+		} 
+		else 
+		{
+			// create billinghistory
+			$this->billing_model->create_billinghistory($batchid, 'creditcard', $user);
 
-				// convert the $ccexportvarorder &#036; dollar signs back to actual dollar signs and &quot; back to quotes
-				$ccexportvarorder = str_replace( "&#036;"           , "$"        , $ccexportvarorder );
-				$ccexportvarorder = str_replace( "&quot;"           , "\\\""        , $ccexportvarorder );
+			// export the batch file
+			$this->billing_model->export_card_batch($batchid, $path_to_ccfile);
 
-				// open the file
-				$filename = "$path_to_ccfile" . "/" . "$exportprefix" . "export" . "$batchid.csv";
-				$handle = fopen($filename, 'w') or die ("cannot open $filename"); // open the file
+			// log this export activity
+			log_activity($user,0,'export','creditcard',$batchid,'success');
 
-				// query the batch for the invoices to do
-				$query = "SELECT DISTINCT d.recent_invoice_number FROM billing_details d 
-					WHERE batch = '$batchid'";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$result = $DB->Execute($query) 
-					or die ("$l_queryfailed");
-
-				while ($myresult = $result->FetchRow()) {
-
-					// get the recent invoice data to process now
-					$invoice_number = $myresult['recent_invoice_number'];
-
-					$query = "SELECT h.id h_id, h.billing_date h_billing_date, 
-						h.created_by h_created_by, h.billing_id h_billing_id, 
-						h.from_date h_from_date, h.to_date h_to_date, 
-						h.payment_due_date h_payment_due_date, 
-						h.new_charges h_new_charges, h.past_due h_past_due, 
-						h.late_fee h_late_fee, h.tax_due h_tax_due, 
-						h.total_due h_total_due, h.notes h_notes, 
-						b.id b_id, b.name b_name, b.company b_company, 
-						b.street b_street, b.city b_city, b.state b_state, 
-						b.country b_country, b.zip b_zip, 
-						b.contact_email b_contact_email, b.account_number b_acctnum, 
-						b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp,
-						b.encrypted_creditcard_number b_enc_ccnum 
-							FROM billing_history h 
-							LEFT JOIN billing b ON h.billing_id = b.id  
-							WHERE h.id = '$invoice_number'";
-					$invoiceresult = $DB->Execute($query)
-						or die ("$l_queryfailed");	
-					$myinvresult = $invoiceresult->fields;
-					$user = $myinvresult['h_created_by'];
-					$mydate = $myinvresult['h_billing_date'];
-					$mybilling_id = $myinvresult['b_id'];
-					$billing_name = $myinvresult['b_name'];
-					$billing_company = $myinvresult['b_company'];
-					$billing_street =  $myinvresult['b_street'];
-					$billing_city = $myinvresult['b_city'];
-					$billing_state = $myinvresult['b_state'];
-					$billing_zip = $myinvresult['b_zip'];
-					$billing_acctnum = $myinvresult['b_acctnum'];
-					$billing_ccnum = $myinvresult['b_ccnum'];
-					$billing_ccexp = $myinvresult['b_ccexp'];
-					$billing_fromdate = $myinvresult['h_from_date'];
-					$billing_todate = $myinvresult['h_to_date'];
-					$billing_payment_due_date = $myinvresult['h_payment_due_date'];
-					$precisetotal = $myinvresult['h_total_due'];
-					$encrypted_creditcard_number = $myinvresult['b_enc_ccnum'];
-
-					// get the absolute value of the total
-					$abstotal = abs($precisetotal);
-
-					// TODO: decrypt the encrypted_creditcard and replace the billing_ccnum value with it
-
-					// write the encrypted_creditcard_number to a temporary file
-					// and decrypt that file to stdout to get the CC
-					// select the path_to_ccfile from settings
-					$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
-					$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-					$ccfileresult = $DB->Execute($query) 
-						or die ("$l_queryfailed");
-					$myccfileresult = $ccfileresult->fields;
-					$path_to_ccfile = $myccfileresult['path_to_ccfile'];
-
-					// open the file
-					$cipherfilename = "$path_to_ccfile/ciphertext.tmp";
-					$cipherhandle = fopen($cipherfilename, 'w') or die ("cannot open $cipherfilename");
-
-					// write the ciphertext we want to decrypt into the file
-					fwrite($cipherhandle, $encrypted_creditcard_number);
-
-					// close the file
-					fclose($cipherhandle);
-
-					//$gpgcommandline = "echo $passphrase | $gpg_decrypt $cipherfilename";
-
-					//$oldhome = getEnv("HOME");
-
-					// destroy the output array before we use it again
-					unset($decrypted);
-
-					$gpgcommandline = "$gpg_decrypt $cipherfilename";
-					$decrypted = decrypt_command($gpgcommandline, $passphrase);
-
-					// if there is a gpg error, stop here
-					if (substr($decrypted,0,5) == "error") {
-						die ("Credit Card Encryption Error: $decrypted $l_billingid: $mybilling_id");
-					}
-
-					// set the billing_ccnum to the decrypted_creditcard_number
-					$decrypted_creditcard_number = $decrypted;
-					$billing_ccnum = $decrypted_creditcard_number;		
-
-					// determine the variable export order values
-					eval ("\$exportstring = \"$ccexportvarorder\";");
-
-					// print the line in the exported data file
-					// don't print them to billing if the amount is less than or equal to zero
-					if ($precisetotal > 0) {
-						$newline = "\"CHARGE\",$exportstring\n";
-						fwrite($handle, $newline); // write to the file
-					}
-				} // end while
-
-				// close the file
-				fclose($handle); // close the file
-
-				// log this export activity
-				log_activity($DB,$user,0,'export','creditcard',$batchid,'success');
-
-
-				echo "$l_wrotefile $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=$exportprefix" . "export" . "$batchid.csv\"><u class=\"bluelink\">$l_download " . "$exportprefix" . "export" . "$batchid.csv</u></a><p>";	
-			} // end if totalall
-		}
+			echo lang('wrotefile')." $filename<br><a href=\"index.php/tools/downloadfile/$exportprefix" . "export" . "$batchid.csv\"><u class=\"bluelink\">".lang('downloadfile')." $exportprefix"."export"."$batchid.csv</u></a><p>";	
+		} // end if totalall
 	}
 
 

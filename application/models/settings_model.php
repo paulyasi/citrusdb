@@ -30,5 +30,21 @@ class Settings_Model extends CI_Model
 		$myresult = $result->row();
 		return $myresult->dependent_cancel_url;
 	}
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the path to the location to save the cc files and other files
+	 * ------------------------------------------------------------------------
+	 */
+	function get_path_to_ccfile()
+	{
+		// get the path_to_citrus
+		$query = "SELECT path_to_ccfile FROM settings WHERE id = 1";
+		$result = $this->db->query($query) or die ("query failed");
+		$myresult = $result->row_array();
+
+		return $myresult['path_to_ccfile'];
+	}
+
     
 }
