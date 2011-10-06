@@ -544,10 +544,14 @@ class Tools extends App_Controller
 	 */
 	function exportcc()
 	{
+		// load the general model so we can get a list of organizations
+		$this->load->model('general_model');
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/exportcc_view');
+		$data['orglist'] = $this->general_model->list_organizations();
+		$this->load->view('tools/exportcc_view', $data);
 	}
 
 
