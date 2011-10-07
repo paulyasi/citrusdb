@@ -6,6 +6,7 @@
 var cal = new CalendarPopup();
 </SCRIPT>
 <table>
+<FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/saveexportcc" METHOD="POST" name="form1" onsubmit="toggleOn();" AUTOCOMPLETE="off">
 <td><b><?php echo lang('organizationname')?></b></td>
 <td><select name="organization_id">
 <option value=""><?php echo lang('choose')?></option>

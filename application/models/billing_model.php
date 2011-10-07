@@ -1232,6 +1232,45 @@ class Billing_Model extends CI_Model
 	}
 
 
+	function update_rerundetails($billingdate, $batchid, $organization_id)
+	{
+		/*----------------------------------------------------------------*/
+		// Update Reruns to the bill
+		/*----------------------------------------------------------------*/
+
+		//$DB->debug = true;
+
+		// select the billing id's that have matching rerun dates
+		$query = "SELECT id, rerun_date FROM billing ".
+			"WHERE rerun_date = '$billingdate' ".
+			"AND organization_id = '$organization_id'";
+		$result = $this->db->query($query) or die ("Rerun Query Failed"); 
+		$i = 0;
+		foreach ($result->result_array() AS $myresult) 
+		{
+			$billing_id = $myresult['id'];
+			$rerun_date = $myresult['rerun_date'];
+
+			// set the item to be rerun that is unpaid and has the rerun flag set
+			// set the recent_invoice_number to NULL so it is replaced when creating billing_history
+			$query = "UPDATE billing_details SET ".         
+				"batch = '$batchid', ".        
+				"recent_invoice_number = NULL, ".
+				"rerun_date = '$rerun_date' ".
+				"WHERE billing_id = $billing_id ".
+				"AND billed_amount > paid_amount ".
+				"AND rerun = 'y'";
+
+			$updateresult = $this->db->query($query) or die ("Update Details Query Failed");
+
+			$i++;	
+		}		
+
+		//echo "$i accounts rerun<p>";
+		return $i; // return the number of reruns updated
+	}
+
+
 	function create_billinghistory($batchid, $billingmethod, $user)
 	{
 		// go through a list of billing_id's that are to be billed in today's batch
@@ -2089,9 +2128,9 @@ class Billing_Model extends CI_Model
 		// get the organization info to print on the bill
 		$query = "SELECT g.org_name,g.org_street,g.org_city,g.org_state,
 			g.org_zip,g.phone_billing,g.email_billing,g.invoice_footer  
-			FROM billing b
-			LEFT JOIN general g ON g.id = b.organization_id 
-			WHERE b.id = $mybilling_id";
+				FROM billing b
+				LEFT JOIN general g ON g.id = b.organization_id 
+				WHERE b.id = $mybilling_id";
 		$generalresult = $this->db->query($query) or die ("query failed");
 		$mygenresult = $generalresult->row_array();
 		$org_name = $mygenresult['org_name'];
@@ -2392,7 +2431,7 @@ class Billing_Model extends CI_Model
 			"WHERE h.id = '$invoice_number'";
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 		$myresult = $result->row_array();
-		
+
 		return $myresult['contact_email'];
 
 	}
@@ -2723,7 +2762,7 @@ class Billing_Model extends CI_Model
 		// select the info from general to get the export variables
 		$query = "SELECT ccexportvarorder,exportprefix FROM general WHERE id = '$organization_id'";
 		$ccvarresult = $this->db->query($query) or die ("query failed");
-		
+
 		return $ccvarresult->row_array();
 	}
 
