@@ -111,7 +111,7 @@ class Billing extends App_Controller
 
 			// run the gpg command
 			$encrypted = encrypt_command($this->config->item('gpg_command'), $creditcard_number);
-
+			
 			// if there is a gpg error, stop here
 			if (substr($encrypted,0,5) == "error")
 			{				
@@ -170,7 +170,7 @@ class Billing extends App_Controller
 		{
 			// insert with a new credit card and encrypted ciphertext
 			$billing_data['encrypted_creditcard_number'] = $encrypted_creditcard_number;
-			$billing_data['creditcard_number'] = $this->input->post('creditcard_number');
+			$billing_data['creditcard_number'] = $creditcard_number;
 			$billing_data['creditcard_expire'] = $this->input->post('creditcard_expire');
 		}
 		elseif ($creditcard_number == '')
