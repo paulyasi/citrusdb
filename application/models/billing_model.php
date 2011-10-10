@@ -1471,15 +1471,15 @@ class Billing_Model extends CI_Model
 			// then use the automatic invoice notes from general config
 			if (empty($billing_notes)) 
 			{
-				if ($status == $l_pastdue) 
+				if ($status == lang('pastdue')) 
 				{
 					$billing_notes = $pastdue_invoicenote;
 				} 
-				elseif ($status == $l_turnedoff) 
+				elseif ($status == lang('turnedoff')) 
 				{
 					$billing_notes = $turnedoff_invoicenote;
 				} 
-				elseif ($status == $l_collections) 
+				elseif ($status == lang('collections')) 
 				{
 					$billing_notes = $collections_invoicenote;
 				} 
@@ -2772,16 +2772,17 @@ class Billing_Model extends CI_Model
 	 *  export credit card batch, print the credit card billing to a file
 	 * ------------------------------------------------------------------------
 	 */
-	function export_card_batch($batchid, $path_to_ccfile)
+	function export_card_batch($organization_id, $batchid, $path_to_ccfile, $passphrase)
 	{
 		// get the card export variables and filename prefix
 		$myccvarresult = $this->ccexportvars($organization_id);
 		$ccexportvarorder = $myccvarresult['ccexportvarorder'];
 		$exportprefix = $myccvarresult['exportprefix'];	
 
-		// convert the $ccexportvarorder &#036; dollar signs back to actual dollar signs and &quot; back to quotes
-		$ccexportvarorder = str_replace( "&#036;"           , "$"        , $ccexportvarorder );
-		$ccexportvarorder = str_replace( "&quot;"           , "\\\""        , $ccexportvarorder );
+		// convert the $ccexportvarorder &#036; 
+		// dollar signs back to actual dollar signs and &quot; back to quotes
+		$ccexportvarorder = str_replace( "&#036;", "$"        , $ccexportvarorder );
+		$ccexportvarorder = str_replace( "&quot;", "\\\""        , $ccexportvarorder );
 
 		// open the file
 		$filename = "$path_to_ccfile" . "/" . "$exportprefix" . "export" . "$batchid.csv";

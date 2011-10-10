@@ -691,10 +691,11 @@ class Tools extends App_Controller
 		else 
 		{
 			// create billinghistory
-			$this->billing_model->create_billinghistory($batchid, 'creditcard', $user);
+			$this->billing_model->create_billinghistory($batchid, 'creditcard', $this->user);
 
 			// export the batch file
-			$this->billing_model->export_card_batch($batchid, $path_to_ccfile);
+			$this->billing_model->export_card_batch($organization_id, $batchid, 
+					$path_to_ccfile, $passphrase);
 
 			// log this export activity
 			log_activity($user,0,'export','creditcard',$batchid,'success');
