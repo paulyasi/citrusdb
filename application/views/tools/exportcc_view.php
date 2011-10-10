@@ -70,8 +70,8 @@ NAME="anchorb2" ID="anchorb2" style="color:blue">[<?php echo lang('select')?>]</
 <?php echo lang('exportpreviousbatchid')?></a><p>
 
 <div id="WaitingMessage" style="border: 0px double black; 
-background-color: #fff; position: absolute; text-align: center; top: 50px; width: 550px; height: 300px;">
+background-color: #fff; position: absolute; text-align: center; top: 0px; width: 550px; height: 400px;">
 <BR><BR><BR><h3><?php echo lang('processing')?>...</h3>
-<p><img src="images/spinner.gif"></p>
+<p><img src="<?php echo $this->ssl_url_prefix?>/images/spinner.gif"></p>
 </div>	
 
