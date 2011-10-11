@@ -986,6 +986,24 @@ class Billing_Model extends CI_Model
 	}
 
 
+	function get_billing_method_attributes($billing_id)
+	{
+		// determine if they are a prepaycc or creditcard type
+		// if they are prepaycc then update the billing dates
+		$query = "SELECT b.id b_id, b.billing_type b_billing_type, 
+			b.next_billing_date b_next_billing_date, 
+			b.from_date b_from_date, b.to_date b_to_date,
+			b.contact_email b_contact_email, 
+			t.frequency t_frequency,
+			t.id t_id, t.method t_method FROM billing b 
+				LEFT JOIN billing_types t ON b.billing_type = t.id
+				WHERE b.id = '$billing_id'";
+		$typeresult = $this->db->query($query) or die ("billing type query failed");
+
+		returnn $typeresult->fields;
+	}
+
+
 	function get_nextbatchnumber() 
 	{	
 		/*--------------------------------------------------------------------*/
@@ -1161,18 +1179,18 @@ class Billing_Model extends CI_Model
 		if ($bybillingid == NULL) {
 			$query = "SELECT u.id u_id, u.account_number u_ac, 
 				u.master_service_id u_msid, u.billing_id u_bid, 
-				u.removed u_rem, u.usage_multiple u_usage, 
-				b.next_billing_date b_next_billing_date, b.id b_id, 
-				b.billing_type b_type, 
-				t.id t_id, t.frequency t_freq, t.method t_method, 
-				m.id m_id, m.pricerate m_pricerate, m.frequency m_freq 
-					FROM user_services u
-					LEFT JOIN master_services m ON u.master_service_id = m.id
-					LEFT JOIN billing b ON u.billing_id = b.id
-					LEFT JOIN billing_types t ON b.billing_type = t.id
-					WHERE b.next_billing_date = '$billingdate' 
-					AND b.organization_id = '$organization_id' 
-					AND t.method = '$billingmethod' AND u.removed <> 'y'";
+			u.removed u_rem, u.usage_multiple u_usage, 
+			b.next_billing_date b_next_billing_date, b.id b_id, 
+			b.billing_type b_type, 
+			t.id t_id, t.frequency t_freq, t.method t_method, 
+			m.id m_id, m.pricerate m_pricerate, m.frequency m_freq 
+				FROM user_services u
+				LEFT JOIN master_services m ON u.master_service_id = m.id
+				LEFT JOIN billing b ON u.billing_id = b.id
+				LEFT JOIN billing_types t ON b.billing_type = t.id
+				WHERE b.next_billing_date = '$billingdate' 
+				AND b.organization_id = '$organization_id' 
+				AND t.method = '$billingmethod' AND u.removed <> 'y'";
 		} else {
 			$query = "SELECT u.id u_id, u.account_number u_ac, 
 				u.master_service_id u_msid, u.billing_id u_bid, 
@@ -2548,6 +2566,33 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	function get_account_number($billing_id)
+	{
+		// get their account_number first
+		$query = "SELECT account_number FROM billing WHERE id = '$billing_id'";
+		$bidresult = $this->db->query($query) 
+			or die ("select account number $l_queryfailed $query");
+		$mybidresult = $bidresult->fields;
+
+		return $mybidresult['account_number'];
+	}
+
+
+	function insert_card_payment_history($type, $transaction_code, $billing_id, 
+			$cardnumber, $cardexp, $response_code, $amount, $avs_response)
+	{
+		// if it's a credit
+		$query = "INSERT INTO payment_history 
+			(creation_date, transaction_code, billing_id, 
+			 creditcard_number,creditcard_expire, response_code, 
+			 billing_amount, status, payment_type, avs_response)
+			VALUES(CURRENT_DATE,'$transaction_code','$billing_id',
+					'$cardnumber','$cardexp','$response_code','$amount',
+					'$type','creditcard','$avs_response')";
+		$result = $DB->Execute($query) 
+			or die ("payment history insert query failed $query");
+	}
 
 	/*
 	 * ------------------------------------------------------------------------
