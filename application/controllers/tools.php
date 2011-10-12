@@ -878,10 +878,14 @@ class Tools extends App_Controller
 	 */
 	function invoice()
 	{
+		// load the general model so we can get a list of organizations
+		$this->load->model('general_model');
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/invoice_view', array('error' => ''));
+		$data['orglist'] = $this->general_model->list_organizations();
+		$this->load->view('tools/invoice_view', $data);
 	}
 
 
@@ -934,9 +938,12 @@ class Tools extends App_Controller
 				echo "Processing $mydate<br>\n";
 
 				// Add creditcard taxes and services to the bill
-				$numtaxes = add_taxdetails($DB, $mydate, NULL, 'invoice', $batchid, $organization_id);
-				$numservices = add_servicedetails($DB, $mydate, NULL, 'invoice', $batchid, $organization_id);
-				echo "$l_taxes $numtaxes $l_added, $l_services $numservices $l_added<p>\n";
+				$numtaxes = $this->billing_model->add_taxdetails($mydate, NULL, 
+						'invoice', $batchid, $organization_id);
+				$numservices = $this->billing_model->add_servicedetails($mydate, NULL, 
+						'invoice', $batchid, $organization_id);
+				echo lang('taxes')." $numtaxes ".lang('added').", ".lang('services').
+					" $numservices ".lang('added')."<p>\n";
 
 				// make the next date to check	
 				list($myyear, $mymonth, $myday) = split('-', $mydate);
@@ -994,7 +1001,7 @@ class Tools extends App_Controller
 		$pdf->Output($filename,'F');
 
 		// output the link to the pdf file
-		//		echo lang('wrotefile')." $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=invoice$batchid.pdf\"><u class=\"bluelink\">$l_download invoice$batchid.pdf</u></a><p>";	
+		echo lang('wrotefile')." $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=invoice$batchid.pdf\"><u class=\"bluelink\">$l_download invoice$batchid.pdf</u></a><p>";	
 
 	}
 
