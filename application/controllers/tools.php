@@ -266,7 +266,7 @@ class Tools extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/importnew_view');
+		$this->load->view('tools/importnew_view', array('error' => ''));
 	}
 
 	/*
@@ -290,7 +290,7 @@ class Tools extends App_Controller
 
 		// upload the file
 		$config['upload_path'] = $path_to_ccfile;
-		$config['allowed_types'] = 'csv|txt|tab';
+		$config['allowed_types'] = 'csv|txt|tab|zip';
 		$config['file_name'] = 'newaccounts.txt';
 		$config['max_size'] = 0;
 
@@ -300,7 +300,7 @@ class Tools extends App_Controller
 		{
 			$error = array('error' => $this->upload->display_errors());
 
-			$this->load->view('upload_form', $error);
+			$this->load->view('tools/importnew_view', $error);
 		}
 		else
 		{
@@ -715,7 +715,7 @@ class Tools extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/importcc_view');
+		$this->load->view('tools/importcc_view', array('error' => ''));
 	}
 
 
@@ -737,7 +737,7 @@ class Tools extends App_Controller
 
 		// upload the file
 		$config['upload_path'] = $path_to_ccfile;
-		$config['allowed_types'] = 'csv|txt|tab';
+		$config['allowed_types'] = 'csv|txt|tab|zip';
 		$config['file_name'] = 'newfile.txt';
 		$config['max_size'] = 0;
 
@@ -747,7 +747,7 @@ class Tools extends App_Controller
 		{
 			$error = array('error' => $this->upload->display_errors());
 
-			$this->load->view('upload_form', $error);
+			$this->load->view('tools/importcc_view', $error);
 		}
 		else
 		{
@@ -860,36 +860,8 @@ class Tools extends App_Controller
 			{
 				$this->billing_model->send_declined_email($mybillingid);
 
-				// select the info for emailing the customer
-				// get the org billing email address for from address           
-				$query = "SELECT g.email_billing, g.declined_subject, g.declined_message, ".
-					"b.contact_email, b.account_number, b.creditcard_number, b.creditcard_expire ". 
-					"FROM billing b ".
-					"LEFT JOIN general g ON b.organization_id = g.id ".
-					"WHERE b.id = $mybillingid";
-				$result = $DB->Execute($query) or die ("email declined $l_queryfailed $query");
-				$myresult = $result->fields;
-				$billing_email = $myresult['email_billing'];
-				$subject = $myresult['declined_subject'];
-				$myaccountnum = $myresult['account_number'];
+			}
 
-				// wipe out the middle of the creditcard_number before it gets inserted
-				$firstdigit = substr($myresult['creditcard_number'], 0,1);
-				$lastfour = substr($myresult['creditcard_number'], -4);
-				$maskedcard = "$firstdigit" . "***********" . "$lastfour";  
-
-				$expdate = $myresult['creditcard_expire'];
-				$declined_message = $myresult['declined_message'];
-				$message = "$l_account: $myaccountnum\n$l_creditcard: $maskedcard $expdate\n\n$declined_message";
-				$myemail = $myresult['contact_email'];
-
-				// HTML Email Headers
-				$headers = "From: $billing_email \n";
-				$to = $myemail;
-				// send the mail
-				mail ($to, $subject, $message, $headers);
-				echo "sent decline to $to\n";
-			} // end foreach
 			echo "<p>".lang('done')."</p>";
 
 			// log this import activity

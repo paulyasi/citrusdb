@@ -1,6 +1,7 @@
 <html>
 <body bgcolor="#ffffff">
 <h3><?php echo lang('importcreditcards')?></h3>
+<?php echo $error;?>
 <FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/saveimportcc" METHOD="POST" enctype="multipart/form-data">
 <table>
 <td><?php echo lang('importfile')?>:</td>

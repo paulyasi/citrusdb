@@ -2,6 +2,7 @@
 ?>
 <p>
 <h3><?php echo lang('importnewaccounts')?></h3>
+<?php echo $error;?>
 <FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/uploadnew" METHOD="POST" enctype="multipart/form-data">
 <table>
 <td><?php echo lang('importfile')?>:</td><td><input type=file name="userfile"></td><tr> 

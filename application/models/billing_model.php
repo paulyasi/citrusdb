@@ -2590,10 +2590,10 @@ class Billing_Model extends CI_Model
 			VALUES(CURRENT_DATE,'$transaction_code','$billing_id',
 					'$cardnumber','$cardexp','$response_code','$amount',
 					'$type','creditcard','$avs_response')";
-		$result = $DB->Execute($query) 
+		$result = $this->db->query($query) 
 			or die ("payment history insert query failed $query");
 
-		return $this->db_insert_id();
+		return $this->db->insert_id();
 	}
 
 
@@ -2616,6 +2616,7 @@ class Billing_Model extends CI_Model
 
 	function pay_billing_details($payment_history_id, $billing_id, $amount)
 	{
+		echo "paying";
 		// update the billing_details for things that still need to be paid
 		// order by most recent invoice in desc order to pay newest run items first
 		// thereby makeing sure to pay the correct rerun items too
@@ -2623,10 +2624,11 @@ class Billing_Model extends CI_Model
 			"WHERE paid_amount < billed_amount ".
 			"AND billing_id = $billing_id ".
 			"ORDER BY recent_invoice_number DESC";
-		$result = $DB->Execute($query)
-			or die ("select billing details $l_queryfailed $query");
+		$result = $this->db->query($query)
+			or die ("select billing details query failed $query");
 
-		while (($myresult = $result->FetchRow()) and (round($amount,2) > 0)) 
+		$i = 0;
+		while (($myresult = $result->row_array($i)) and (round($amount,2) > 0)) 
 		{
 			$id = $myresult['id'];
 			$paid_amount = sprintf("%.2f",$myresult['paid_amount']);
@@ -2644,7 +2646,7 @@ class Billing_Model extends CI_Model
 					"payment_applied = CURRENT_DATE, ".
 					"payment_history_id = '$payment_history_id' ".	    
 					"WHERE id = $id";
-				$greaterthanresult = $DB->Execute($query) 
+				$greaterthanresult = $this->db->query($query) 
 					or die ("greater than $l_queryfailed $query");
 			} 
 			else 
@@ -2658,9 +2660,12 @@ class Billing_Model extends CI_Model
 					"payment_applied = CURRENT_DATE, ".
 					"payment_history_id = '$payment_history_id' ".	    
 					"WHERE id = $id";
-				$lessthanresult = $DB->Execute($query) 
+				$lessthanresult = $this->db->query($query) 
 					or die ("less than $l_queryfailed $query");
 			} //end if amount
+
+			// increment row counter
+			$i++;
 		} // end while fetchrow
 
 		// return the amount of money left after payment applied to this item
