@@ -871,4 +871,134 @@ class Tools extends App_Controller
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  show the form to allow printing of new invoice batches
+	 * ------------------------------------------------------------------------
+	 */
+	function invoice()
+	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/invoice_view', array('error' => ''));
+	}
+
+
+	function printinvoice()
+	{
+		$billingdate = $this->input->post('billingdate');
+		$bybillingid = $this->input->post('billingid');
+		$byacctnum = $this->input->post('acctnum');
+		$organization_id = $this->input->post('organization_id');
+		$billingdate1 = $this->input->post('billingdate1');
+		$billingdate2 = $this->input->post('billingdate2');
+
+		// make sure the user is in a group that is allowed to run this
+
+		// select the path_to_ccfile from settings
+		$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
+		$ccfileresult = $this->db->query($query) or die ("query failed");
+		$myccfileresult = $ccfileresult->row_array();
+		$path_to_ccfile = $myccfileresult['path_to_ccfile'];
+
+		/*--------------------------------------------------------------------*/
+		// Check if they entered by account number and change to bybillingid
+		/*--------------------------------------------------------------------*/
+		if ($byacctnum <> NULL) 
+		{
+			$query = "SELECT default_billing_id FROM customer ".
+				"WHERE account_number = '$byacctnum'";
+			$result = $this->db->query($query) or die ("query failed");
+			$myresult = $result->row_array();
+			$bybillingid = $myresult['default_billing_id'];	
+		}
+
+		/*--------------------------------------------------------------------*/
+		// Create the billing data
+		/*--------------------------------------------------------------------*/
+
+		// determine the next available batch number
+		$batchid = $this->billing_model->get_nextbatchnumber();
+
+		// query for taxed services that are billed on the specified date
+		// and a specific organization
+		if ($billingdate2 <> NULL)
+		{
+			$startdate = $billingdate1;
+			$enddate = $billingdate2;
+			$mydate = $startdate;
+			echo "Date Range: $startdate - $enddate<p>\n";
+			while ($mydate <= $enddate)
+			{
+				echo "Processing $mydate<br>\n";
+
+				// Add creditcard taxes and services to the bill
+				$numtaxes = add_taxdetails($DB, $mydate, NULL, 'invoice', $batchid, $organization_id);
+				$numservices = add_servicedetails($DB, $mydate, NULL, 'invoice', $batchid, $organization_id);
+				echo "$l_taxes $numtaxes $l_added, $l_services $numservices $l_added<p>\n";
+
+				// make the next date to check	
+				list($myyear, $mymonth, $myday) = split('-', $mydate);
+				$nextday = date("Y-m-d", mktime(0, 0, 0, $mymonth, $myday+1, $myyear));
+				$totalall = $numreruns + $numservices + $numtaxes + $numpptaxes + $numppservices + $totalall;
+				$mydate = $nextday;
+			} // end while	
+		}
+		elseif ($billingdate <> NULL)
+		{
+			// by billing date
+			$numtaxes = $this->billing_model->add_taxdetails($billingdate, 
+					NULL, 'invoice', $batchid, $organization_id);
+			$numservices = $this->billing_model->add_servicedetails($billingdate, 
+					NULL,'invoice', $batchid, $organization_id);
+		}
+		else
+		{
+			// by billing id
+			$numtaxes = $this->billing_model->add_taxdetails(NULL, 
+					$bybillingid,'invoice', $batchid, NULL);
+			$numservices = $this->billing_model->add_servicedetails(NULL, 
+					$bybillingid,'invoice', $batchid, NULL);
+		}
+		//echo "taxes: $numtaxes, services: $numservices<p>";
+
+		// create billinghistory
+		$this->billing_model->create_billinghistory($batchid, 'invoice', $this->user);	
+
+		/*-------------------------------------------------------------------*/	
+		// Print the invoice
+		/*-------------------------------------------------------------------*/
+		// query the batch for the invoices to do
+		$query = "SELECT DISTINCT d.invoice_number FROM billing_details d 
+			WHERE batch = '$batchid'";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+
+		// Show the control box on top of everthing else
+		//echo "<div id=\"popbox\">
+		//<a href=\"javascript:print()\">[Print]</a></div>";
+
+		//require('./include/fpdf.php');
+		$this->load->library('fpdf');    
+
+		$pdf = new FPDF();
+
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// get the invoice data to process now
+			$invoice_number = $myresult['invoice_number'];
+			$pdf = $this->billing_model->outputinvoice($invoice_number, "pdf", $pdf);	
+		}
+
+		$filename = "$path_to_ccfile/invoice$batchid.pdf";
+		$pdf->Output($filename,'F');
+
+		// output the link to the pdf file
+		//		echo lang('wrotefile')." $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=invoice$batchid.pdf\"><u class=\"bluelink\">$l_download invoice$batchid.pdf</u></a><p>";	
+
+	}
+
 }
+
+/* End of file tools */
+/* Location: ./application/controllers/tools.php */

@@ -3054,3 +3054,7 @@ class Billing_Model extends CI_Model
 		echo "sent decline to $contact_email<br>\n";
 	}
 }
+
+
+/* End of file billing_model */
+/* Location: ./application/models/billing_model.php */
