@@ -1000,7 +1000,7 @@ class Billing_Model extends CI_Model
 				WHERE b.id = '$billing_id'";
 		$typeresult = $this->db->query($query) or die ("billing type query failed");
 
-		returnn $typeresult->fields;
+		return $typeresult->row_array();
 	}
 
 
@@ -2614,6 +2614,60 @@ class Billing_Model extends CI_Model
 	}
 
 
+	function pay_billing_details($payment_history_id, $billing_id, $amount)
+	{
+		// update the billing_details for things that still need to be paid
+		// order by most recent invoice in desc order to pay newest run items first
+		// thereby makeing sure to pay the correct rerun items too
+		$query = "SELECT * FROM billing_details ". 
+			"WHERE paid_amount < billed_amount ".
+			"AND billing_id = $billing_id ".
+			"ORDER BY recent_invoice_number DESC";
+		$result = $DB->Execute($query)
+			or die ("select billing details $l_queryfailed $query");
+
+		while (($myresult = $result->FetchRow()) and (round($amount,2) > 0)) 
+		{
+			$id = $myresult['id'];
+			$paid_amount = sprintf("%.2f",$myresult['paid_amount']);
+			$billed_amount = sprintf("%.2f",$myresult['billed_amount']);
+
+			// do stuff 
+			$owed = round($billed_amount - $paid_amount,2);
+
+			if (round($amount,2) >= round($owed,2)) 
+			{
+				$amount = round($amount - $owed,2);
+				$fillamount = round($owed + $paid_amount,2);
+				$query = "UPDATE billing_details ".
+					"SET paid_amount = '$fillamount', ".
+					"payment_applied = CURRENT_DATE, ".
+					"payment_history_id = '$payment_history_id' ".	    
+					"WHERE id = $id";
+				$greaterthanresult = $DB->Execute($query) 
+					or die ("greater than $l_queryfailed $query");
+			} 
+			else 
+			{ 
+				// amount is  less than owed
+				$available = $amount;
+				$amount = 0;
+				$fillamount = round($available + $paid_amount,2);
+				$query = "UPDATE billing_details ".
+					"SET paid_amount = '$fillamount', ".
+					"payment_applied = CURRENT_DATE, ".
+					"payment_history_id = '$payment_history_id' ".	    
+					"WHERE id = $id";
+				$lessthanresult = $DB->Execute($query) 
+					or die ("less than $l_queryfailed $query");
+			} //end if amount
+		} // end while fetchrow
+
+		// return the amount of money left after payment applied to this item
+		return $amount;
+	}
+
+
 	/*
 	 * ------------------------------------------------------------------------
 	 * enter payments for this account, billing id, or invoice number
@@ -2772,9 +2826,9 @@ class Billing_Model extends CI_Model
 				$myfromdate = $billingresult['b_from_date'];
 				$mytodate = $billingresult['b_to_date'];
 				$mybillingfreq = $billingresult['t_frequency'];
-	
+
 				$this->update_billing_dates($mybillingdate, $mybillingfreq,
-					$myfromdate, $billing_id);
+						$myfromdate, $billing_id);
 			}
 
 
@@ -2931,5 +2985,67 @@ class Billing_Model extends CI_Model
 
 		// close the file
 		fclose($handle); // close the file
-	}		
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  send a declined notice to the customer email address
+	 * ------------------------------------------------------------------------
+	 */
+	function send_declined_email($mybilling_id)
+	{
+
+		// This can be removed if you use __autoload() in config.php OR use Modular Extensions
+		require APPPATH.'/libraries/swift/lib/swift_required.php';
+
+		// select the info for emailing the customer
+		// get the org billing email address for from address           
+		$query = "SELECT g.email_billing, g.declined_subject, g.declined_message, ".
+			"b.contact_email, b.account_number, b.creditcard_number, b.creditcard_expire ". 
+			"FROM billing b ".
+			"LEFT JOIN general g ON b.organization_id = g.id ".
+			"WHERE b.id = $mybillingid";
+		$result = $this->db->query($query) or die ("email declined query failed $query");
+		$myresult = $result->row_array();
+		$billing_email = $myresult['email_billing'];
+		$subject = $myresult['declined_subject'];
+		$myaccountnum = $myresult['account_number'];
+
+		// wipe out the middle of the creditcard_number before it gets inserted
+		$firstdigit = substr($myresult['creditcard_number'], 0,1);
+		$lastfour = substr($myresult['creditcard_number'], -4);
+		$maskedcard = "$firstdigit" . "***********" . "$lastfour";  
+
+		$expdate = $myresult['creditcard_expire'];
+		$declined_message = $myresult['declined_message'];
+		$messagebody = lang('account').": $myaccountnum\n".lang('creditcard').
+			": $maskedcard $expdate\n\n$declined_message";
+		$contact_email = $myresult['contact_email'];
+
+		//Create the message
+		$message = Swift_Message::newInstance();
+
+		//Give the message a subject
+		$message->setSubject("$subject");
+
+		//Set the From address with an associative array
+		$message->setFrom("$billing_email");
+
+		//Set the To addresses with an associative array
+		$message->setTo("$contact_email");
+
+		// set the message body
+		$message->setBody("$messagebody");
+
+		//Create the Transport
+		$transport = Swift_MailTransport::newInstance();
+
+		//Create the Mailer using your created Transport
+		$mailer = Swift_Mailer::newInstance($transport);
+
+		//Send the message
+		$mailresult = $mailer->send($message);
+		echo "sent decline to $contact_email<br>\n";
+	}
 }

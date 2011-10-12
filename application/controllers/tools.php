@@ -838,75 +838,12 @@ class Tools extends App_Controller
 					// from_date, and payment_due_date for prepay/prepaycc 
 					if ($billingmethod == 'prepaycc' OR $billingmethod == 'prepay') 
 					{
-						function update_billing_dates($mybillingdate, $mybillingfreq,
-								$myfromdate, $billing_id);
-
 						$this->billing_model->update-billing_dates($mybillingdate, $mybillingfreq,
 								$myfromdate, $billing_id);
-						// to get the to_date, double the frequency
-						$doublefreq = $mybillingfreq * 2;
+					}
 
-						// insert the new dates
-						$query = "UPDATE billing SET 
-							next_billing_date = DATE_ADD('$mybillingdate', 
-									INTERVAL '$mybillingfreq' MONTH),
-											  from_date = DATE_ADD('$myfromdate', 
-													  INTERVAL '$mybillingfreq' MONTH),
-											  to_date = DATE_ADD('$myfromdate', 
-													  INTERVAL '$doublefreq' MONTH),
-											  payment_due_date = DATE_ADD('$myfromdate', 
-													  INTERVAL '$mybillingfreq' MONTH)
-												  WHERE id = '$billing_id'";
-						$updateresult = $DB->Execute($query) 
-							or die ("update billing $l_queryfailed $query");
-					} // end if billing method
+					$this->billing_model->pay_billing_details($payment_history_id, $billing_id, $amount);
 
-					// update the billing_details for things that still need to be paid
-					// order by most recent invoice in desc order to pay newest run items first
-					// thereby makeing sure to pay the correct rerun items too
-					$query = "SELECT * FROM billing_details ". 
-						"WHERE paid_amount < billed_amount ".
-						"AND billing_id = $billing_id ".
-						"ORDER BY recent_invoice_number DESC";
-					$result = $DB->Execute($query)
-						or die ("select billing details $l_queryfailed $query");
-
-					while (($myresult = $result->FetchRow()) and (round($amount,2) > 0)) 
-					{
-						$id = $myresult['id'];
-						$paid_amount = sprintf("%.2f",$myresult['paid_amount']);
-						$billed_amount = sprintf("%.2f",$myresult['billed_amount']);
-
-						// do stuff 
-						$owed = round($billed_amount - $paid_amount,2);
-
-						if (round($amount,2) >= round($owed,2)) 
-						{
-							$amount = round($amount - $owed,2);
-							$fillamount = round($owed + $paid_amount,2);
-							$query = "UPDATE billing_details ".
-								"SET paid_amount = '$fillamount', ".
-								"payment_applied = CURRENT_DATE, ".
-								"payment_history_id = '$payment_history_id' ".	    
-								"WHERE id = $id";
-							$greaterthanresult = $DB->Execute($query) 
-								or die ("greater than $l_queryfailed $query");
-						} 
-						else 
-						{ 
-							// amount is  less than owed
-							$available = $amount;
-							$amount = 0;
-							$fillamount = round($available + $paid_amount,2);
-							$query = "UPDATE billing_details ".
-								"SET paid_amount = '$fillamount', ".
-								"payment_applied = CURRENT_DATE, ".
-								"payment_history_id = '$payment_history_id' ".	    
-								"WHERE id = $id";
-							$lessthanresult = $DB->Execute($query) 
-								or die ("less than $l_queryfailed $query");
-						} //end if amount
-					} // end while fetchrow
 				} // end if response_id = y
 			} // end while fgetcsv
 
@@ -921,6 +858,8 @@ class Tools extends App_Controller
 
 			foreach ($declined as $key=>$mybillingid) 
 			{
+				$this->billing_model->send_declined_email($mybillingid);
+
 				// select the info for emailing the customer
 				// get the org billing email address for from address           
 				$query = "SELECT g.email_billing, g.declined_subject, g.declined_message, ".
