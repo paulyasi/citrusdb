@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 ?>
 
-<div class=toolblock style="height: 200px;">
+<div class=toolblock style="height: 100px;">
 <b><?php echo lang('billing');?></b>
 <br>
 
@@ -19,11 +19,6 @@
 <a href=# onclick = "popupPage('<?php echo $this->ssl_url_prefix?>/index.php/tools/importcc'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_creditcards.png"><br>
 <?php echo lang('importcreditcards')?></a></div>
-
-<div class=icon>
-<a href=# onclick = "popupPage('<?php echo $this->ssl_url_prefix?>/index.php/tools/importccupdates'); return false;">
-<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_creditcards.png"><br>
-<?php echo lang('importccupdates');?></a></div>
 
 <div class=icon>
 <a href=# onclick = "popupPage('<?php echo $this->url_prefix?>/index.php/tools/invoice'); return false;">
