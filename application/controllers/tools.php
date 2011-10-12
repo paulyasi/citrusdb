@@ -149,7 +149,7 @@ class Tools extends App_Controller
 		// set the payment to the amount entered
 		$payment = $amount;
 
-		$p = $this->billing_model->enter_payment($account_num, $billing_id, $amount, 
+		$p = $this->billing_model->enter_invoice_payment($account_num, $billing_id, $amount, 
 				$payment_type, $invoice_number, $check_number);
 
 		if ($p['amount'] > 0) 
@@ -836,7 +836,13 @@ class Tools extends App_Controller
 
 					// update the next_billing_date, to_date, 
 					// from_date, and payment_due_date for prepay/prepaycc 
-					if ($billingmethod == 'prepaycc' OR $billingmethod == 'prepay') {
+					if ($billingmethod == 'prepaycc' OR $billingmethod == 'prepay') 
+					{
+						function update_billing_dates($mybillingdate, $mybillingfreq,
+								$myfromdate, $billing_id);
+
+						$this->billing_model->update-billing_dates($mybillingdate, $mybillingfreq,
+								$myfromdate, $billing_id);
 						// to get the to_date, double the frequency
 						$doublefreq = $mybillingfreq * 2;
 

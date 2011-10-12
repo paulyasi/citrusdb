@@ -2592,7 +2592,27 @@ class Billing_Model extends CI_Model
 					'$type','creditcard','$avs_response')";
 		$result = $DB->Execute($query) 
 			or die ("payment history insert query failed $query");
+
+		return $this->db_insert_id();
 	}
+
+
+	function update_billing_dates($mybillingdate, $mybillingfreq,
+			$myfromdate, $billing_id)
+	{
+		// to get the to_date, double the frequency
+		$doublefreq = $mybillingfreq * 2;
+
+		// insert the new dates
+		$query = "UPDATE billing SET ".
+			"next_billing_date = DATE_ADD('$mybillingdate', INTERVAL '$mybillingfreq' MONTH), ".
+			"from_date = DATE_ADD('$myfromdate', INTERVAL '$mybillingfreq' MONTH), ".
+			"to_date = DATE_ADD('$myfromdate', INTERVAL '$doublefreq' MONTH), ".
+			"payment_due_date = DATE_ADD('$myfromdate', INTERVAL '$mybillingfreq' MONTH) ".
+			"WHERE id = '$billing_id'";
+		$updateresult = $this->db->query($query) or die ("update billing query failed $query");
+	}
+
 
 	/*
 	 * ------------------------------------------------------------------------
@@ -2600,7 +2620,7 @@ class Billing_Model extends CI_Model
 	 * returns left of amount and info about what account was paid in an array
 	 * ------------------------------------------------------------------------
 	 */
-	function enter_payment($account_num, $billing_id, $amount, $payment_type, $invoice_number, $check_number)
+	function enter_invoice_payment($account_num, $billing_id, $amount, $payment_type, $invoice_number, $check_number)
 	{
 		if ($invoice_number == '') { $invoice_number = 0; }
 
@@ -2752,27 +2772,9 @@ class Billing_Model extends CI_Model
 				$myfromdate = $billingresult['b_from_date'];
 				$mytodate = $billingresult['b_to_date'];
 				$mybillingfreq = $billingresult['t_frequency'];
-
-				// to get the to_date, need to double the frequency added
-				$doublefreq = $mybillingfreq * 2;	
-
-				//
-				// insert the new next_billing_date
-				// and a new from_date and to_date 
-				// and payment_due_date based on from_date
-				//
-
-				$query = "UPDATE billing SET ".
-					"next_billing_date = DATE_ADD('$mybillingdate', ".
-					"INTERVAL '$mybillingfreq' MONTH), ".
-					"from_date = DATE_ADD('$myfromdate', ".
-					"INTERVAL '$mybillingfreq' MONTH), ".
-					"to_date = DATE_ADD('$myfromdate', ".
-					"INTERVAL '$doublefreq' MONTH), ".
-					"payment_due_date = DATE_ADD('$myfromdate', ".
-					"INTERVAL '$mybillingfreq' MONTH) ".
-					"WHERE id = '$billing_id'"; 
-				$updateresult = $this->db->query($query) or die ("update query failed");
+	
+				$this->update_billing_dates($mybillingdate, $mybillingfreq,
+					$myfromdate, $billing_id);
 			}
 
 
