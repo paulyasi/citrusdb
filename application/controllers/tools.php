@@ -891,6 +891,10 @@ class Tools extends App_Controller
 
 	function printinvoice()
 	{
+		// load the settings model and service model
+		$this->load->model('settings_model');
+		$this->load->model('service_model');
+
 		$billingdate = $this->input->post('billingdate');
 		$bybillingid = $this->input->post('billingid');
 		$byacctnum = $this->input->post('acctnum');
@@ -901,21 +905,14 @@ class Tools extends App_Controller
 		// make sure the user is in a group that is allowed to run this
 
 		// select the path_to_ccfile from settings
-		$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
-		$ccfileresult = $this->db->query($query) or die ("query failed");
-		$myccfileresult = $ccfileresult->row_array();
-		$path_to_ccfile = $myccfileresult['path_to_ccfile'];
+		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
 
 		/*--------------------------------------------------------------------*/
 		// Check if they entered by account number and change to bybillingid
 		/*--------------------------------------------------------------------*/
 		if ($byacctnum <> NULL) 
 		{
-			$query = "SELECT default_billing_id FROM customer ".
-				"WHERE account_number = '$byacctnum'";
-			$result = $this->db->query($query) or die ("query failed");
-			$myresult = $result->row_array();
-			$bybillingid = $myresult['default_billing_id'];	
+			$bybillingid = $this->billing_model->default_billing_id($byacctnum);
 		}
 
 		/*--------------------------------------------------------------------*/
@@ -1001,8 +998,49 @@ class Tools extends App_Controller
 		$pdf->Output($filename,'F');
 
 		// output the link to the pdf file
-		echo lang('wrotefile')." $filename<br><a href=\"index.php?load=tools/downloadfile&type=dl&filename=invoice$batchid.pdf\"><u class=\"bluelink\">$l_download invoice$batchid.pdf</u></a><p>";	
+		echo lang('wrotefile')." $filename<br>".
+			"<a href=\"$this->url_prefix/index.php/tools/downloadfile/invoice$batchid.pdf\">".
+			"<u class=\"bluelink\">".lang('download')." invoice$batchid.pdf</u></a><p>";	
+	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  downloadfile allows you to link to files for users like invoice pdfs
+	 * ------------------------------------------------------------------------
+	 */
+	function downloadfile($filename)
+	{
+		// load the settings model
+		$this->load->model('settings_model');
+
+		// load the file download helper
+		$this->load->helper('download');
+		
+		// check if it is a pdf file that we allow anyone to open
+		// or something else that only admin can open
+		$filetype = substr($filename,-3);
+		if (($filetype != "pdf") AND ($filename != "summary.csv") 
+				AND ($filename != "summary.tab")) 
+		{
+			// check that the user has admin privileges
+			$myresult = $this->user_model->user_privileges($this->user);
+			if ($myresult['admin'] == 'n') 
+			{
+				echo lang('youmusthaveadmin')."<br>";
+				exit; 
+			}
+		}
+
+		// select the path_to_ccfile from settings
+		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
+
+		$myfile = "$path_to_ccfile/$filename";
+
+		// OPEN THE FILE AND PROCESS IT
+		$data = file_get_contents($myfile); // Read the file's contents
+
+		force_download($filename, $data); 
 	}
 
 }
