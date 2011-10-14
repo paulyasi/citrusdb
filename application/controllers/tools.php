@@ -698,7 +698,7 @@ class Tools extends App_Controller
 					$path_to_ccfile, $passphrase);
 
 			// log this export activity
-			log_activity($user,0,'export','creditcard',$batchid,'success');
+			log_activity($this->user,0,'export','creditcard',$batchid,'success');
 
 			echo lang('wrotefile')." $filename<br><a href=\"index.php/tools/downloadfile/$exportprefix" . "export" . "$batchid.csv\"><u class=\"bluelink\">".lang('downloadfile')." $exportprefix"."export"."$batchid.csv</u></a><p>";	
 		} // end if totalall
@@ -1070,24 +1070,22 @@ class Tools extends App_Controller
 	 */
 	function sendeinvoice()
 	{
-		$billingdate = $base->input['billingdate'];
-		$bybillingid = $base->input['billingid'];
-		$byacctnum = $base->input['acctnum'];
-		$organization_id = $base->input['organization_id'];
-		$billingdate1 = $base->input['billingdate1'];
-		$billingdate2 = $base->input['billingdate2'];
+		// load the service model
+		$this->load->model('service_model');
 
-		// make sure the user is in a group that is allowed to run this
+		$billingdate = $this->input->post('billingdate');
+		$bybillingid = $this->input->post('billingid');
+		$byacctnum = $this->input->post('acctnum');
+		$organization_id = $this->input->post('organization_id');
+		$billingdate1 = $this->input->post('billingdate1');
+		$billingdate2 = $this->input->post('billingdate2');
 
 		/*--------------------------------------------------------------------*/
 		// Check if they entered by account number and change to bybillingid
 		/*--------------------------------------------------------------------*/
-		if ($byacctnum <> NULL) {
-			$query = "SELECT default_billing_id FROM customer WHERE account_number = '$byacctnum'";
-			$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-			$result = $DB->Execute($query) or die ("$l_queryfailed");
-			$myresult = $result->fields;
-			$bybillingid = $myresult['default_billing_id'];	
+		if ($byacctnum <> NULL) 
+		{
+			$bybillingid = $this->billing_model->default_billing_id($byacctnum);
 		}
 
 		/*--------------------------------------------------------------------*/
@@ -1095,24 +1093,29 @@ class Tools extends App_Controller
 		/*--------------------------------------------------------------------*/
 
 		// determine the next available batch number
-		$batchid = get_nextbatchnumber($DB);
+		$batchid = $this->billing_model->get_nextbatchnumber();
 		echo "BATCH: $batchid<p>\n";
 
 		// query for taxed services that are billed on the specified date
 		// and for a specific organization
 
-		if ($billingdate2 <> NULL) {
+		if ($billingdate2 <> NULL) 
+		{
 			$startdate = $billingdate1;
 			$enddate = $billingdate2;
 			$mydate = $startdate;
 			echo "Date Range: $startdate - $enddate<p>\n";
-			while ($mydate <= $enddate) {
+			while ($mydate <= $enddate) 
+			{
 				echo "Processing $mydate<br>\n";
 
 				// Add creditcard taxes and services to the bill
-				$numtaxes = add_taxdetails($DB, $mydate, NULL, 'einvoice', $batchid, $organization_id);
-				$numservices = add_servicedetails($DB, $mydate, NULL, 'einvoice', $batchid, $organization_id);
-				echo "$l_taxes $numtaxes $l_added, $l_services $numservices $l_added<p>\n";
+				$numtaxes = $this->billing_model->add_taxdetails($mydate, NULL, 
+						'einvoice', $batchid, $organization_id);
+				$numservices = $this->billing_model->add_servicedetails($mydate, NULL, 
+						'einvoice', $batchid, $organization_id);
+				echo lang('taxes')." $numtaxes ".lang('added').", ".lang('services')." 
+					$numservices ".lang('added')."<p>\n";
 
 				// make the next date to check	
 				list($myyear, $mymonth, $myday) = split('-', $mydate);
@@ -1120,17 +1123,27 @@ class Tools extends App_Controller
 				$totalall = $numreruns + $numservices + $numtaxes + $numpptaxes + $numppservices + $totalall;
 				$mydate = $nextday;
 			} // end while	
-		} elseif ($billingdate <> NULL) { // by billing date
-			$numtaxes = add_taxdetails($DB, $billingdate, NULL, 'einvoice', $batchid, $organization_id);
-			$numservices = add_servicedetails($DB, $billingdate, NULL,'einvoice', $batchid, $organization_id);
-		} else { // by billing id
-			$numtaxes = add_taxdetails($DB, NULL, $bybillingid,'einvoice', $batchid, NULL);
-			$numservices = add_servicedetails($DB, NULL, $bybillingid,'einvoice', $batchid, NULL);
+		} 
+		elseif ($billingdate <> NULL) 
+		{ 
+			// by billing date
+			$numtaxes = $this->billing_model->add_taxdetails($billingdate, NULL, 
+					'einvoice', $batchid, $organization_id);
+			$numservices = $this->billing_model->add_servicedetails($billingdate, NULL,
+					'einvoice', $batchid, $organization_id);
+		} 
+		else 
+		{ 
+			// by billing id
+			$numtaxes = $this->billing_model->add_taxdetails(NULL, $bybillingid,
+					'einvoice', $batchid, NULL);
+			$numservices = $this->billing_model->add_servicedetails(NULL, $bybillingid,
+					'einvoice', $batchid, NULL);
 		}
 		echo "taxes: $numtaxes, services: $numservices<p>";
 
 		// create billinghistory
-		create_billinghistory($DB, $batchid, 'einvoice', $user);	
+		$this->billing_model->create_billinghistory($batchid, 'einvoice', $this->user);	
 
 		/*-------------------------------------------------------------------*/	
 		// Email the invoice
@@ -1141,23 +1154,24 @@ class Tools extends App_Controller
 			FROM billing_details d 
 			LEFT JOIN billing b ON b.id = d.billing_id
 			WHERE d.batch = '$batchid'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("$l_queryfailed");
 
-		while ($myresult = $result->FetchRow()) {
+		foreach ($result->result_array() AS $myresult) 
+		{
 			// get the invoice data to process now
 			$invoice_number = $myresult['invoice_number'];
 			$contact_email = $myresult['contact_email'];
 			$invoice_account_number = $myresult['account_number'];
 			$invoice_billing_id = $myresult['id'];
 
-			emailinvoice ($invoice_number,$contact_email,$invoice_billing_id);
+			$this->billing_model->emailinvoice ($invoice_number,$contact_email,$invoice_billing_id);
 			echo "sent invoice to $contact_email<br>\n";
 		}
 
 		echo "<b style=\"color:red;\">done</b>";
 
 	}
+
 }
 /* End of file tools */
 /* Location: ./application/controllers/tools.php */
