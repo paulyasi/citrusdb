@@ -26,7 +26,7 @@
 <?php echo lang('printinvoices')?></a></div>
 
 <div class=icon>
-<a href=# onclick = "popupPage('<?php echo $this->url_prefix?>/index.php?load=billing&tooltype=module&type=tools&einvoice=on'); return false;">
+<a href=# onclick = "popupPage('<?php echo $this->url_prefix?>/index.php/tools/einvoice'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_email.png"><br>
 <?php echo lang('emailinvoices')?></a></div>
 

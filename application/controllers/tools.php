@@ -1043,7 +1043,121 @@ class Tools extends App_Controller
 		force_download($filename, $data); 
 	}
 
-}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  show the form to allow emailing of einvoice batches
+	 * ------------------------------------------------------------------------
+	 */
+	function einvoice()
+	{
+		// load the general model so we can get a list of organizations
+		$this->load->model('general_model');
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$data['orglist'] = $this->general_model->list_organizations();
+		$this->load->view('tools/einvoice_view', $data);
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  send the batch of einvoices indicated by the input from einvoice tool
+	 * ------------------------------------------------------------------------
+	 */
+	function sendeinvoice()
+	{
+		$billingdate = $base->input['billingdate'];
+		$bybillingid = $base->input['billingid'];
+		$byacctnum = $base->input['acctnum'];
+		$organization_id = $base->input['organization_id'];
+		$billingdate1 = $base->input['billingdate1'];
+		$billingdate2 = $base->input['billingdate2'];
+
+		// make sure the user is in a group that is allowed to run this
+
+		/*--------------------------------------------------------------------*/
+		// Check if they entered by account number and change to bybillingid
+		/*--------------------------------------------------------------------*/
+		if ($byacctnum <> NULL) {
+			$query = "SELECT default_billing_id FROM customer WHERE account_number = '$byacctnum'";
+			$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+			$result = $DB->Execute($query) or die ("$l_queryfailed");
+			$myresult = $result->fields;
+			$bybillingid = $myresult['default_billing_id'];	
+		}
+
+		/*--------------------------------------------------------------------*/
+		// Create the billing data
+		/*--------------------------------------------------------------------*/
+
+		// determine the next available batch number
+		$batchid = get_nextbatchnumber($DB);
+		echo "BATCH: $batchid<p>\n";
+
+		// query for taxed services that are billed on the specified date
+		// and for a specific organization
+
+		if ($billingdate2 <> NULL) {
+			$startdate = $billingdate1;
+			$enddate = $billingdate2;
+			$mydate = $startdate;
+			echo "Date Range: $startdate - $enddate<p>\n";
+			while ($mydate <= $enddate) {
+				echo "Processing $mydate<br>\n";
+
+				// Add creditcard taxes and services to the bill
+				$numtaxes = add_taxdetails($DB, $mydate, NULL, 'einvoice', $batchid, $organization_id);
+				$numservices = add_servicedetails($DB, $mydate, NULL, 'einvoice', $batchid, $organization_id);
+				echo "$l_taxes $numtaxes $l_added, $l_services $numservices $l_added<p>\n";
+
+				// make the next date to check	
+				list($myyear, $mymonth, $myday) = split('-', $mydate);
+				$nextday = date("Y-m-d", mktime(0, 0, 0, $mymonth, $myday+1, $myyear));
+				$totalall = $numreruns + $numservices + $numtaxes + $numpptaxes + $numppservices + $totalall;
+				$mydate = $nextday;
+			} // end while	
+		} elseif ($billingdate <> NULL) { // by billing date
+			$numtaxes = add_taxdetails($DB, $billingdate, NULL, 'einvoice', $batchid, $organization_id);
+			$numservices = add_servicedetails($DB, $billingdate, NULL,'einvoice', $batchid, $organization_id);
+		} else { // by billing id
+			$numtaxes = add_taxdetails($DB, NULL, $bybillingid,'einvoice', $batchid, NULL);
+			$numservices = add_servicedetails($DB, NULL, $bybillingid,'einvoice', $batchid, NULL);
+		}
+		echo "taxes: $numtaxes, services: $numservices<p>";
+
+		// create billinghistory
+		create_billinghistory($DB, $batchid, 'einvoice', $user);	
+
+		/*-------------------------------------------------------------------*/	
+		// Email the invoice
+		/*-------------------------------------------------------------------*/
+
+		// query the batch for the invoices to do
+		$query = "SELECT DISTINCT d.invoice_number, b.contact_email, b.id, b.account_number  
+			FROM billing_details d 
+			LEFT JOIN billing b ON b.id = d.billing_id
+			WHERE d.batch = '$batchid'";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+		while ($myresult = $result->FetchRow()) {
+			// get the invoice data to process now
+			$invoice_number = $myresult['invoice_number'];
+			$contact_email = $myresult['contact_email'];
+			$invoice_account_number = $myresult['account_number'];
+			$invoice_billing_id = $myresult['id'];
+
+			emailinvoice ($invoice_number,$contact_email,$invoice_billing_id);
+			echo "sent invoice to $contact_email<br>\n";
+		}
+
+		echo "<b style=\"color:red;\">done</b>";
+
+	}
+}
 /* End of file tools */
 /* Location: ./application/controllers/tools.php */
