@@ -3063,7 +3063,8 @@ class Billing_Model extends CI_Model
 		$ccexportvarorder = $myccvarresult['ccexportvarorder'];
 		$exportprefix = $myccvarresult['exportprefix'];
 
-		// convert the $ccexportvarorder &#036; dollar signs back to actual dollar signs and &quot; back to quotes
+		// convert the $ccexportvarorder &#036; dollar signs back 
+		// to actual dollar signs and &quot; back to quotes
 		$ccexportvarorder = str_replace( "&#036;"           , "$"        , $ccexportvarorder );
 		$ccexportvarorder = str_replace( "&quot;"           , "\\\""        , $ccexportvarorder );
 
@@ -3093,11 +3094,10 @@ class Billing_Model extends CI_Model
 				AND bt.method = 'creditcard' 
 				AND b.organization_id = '$organization_id' 
 				GROUP BY b.id";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) 
-			or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("$l_queryfailed");
 
-		while ($myresult = $result->FetchRow()) {
+		foreach ($result->result_array() AS $myresult) 
+		{
 			$batchid = $myresult['bd_batch'];
 			$invoice_number = $myresult['bd_invoice_number'];
 			$user = "refund";
@@ -3121,16 +3121,6 @@ class Billing_Model extends CI_Model
 			// get the absolute value of the total
 			$abstotal = abs($precisetotal);
 
-			// write the encrypted_creditcard_number to a temporary file
-			// and decrypt that file to stdout to get the CC
-			// select the path_to_ccfile from settings
-			$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
-			$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-			$ccfileresult = $DB->Execute($query) 
-				or die ("$l_queryfailed");
-			$myccfileresult = $ccfileresult->fields;
-			$path_to_ccfile = $myccfileresult['path_to_ccfile'];
-
 			// open the file
 			$cipherfilename = "$path_to_ccfile/ciphertext.tmp";
 			$cipherhandle = fopen($cipherfilename, 'w') or die ("cannot open $cipherfilename");
@@ -3148,11 +3138,12 @@ class Billing_Model extends CI_Model
 
 			//$gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
 
-			$gpgcommandline = "$gpg_decrypt $cipherfilename";
+			$gpgcommandline = $this->config->item('gpg_decrypt')." $cipherfilename";
 			$decrypted = decrypt_command($gpgcommandline, $passphrase);
 
 			// if there is a gpg error, stop here
-			if (substr($decrypted,0,5) == "error") {
+			if (substr($decrypted,0,5) == "error") 
+			{
 				die ("Credit Card Encryption Error: $decrypted");
 			}
 
@@ -3174,7 +3165,7 @@ class Billing_Model extends CI_Model
 				SET refunded = 'y' 
 				WHERE refunded <> 'y' AND refund_amount > 0 
 				AND billing_id = $mybilling_id";		
-				$detailresult = $DB->Execute($query) or die ("$l_queryfailed");	
+				$detailresult = $this->db->query($query) or die ("query failed");	
 
 		} // end while
 
@@ -3185,6 +3176,35 @@ class Billing_Model extends CI_Model
 
 		// return the name of the file where the export data is
 		return $filename;
+	}
+
+
+	function reset_detail_refund_amount($detailid)
+	{
+		$query = "UPDATE billing_details SET ".
+			"refund_amount = 0.00, ".
+			"refund_date = null ".
+			"WHERE id = $detailid";
+		$result = $this->db->query($query) or die ("$query Query Failed");
+	} 
+
+	function update_detail_refund_amount($detailid, $amount)
+	{
+		$query = "UPDATE billing_details SET ".
+			"refund_amount = '$amount', ".
+			"refund_date = CURRENT_DATE ".
+			"WHERE id = $detailid";
+		$result = $this->db->query($query) or die ("$query Query Failed");
+	}
+
+	function manual_detail_refund_amount($detailid)
+	{
+		// if billing method is not credit card they must be done manually
+		// just mark the amount as refunded in the database
+		$query ="UPDATE billing_details SET refunded = 'y' ".
+			"WHERE refunded <> 'y' AND refund_amount > 0 ". 
+			"AND id = $detailid";		
+		$detailresult = $this->db->query($query) or die ("$query $l_queryfailed");	
 	}
 
 }

@@ -1202,12 +1202,11 @@ class Tools extends App_Controller
 		$this->load->model('settings_model');
 		$this->load->model('service_model');
 
-		$organization_id = $this->input->post['organization_id'];
-		$passphrase = $this->input->post['passphrase'];
+		// load the encryption helper for use by export card refunds
+		$this->load->helper('encryption');
 
-		/*--------------------------------------------------------------------*/
-		// Create the refund data
-		/*--------------------------------------------------------------------*/
+		$organization_id = $this->input->post('organization_id');
+		$passphrase = $this->input->post('passphrase');
 
 		// select the path_to_ccfile from settings
 		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
@@ -1217,10 +1216,9 @@ class Tools extends App_Controller
 				$path_to_ccfile, $passphrase);
 		
 		// log this export activity
-		$this->log_model->activity($this->user,0,'export','creditcard',$batchid,'success');
+		$this->log_model->activity($this->user,0,'export','creditcard',0,'success');
 
 		$today = date("Y-m-d");
-		$myfile = "$exportprefix" . "refund" . "$today.csv";
 
 		echo lang('wrotefile')." $exportfilename<br><a href=\"$this->ssl_url_prefix/index.php/tools/downloadfile/$exportfilename\"><u class=\"bluelink\">".lang('download')." $exportfilename</u></a><p>";	
 

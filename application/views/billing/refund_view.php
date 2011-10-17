@@ -60,7 +60,7 @@ foreach ($details as $myresult)
 	print "<td style=\"border-top: 1px solid grey;\">
 		$refunded &nbsp;";
 	if ($refunded <> 'y' AND $paidamount > 0) {
-		echo "[ <a href=\"$this->url_prefix/index.php/refunditem/$id/$method/$billingid\">".lang('refund')."</a> ]";
+		echo "[ <a href=\"$this->url_prefix/index.php/billing/refunditem/$id/$method/$billingid\">".lang('refund')."</a> ]";
 	}	
 	echo "</td>";
 

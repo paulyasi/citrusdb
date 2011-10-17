@@ -1129,22 +1129,22 @@ class Billing extends App_Controller
 			echo "<h2 style=\"color: red;\">$l_method_warning</h2>";
 		}
 
-		$data['detailid'] = $detailid;
+		$data['detailid'] = $detailitem;
 		$data['method'] = $method;
 		$data['billingid'] = $billingid;
 
 		// get the list of billing items that could be refunded
-		$myresult = $this->billing_model->billing_detail_item($detailid);
-
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		$myresult = $result->fields;
+		$myresult = $this->billing_model->billing_detail_item($detailitem);
 
 		$data['id'] = $myresult['d_id'];
 		$data['date'] = $myresult['d_creation_date'];
-		if ($myresult['d_taxed_services_id']) { 
+		if ($myresult['d_taxed_services_id']) 
+		{ 
 			// it's a tax
 			$data['description'] = $myresult['r_description'];
-		} else {
+		} 
+		else 
+		{
 			// it's a service
 			$data['description'] = $myresult['m_description'];
 		}
@@ -1171,38 +1171,28 @@ class Billing extends App_Controller
 		$refundamount = $this->input->post('refundamount');
 		$method = $this->input->post('method');
 
-
 		// reset the refund if amount entered is zero
-		if ($refundamount == 0) {
-			$query = "UPDATE billing_details SET
-				refund_amount = 0.00,
-							  refund_date = null
-								  WHERE id = $detailid";
-			$result = $DB->Execute($query) or die ("$query Query Failed");  
-		} else {
-			$query = "UPDATE billing_details SET 
-				refund_amount = '$refundamount',
-							  refund_date = CURRENT_DATE 
-								  WHERE id = $detailid";
-			$result = $DB->Execute($query) or die ("$query Query Failed");
+		if ($refundamount == 0) 
+		{
+			$this->billing_model->reset_detail_refund_amount($detailid);
+		} 
+		else 
+		{
+			$this->billing_model->update_detail_refund_amount($detailid, $refundamount);
 		}
 
 		// if billing method is not credit card they must be done manually
 		// just mark the amount as refunded in the database
-		if ($method <> 'creditcard') {
-			$query ="UPDATE billing_details SET refunded = 'y' ".
-				"WHERE refunded <> 'y' AND refund_amount > 0 ". 
-				"AND id = $detailid";		
-			$detailresult = $DB->Execute($query) or die ("$query $l_queryfailed");	
+		if ($method <> 'creditcard') 
+		{
+			$this->billing_model->manual_detail_refund_amount($detailid, $refundamount);
 
-			print "<h2 style=\"color: red;\">$l_method_warning</h2>";
-
+			print "<h2 style=\"color: red;\">".lang('method_warning')."</h2>";
 		}
 
 		print "<h3>".lang('changessaved')."<h3>";
 
 		redirect("/billing/refund/$billingid");
-
 	}
 
 

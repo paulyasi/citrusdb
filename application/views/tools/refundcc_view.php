@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 ?>
+<br>
 <h3><?php echo lang('refund')?></h3>
 <SCRIPT LANGUAGE=\"JavaScript\" SRC=\"include/CalendarPopup.js\"></SCRIPT>
 <SCRIPT LANGUAGE=\"JavaScript\">
