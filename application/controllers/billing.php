@@ -1185,7 +1185,7 @@ class Billing extends App_Controller
 		// just mark the amount as refunded in the database
 		if ($method <> 'creditcard') 
 		{
-			$this->billing_model->manual_detail_refund_amount($detailid, $refundamount);
+		$this->billing_model->manual_detail_refund_amount($detailid, $refundamount);
 
 			print "<h2 style=\"color: red;\">".lang('method_warning')."</h2>";
 		}

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Tools extends App_Controller
+class Billing extends App_Controller
 {
 	function __construct()
 	{
@@ -10,52 +10,6 @@ class Tools extends App_Controller
 		$this->load->model('billing_model');
 		$this->load->model('user_model');
 	}		
-
-	/*
-	 * ------------------------------------------------------------------------
-	 *  Show the tools to this user they have permission to view
-	 * ------------------------------------------------------------------------
-	 */
-	public function index()
-	{
-		// load the module header common to all module views
-		$this->load->view('module_header_view');
-
-		// show user tools that everyone can use
-		$this->load->view('tools/usertools_view');
-
-		// check for user privileges to see if the are manager or admin
-		$privileges = $this->user_model->user_privileges($this->user);
-
-		if (($privileges['manager'] == 'y') OR ($privileges['admin'] == 'y'))
-		{
-			// get list of the modules that are installed
-			$result = $this->module_model->modulelist();
-
-			foreach($result->result() as $myresult)
-			{
-				$modulename = $myresult->modulename;
-
-				// load the tools view for this module
-				// view file in the format modulenametools_view, eg: customertools_view
-				$this->load->view("tools/".$modulename."tools_view");
-			}
-
-			// Show Reports Tools for manager and admin
-			$this->load->view('tools/reporttools_view');
-		}
-
-		if ($privileges['admin'] == 'y')
-		{
-			// Show Admin Tools for admin
-			$this->load->view('tools/admintools_view');
-		}
-
-		// the html page footer
-		$this->load->view('html_footer_view');
-
-	}
-
 
 
 	function printpreviousinvoice($billingid, $invoiceid)
@@ -131,7 +85,7 @@ class Tools extends App_Controller
 		$data['invoice_number'] = $invoice_number;
 		$data['amount'] = $amount;
 
-		$this->load->view('tools/payment_view', $data);
+		$this->load->view('tools/billing/payment_view', $data);
 
 	}
 
@@ -157,7 +111,7 @@ class Tools extends App_Controller
 			// if there is an over payment show the amount in red
 			//and prompt to add as a credit		
 			print "<h3 style=\"color: red;\">".lang('paymentsaved').", ".lang('currency').$p['amount'] .
-				lang('leftover').", <a href=\"index.php/tools/addcredit/".$p['amount']."/$billing_id\">".
+				lang('leftover').", <a href=\"index.php/tools/billing/addcredit/".$p['amount']."/$billing_id\">".
 				lang('addcreditfor')." ".$p['amount']."</a></h3>";
 		} 
 		else 
@@ -189,70 +143,7 @@ class Tools extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/payment_view', $data);
-	}
-
-
-	function changepass()
-	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
-		$this->load->view('tools/changepass_view');
-	}
-
-	function savechangepass()
-	{
-		$feedback = $this->input->post('feedback');
-		$new_password1 = $this->input->post('new_password1');
-		$new_password2 = $this->input->post('new_password2');
-		$old_password = $this->input->post('old_password');
-
-		$real_name = $this->user_model->user_getrealname($this->user);
-		echo "$real_name, ".lang('youareloggedinas')." ".$this->user."<br>";
-
-		$feedback = $this->user_model->user_change_password($new_password1,$new_password2,$this->user,$old_password);
-
-		echo '<FONT COLOR="RED"><H2>'.$feedback.'</H2></FONT>';
-
-	}
-
-	function version()
-	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
-		$this->load->view('tools/version_view');
-	}
-
-	function notifications()
-	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
-		$privileges = $this->user_model->user_privileges($this->user);
-
-		$this->load->view('tools/notifications_view', $privileges);
-
-	}
-
-	function savenotifications()
-	{
-		$email = $this->input->post('email');
-		$screenname = $this->input->post('screenname');
-		$email_notify = $this->input->post('email_notify');
-		$screenname_notify = $this->input->post('screenname_notify');
-
-		$this->user_model->update_usernotifications($email, $screenname, $email_notify, $screenname_notify);
-		print "<h3>".lang('changessaved')."</h3>";
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
-		// show the info you just changed for the user
-		$privileges = $this->user_model->user_privileges($this->user);
-
-		$this->load->view('tools/notifications_view', $privileges);
+		$this->load->view('tools/billing/payment_view', $data);
 	}
 
 
@@ -266,7 +157,7 @@ class Tools extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/importnew_view', array('error' => ''));
+		$this->load->view('tools/billing/importnew_view', array('error' => ''));
 	}
 
 	/*
@@ -300,7 +191,7 @@ class Tools extends App_Controller
 		{
 			$error = array('error' => $this->upload->display_errors());
 
-			$this->load->view('tools/importnew_view', $error);
+			$this->load->view('tools/billing/importnew_view', $error);
 		}
 		else
 		{
@@ -552,7 +443,7 @@ class Tools extends App_Controller
 		$this->load->view('header_no_sidebar_view');
 
 		$data['orglist'] = $this->general_model->list_organizations();
-		$this->load->view('tools/exportcc_view', $data);
+		$this->load->view('tools/billing/exportcc_view', $data);
 	}
 
 
@@ -715,7 +606,7 @@ class Tools extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/importcc_view', array('error' => ''));
+		$this->load->view('tools/billing/importcc_view', array('error' => ''));
 	}
 
 
@@ -747,7 +638,7 @@ class Tools extends App_Controller
 		{
 			$error = array('error' => $this->upload->display_errors());
 
-			$this->load->view('tools/importcc_view', $error);
+			$this->load->view('tools/billing/importcc_view', $error);
 		}
 		else
 		{
@@ -885,7 +776,7 @@ class Tools extends App_Controller
 		$this->load->view('header_no_sidebar_view');
 
 		$data['orglist'] = $this->general_model->list_organizations();
-		$this->load->view('tools/invoice_view', $data);
+		$this->load->view('tools/billing/invoice_view', $data);
 	}
 
 
@@ -1059,7 +950,7 @@ class Tools extends App_Controller
 		$this->load->view('header_no_sidebar_view');
 
 		$data['orglist'] = $this->general_model->list_organizations();
-		$this->load->view('tools/einvoice_view', $data);
+		$this->load->view('tools/billing/einvoice_view', $data);
 	}
 
 
@@ -1187,7 +1078,7 @@ class Tools extends App_Controller
 		$this->load->view('header_no_sidebar_view');
 
 		$data['orglist'] = $this->general_model->list_organizations();
-		$this->load->view('tools/refundcc_view', $data);
+		$this->load->view('tools/billing/refundcc_view', $data);
 	}
 
 
@@ -1225,5 +1116,7 @@ class Tools extends App_Controller
 	}
 
 }
-/* End of file tools */
-/* Location: ./application/controllers/tools.php */
+
+
+/* End of file tools/billing */
+/* Location: ./application/controllers/tools/billing.php */

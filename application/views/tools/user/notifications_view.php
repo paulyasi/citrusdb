@@ -2,7 +2,7 @@
 ?>
 <h3><?php echo lang('notifications')?></h3>
 <p>
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/savenotifications" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/user/savenotifications" METHOD="POST">
 <B><?php echo lang('contactemail')?>:</B> 
 <INPUT TYPE="TEXT" NAME="email" VALUE="<?php echo $email?>" SIZE="20" MAXLENGTH="65"><p>
 <B><?php echo lang('screenname')?>:</B>

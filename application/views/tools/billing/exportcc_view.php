@@ -6,7 +6,7 @@
 var cal = new CalendarPopup();
 </SCRIPT>
 <table>
-<FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/saveexportcc" METHOD="POST" name="form1" onsubmit="toggleOn();" AUTOCOMPLETE="off">
+<FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/billing/saveexportcc" METHOD="POST" name="form1" onsubmit="toggleOn();" AUTOCOMPLETE="off">
 <td><b><?php echo lang('organizationname')?></b></td>
 <td><select name="organization_id">
 <option value=""><?php echo lang('choose')?></option>
@@ -32,7 +32,7 @@ NAME="anchor1" ID="anchor1" style="color:blue">[<?php echo lang('select')?>]</A>
 </form>
 </table><br><br><br>
 
-<FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/saveexportcc" METHOD="POST" name="form2" onsubmit="toggleOn();" AUTOCOMPLETE="off">
+<FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/billing/saveexportcc" METHOD="POST" name="form2" onsubmit="toggleOn();" AUTOCOMPLETE="off">
 <table>
 
 <td><b><?php echo lang('organizationname')?></b></td>
@@ -66,7 +66,7 @@ NAME="anchorb2" ID="anchorb2" style="color:blue">[<?php echo lang('select')?>]</
 </form>
 </table><p>
 
-<a href="<?php echo $this->ssl_url_prefix?>/index.php/tools/fixexportcc">
+<a href="<?php echo $this->ssl_url_prefix?>/index.php/tools/billing/fixexportcc">
 <?php echo lang('exportpreviousbatchid')?></a><p>
 
 <div id="WaitingMessage" style="border: 0px double black; 

@@ -8,20 +8,20 @@ $ldap_enable = $this->config->item('ldap_enable');
 if ($this->config->item('ldap_enable') == FALSE)
 {
 	echo "<div class=icon>
-	<a href=# onclick=\"popupPage('$this->url_prefix/index.php/tools/changepass'); return false;\">
+	<a href=# onclick=\"popupPage('$this->url_prefix/index.php/tools/user/changepass'); return false;\">
 	<img src=\"$this->url_prefix/images/icons/citrus_changepass.png\" border=0><br>
 	".lang('changeyourpassword')."</a>
 	</div>";
 }
 ?>
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/version'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/user/version'); return false;">
 <img src="<?php echo $this->url_prefix?>/images/icons/citrus_version.png" border=0><br>
 <?php echo lang('version')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/notifications'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/user/notifications'); return false;">
 <img src="<?php echo $this->url_prefix?>/images/icons/citrus_email.png" border=0><br>
 <?php echo lang('notifications')?></a>
 </div>

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 ?>
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/savepayment" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/billing/savepayment" METHOD="POST">
 <?php echo lang('enteroneofthesethreevalues')?>:
 <table><td>
 <b><?php echo lang('accountnumber')?>:</b></td><td>
