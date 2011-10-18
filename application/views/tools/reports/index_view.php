@@ -5,60 +5,60 @@
 <br>
 
 <div class=icon>
-<a href=# onclick="popupPage('index.php/tools/customersummary'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/summary'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_report.png"><br>
 <?php echo lang('customersummary')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/revenuereport'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/revenue'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_report.png"><br>
 <?php echo lang('revenuereport')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/refundreport'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/refunds'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_report.png"><br>
 <?php echo lang('refundreport')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/pastduereport'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/pastdue'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_declines.png"><br>
 <?php echo lang('pastduereport')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick = "popupPage('<?php echo $this->url_prefix?>/index.php/tools/paymentstatus'); return false;">
+<a href=# onclick = "popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/paymentstatus'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_declines.png"><br>
 <?php echo lang('paymentstatus')?></a></div>
 
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/servicereport'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/services'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_report.png"><br>
 <?php echo lang('servicereport')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/sourcereport'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/sources'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_report.png"><br>
 <?php echo lang('sourcereport')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/exemptreport'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/exempt'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_report.png"><br>
 <?php echo lang('exemptreport')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/printnotices'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/printnotices'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_report.png"><br>
 <?php echo lang('printnotices')?></a>
 </div>
 
 <div class=icon>
-<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/servicechurn'); return false;">
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/tools/reports/servicechurn'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_report.png"><br>
 <?php echo lang('servicechurn')?></a>
 </div>
