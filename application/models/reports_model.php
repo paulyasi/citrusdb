@@ -85,4 +85,86 @@ class Reports_Model extends CI_Model
 
 		return $serviceresult->result_array();
 	}
+			
+	function taxed_services($id)
+	{
+		$query = "SELECT tr.description, tr.rate, ms.service_description, ".
+			"ms.category FROM tax_rates tr ".
+			"LEFT JOIN taxed_services ts ON ts.tax_rate_id = tr.id ".
+			"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".	
+			"WHERE ts.id = '$id'";
+		$taxresult = $this->db->query($query) or die ("Taxes Query Failed");
+
+		return $taxresult->result_array();
+	}
+
+
+	function total_services($organization_id)
+	{
+		// get the total services for each billing type
+		$query = "SELECT m.id m_id, m.service_description m_servicedescription, ".
+			"m.pricerate m_pricerate, m.frequency m_frequency, ".
+			"m.organization_id m_organization_id, g.org_name g_org_name, ".
+			"u.removed u_removed, u.master_service_id u_msid, ".
+			"count(bt.method) AS TotalNumber, ".
+			"b.id b_id, b.billing_type b_billing_type, bt.id bt_id, ".
+			"bt.method bt_method ". 
+			"FROM user_services u ".
+			"LEFT JOIN master_services m ON u.master_service_id = m.id ".
+			"LEFT JOIN billing b ON b.id = u.billing_id ".
+			"LEFT JOIN billing_types bt ON b.billing_type = bt.id ".
+			"LEFT JOIN general g ON m.organization_id = g.id ".
+			"WHERE u.removed <> 'y' AND bt.method <> 'free' ".
+			"AND b.organization_id = '$organization_id' AND m.pricerate > '0' ". 
+			"AND m.frequency > '0' GROUP BY bt.method ORDER BY TotalNumber";
+		$result = $this->db->query($query) or die ("query failed");
+
+		return $result->result_array();
+
+	}
+
+
+	function services_in_categories($organization_id)
+	{
+		// get the number of services in each category
+		$query = "SELECT m.id m_id, m.service_description m_servicedescription, ".
+			"m.pricerate m_pricerate, m.category m_category, m.frequency m_frequency, ".
+			"m.organization_id m_organization_id, g.org_name g_org_name, ".
+			"u.removed u_removed, u.master_service_id u_msid, ".
+			"count(bt.method) AS TotalNumber, ".
+			"b.id b_id, b.billing_type b_billing_type, bt.id bt_id, bt.method bt_method ".
+			"FROM user_services u ".
+			"LEFT JOIN master_services m ON u.master_service_id = m.id ".
+			"LEFT JOIN billing b ON b.id = u.billing_id ".
+			"LEFT JOIN billing_types bt ON b.billing_type = bt.id ".
+			"LEFT JOIN general g ON m.organization_id = g.id ".
+			"WHERE u.removed <> 'y' AND b.organization_id = '$organization_id' ".
+			"AND m.frequency > '0' GROUP BY m.category ORDER BY TotalNumber";
+		$result = $this->db->query($query) or die ("query failed");
+
+		return $result->result_array();
+
+	}
+
+	function number_of_customers()
+	{
+		// get the number of customers
+		$query = "SELECT COUNT(*) FROM customer WHERE cancel_date is NULL";
+		$result = $this->db->query($query) or die ("query failed");
+		$myresult = $result->row_array();
+		return $myresult['COUNT(*)'];
+
+	}
+
+	function number_of_non_free_customers()
+	{
+		// get the number of customers who are not free
+		$query = "SELECT COUNT(*) FROM customer c
+			LEFT JOIN billing b ON b.id = c.default_billing_id 
+			LEFT JOIN billing_types bt ON b.billing_type = bt.id
+			WHERE cancel_date is NULL AND bt.method <> 'free'";
+		$result = $this->db->query($query) or die ("query failed");
+		$myresult = $result->row_array();
+		return $myresult['COUNT(*)'];
+	}
 }

@@ -266,17 +266,12 @@ class Reports extends App_Controller
 		// print each item in the tax and count arrays
 		foreach($tax_array as $taxed_services_id_value => $total_taxed) 
 		{
-			$query = "SELECT tr.description, tr.rate, ms.service_description, ".
-				"ms.category FROM tax_rates tr ".
-				"LEFT JOIN taxed_services ts ON ts.tax_rate_id = tr.id ".
-				"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".	
-				"WHERE ts.id = '$taxed_services_id_value'";
-			$taxresult = $this->db->query($query) or die ("Taxes Query Failed");
+			$taxresults = $this->reports_model->taxed_services($taxed_services_id_value);
 
 			// count the number of taxes
 			$count = $count_array[$taxed_services_id_value];
 
-			foreach ($taxresult->result_array() AS $mytaxresult) 
+			foreach ($taxresults AS $mytaxresult) 
 			{
 				$description = $mytaxresult['description'];
 				$service_description = $mytaxresult['service_description'];
@@ -325,24 +320,10 @@ class Reports extends App_Controller
 
 		// initialize billing methods dataview
 		$dataview['billing_methods'] = '';
-		// get the total services for each billing type
-		$query = "SELECT m.id m_id, m.service_description m_servicedescription, ".
-			"m.pricerate m_pricerate, m.frequency m_frequency, ".
-			"m.organization_id m_organization_id, g.org_name g_org_name, ".
-			"u.removed u_removed, u.master_service_id u_msid, ".
-			"count(bt.method) AS TotalNumber, ".
-			"b.id b_id, b.billing_type b_billing_type, bt.id bt_id, ".
-			"bt.method bt_method ". 
-			"FROM user_services u ".
-			"LEFT JOIN master_services m ON u.master_service_id = m.id ".
-			"LEFT JOIN billing b ON b.id = u.billing_id ".
-			"LEFT JOIN billing_types bt ON b.billing_type = bt.id ".
-			"LEFT JOIN general g ON m.organization_id = g.id ".
-			"WHERE u.removed <> 'y' AND bt.method <> 'free' ".
-			"AND b.organization_id = '$organization_id' AND m.pricerate > '0' ". 
-			"AND m.frequency > '0' GROUP BY bt.method ORDER BY TotalNumber";
-		$result = $this->db->query($query) or die ("query failed");
-		foreach ($result->result_array() AS $myresult) 
+		
+		$results = $this->reports_model->total_services($organization_id);
+
+		foreach ($results AS $myresult) 
 		{
 			$count = $myresult['TotalNumber'];
 			$billingmethod = $myresult['bt_method'];
@@ -352,24 +333,9 @@ class Reports extends App_Controller
 		// initialize data view service_categories
 		$dataview['service_categories'] = '';
 
-		/*-----------------------------------------------*/
-		// get the number of services in each category
-		/*-----------------------------------------------*/
-		$query = "SELECT m.id m_id, m.service_description m_servicedescription, ".
-			"m.pricerate m_pricerate, m.category m_category, m.frequency m_frequency, ".
-			"m.organization_id m_organization_id, g.org_name g_org_name, ".
-			"u.removed u_removed, u.master_service_id u_msid, ".
-			"count(bt.method) AS TotalNumber, ".
-			"b.id b_id, b.billing_type b_billing_type, bt.id bt_id, bt.method bt_method ".
-			"FROM user_services u ".
-			"LEFT JOIN master_services m ON u.master_service_id = m.id ".
-			"LEFT JOIN billing b ON b.id = u.billing_id ".
-			"LEFT JOIN billing_types bt ON b.billing_type = bt.id ".
-			"LEFT JOIN general g ON m.organization_id = g.id ".
-			"WHERE u.removed <> 'y' AND b.organization_id = '$organization_id' ".
-			"AND m.frequency > '0' GROUP BY m.category ORDER BY TotalNumber";
-		$result = $this->db->query($query) or die ("query failed");
-		foreach ($result->result_array() as $myresult) 
+		$results = $this->reports_model->services_in_categories($organization_id);
+		
+		foreach ($results as $myresult) 
 		{
 			$count = $myresult['TotalNumber'];
 			$category = $myresult['m_category'];
@@ -377,23 +343,9 @@ class Reports extends App_Controller
 		}
 		echo "</blockquote>";
 
-		// get the number of customers
-		$query = "SELECT COUNT(*) FROM customer WHERE cancel_date is NULL";
-		$result = $this->db->query($query) or die ("query failed");
-		$myresult = $result->row_array();
-		$totalcustomers = $myresult['COUNT(*)'];
-		$dataview['totalcustomers'] = $totalcustomers;
+		$dataview['totalcustomers'] = $this->reports_model->number_of_customers();
 
-
-		// get the number of customers who are not free
-		$query = "SELECT COUNT(*) FROM customer c
-			LEFT JOIN billing b ON b.id = c.default_billing_id 
-			LEFT JOIN billing_types bt ON b.billing_type = bt.id
-			WHERE cancel_date is NULL AND bt.method <> 'free'";
-		$result = $this->db->query($query) or die ("query failed");
-		$myresult = $result->row_array();
-		$totalpayingcustomers = $myresult['COUNT(*)'];
-		$dataview['totalpayingcustomers'] = $totalpayingcustomers;
+		$dataview['totalpayingcustomers'] = $this->reports_model->number_of_non_free_customers();
 
 		if ($style == 'view')
 		{
