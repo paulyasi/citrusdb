@@ -19,15 +19,33 @@ foreach ($orglist as $myresult) {
 
 <input type="SUBMIT" NAME="submit" value="<?php echo lang('submit')?>"><p>
 
+
+<a href="<?php echo $this->url_prefix?>/index.php/tools/reports/summary/file">
+<u class="bluelink"><?php echo lang('download')?></u></a><p>
+
 <table cellpadding=2><td><b><?php echo lang('services')?></b></td>
 <td><b>Frequency</b></td>
 <td><b>Category</b></td>
 <td><b>Customers</b></td>
 <td><b>Service Cost</b></td>
 <td><b>Monthly <?php echo lang('total')?></b></td><tr>
+<?php echo $service_listing?>
+<?php echo $tax_listing?>
+<?php echo $listing_footer?>
+</table>
 
-
-<?php print "$l_totalpayingcustomers: $numofcustomers<p>"; ?>
+<?php print lang('paidsubscriptions').": $paidsubscriptions<p>"; ?>
+<?php echo $billing_methods?>
+		
+<p><b>Service Category Totals: </b><br><i style="font-size: 8pt;">
+total monthly services in each category, includes declined and 
+turned off pending payment, does not include canceled services</i>
+</p><blockquote>
+<?php echo $service_categories?>
+</blockquote>
+<hr>
+<?php print lang('totalpayingcustomers').": $totalpayingcustomers<p>"; ?>
+<?php print lang('totalcustomers').": $totalcustomers<p>"; ?>
 
 </body>
 </html>

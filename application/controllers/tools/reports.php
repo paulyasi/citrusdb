@@ -15,10 +15,11 @@ class Reports extends App_Controller
 
 	/*
 	 * ------------------------------------------------------------------------
-	 *  sends customer summary to view and to summary file for download
+	 *  sends customer summary to view or summary file for download
+	 *  input: style (view|file)
 	 * ------------------------------------------------------------------------
 	 */
-	function summary()
+	function summary($style)
 	{
 		// check if the user has manager privileges first
 		$myresult = $this->user_model->user_privileges($this->user);
@@ -45,18 +46,16 @@ class Reports extends App_Controller
 			$organization_id = $this->input->post('organization_id');
 		}
 
-		// get the path where to store the cc data
-		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
+		if ($style == 'file')
+		{
+			// load the download helper
+			$this->load->helper('download');
 
-		// TODO: use the codeigniter download helper with force download 
-		// when link to download file instead of always making this summary file during view
-		// open the file
-		$filename = "$path_to_ccfile/summary.csv";
-		$handle = fopen($filename, 'w'); // open the file
+			$filename = "summary.csv";
 
-		$newline = lang('services').",Frequency,Category,Customers,Service Cost,".
-			"Monthly Total\n";
-		fwrite($handle, $newline); // write to the file	
+			$datafile = lang('services').",Frequency,Category,Customers,Service Cost,".
+				"Monthly Total\n";
+		}
 
 		// initialize the count of paid monthly services
 		$paidsubscriptions = 0;
@@ -115,6 +114,9 @@ class Reports extends App_Controller
 			// count the number of taxes
 			$count = $count_array[$master_service_id_value];
 
+			// initialize dataview service listing
+			$dataview['service_listing'] = '';
+
 			foreach ($servicearray AS $myserviceresult) 
 			{
 				$service_description = $myserviceresult['service_description'];
@@ -135,13 +137,18 @@ class Reports extends App_Controller
 					$total_billed = $total_billed/$frequency;
 				}
 
-				echo "<td>$service_description</td><td>$frequency</td>".
-					"<td>$category</td><td>$count</td><td>$rate</td>".
-					"<td>$total_billed</td><tr>";
-
-				$newline = "$service_description,$frequency,$category,$count,".
-					"$rate,$total_billed\n";
-				fwrite($handle, $newline); // write to the file
+				if ($style == 'view')
+				{
+					$dataview['service_listing'] .= "<td>$service_description</td>".
+						"<td>$frequency</td>".
+						"<td>$category</td><td>$count</td><td>$rate</td>".
+						"<td>$total_billed</td><tr>";
+				}
+				else
+				{
+					$datafile .= "$service_description,$frequency,$category,$count,".
+						"$rate,$total_billed\n";
+				}
 
 				// add totals
 				$total_customers = sprintf("%.2f",$total_customers + $count);
@@ -273,6 +280,9 @@ class Reports extends App_Controller
 			} // endif exempt
 		}
 
+		// initialize dataview tax listing
+		$dataview['tax_listing'] = '';
+
 		// print each item in the tax and count arrays
 		foreach($tax_array as $taxed_services_id_value => $total_taxed) 
 		{
@@ -293,13 +303,18 @@ class Reports extends App_Controller
 				$rate = $mytaxresult['rate'];
 				$category = $mytaxresult['category'];
 
-				echo "<td>$description for $service_description</td>".
-					"<td></td>".
-					"<td>$category</td><td>$count</td>".
-					"<td>$rate</td><td>$total_taxed</td><tr>";
-				$newline = "$description for $service_description,,$category,".
-					"$count,$rate,$total_taxed\n";
-				fwrite($handle, $newline); // write to the file
+				if ($style == 'view')
+				{
+					$dataview['tax_listing'] .= "<td>$description for $service_description</td>".
+						"<td></td>".
+						"<td>$category</td><td>$count</td>".
+						"<td>$rate</td><td>$total_taxed</td><tr>";
+				}
+				else
+				{
+					$datafile .= "$description for $service_description,,$category,".
+						"$count,$rate,$total_taxed\n";
+				}
 
 				// add totals
 				$total_customers = sprintf("%.2f",$total_customers + $count);
@@ -310,26 +325,26 @@ class Reports extends App_Controller
 		}
 
 
-		// print the table footer
-		echo "<td style=\"border-top: 1px solid black; font-weight: bold;\">".lang('total').":</td>
-			<td style=\"border-top: 1px solid black; font-weight: bold;\">&nbsp;</td>
-			<td style=\"border-top: 1px solid black; font-weight: bold;\">&nbsp;</td>
-			<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_customers</td>
-			<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_service_cost</td>
-			<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_monthly</td><tr>";
+		if ($style == 'view')
+		{
+			// print the table footer
+			$dataview['listing_footer'] = "<td style=\"border-top: 1px solid black; font-weight: bold;\">".
+				lang('total').":</td> ".
+				"<td style=\"border-top: 1px solid black; font-weight: bold;\">&nbsp;</td> ".
+				"<td style=\"border-top: 1px solid black; font-weight: bold;\">&nbsp;</td> ".
+				"<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_customers</td> ".
+				"<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_service_cost</td> ".
+				"<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_monthly</td><tr>";
+		}
+		else
+		{
+			$datafile .= ",,,$total_customers,$total_service_cost,$total_monthly\n";
+		}
 
-		$newline = ",,,$total_customers,$total_service_cost,$total_monthly\n";
-		fwrite($handle, $newline); // write to the file
+		$dataview['paidsubscriptions'] = $paidsubscriptions;
 
-		fclose($handle);
-
-		// print link to download the summary file
-		echo "<a href=\"index.php/tools/downloadfile/summary.csv\">".
-			"<u class=\"bluelink\">".lang('download')." summary.csv</u></a><p>";
-
-		echo "</table><p>
-			".lang('paidsubscriptions').": $paidsubscriptions<p>";
-
+		// initialize billing methods dataview
+		$dataview['billing_methods'] = '';
 		// get the total services for each billing type
 		$query = "SELECT m.id m_id, m.service_description m_servicedescription, ".
 			"m.pricerate m_pricerate, m.frequency m_frequency, ".
@@ -347,15 +362,15 @@ class Reports extends App_Controller
 			"AND b.organization_id = '$organization_id' AND m.pricerate > '0' ". 
 			"AND m.frequency > '0' GROUP BY bt.method ORDER BY TotalNumber";
 		$result = $this->db->query($query) or die ("query failed");
-		echo "<blockquote>";
 		foreach ($result->result_array() AS $myresult) 
 		{
 			$count = $myresult['TotalNumber'];
 			$billingmethod = $myresult['bt_method'];
-			echo "$billingmethod: $count<br>\n";	
+			$dataview['billing_methods'] .= "$billingmethod: $count<br>\n";	
 		}
-		echo "</blockquote>";
 
+		// initialize data view service_categories
+		$dataview['service_categories'] = '';
 
 		/*-----------------------------------------------*/
 		// get the number of services in each category
@@ -374,27 +389,20 @@ class Reports extends App_Controller
 			"WHERE u.removed <> 'y' AND b.organization_id = '$organization_id' ".
 			"AND m.frequency > '0' GROUP BY m.category ORDER BY TotalNumber";
 		$result = $this->db->query($query) or die ("query failed");
-		echo "<p><b>Service Category Totals: </b><br><i style=\"font-size: 8pt;\">".
-			"total monthly services in each category, includes declined and ".
-			"turned off pending payment, does not include canceled services</i>".
-			"</p><blockquote>";
 		foreach ($result->result_array() as $myresult) 
 		{
 			$count = $myresult['TotalNumber'];
 			$category = $myresult['m_category'];
-			echo "$category: $count<br>\n";	
+			$dataview['service_categories'] .= "$category: $count<br>\n";	
 		}
 		echo "</blockquote>";
-
-
 
 		// get the number of customers
 		$query = "SELECT COUNT(*) FROM customer WHERE cancel_date is NULL";
 		$result = $this->db->query($query) or die ("query failed");
 		$myresult = $result->row_array();
-		$numofcustomers = $myresult['COUNT(*)'];
-
-		print "<hr>".lang('totalcustomers').": $numofcustomers<p>";
+		$totalcustomers = $myresult['COUNT(*)'];
+		$dataview['totalcustomers'] = $totalcustomers;
 
 
 		// get the number of customers who are not free
@@ -404,13 +412,22 @@ class Reports extends App_Controller
 			WHERE cancel_date is NULL AND bt.method <> 'free'";
 		$result = $this->db->query($query) or die ("query failed");
 		$myresult = $result->row_array();
-		$numofcustomers = $myresult['COUNT(*)'];
+		$totalpayingcustomers = $myresult['COUNT(*)'];
+		$dataview['totalpayingcustomers'] = $totalpayingcustomers;
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
+		if ($style == 'view')
+		{
+			// load the header without the sidebar to get the stylesheet in there
+			$this->load->view('header_no_sidebar_view');
 
-		$data['orglist'] = $this->general_model->list_organizations();
-		$this->load->view('tools/reports/summary_view', $data);
+			$dataview['orglist'] = $this->general_model->list_organizations();
+			$this->load->view('tools/reports/summary_view', $dataview);
+		}
+		else
+		{
+			// file style
+			force_download($filename, $datafile);
+		}
 	}
 
 
