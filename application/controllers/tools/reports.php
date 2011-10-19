@@ -13,6 +13,11 @@ class Reports extends App_Controller
 	}		
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  sends customer summary to view and to summary file for download
+	 * ------------------------------------------------------------------------
+	 */
 	function summary()
 	{
 		// check if the user has manager privileges first
@@ -24,14 +29,27 @@ class Reports extends App_Controller
 			exit; 
 		}
 
-		// load settings model
+		// load settings and general
 		$this->load->model('settings_model');
+		$this->load->model('general_model');
 
-		$data['organization_id'] = $this->input->post('organization_id');
+		// default to org id 1 if none specified
+		if (!$this->input->post('organization_id'))
+		{
+			$data['organization_id'] = 1;
+			$organization_id = 1;
+		}
+		else
+		{
+			$data['organization_id'] = $this->input->post('organization_id');
+			$organization_id = $this->input->post('organization_id');
+		}
 
 		// get the path where to store the cc data
 		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
 
+		// TODO: use the codeigniter download helper with force download 
+		// when link to download file instead of always making this summary file during view
 		// open the file
 		$filename = "$path_to_ccfile/summary.csv";
 		$handle = fopen($filename, 'w'); // open the file
@@ -51,26 +69,7 @@ class Reports extends App_Controller
 		$total_service_cost = 0;
 		$total_monthly = 0;
 
-		/*--------------------------------------------------------------------*/
-		// Add services to the bill
-		/*--------------------------------------------------------------------*/
-		// join the user_services, billing, billing_types, and master_services 
-		// together to find what would be on upcoming bills
-		$query = "SELECT u.id u_id, u.account_number u_ac, ".
-			"u.master_service_id u_msid, u.billing_id u_bid, ".
-			"u.removed u_rem, u.usage_multiple u_usage, ".
-			"b.next_billing_date b_next_billing_date, b.id b_id, ".
-			"b.billing_type b_type, t.id t_id, t.frequency t_freq, ".
-			"t.method t_method, m.service_description m_service_description, ".
-			"m.id m_id, m.pricerate m_pricerate, m.frequency m_freq ".
-			"FROM user_services u ".
-			"LEFT JOIN master_services m ON u.master_service_id = m.id ".
-			"LEFT JOIN billing b ON u.billing_id = b.id ".
-			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
-			"WHERE b.organization_id = '$organization_id' ".
-			"AND t.method <> 'free' AND u.removed <> 'y'";
-
-		$result = $this->db->query($query) or die ("Services Query Failed");
+		$services_by_org = $this->reports_model->services_by_org($organization_id);
 
 		// initialize arrays to keep our results in
 		// make hash/array of master service id and amount being charged
@@ -79,7 +78,7 @@ class Reports extends App_Controller
 		$count_array = array();
 
 		$i = 0; // count the billing services
-		foreach($result->result_array() AS $myresult)
+		foreach($services_by_org AS $myresult)
 		{
 			$billing_id = $myresult['u_bid'];
 			$user_services_id = $myresult['u_id'];
@@ -111,15 +110,12 @@ class Reports extends App_Controller
 		// print each item in the price and count arrays
 		foreach($price_array as $master_service_id_value => $total_billed) 
 		{
-			$query = "SELECT ms.service_description, ms.pricerate, ms.category, ".
-				"ms.frequency FROM master_services ms ".
-				"WHERE ms.id = '$master_service_id_value'";
-			$serviceresult = $this->db->query($query) or die ("Services Query Failed");
+			$servicearray = $this->reports_model->master_service_info($master_service_id_value);
 
 			// count the number of taxes
 			$count = $count_array[$master_service_id_value];
 
-			foreach ($serviceresult->result_array() AS $myserviceresult) 
+			foreach ($servicearray AS $myserviceresult) 
 			{
 				$service_description = $myserviceresult['service_description'];
 				$rate = $myserviceresult['pricerate'];
@@ -315,7 +311,7 @@ class Reports extends App_Controller
 
 
 		// print the table footer
-		echo "<td style=\"border-top: 1px solid black; font-weight: bold;\">$l_total:</td>
+		echo "<td style=\"border-top: 1px solid black; font-weight: bold;\">".lang('total').":</td>
 			<td style=\"border-top: 1px solid black; font-weight: bold;\">&nbsp;</td>
 			<td style=\"border-top: 1px solid black; font-weight: bold;\">&nbsp;</td>
 			<td style=\"border-top: 1px solid black; font-weight: bold;\">$total_customers</td>
@@ -350,7 +346,7 @@ class Reports extends App_Controller
 			"WHERE u.removed <> 'y' AND bt.method <> 'free' ".
 			"AND b.organization_id = '$organization_id' AND m.pricerate > '0' ". 
 			"AND m.frequency > '0' GROUP BY bt.method ORDER BY TotalNumber";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("query failed");
 		echo "<blockquote>";
 		foreach ($result->result_array() AS $myresult) 
 		{
@@ -377,7 +373,7 @@ class Reports extends App_Controller
 			"LEFT JOIN general g ON m.organization_id = g.id ".
 			"WHERE u.removed <> 'y' AND b.organization_id = '$organization_id' ".
 			"AND m.frequency > '0' GROUP BY m.category ORDER BY TotalNumber";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("query failed");
 		echo "<p><b>Service Category Totals: </b><br><i style=\"font-size: 8pt;\">".
 			"total monthly services in each category, includes declined and ".
 			"turned off pending payment, does not include canceled services</i>".
@@ -395,7 +391,7 @@ class Reports extends App_Controller
 		// get the number of customers
 		$query = "SELECT COUNT(*) FROM customer WHERE cancel_date is NULL";
 		$result = $this->db->query($query) or die ("query failed");
-		$myresult = $result->row_array;
+		$myresult = $result->row_array();
 		$numofcustomers = $myresult['COUNT(*)'];
 
 		print "<hr>".lang('totalcustomers').": $numofcustomers<p>";
@@ -406,7 +402,7 @@ class Reports extends App_Controller
 			LEFT JOIN billing b ON b.id = c.default_billing_id 
 			LEFT JOIN billing_types bt ON b.billing_type = bt.id
 			WHERE cancel_date is NULL AND bt.method <> 'free'";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("query failed");
 		$myresult = $result->row_array();
 		$numofcustomers = $myresult['COUNT(*)'];
 

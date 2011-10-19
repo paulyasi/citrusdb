@@ -46,14 +46,14 @@ foreach ($invoicelist as $myresult)
 		<td>$new_charges</td>
 		<td>$total_due</td>
 		<td>$billing_type</td>
-		<td>[<a href=\"$this->url_prefix/index.php/tools/printpreviousinvoice/$billingid/$invoice_number\">".lang('pdf')."</a>]</td>
+		<td>[<a href=\"$this->url_prefix/index.php/tools/billing/printpreviousinvoice/$billingid/$invoice_number\">".lang('pdf')."</a>]</td>
 
-		<td>[<a href=\"$this->url_prefix/index.php/tools/htmlpreviousinvoice/$billingid/$invoice_number\" target=\"_blank\">".lang('html')."</a>]</td>
+		<td>[<a href=\"$this->url_prefix/index.php/tools/billing/htmlpreviousinvoice/$billingid/$invoice_number\" target=\"_blank\">".lang('html')."</a>]</td>
 
-		<td>[<a href=\"$this->url_prefix/index.php/tools/extendedpreviousinvoice/$billingid/$invoice_number\" target=\"_blank\">".lang('extended')."</a>]</td>
+		<td>[<a href=\"$this->url_prefix/index.php/tools/billing/extendedpreviousinvoice/$billingid/$invoice_number\" target=\"_blank\">".lang('extended')."</a>]</td>
 
 		<td>[<a
-		href=\"$this->url_prefix/index.php/tools/emailpreviousinvoice/$billingid/$invoice_number\">".lang('email')."</a>]</td>";
+		href=\"$this->url_prefix/index.php/tools/billing/emailpreviousinvoice/$billingid/$invoice_number\">".lang('email')."</a>]</td>";
 	if ($normal_sum == 0) {
 		echo "<td>[<a href=\"$this->url_prefix/index.php/billing/removeinvoice/$invoice_number\">".lang('remove')."</a>]</td>";
 	} else {
@@ -62,7 +62,7 @@ foreach ($invoicelist as $myresult)
 	// print payment link with prefilled in information if there are new charges to pay to this invoice
 	echo "<td>";
 	if ($new_charges > 0) {
-		echo "<a href=# onclick=\"popupPage('$this->url_prefix/index.php/tools/payment/$invoice_number/$new_charges".
+		echo "<a href=# onclick=\"popupPage('$this->url_prefix/index.php/tools/billing/payment/$invoice_number/$new_charges".
 			"'); return false;\">".lang('enterpayments')."</a>";
 	}
 	echo "</td><tr>";
