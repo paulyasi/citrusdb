@@ -2,7 +2,7 @@
 <html>
 <body bgcolor="#ffffff">
 <h3><?php echo lang('customersummary')?></h3>
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/summary" 
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/summary/view" 
 METHOD="POST" name="form1">
 
 <td><b><?php echo lang('organizationname')?></b></td>
@@ -19,8 +19,7 @@ foreach ($orglist as $myresult) {
 
 <input type="SUBMIT" NAME="submit" value="<?php echo lang('submit')?>"><p>
 
-
-<a href="<?php echo $this->url_prefix?>/index.php/tools/reports/summary/file">
+<a href="<?php echo $this->url_prefix?>/index.php/tools/reports/summary/file/<?php echo $organization_id?>">
 <u class="bluelink"><?php echo lang('download')?></u></a><p>
 
 <table cellpadding=2><td><b><?php echo lang('services')?></b></td>

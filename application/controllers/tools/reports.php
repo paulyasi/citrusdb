@@ -17,9 +17,10 @@ class Reports extends App_Controller
 	 * ------------------------------------------------------------------------
 	 *  sends customer summary to view or summary file for download
 	 *  input: style (view|file)
+	 *  input: organization id (for file generated), optional
 	 * ------------------------------------------------------------------------
 	 */
-	function summary($style)
+	function summary($style, $organization_id = NULL)
 	{
 		// check if the user has manager privileges first
 		$myresult = $this->user_model->user_privileges($this->user);
@@ -34,16 +35,23 @@ class Reports extends App_Controller
 		$this->load->model('settings_model');
 		$this->load->model('general_model');
 
-		// default to org id 1 if none specified
-		if (!$this->input->post('organization_id'))
+		// set org id input or default to org id 1 if none specified
+		if ($organization_id)
 		{
-			$data['organization_id'] = 1;
-			$organization_id = 1;
-		}
+			$dataview['organization_id'] = $organization_id;
+		} 
 		else
 		{
-			$data['organization_id'] = $this->input->post('organization_id');
-			$organization_id = $this->input->post('organization_id');
+			if (!$this->input->post('organization_id'))
+			{
+				$dataview['organization_id'] = 1;
+				$organization_id = 1;
+			}
+			else
+			{
+				$dataview['organization_id'] = $this->input->post('organization_id');
+				$organization_id = $this->input->post('organization_id');
+			}
 		}
 
 		if ($style == 'file')
