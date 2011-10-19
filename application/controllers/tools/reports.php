@@ -176,37 +176,13 @@ class Reports extends App_Controller
 		// and another array to count how many of those taxes are charged
 		$tax_array = array();
 		$count_array = array();
-
-		$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
-			"ts.tax_rate_id ts_rateid, ms.id ms_id, ".
-			"ms.service_description ms_description, ms.pricerate ms_pricerate, ".
-			"ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
-			"tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
-			"tr.percentage_or_fixed tr_percentage_or_fixed, ".
-			"us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
-			"us.removed us_removed, us.account_number us_account_number, ". 
-			"us.usage_multiple us_usage_multiple,  ".
-			"te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
-			"b.id b_id, b.billing_type b_billing_type, ".
-			"t.id t_id, t.frequency t_freq, t.method t_method ".
-			"FROM taxed_services ts ".
-			"LEFT JOIN user_services us ON ".
-			"us.master_service_id = ts.master_services_id ".
-			"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
-			"LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
-			"LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
-			"AND te.tax_rate_id = tr.id ".
-			"LEFT JOIN billing b ON us.billing_id = b.id ".
-			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
-			"WHERE b.organization_id = '$organization_id' ".
-			"AND us.removed <> 'y'";
-
-		$taxresult = $this->db->query($query) or die ("Taxes Query Failed");
+		
+		$taxresults = $this->reports_model->taxes_by_org($organization_id);
 
 		// count the number of taxes
 		$i = 0;
 
-		foreach ($taxresult->result_array() AS $mytaxresult) 
+		foreach ($taxresults AS $mytaxresult) 
 		{
 			$billing_id = $mytaxresult['b_id'];
 			$taxed_services_id = $mytaxresult['ts_id'];
@@ -230,11 +206,7 @@ class Reports extends App_Controller
 				// the tax applies to this customer
 				if ($if_field <> '') 
 				{
-					$ifquery = "SELECT $if_field FROM customer ".
-						"WHERE account_number = '$my_account_number'";
-					$ifresult = $this->db->query($ifquery) or die ("Query Failed");	
-					$myifresult = $ifresult->fields;
-					$checkvalue = $myifresult[0];
+					$checkvalue = $this->customer_model->check_if_field($if_field, $my_account_number);
 				} 
 				else 
 				{

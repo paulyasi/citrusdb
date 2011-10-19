@@ -332,12 +332,7 @@ class Service_model extends CI_Model
 			// to this customer
 			if ($if_field <> '')
 			{
-				$ifquery = "SELECT $if_field FROM customer ".
-					"WHERE account_number = '$account_number'";
-				$DB->SetFetchMode(ADODB_FETCH_NUM);
-				$ifresult = $DB->Execute($ifquery) or die ("$l_queryfailed");
-				$myifresult = $ifresult->fields;
-				$checkvalue = $myifresult[0];
+				$checkvalue = $this->customer_model->check_if_field($if_field, $my_account_number);
 			} else {
 				$checkvalue = TRUE;
 				$if_value = TRUE;
