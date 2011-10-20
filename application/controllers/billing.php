@@ -1278,6 +1278,40 @@ class Billing extends App_Controller
 		}  else permission_error();
 	}
 
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  show the billing history tab content for this customer
+	 * ------------------------------------------------------------------------
+	 */
+	function billinghistory()
+	{
+		$this->load->view('billing/billinghistory_view', $data);
+	}
+
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  show the payment history tab content for this customer
+	 * ------------------------------------------------------------------------
+	 */
+	function paymenthistory()
+	{
+		$this->load->view('billing/paymenthistory_view', $data);
+	}
+
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  show the billing details history tab content for this customer
+	 * ------------------------------------------------------------------------
+	 */
+	function detailhistory()
+	{
+		$this->load->view('billing/detailhistory_view', $data);
+	}
+
 }
 
 /* End of file billing */
