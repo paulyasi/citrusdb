@@ -3207,6 +3207,21 @@ class Billing_Model extends CI_Model
 		$detailresult = $this->db->query($query) or die ("$query $l_queryfailed");	
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  select the ascii armored card and card data from billing data
+	 * ------------------------------------------------------------------------
+	 */
+	function ascii_armor_card($billing_id)
+	{
+		$query = "SELECT encrypted_creditcard_number, creditcard_number, ".
+			"creditcard_expire FROM billing WHERE id = '$billing_id'";
+		$result = $this->db->query($query) or die ("Armor Query Failed");
+	
+		return $result->row_array();	
+	}
+
 }
 
 

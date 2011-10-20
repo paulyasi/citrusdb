@@ -1196,12 +1196,64 @@ class Billing extends App_Controller
 	}
 
 
-	public function asciiarmor()
+	public function asciiarmor($billing_id)
 	{
+		$data = $this->billing_model->ascii_armor_card($billing_id);
+		$data['billing_id'] = $billing_id;
 
 		$this->load->view('billing/asciiarmor_view', $data);
 	}
 
+
+	function saveasciiarmor()
+	{
+		$billing_id = $this->input->post('billing_id');
+		$creditcard_number = $this->input->post('creditcard_number');
+		$creditcard_expire = $this->input->post('creditcard_expire');
+
+		$encrypted = $_POST['encrypted'];
+		$encrypted = safe_value_with_newlines($encrypted);
+
+		// make sure the first lines says -----BEGIN PGP MESSAGE-----
+		// make sure the last line says -----END PGP MESSAGE-----
+
+		$encrypted_lines = explode("\n", $encrypted);
+		$firstline = rtrim($encrypted_lines[0]); // rtrim to remove the newline character at the end
+		$lastline = array_pop($encrypted_lines); // do not rtrim since no newline should be here
+
+		if ($firstline <> "-----BEGIN PGP MESSAGE-----") {
+			echo "\"$firstline\" ";
+			die ("Error first line of ciphertext format");
+		}
+		if ($lastline <> "-----END PGP MESSAGE-----") {
+			echo "\"$lastline\" ";
+			die ("Error last line of  ciphertext format");
+		}
+
+		// make sure each line is no more than 65 characters long (includes newline)
+		foreach ($encrypted_lines as $line) {
+			$length = strlen($line);
+			//echo "$line<br>\n";
+			if ($length > 65) {
+				die ("Error in ciphertext format lines");
+			}
+		}
+
+
+		// update the billing record with the new info
+		$query = "UPDATE billing SET ".
+			"encrypted_creditcard_number = '$encrypted', ".
+			"creditcard_number = '$creditcard_number' ".
+			"WHERE id = '$billing_id' LIMIT 1";
+		$billingupdate = $DB->Execute($query) or die ("$l_queryfailed");
+
+		// add a log entry that this billing record was edited
+		log_activity($DB,$user,$account_number,'edit','creditcard',$billing_id,'success');  
+
+		print "<script language=\"JavaScript\">window.location.href = ".
+			"\"$url_prefix/index.php?load=billing&type=module\";</script>";
+
+	}
 
 	public function nsf()
 	{
