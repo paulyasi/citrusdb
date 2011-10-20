@@ -7,15 +7,15 @@
 target="historyframe"><? echo lang('notes');?></a></b></a></td>
 <td>&nbsp;</td>
 <td bgcolor="#ddeeee" width=100 align=center><b class="smalltabs">
-<a href="<?=$this->url_prefix?>/index.php/billing/billinghistory/<?=$account_number?>" 
+<a href="<?=$this->url_prefix?>/index.php/billing/billinghistory/" 
 target="historyframe"><? echo lang('billing')?></a></b></td>
 <td>&nbsp;</td>
 <td bgcolor="#eedddd" width=100 align=center><b class="smalltabs">
-<a href="<?=$this->url_prefix?>/index.php/billing/paymenthistory/<?=$account_number?>" 
+<a href="<?=$this->url_prefix?>/index.php/billing/paymenthistory/" 
 target="historyframe"><? echo lang('payments');?></a></b></td>
 <td>&nbsp;</td>
 <td bgcolor="#dddddd" width=100 align=center><b class="smalltabs">
-<a href="<?=$this->url_prefix?>/index.php/billing/detailhistory/<?=$account_number?>" 
+<a href="<?=$this->url_prefix?>/index.php/billing/detailhistory/" 
 target="historyframe"><? echo lang('billing') . " " . lang('details');?></a></b></td>
 </table>
 </td><tr>

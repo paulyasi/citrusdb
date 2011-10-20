@@ -3240,6 +3240,166 @@ class Billing_Model extends CI_Model
 					$creditcard_expire, $billing_id)) or die ("query failed");
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get some billing history data for history tab
+	 * ------------------------------------------------------------------------
+	 */
+	function billinghistory($account_number)
+	{
+		$query = "SELECT h.id h_id, h.billing_id h_bid, h.billing_date h_bdate, 
+			h.billing_type h_btype, h.from_date h_from, h.to_date h_to, h.total_due 
+			h_total, h.new_charges h_new_charges,
+			h.payment_due_date h_payment_due_date,
+			c.account_number c_acctnum, b.account_number b_acctnum, b.id b_id 
+				FROM billing_history h 
+				LEFT JOIN billing b ON h.billing_id = b.id  
+				LEFT JOIN customer c ON b.account_number = c.account_number
+				WHERE b.account_number = ? ORDER BY h.id DESC LIMIT 24";
+		
+		$result = $this->db->query($query, array($account_number)) 
+			or die ("query failed");
+	
+		return $result->result_array();
+	}	
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get all billing history data for history tab
+	 * ------------------------------------------------------------------------
+	 */
+	function allbillinghistory($account_number)
+	{
+		$query = "SELECT h.id h_id, h.billing_id h_bid, h.billing_date h_bdate, 
+			h.billing_type h_btype, h.from_date h_from, h.to_date h_to, h.total_due 
+			h_total, h.new_charges h_new_charges,
+			h.payment_due_date h_payment_due_date,
+			c.account_number c_acctnum, b.account_number b_acctnum, b.id b_id 
+				FROM billing_history h 
+				LEFT JOIN billing b ON h.billing_id = b.id  
+				LEFT JOIN customer c ON b.account_number = c.account_number
+				WHERE b.account_number = ? ORDER BY h.id DESC";
+		
+		$result = $this->db->query($query, array($account_number)) 
+			or die ("query failed");
+	
+		return $result->result_array();
+	}	
+
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get some payment history data for history tab
+	 * ------------------------------------------------------------------------
+	 */
+	function paymenthistory($account_number)
+	{
+		$query = "SELECT p.id p_id, p.creation_date p_cdate, p.payment_type ".
+			"p_payment_type, p.status p_status, p.billing_id p_billing_id, ".
+			"p.invoice_number p_invoice_number, ".
+			"p.billing_amount p_billing_amount, p.response_code p_response_code, ".
+			"p.avs_response p_avs_response, p.check_number p_check_number, ".
+			"c.account_number c_acctnum, p.creditcard_number p_creditcard_number, ".
+			"p.creditcard_expire p_creditcard_expire, b.account_number b_acctnum, ".
+			"b.id b_id ".
+			"FROM payment_history p ".
+			"LEFT JOIN billing b ON p.billing_id = b.id ".
+			"LEFT JOIN customer c ON b.account_number = c.account_number ".
+			"WHERE b.account_number = ? ORDER BY p.id DESC LIMIT 24";
+		$result = $this->db->query($query, array($account_number)) or die ("$l_queryfailed");
+
+		return $result->result_array();
+	}
+
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get all payment history data for history tab
+	 * ------------------------------------------------------------------------
+	 */
+	function allpaymenthistory($account_number)
+	{
+		$query = "SELECT p.id p_id, p.creation_date p_cdate, p.payment_type ".
+			"p_payment_type, p.status p_status, p.billing_id p_billing_id, ".
+			"p.invoice_number p_invoice_number, ".
+			"p.billing_amount p_billing_amount, p.response_code p_response_code, ".
+			"p.avs_response p_avs_response, p.check_number p_check_number, ".
+			"c.account_number c_acctnum, p.creditcard_number p_creditcard_number, ".
+			"p.creditcard_expire p_creditcard_expire, b.account_number b_acctnum, ".
+			"b.id b_id ".
+			"FROM payment_history p ".
+			"LEFT JOIN billing b ON p.billing_id = b.id ".
+			"LEFT JOIN customer c ON b.account_number = c.account_number ".
+			"WHERE b.account_number = ? ORDER BY p.id DESC";
+		$result = $this->db->query($query, array($account_number)) or die ("$l_queryfailed");
+
+		return $result->result_array();
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get some detail history data for history tab
+	 * ------------------------------------------------------------------------
+	 */
+	function detailhistory($account_number)
+	{
+		$query = "SELECT d.id d_id, d.billing_id d_billing_id, ".
+			"d.creation_date d_creation_date, d.user_services_id d_user_services_id, ".
+			"d.taxed_services_id d_taxed_services_id, d.invoice_number d_invoice_number, ".
+			"d.billed_amount d_billed_amount, d.paid_amount d_paid_amount, ".
+			"d.refund_amount d_refund_amount, d.refunded d_refunded, ".
+			"d.rerun d_rerun, d.original_invoice_number d_original_invoice, ".
+			"m.service_description m_description, r.description r_description, ".
+			"bh.from_date bh_from_date, bh.to_date bh_to_date, ".
+			"bh.payment_due_date bh_due_date, ph.creation_date ph_creation_date ".
+			"FROM billing_details d ".
+			"LEFT JOIN billing b ON b.id = d.billing_id ".
+			"LEFT JOIN billing_history bh ON bh.id = d.original_invoice_number ".
+			"LEFT JOIN payment_history ph ON ph.id = d.payment_history_id ".
+			"LEFT JOIN user_services u ON u.id = d.user_services_id ".
+			"LEFT JOIN master_services m ON m.id = u.master_service_id ".
+			"LEFT JOIN taxed_services t ON t.id = d.taxed_services_id ".
+			"LEFT JOIN tax_rates r ON t.tax_rate_id = r.id ".
+			"WHERE b.account_number = '$account_number' ORDER BY d.id DESC LIMIT 400";
+		$result = $this->db->query($query) or die ("$query $l_queryfailed");
+
+		return $result->result_array();
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get all detail history data for history tab
+	 * ------------------------------------------------------------------------
+	 */
+	function alldetailhistory($account_number)
+	{
+		$query = "SELECT d.id d_id, d.billing_id d_billing_id, ".
+			"d.creation_date d_creation_date, d.user_services_id d_user_services_id, ".
+			"d.taxed_services_id d_taxed_services_id, d.invoice_number d_invoice_number, ".
+			"d.billed_amount d_billed_amount, d.paid_amount d_paid_amount, ".
+			"d.refund_amount d_refund_amount, d.refunded d_refunded, ".
+			"d.rerun d_rerun, d.original_invoice_number d_original_invoice, ".
+			"m.service_description m_description, r.description r_description, ".
+			"bh.from_date bh_from_date, bh.to_date bh_to_date, ".
+			"bh.payment_due_date bh_due_date, ph.creation_date ph_creation_date ".
+			"FROM billing_details d ".
+			"LEFT JOIN billing b ON b.id = d.billing_id ".
+			"LEFT JOIN billing_history bh ON bh.id = d.original_invoice_number ".
+			"LEFT JOIN payment_history ph ON ph.id = d.payment_history_id ".
+			"LEFT JOIN user_services u ON u.id = d.user_services_id ".
+			"LEFT JOIN master_services m ON m.id = u.master_service_id ".
+			"LEFT JOIN taxed_services t ON t.id = d.taxed_services_id ".
+			"LEFT JOIN tax_rates r ON t.tax_rate_id = r.id ".
+			"WHERE b.account_number = '$account_number' ORDER BY d.id DESC";
+		$result = $this->db->query($query) or die ("$query $l_queryfailed");
+
+		return $result->result_array();
+	}
+
 }
 
 

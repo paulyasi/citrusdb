@@ -293,13 +293,9 @@ class Billing extends App_Controller
 			}
 
 			// check if the user has manager privileges
-			$result = $this->db->get_where('user', array('username' => $this->user), 1);
-			//$query = "SELECT * FROM user WHERE username='$user'";
-			//$result = $DB->Execute($query) or die ("$l_queryfailed");
-			$myresult = $result->row();
-			$manager = $myresult->manager;
+			$userprivileges = $this->user_model->user_privileges($this->user);
 
-			if ($dependent == false OR $manager == 'y') {
+			if ($dependent == false OR $user_privileges['manager'] == 'y') {
 				// show the regular cancel form for non carrier dependent and for managers
 				// ask if they are sure they want to cancel this customer
 				print "<br><br>";
@@ -1198,6 +1194,9 @@ class Billing extends App_Controller
 
 	public function asciiarmor($billing_id)
 	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
 		$data = $this->billing_model->get_ascii_armor($billing_id);
 		$data['billing_id'] = $billing_id;
 
@@ -1285,30 +1284,70 @@ class Billing extends App_Controller
 	 *  show the billing history tab content for this customer
 	 * ------------------------------------------------------------------------
 	 */
-	function billinghistory()
+	function billinghistory($all = NULL)
 	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		if($all)
+		{
+			$data['history'] = $this->billing_model->allbillinghistory($this->account_number);
+
+		}
+		else
+		{
+			$data['history'] = $this->billing_model->billinghistory($this->account_number);
+		}
+
 		$this->load->view('billing/billinghistory_view', $data);
 	}
 
-	
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  show the payment history tab content for this customer
 	 * ------------------------------------------------------------------------
 	 */
-	function paymenthistory()
+	function paymenthistory($all = NULL)
 	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		if($all)
+		{
+			$data['history'] = $this->billing_model->allpaymenthistory($this->account_number);
+		}
+		else
+		{
+			$data['history'] = $this->billing_model->paymenthistory($this->account_number);
+		}
+
+		// check user privileges to see if we show them things like nsf or delete payment links
+		$data['userprivileges'] = $this->user_model->user_privileges($this->user);
+		
 		$this->load->view('billing/paymenthistory_view', $data);
 	}
 
-	
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  show the billing details history tab content for this customer
 	 * ------------------------------------------------------------------------
 	 */
-	function detailhistory()
+	function detailhistory($all = NULL)
 	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		if($all)
+		{
+			$data['history'] = $this->billing_model->alldetailhistory($this->account_number);
+		}
+		else
+		{
+			$data['history'] = $this->billing_model->detailhistory($this->account_number);
+		}
+
 		$this->load->view('billing/detailhistory_view', $data);
 	}
 
