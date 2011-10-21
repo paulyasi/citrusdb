@@ -370,10 +370,44 @@ class Reports extends App_Controller
 	 */
 	function revenue()
 	{
+		// load settings and general
+		$this->load->model('settings_model');
+		$this->load->model('general_model');
+
+		// make sure they have manager privileges
+		$myresult = $this->user_model->user_privileges($this->user);
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+		
+		$empty_day_1  = date("Y-m-d", mktime(0, 0, 0, date("m")-1  , date("d"), date("Y")));
+		$empty_day_2  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
+
+		$day1 = $this->input->post('day1');
+		$day2 = $this->input->post('day2');
+		$org_id = $this->input->post('organization_id');
+
+		// if nothing was entered for the day, then put in the defaults month period
+		if ($day1 =='') { $day1 = $empty_day_1; }
+		if ($day2 =='') { $day2 = $empty_day_2; }
+
+		$data['day1'] = $day1;
+		$data['day2'] = $day2;
+
+		$data['orglist'] = $this->general_model->list_organizations();
+		$data['servicerevenue'] = $this->reports_model->servicerevenue($day1, $day2, $org_id);
+		$data['creditrevenue'] = $this->reports_model->creditrevenue($day1, $day2, $org_id);
+		$data['refundrevenue'] = $this->reports_model->refundrevenue($day1, $day2, $org_id);
+		$data['discountrevenue'] = $this->reports_model->discountrevenue($day1, $day2, $org_id);
+		$data['taxrevenue'] = $this->reports_model->taxrevenue($day1, $day2);
+		$data['taxrefunds'] = $this->reports_model->taxrefunds($day1, $day2);
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/revenue_view');
+		$this->load->view('tools/reports/revenue_view', $data);
 	}
 
 	function refunds()

@@ -11,9 +11,9 @@
 class Reports_Model extends CI_Model
 {
 	function __construct()
-    {
-        parent::__construct();
-    }	
+	{
+		parent::__construct();
+	}	
 
 
 	function services_by_org($organization_id)
@@ -85,7 +85,7 @@ class Reports_Model extends CI_Model
 
 		return $serviceresult->result_array();
 	}
-			
+
 	function taxed_services($id)
 	{
 		$query = "SELECT tr.description, tr.rate, ms.service_description, ".
@@ -166,5 +166,141 @@ class Reports_Model extends CI_Model
 		$result = $this->db->query($query) or die ("query failed");
 		$myresult = $result->row_array();
 		return $myresult['COUNT(*)'];
+	}
+
+
+	function servicerevenue($day1, $day2, $org_id)
+	{
+		// show payments for a specified date range according to 
+		// their service category
+		$query = "SELECT ROUND(SUM(bd.paid_amount),2) AS CategoryTotal, 
+			COUNT(DISTINCT us.id) As ServiceCount, 
+			ms.category service_category, 
+			ms.service_description, service_description,  
+			g.org_name g_org_name 
+				FROM billing_details bd 
+				LEFT JOIN user_services us ON us.id = bd.user_services_id 
+				LEFT JOIN master_services ms ON us.master_service_id = ms.id 
+				LEFT JOIN general g ON ms.organization_id = g.id 
+				WHERE bd.creation_date BETWEEN ? AND ? 
+				AND bd.taxed_services_id IS NULL AND g.id = ? 
+				GROUP BY ms.id ORDER BY ms.category";
+
+		$result = $this->db->query($query, array($day1, $day2, $org_id)) or die ("query failed");
+
+		return $result->result_array();
+
+	}
+
+
+	function creditrevenue($day1, $day2, $org_id)
+	{
+		// show credits for a specified date range according to 
+		// their credit_options description
+		$query = "SELECT ROUND(SUM(bd.paid_amount),2) AS CategoryTotal, 
+			COUNT(DISTINCT us.id) As ServiceCount, 
+			cr.description credit_description, 
+			g.org_name g_org_name 
+				FROM billing_details bd
+				LEFT JOIN user_services us ON us.id = bd.user_services_id 
+				LEFT JOIN master_services ms ON us.master_service_id = ms.id 
+				LEFT JOIN credit_options cr ON cr.user_services = us.id
+				LEFT JOIN general g ON g.id = ms.organization_id 
+				WHERE bd.creation_date BETWEEN ? AND ? 
+				AND bd.taxed_services_id IS NULL AND g.id = ? 
+				AND ms.id = 1  
+				GROUP BY cr.description"; 
+
+		$result = $this->db->query($query, array($day1, $day2, $org_id)) or die ("query failed");
+		
+		return $result->result_array();
+	}
+
+
+	function refundrevenue($day1, $day2, $org_id)
+	{
+		// show service refunds for a specified date range according to 
+		// their refund_date
+		$query = "SELECT ROUND(SUM(bd.refund_amount),2) AS CategoryTotal,
+			COUNT(DISTINCT us.id) As ServiceCount,  
+			ms.category service_category, 
+			ms.service_description service_description, 
+			g.org_name g_org_name    
+				FROM billing_details bd
+				LEFT JOIN user_services us 
+				ON us.id = bd.user_services_id 
+				LEFT JOIN master_services ms 
+				ON us.master_service_id = ms.id
+				LEFT JOIN general g 
+				ON g.id = ms.organization_id  
+				WHERE bd.refund_date BETWEEN ? AND ? 
+				AND bd.taxed_services_id IS NULL and g.id = ? 
+				GROUP BY ms.id"; 
+
+		$result = $this->db->query($query, array($day1, $day2, $org_id)) or die ("query failed");
+		
+		return $result->result_array();
+
+	}
+
+
+	function discountrevenue($day1, $day2, $org_id)
+	{
+		// show discounts entered for a specified date range
+		$query = "SELECT ph.billing_amount, ph.invoice_number, ".
+			"ph.creation_date, bi.name, bi.company ".
+			"FROM payment_history ph ".
+			"LEFT JOIN billing bi ON ph.billing_id = bi.id ".
+			"WHERE ph.creation_date BETWEEN ? AND ? ".
+			"AND ph.payment_type = 'discount' AND bi.organization_id = ?";
+
+		$result = $this->db->query($query, array($day1, $day2, $org_id)) or die ("query failed");
+		
+		return $result->result_array();
+	}
+
+	function taxrevenue($day1, $day2)
+	{
+		// show taxes for a specified date range according to
+		// their tax rate description
+		$query = "SELECT ROUND(SUM(bd.paid_amount),2)
+			AS CategoryTotal,
+			   COUNT(DISTINCT bd.id) As ServiceCount,
+			   tr.description tax_description
+				   FROM billing_details bd
+				   LEFT JOIN taxed_services ts
+				   ON bd.taxed_services_id = ts.id
+				   LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id
+				   WHERE bd.creation_date BETWEEN ? AND ? 
+				   AND bd.taxed_services_id IS NOT NULL
+				   GROUP BY tr.id";
+
+		$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+		
+		return $result->result_array();
+
+	}
+
+
+	function taxrefunds($day1, $day2)
+	{
+		// show tax refunds for a specified date range according to 
+		// their tax rate description
+		$query = "SELECT ROUND(SUM(bd.refund_amount),2) 
+			AS CategoryTotal,
+			   COUNT(DISTINCT bd.id) As ServiceCount,  
+			   tr.description tax_description  
+				   FROM billing_details bd 
+				   LEFT JOIN taxed_services ts 
+				   ON bd.taxed_services_id = ts.id 
+				   LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
+				   WHERE bd.refund_date BETWEEN ? AND ? 
+				   AND bd.taxed_services_id IS NOT NULL 
+				   GROUP BY tr.id";
+
+		$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+		
+		return $result->result_array();
+
 	}
 }
