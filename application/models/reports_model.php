@@ -303,4 +303,18 @@ class Reports_Model extends CI_Model
 		return $result->result_array();
 
 	}
+
+
+	function refunds($organization_id, $day1, $day2)
+	{
+		$query = "SELECT ph.creation_date, ph.billing_id, ph.creditcard_number, ".
+			"ph.billing_amount, bi.name, bi.account_number FROM payment_history ph  ".
+			"LEFT JOIN billing bi ON bi.id = ph.billing_id ".
+			"WHERE ph.status = 'credit' AND bi.organization_id = ? ".
+			"AND ph.creation_date BETWEEN ? AND ?";
+		$result = $this->db->query($query, array($organization_id, $day1, $day2)) or die ("query failed");
+		
+		return $result->result_array();
+	}
+
 }

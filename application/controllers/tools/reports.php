@@ -412,10 +412,41 @@ class Reports extends App_Controller
 
 	function refunds()
 	{
+		// load settings and general
+		$this->load->model('settings_model');
+		$this->load->model('general_model');
+
+		// make sure they have manager privileges
+		$myresult = $this->user_model->user_privileges($this->user);
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+		
+		$empty_day_1  = date("Y-m-d", mktime(0, 0, 0, date("m")-1  , date("d"), date("Y")));
+		$empty_day_2  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
+
+		$day1 = $this->input->post('day1');
+		$day2 = $this->input->post('day2');
+		$organization_id = $this->input->post('organization_id');
+
+		// if nothing was entered for the day, then put in the defaults month period
+		if ($day1 =='') { $day1 = $empty_day_1; }
+		if ($day2 =='') { $day2 = $empty_day_2; }
+		if ($organization_id =='') { $organization_id = 1; }
+
+		$data['day1'] = $day1;
+		$data['day2'] = $day2;
+
+		$data['orglist'] = $this->general_model->list_organizations();
+		$data['organization_name'] = $this->general_model->get_org_name($organization_id);
+		$data['refunds'] = $this->reports_model->refunds($organization_id, $day1, $day2);
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/refunds_view');
+		$this->load->view('tools/reports/refunds_view', $data);
 	}
 
 

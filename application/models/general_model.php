@@ -30,4 +30,18 @@ class General_Model extends CI_Model
 		return $result->result_array();
 	}
 
+	
+	/*
+	 * -------------------------------------------------------------------------
+	 *  return the list of name of the organization
+	 * -------------------------------------------------------------------------
+	 */
+	function get_org_name($id)
+	{
+		// get the organization info
+		$query = "SELECT org_name FROM general WHERE id = $id LIMIT 1";
+		$orgresult = $this->db->query($query, array($id)) or die ("queryfailed");
+		$myorgresult = $orgresult->row_array();
+		return $myorgresult['org_name']; 
+	}
 }
