@@ -176,7 +176,7 @@ class Reports extends App_Controller
 		// and another array to count how many of those taxes are charged
 		$tax_array = array();
 		$count_array = array();
-		
+
 		$taxresults = $this->reports_model->taxes_by_org($organization_id);
 
 		// count the number of taxes
@@ -320,7 +320,7 @@ class Reports extends App_Controller
 
 		// initialize billing methods dataview
 		$dataview['billing_methods'] = '';
-		
+
 		$results = $this->reports_model->total_services($organization_id);
 
 		foreach ($results AS $myresult) 
@@ -334,7 +334,7 @@ class Reports extends App_Controller
 		$dataview['service_categories'] = '';
 
 		$results = $this->reports_model->services_in_categories($organization_id);
-		
+
 		foreach ($results as $myresult) 
 		{
 			$count = $myresult['TotalNumber'];
@@ -381,7 +381,7 @@ class Reports extends App_Controller
 			echo lang('youmusthaveadmin')."<br>";
 			exit; 
 		}
-		
+
 		$empty_day_1  = date("Y-m-d", mktime(0, 0, 0, date("m")-1  , date("d"), date("Y")));
 		$empty_day_2  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
 
@@ -423,7 +423,7 @@ class Reports extends App_Controller
 			echo lang('youmusthaveadmin')."<br>";
 			exit; 
 		}
-		
+
 		$empty_day_1  = date("Y-m-d", mktime(0, 0, 0, date("m")-1  , date("d"), date("Y")));
 		$empty_day_2  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
 
@@ -452,6 +452,62 @@ class Reports extends App_Controller
 
 	function pastdue()
 	{
+		// load settings and general
+		$this->load->model('settings_model');
+		$this->load->model('general_model');
+
+		// make sure they have manager privileges
+		$myresult = $this->user_model->user_privileges($this->user);
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$organization_id = $this->input->post('organization_id');
+		$changestatus = $this->input->post('changestatus');
+		$viewstatus = $this->input->post('viewstatus');
+		$history_date = $this->input->post('history_date');
+		$history_date2 = $this->input->post('history_date2');
+		$billingid = $this->input->post('billingid');
+
+		if ($organization_id == '') { $organization_id = 1; }
+		if ($viewstatus == '') { $viewstatus = 'pastdue'; }
+
+		// change the status if changestatus is input
+		switch ($changestatus) 
+		{
+			case 'waiting':
+				$this->billing_model->waiting_status($billingid);
+				break;
+
+			case 'turnedoff':
+				$this->billing_model->turnedoff_status($billingid);
+				break;
+
+			case 'canceled':
+				$this->billing_model->canceled_status($billingid);
+				break;
+
+			case 'cancelwfee':
+				$this->billing_model->cancelwfee_status($billingid);
+				break;
+
+			case 'collections':
+				$this->billing_model->collections_status($billingid);
+				break;
+		}
+
+		$data['organization_id'] = $organization_id;
+		$data['changestatus'] = $changestatus;
+		$data['viewstatus'] = $viewstatus;
+		$data['history_date'] = $history_date;
+		$data['history_date2'] = $history_date2;
+		$data['billingid'] = $billingid;
+
+		$data['org_name'] = $this->general_model->get_org_name($organization_id);
+		$data['recentpayments'] = $this->reports_model->recentpayments($organization_id, $viewstatus);
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 

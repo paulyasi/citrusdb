@@ -317,4 +317,121 @@ class Reports_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	function recentpayments($organization_id, $viewstatus)
+	{
+		// get the most recent payment history id for each billing id in that org
+		$query = "SELECT max(ph.id) my_id, ph.billing_id my_bid ".
+			"FROM payment_history ph ".
+			"LEFT JOIN billing b ON b.id = ph.billing_id ".
+			"WHERE b.organization_id = ? ".
+			"GROUP BY ph.billing_id ORDER BY ph.billing_id";
+
+		$result = $this->db->query($query, array($organization_id)) or die ("recentpayments query failed");
+
+		// initialize for multidimensional result array
+		$i = 0;
+		$payments = array();
+
+		// go through each one and find one with status we want to show
+		foreach ($result->result_array() AS $myresult) 
+		{
+			$recentpaymentid = $myresult['my_id'];
+
+			if (($viewstatus == 'authorized') OR ($viewstatus == 'declined') 
+					OR ($viewstatus == 'pending') OR ($viewstatus == 'turnedoff') 
+					OR ($viewstatus == 'pastdue') OR ($viewstatus == 'noticesent')
+					OR ($viewstatus == 'waiting')) 
+			{
+				// don't include past due exempts in this listing
+				$query = "SELECT ph.billing_id, b.account_number, b.name, b.company, ".
+					"ph.status, bd.invoice_number, bh.payment_due_date, bh.from_date, bh.to_date, c.cancel_date ".
+					"FROM payment_history ph ".
+					"LEFT JOIN billing b ON b.id = ph.billing_id ".
+					"LEFT JOIN billing_details bd ON bd.billing_id = b.id ".
+					"LEFT JOIN billing_history bh ON bd.invoice_number = bh.id ".
+					"LEFT JOIN customer c ON c.account_number = b.account_number ".
+					"WHERE ph.id = $recentpaymentid AND b.pastdue_exempt <> 'y' AND ".
+					"c.cancel_date IS NULL AND ".
+					"ph.status = '$viewstatus' AND bd.billed_amount > bd.paid_amount LIMIT 1";
+			} 
+			elseif (($viewstatus == 'cancelwfee') OR ($viewstatus == 'canceled') 
+					OR ($viewstatus == 'collections')) 
+			{
+				// ok to include pastdue exempt accounts in this listing
+				$query = "SELECT ph.billing_id, b.account_number, b.name, b.company, ".
+					"ph.status, bd.invoice_number, bh.payment_due_date, bh.from_date, bh.to_date, c.cancel_date ".
+					"FROM payment_history ph ".
+					"LEFT JOIN billing b ON b.id = ph.billing_id ".
+					"LEFT JOIN billing_details bd ON bd.billing_id = b.id ".
+					"LEFT JOIN billing_history bh ON bd.invoice_number = bh.id ".
+					"LEFT JOIN customer c ON c.account_number = b.account_number ".
+					"WHERE ph.id = $recentpaymentid AND ".
+					"ph.status = '$viewstatus' AND bd.billed_amount > bd.paid_amount LIMIT 1";
+			} 
+			elseif ($viewstatus == 'pastdueexempt') 
+			{
+				$query = "SELECT ph.billing_id, b.account_number, b.name, b.company, ".
+					"ph.status, bd.invoice_number, bh.payment_due_date, bh.from_date, bh.to_date, c.cancel_date ".
+					"FROM payment_history ph ".
+					"LEFT JOIN billing b ON b.id = ph.billing_id ".
+					"LEFT JOIN billing_details bd ON bd.billing_id = b.id ".
+					"LEFT JOIN billing_history bh ON bd.invoice_number = bh.id ".
+					"LEFT JOIN customer c ON c.account_number = b.account_number ".
+					"WHERE ph.id = $recentpaymentid AND b.pastdue_exempt = 'y' ".
+					"AND c.cancel_date IS NULL AND bd.billed_amount > bd.paid_amount LIMIT 1";	
+			}
+
+			$paymentresult = $this->db->query($query) or die ("paymentresult $l_queryfailed");
+			foreach ($paymentresult->result_array() AS $mypaymentresult) 
+			{    
+				$account_number = $mypaymentresult['account_number'];
+				$billing_id = $mypaymentresult['billing_id'];    
+				$name = $mypaymentresult['name'];
+				$company = $mypaymentresult['company'];
+				$status = $mypaymentresult['status'];
+				$invoice_number = $mypaymentresult['invoice_number'];
+				$from_date = $mypaymentresult['from_date'];
+				$to_date = $mypaymentresult['to_date'];
+				$payment_due_date = $mypaymentresult['payment_due_date'];
+
+				// TODO: select unique categories of service for this billing id from
+				$categorylist = "";
+				$query = "SELECT DISTINCT m.category FROM user_services u ".
+					"LEFT JOIN master_services m ON u.master_service_id = m.id ".
+					"WHERE u.billing_id = '$billing_id' AND removed <> 'y'";
+				$categoryresult = $DB->Execute($query) or die ("category $l_queryfailed");
+				while($mycategoryresult = $categoryresult->FetchRow()) 
+				{
+					$categorylist .= $mycategoryresult['category'];
+					$categorylist .= "<br>";
+				}
+
+				$pastcharges = sprintf("%.2f",total_pastdueitems($DB, $billing_id));
+
+				// put the data in an array to return
+				$payments[$i] = array(
+						'account_number' => $account_number,
+						'billing_id' => $billing_id,
+						'name' => $name,
+						'company' => $company,
+						'status' => $status,
+						'invoice_number' => $invoice_number,
+						'from_date' => $from_date,
+						'to_date' => $to_date,
+						'payment_due_date' => $payment_due_date,
+						'categorylist' => $categorylist,
+						'pastcharges' => $pastcharges
+						);
+
+				$i++;
+
+			}
+
+		}
+
+		return $payments;
+
+	}
+
 }
