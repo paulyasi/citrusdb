@@ -516,4 +516,18 @@ class Reports_Model extends CI_Model
 
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the list of services from the master_services table
+	 * ------------------------------------------------------------------------
+	 */
+	function listservices()
+	{
+		$query = "SELECT * FROM master_services ORDER BY service_description";
+		$result = $this->db->query($query) or die ("queryfailed");
+	
+		return $result->result_array();
+	}
+
 }

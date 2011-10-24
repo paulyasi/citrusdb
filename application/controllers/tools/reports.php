@@ -579,12 +579,25 @@ class Reports extends App_Controller
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  show the menu that lets you pick services to report on
+	 * ------------------------------------------------------------------------
+	 */
 	function services()
 	{
+		$data['listservices'] = $this->reports_model->listservices();
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/services_view');
+		$this->load->view('tools/reports/services_view', $data);
+	}
+
+
+	function showservices()
+	{
+
 	}
 
 
