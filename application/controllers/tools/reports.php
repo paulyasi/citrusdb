@@ -507,11 +507,12 @@ class Reports extends App_Controller
 
 		$data['org_name'] = $this->general_model->get_org_name($organization_id);
 		$data['recentpayments'] = $this->reports_model->recentpayments($organization_id, $viewstatus);
+		$data['orglist'] = $this->general_model->list_organizations();
 
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/pastdue_view');
+		$this->load->view('tools/reports/pastdue_view', $data);
 	}
 
 

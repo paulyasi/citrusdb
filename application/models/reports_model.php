@@ -400,14 +400,14 @@ class Reports_Model extends CI_Model
 				$query = "SELECT DISTINCT m.category FROM user_services u ".
 					"LEFT JOIN master_services m ON u.master_service_id = m.id ".
 					"WHERE u.billing_id = '$billing_id' AND removed <> 'y'";
-				$categoryresult = $DB->Execute($query) or die ("category $l_queryfailed");
-				while($mycategoryresult = $categoryresult->FetchRow()) 
+				$categoryresult = $this->db->query($query) or die ("category $l_queryfailed");
+				foreach ($categoryresult->result_array() AS $mycategoryresult) 
 				{
 					$categorylist .= $mycategoryresult['category'];
 					$categorylist .= "<br>";
 				}
 
-				$pastcharges = sprintf("%.2f",total_pastdueitems($DB, $billing_id));
+				$pastcharges = sprintf("%.2f",$this->billing_model->total_pastdueitems($billing_id));
 
 				// put the data in an array to return
 				$payments[$i] = array(

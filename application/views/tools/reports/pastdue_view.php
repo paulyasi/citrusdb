@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 
-<FORM ACTION="<?php echo $this->url_prefix?>index.php/tools/reports/pastdue" METHOD="POST" name="form1"> 
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/pastdue" METHOD="POST" name="form1"> 
 
 <td><b><?php echo lang('organizationname')?></b></td>
 <td><select name="organization_id">
@@ -79,36 +79,36 @@ switch ($viewstatus)
 foreach ($recentpayments as $payment)
 {
 ?>
-	<tr style="background: #ccc;"><?php echo $payment['status']?></td>
-	<td><a href="index.php/view/account/<?php echo $payment['account_number']?>
-	target="_blank">$payment['account_number']</a></td>
-	<td>$payment['invoice_number']</td>
-	<td>$payment['name']</td>
-	<td>$payment['from_date']</td>
-	<td>$payment['to_date']</td>
-	<td>$payment['pastcharges']</td>
-	<td>$payment['payment_due_date']</td>
-	<td>$payment['categorylist']</td>
+	<tr style="background: #ccc;"><td><?php echo $payment['status']?></td>
+	<td><a href="<?php echo $this->url_prefix?>/index.php/view/account/<?php echo $payment['account_number']?>"
+	target="_blank"><?php echo $payment['account_number']?></a></td>
+	<td><?php echo $payment['invoice_number']?></td>
+	<td><?php echo $payment['name']?></td>
+	<td><?php echo $payment['from_date']?></td>
+	<td><?php echo $payment['to_date']?></td>
+	<td><?php echo $payment['pastcharges']?></td>
+	<td><?php echo $payment['payment_due_date']?></td>
+	<td><?php echo $payment['categorylist']?></td>
 
-	<td><form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>/index.php/tools/pastdue" method=post>
+	<td><form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>/index.php/tools/reports/pastdue" method=post>
 
 	<select name="changestatus" style="font-size: 9px;">
 	<option value=""><?php lang('choose')?></option>
-	<option value="collections">$l_collections</option>
-	<option value="turnedoff">$l_turnedoff</option>
-	<option value="canceled">$l_canceled</option>
-	<option value="cancelwfee">$l_cancelwithfee</option>
-	<option value="waiting">$l_waiting</option>
+	<option value="collections"><?php echo lang('collections')?></option>
+	<option value="turnedoff"><?php echo lang('turnedoff')?></option>
+	<option value="canceled"><?php echo lang('canceled')?></option>
+	<option value="cancelwfee"><?php echo lang('cancelwithfee')?></option>
+	<option value="waiting"><?php echo lang('waiting')?></option>
 	</select>
 
-	<input type=hidden name=billingid value=$payment['billing_id']>
-	<input type=hidden name=organization_id value=$payment['organization_id']>
-	<input type=hidden name=viewstatus value=$payment['viewstatus']>
-	<input type="SUBMIT" NAME="submit" value="<?php lang('submit')?>" class="smallbutton"> 
+	<input type=hidden name=billingid value="<?php echo $payment['billing_id']?>">
+	<input type=hidden name=organization_id value="<?php echo $organization_id?>">
+	<input type=hidden name=viewstatus value="<?php echo $viewstatus?>">
+	<input type="SUBMIT" NAME="submit" value="<?php echo lang('submit')?>" class="smallbutton"> 
 	</form></td>
 	</tr>
+<?php
 }
-
 ?>
 </table>
 </body>
