@@ -434,4 +434,86 @@ class Reports_Model extends CI_Model
 
 	}
 
+
+	function paymentstatus($day1, $day2, $organization_id, $showpaymenttype)
+	{
+		// get the organization info
+		// special id = all queries all organizations combined
+		if ($organization_id == "all") 
+		{
+			$query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
+				"LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
+				"BETWEEN ? AND ? AND p.payment_type = ?";
+
+			$result = $this->db->query($query, array($day1, $day2, $showpaymenttype)) or die ("queryfailed");
+		} 
+		else 
+		{
+			$query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
+				"LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
+				"BETWEEN ? AND ? AND b.organization_id = ? ".
+				"AND p.payment_type = ?";
+
+			$result = $this->db->query($query, array($day1, $day2, $organization_id, $showpaymenttype)) 
+			or die ("$l_queryfailed");
+		}
+
+		return $result->result_array();
+	}
+
+
+	function distinctdeclined($day1, $day2, $organization_id)
+	{
+		if ($organization_id == "all") 
+		{
+			$query = "SELECT DISTINCT(p.creditcard_number), p.status, b.name, b.phone ".
+				"FROM payment_history p ".
+				"LEFT JOIN billing b ON p.billing_id = b.id ".
+				"WHERE p.creation_date BETWEEN ? AND ? ".
+				"AND p.payment_type = 'creditcard' AND p.status = 'declined'";
+			
+			$result = $this->db->query($query, array($day1, $day2)) or die ("$l_queryfailed");
+		} 
+		else 
+		{
+			$query = "SELECT DISTINCT(p.creditcard_number), p.status, b.name, b.phone ".
+				"FROM payment_history p ".
+				"LEFT JOIN billing b ON p.billing_id = b.id ".
+				"WHERE p.creation_date BETWEEN ? AND ? ".
+				"AND b.organization_id = ? ".
+				"AND p.payment_type = 'creditcard' AND p.status = 'declined'";
+			
+			$result = $this->db->query($query, array($day1, $day2, $organization_id)) or die ("$l_queryfailed");
+		}
+
+		return $result->result_array();
+	}
+
+
+	function noncardpayments($day1, $day2, $organization_id)
+	{
+		// print the number of non-creditcard payments
+
+		if ($organization_id == "all") 
+		{
+			$query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
+				"LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
+				"BETWEEN ? AND ? AND p.payment_type <> 'creditcard'";
+		
+			$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+		} 
+		else 
+		{
+			$query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
+				"LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
+				"BETWEEN ? AND ? AND b.organization_id = ? ".
+				"AND p.payment_type <> 'creditcard'";    
+		
+			$result = $this->db->query($query, array($day1, $day2, $organization_id)) or die ("query failed");
+		}
+
+		return $result->result_array();
+
+	}
+
 }

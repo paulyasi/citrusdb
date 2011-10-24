@@ -518,10 +518,64 @@ class Reports extends App_Controller
 
 	function paymentstatus()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		// load settings and general
+		$this->load->model('settings_model');
+		$this->load->model('general_model');
+		
+			
+		// set the organization id to default 1
+		if (!$this->input->post('organization_id'))
+		{
+			$data['organization_id'] = 1;
+			$organization_id = 1;
+		}
+		else
+		{
+			$data['organization_id'] = $this->input->post('organization_id');
+			$organization_id = $this->input->post('organization_id');
+		}
+
+		// get input
+		$day1 = $this->input->post('day1');
+		$day2 = $this->input->post('day2');
+		$showpaymenttype = $this->input->post('showpaymenttype');
+		$showstatus = $this->input->post('showstatus');
+
+		// get input
+		$data['day1'] = $this->input->post('day1');
+		$data['day2'] = $this->input->post('day2');
+		$data['showpaymenttype'] = $this->input->post('showpaymenttype');
+		$data['showstatus'] = $this->input->post('showstatus');
+
+		// set the organization name, if all set to All, else normal org name
+		if ($organization_id == 'all')
+		{
+			$data['org_name'] = lang('all');
+		}
+		else
+		{
+			$data['org_name'] = $this->general_model->get_org_name($organization_id);
+		}
+
+		$data['paymentstatus'] = $this->reports_model->paymentstatus($day1, $day2, 
+				$organization_id, $showpaymenttype);
+		$data['distinctdeclined'] = $this->reports_model->distinctdeclined($day1, $day2, $organization_id);
+		$data['noncardpayments'] = $this->reports_model->noncardpayments($day1, $day2, $organization_id);
+		$data['orglist'] = $this->general_model->list_organizations();
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/paymentstatus_view');
+		$this->load->view('tools/reports/paymentstatus_view', $data);
 	}
 
 
