@@ -629,4 +629,14 @@ class Service_model extends CI_Model
 		return $result->row_array();	
 	}
 
+
+	public function get_service_name($service_id)
+	{
+		$query = "SELECT service_description FROM master_services WHERE id = ?";
+		$result = $this->db->query($query, array($service_id)) or die ("service name $l_queryfailed");
+		$myresult = $result->row_array;
+	
+		return $myresult['service_description'];
+	}
+
 }

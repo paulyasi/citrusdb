@@ -15,7 +15,7 @@
 <?php
 foreach ($history AS $myresult) 
 {
-  $id = $myresult['d_id'];
+  $id = $myresult['d_user_services_id'];
   $date = $myresult['d_creation_date'];
   if ($myresult['d_taxed_services_id']) 
   { 

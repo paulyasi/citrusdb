@@ -586,6 +586,18 @@ class Reports extends App_Controller
 	 */
 	function services()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		// load settings and general
+		$this->load->model('settings_model');
+		$this->load->model('general_model');
 		$data['listservices'] = $this->reports_model->listservices();
 
 		// load the header without the sidebar to get the stylesheet in there
@@ -597,7 +609,30 @@ class Reports extends App_Controller
 
 	function showservices()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
 
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		// load settings, general, and service models
+		$this->load->model('settings_model');
+		$this->load->model('general_model');
+		$this->load->model('service_model');
+
+		// get the service id input
+		$service_id = $this->input->post('service_id');
+
+		$data['distinctservices'] = $this->reports_model->distinctservices($service_id);
+		$data['description'] = $this->service_model->get_service_name($service_id);
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/reports/services_view', $data);
 	}
 
 

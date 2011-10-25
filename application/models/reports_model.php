@@ -530,4 +530,21 @@ class Reports_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	function distinctservices($service_id)
+	{
+		// number of services added and billing type for each added
+		$query = "SELECT DISTINCT us.id us_id, bi.id bi_id, bt.method bt_method, " .
+			"cr.reason cancel_reason FROM user_services us " .
+			"LEFT JOIN master_services ms ON ms.id = us.master_service_id " .
+			"LEFT JOIN billing bi ON bi.id = us.billing_id " .
+			"LEFT JOIN billing_types bt ON bt.id = bi.billing_type " .
+			"LEFT JOIN customer cu ON us.account_number = cu.account_number " .
+			"LEFT JOIN cancel_reason cr ON cu.cancel_reason = cr.id " .
+			"WHERE ms.id = '$service_id'";
+		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+
+		return $result->result_array()
+	}
+
 }
