@@ -542,9 +542,9 @@ class Reports_Model extends CI_Model
 			"LEFT JOIN customer cu ON us.account_number = cu.account_number " .
 			"LEFT JOIN cancel_reason cr ON cu.cancel_reason = cr.id " .
 			"WHERE ms.id = '$service_id'";
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+		$result = $this->db->query($query) or die ("$query $l_queryfailed");
 
-		return $result->result_array()
+		return $result->result_array();
 	}
 
 }
