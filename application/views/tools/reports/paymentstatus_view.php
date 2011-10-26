@@ -10,8 +10,8 @@ $day_1  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
 <td><?php echo lang('from')?>: <input type=text name="day1" value="<?php echo $day_1?>"></td>
 <td> - <?php echo lang('to')?>: <input type=text name="day2"value="<?php echo $day_1?>"></td>
 
-<td><b><?php echo lang('organizationname')?></b></td>
-<td><select name="organization_id">
+<tr><td colspan=2><?php echo lang('organizationname')?>:
+<select name="organization_id">
 <option value=""><?php echo lang('choose')?></option>
 <?php
 foreach ($orglist as $myresult) {
@@ -22,7 +22,7 @@ foreach ($orglist as $myresult) {
 ?>
 </select></td>
 
-<td> <?php echo lang('billingtype')?>: 
+<tr><td> <?php echo lang('billingtype')?>: 
 <select name="showpaymenttype">
 <option value="creditcard">creditcard</option>
 <option value="check">check</option>
