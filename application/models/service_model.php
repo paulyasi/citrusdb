@@ -639,4 +639,18 @@ class Service_model extends CI_Model
 		return $myresult['service_description'];
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the list of service categories from the master_services table
+	 * ------------------------------------------------------------------------
+	 */
+	public function distinct_service_categories()
+	{
+		$query = "SELECT DISTINCT(category) FROM master_services ORDER BY category";
+		$result = $this->db->query($query) or die ("distince service categories query failed");
+
+		return $result->result_array();
+	}
+
 }

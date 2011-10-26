@@ -547,4 +547,23 @@ class Reports_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  services in this category added during date period with sources
+	 * ------------------------------------------------------------------------
+	 */
+	function servicesources($day1, $day2, $category)
+	{
+		$query = "SELECT DISTINCT us.id us_id, cu.source " .
+			"FROM user_services us " .
+			"LEFT JOIN master_services ms ON ms.id = us.master_service_id " .
+			"LEFT JOIN customer cu ON cu.account_number = us.account_number " .
+			"WHERE ms.category = ? ".
+			"AND date(us.start_datetime) BETWEEN ? AND ?";
+		$result = $this->db->query($query, array($category, $day1, $day2)) or die ("$query $l_queryfailed");
+
+		return $result->result_array();
+
+	}
 }

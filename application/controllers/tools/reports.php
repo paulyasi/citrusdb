@@ -845,10 +845,47 @@ class Reports extends App_Controller
 
 	function sources()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$this->load->model('service_model');
+		$data['servicecategories'] = $this->service_model->distinct_service_categories();
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/sources_view');
+		$this->load->view('tools/reports/sources_view', $data);
+	}
+
+
+	function showsources()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$day1 = $this->input->post('day1');
+		$day2 = $this->input->post('day2');
+		$category = $this->input->post('category');
+		$data['category'] = $category;
+
+		$data['servicesources'] = $this->reports_model->servicesources($day1, $day2, $category);
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/reports/showsources_view', $data);
 	}
 
 
