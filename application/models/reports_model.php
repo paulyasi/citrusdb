@@ -566,4 +566,36 @@ class Reports_Model extends CI_Model
 		return $result->result_array();
 
 	}
+
+
+	function pastdueexempt()
+	{
+		$query = "SELECT * FROM billing WHERE pastdue_exempt = 'y'";
+		$result = $this->db->query($query) or die ("pastdue exempt query failed");
+		
+		return $result->result_array();
+	}
+
+
+	function baddebt()
+	{
+		$query = "SELECT * FROM billing WHERE pastdue_exempt = 'bad_debt'";
+		$result = $this->db->query($query) or die ("bad debt query failed");
+		
+		return $result->result_array();
+	}
+
+
+	function taxexempt()
+	{
+		$query = "SELECT tr.description, c.account_number, c.name, c.company, ".
+			"te.customer_tax_id, ".
+			"te.expdate FROM tax_exempt te ".
+			"LEFT JOIN customer c ON c.account_number = te.account_number ".
+			"LEFT JOIN tax_rates tr ON tr.id = tax_rate_id";
+		$result = $this->db->query($query) or die ("tax exempt query failed");
+
+		return $result->result_array();
+	}
+
 }

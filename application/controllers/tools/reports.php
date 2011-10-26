@@ -923,7 +923,23 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/showexempt_view', $data);
+		// load the view for the specific exempt type
+		switch ($data['exempttype']) 
+		{
+			case 'pastdueexempt':
+				$data['pastdueexempt'] = $this->reports_model->pastdueexempt();
+				$this->load->view('tools/reports/pastdueexempt_view', $data);
+				break;
+			case 'baddebt':
+				$data['baddebt'] = $this->reports_model->baddebt();
+				$this->load->view('tools/reports/baddebt_view', $data);
+				break;
+			case 'taxexempt':
+				$data['taxexempt'] = $this->reports_model->taxexempt();
+				$this->load->view('tools/reports/taxexempt_view', $data);
+				break;
+		}
+
 	}
 
 
