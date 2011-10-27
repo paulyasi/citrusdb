@@ -598,4 +598,56 @@ class Reports_Model extends CI_Model
 		return $result->result_array();
 	}
 
+	function servicechurn($month, $year)
+	{
+		// initialize variables for services array
+		$services = array();
+		$i = 0;
+
+		// get a total of customers for of all services at end of that month/year period
+		$daysinmonth = date("t", mktime(0,0,0, $month, 1, $year));
+		$firstofmonth = date("Y-m-d", mktime(0, 0, 0, $month, 1, $year));
+		$lastofmonth = date("Y-m-d", mktime(0, 0, 0, $month, $daysinmonth, $year));
+
+		$query = "SELECT ms.category, ms.service_description, ms.id, count(*) AS monthtotal ".
+			"FROM user_services us LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+			"LEFT JOIN billing b ON b.id = us.billing_id ".
+			"LEFT JOIN billing_types t ON t.id = b.billing_type ".
+			"WHERE date(us.start_datetime) <= ? ".
+			"AND ((date(us.end_datetime) >= ?) OR (us.removed <> 'y')) ".
+			"AND ms.frequency > 0 AND t.method <> 'free' GROUP BY ms.id ORDER BY category";
+		$totalresult = $this->db->query($query, array($lastofmonth, $firstofmonth)) or die ("$query $l_queryfailed");
+		foreach ($totalresult->result_array() AS $mytotalresult) 
+		{
+			$service_description = $mytotalresult['service_description'];
+			$msid = $mytotalresult['id'];
+			$totalformonth = $mytotalresult['monthtotal'];
+			$category = $mytotalresult['category'];
+
+			// search for customers with recurring service charges have an end_datetime in that month and year period
+			//   us.end_datetime >= first of month AND us.end_datetime <= end of month
+			$query = "SELECT count(*) AS count FROM user_services us ".
+				"WHERE YEAR(us.end_datetime) = ? ".
+				"AND MONTH(us.end_datetime) = ? AND us.master_service_id = ?";
+			$endresult = $this->db->query($query, array($year, $month, $msid)) or die ("$query $l_queryfailed");
+			$myendresult = $endresult->row_array();
+			$lostcount = $myendresult['count'];
+
+			$percentchurn = sprintf("%.2f",($lostcount/$totalformonth)*100);
+
+			$services[$i] = array(
+					'service_description' => $service_description, 
+					'category' => $category, 
+					'lostcount' => $lostcount, 
+					'totalformonth' => $totalformonth, 
+					'percentchurn' => $percentchurn 
+					);
+			$i++;
+
+		}
+
+		// return the services array
+		return $services;
+	}
+
 }

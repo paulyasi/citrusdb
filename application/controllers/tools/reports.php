@@ -963,10 +963,17 @@ class Reports extends App_Controller
 
 	function servicechurn()
 	{
+		// Variables
+		$data['year'] = $this->input->post('year');
+		$data['month'] = $this->input->post('month');
+		$data['category'] = $this->input->post('category');
+
+		$data['servicechurn'] = $this->reports_model->servicechurn($data['month'], $data['year']);
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/servicechurn_view');
+		$this->load->view('tools/reports/servicechurn_view', $data);
 	}
 
 }
