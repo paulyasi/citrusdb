@@ -56,6 +56,46 @@ class Dashboard extends App_Controller
 
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  downloadfile allows you to link to files for users like invoice pdfs
+	 * ------------------------------------------------------------------------
+	 */
+	function downloadfile($filename)
+	{
+		// load the settings model
+		$this->load->model('settings_model');
+
+		// load the file download helper
+		$this->load->helper('download');
+		
+		// check if it is a pdf file that we allow anyone to open
+		// or something else that only admin can open
+		$filetype = substr($filename,-3);
+		if (($filetype != "pdf") AND ($filename != "summary.csv") 
+				AND ($filename != "summary.tab")) 
+		{
+			// check that the user has admin privileges
+			$myresult = $this->user_model->user_privileges($this->user);
+			if ($myresult['admin'] == 'n') 
+			{
+				echo lang('youmusthaveadmin')."<br>";
+				exit; 
+			}
+		}
+
+		// select the path_to_ccfile from settings
+		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
+
+		$myfile = "$path_to_ccfile/$filename";
+
+		// OPEN THE FILE AND PROCESS IT
+		$data = file_get_contents($myfile); // Read the file's contents
+
+		force_download($filename, $data); 
+	}
+
 }
 /* End of file tools/dashboard */
 /* Location: ./application/controllers/tools/dashboard.php */

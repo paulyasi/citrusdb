@@ -945,10 +945,19 @@ class Reports extends App_Controller
 
 	function printnotices()
 	{
+		// load the settings model 
+		$this->load->model('settings_model');
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/printnotices_view');
+		// get the path where to store the cc data
+		$data['path_to_ccfile'] = $this->settings_model->get_path_to_ccfile();
+
+		// get the day input, if any
+		$data['day'] = $this->input->post('day');
+
+		$this->load->view('tools/reports/printnotices_view', $data);
 	}
 
 

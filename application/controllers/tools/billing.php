@@ -591,7 +591,7 @@ class Billing extends App_Controller
 			// log this export activity
 			$this->log_model->activity($this->user,0,'export','creditcard',$batchid,'success');
 
-			echo lang('wrotefile')." $exportfilename<br><a href=\"$this->ssl_url_prefix/index.php/tools/downloadfile/$exportfilename\"><u class=\"bluelink\">".lang('downloadfile')." $exportfilename</u></a><p>";	
+			echo lang('wrotefile')." $exportfilename<br><a href=\"$this->ssl_url_prefix/index.php/tools/dashboard/downloadfile/$exportfilename\"><u class=\"bluelink\">".lang('downloadfile')." $exportfilename</u></a><p>";	
 		} // end if totalall
 	}
 
@@ -890,49 +890,11 @@ class Billing extends App_Controller
 
 		// output the link to the pdf file
 		echo lang('wrotefile')." $filename<br>".
-			"<a href=\"$this->url_prefix/index.php/tools/downloadfile/invoice$batchid.pdf\">".
+			"<a href=\"$this->url_prefix/index.php/tools/dashboard/downloadfile/invoice$batchid.pdf\">".
 			"<u class=\"bluelink\">".lang('download')." invoice$batchid.pdf</u></a><p>";	
 	}
 
 
-	/*
-	 * ------------------------------------------------------------------------
-	 *  downloadfile allows you to link to files for users like invoice pdfs
-	 * ------------------------------------------------------------------------
-	 */
-	function downloadfile($filename)
-	{
-		// load the settings model
-		$this->load->model('settings_model');
-
-		// load the file download helper
-		$this->load->helper('download');
-		
-		// check if it is a pdf file that we allow anyone to open
-		// or something else that only admin can open
-		$filetype = substr($filename,-3);
-		if (($filetype != "pdf") AND ($filename != "summary.csv") 
-				AND ($filename != "summary.tab")) 
-		{
-			// check that the user has admin privileges
-			$myresult = $this->user_model->user_privileges($this->user);
-			if ($myresult['admin'] == 'n') 
-			{
-				echo lang('youmusthaveadmin')."<br>";
-				exit; 
-			}
-		}
-
-		// select the path_to_ccfile from settings
-		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
-
-		$myfile = "$path_to_ccfile/$filename";
-
-		// OPEN THE FILE AND PROCESS IT
-		$data = file_get_contents($myfile); // Read the file's contents
-
-		force_download($filename, $data); 
-	}
 
 
 
@@ -1111,7 +1073,7 @@ class Billing extends App_Controller
 
 		$today = date("Y-m-d");
 
-		echo lang('wrotefile')." $exportfilename<br><a href=\"$this->ssl_url_prefix/index.php/tools/downloadfile/$exportfilename\"><u class=\"bluelink\">".lang('download')." $exportfilename</u></a><p>";	
+		echo lang('wrotefile')." $exportfilename<br><a href=\"$this->ssl_url_prefix/index.php/tools/dashboard/downloadfile/$exportfilename\"><u class=\"bluelink\">".lang('download')." $exportfilename</u></a><p>";	
 
 	}
 
