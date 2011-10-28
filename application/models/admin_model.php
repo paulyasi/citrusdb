@@ -16,17 +16,44 @@ class Admin_Model extends CI_Model
 	}	
 
 
+	/*
+	 * -------------------------------------------------------------------------
+	 * 	get the variables out of the general configuration table
+	 * -------------------------------------------------------------------------
+	 */
+	function get_organization($id)
+	{
+		$query = "SELECT * FROM general WHERE id = $id";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		return $result->result_array();
+	}
+
+
 	function update_organization($id, $org_data)
 	{
 		$this->db->where('id', $id);
 		$this->db->update('general', $org_data);
 	}
 
+
 	function add_organization()
 	{
 		$query = "INSERT INTO general (org_name) VALUES ('".lang('new')."')";
 		$result = $this->db->query($query) or die ("add organization query failed");
 		return $this->db->indert_id();
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  show all the organizations that can be edited
+	 * ------------------------------------------------------------------------
+	 */
+	function org_list()
+	{
+		$query = "SELECT id,org_name from general";
+		$result = $this->db->query($query) or die ("org list query failed");
+		return $result->result_array()
 	}
 
 }

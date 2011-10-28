@@ -12,40 +12,8 @@ class Admin extends App_Controller
 	}		
 
 
-	function organization()
+	function organization($id = NULL)
 	{
-		$addnew = $this->input->post('addnew');
-		$id = $this->input->post('id');
-		$org_name = $this->input->post('org_name');
-		$org_street = $this->input->post('org_street');
-		$org_city = $this->input->post('org_city');
-		$org_state = $this->input->post('org_state');
-		$org_country = $this->input->post('org_country');
-		$org_zip = $this->input->post('org_zip');
-		$phone_sales = $this->input->post('phone_sales');
-		$email_sales = $this->input->post('email_sales');
-		$phone_billing = $this->input->post('phone_billing');
-		$email_billing = $this->input->post('email_billing');
-		$phone_custsvc = $this->input->post('phone_custsvc');
-		$email_custsvc = $this->input->post('email_custsvc');
-		$ccexportvarorder = $this->input->post('ccexportvarorder');
-		$regular_pastdue = $this->input->post('regular_pastdue');
-		$regular_turnoff = $this->input->post('regular_turnoff');
-		$regular_canceled = $this->input->post('regular_canceled');
-		$dependent_pastdue = $this->input->post('dependent_pastdue');
-		$dependent_shutoff_notice = $this->input->post('dependent_shutoff_notice');
-		$dependent_turnoff = $this->input->postR('dependent_turnoff');
-		$dependent_canceled = $this->input->post('dependent_canceled');
-		$default_invoicenote = $this->input->post('default_invoicenote');
-		$pastdue_invoicenote = $this->input->post('pastdue_invoicenote');
-		$turnedoff_invoicenote = $this->input->post('turnedoff_invoicenote');
-		$collections_invoicenote = $this->input->post('collections_invoicenote');
-		$declined_subject = $this->input->post('declined_subject');
-		$declined_message = $this->input->post('declined_message');
-		$invoice_footer = $this->input->post('invoice_footer');
-		$einvoice_footer = $this->input->post('einvoice_footer');
-		$exportprefix = $this->input->post('exportprefix');
-
 		// check if the user has manager privileges first
 		$myresult = $this->user_model->user_privileges($this->user);
 
@@ -54,6 +22,15 @@ class Admin extends App_Controller
 			echo lang('youmusthaveadmin')."<br>";
 			exit; 
 		}
+
+		// if no id is specified, set to 1
+		if (!$id) 
+		{
+			$id = 1;
+		}
+
+		$data['org_list'] = $this->admin_model->org_list();
+		$data['org'] = $this->admin_model->get_organization($id);
 
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
