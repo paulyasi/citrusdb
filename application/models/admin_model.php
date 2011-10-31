@@ -56,4 +56,28 @@ class Admin_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the variables out of the id 1 settings configuration table
+	 * ------------------------------------------------------------------------
+	 */
+	function get_settings()
+	{
+		$query = "SELECT * FROM settings WHERE id = 1";
+		$result = $this->db->query($query) or die ("get settings query failed");
+		return $result->row_array();
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  update the settings table with new input
+	 * ------------------------------------------------------------------------
+	 */
+	function update_settings($settings_array)
+	{
+		$this->db->where('id', 1);
+		$this->db->update('settings', $settings_array);
+	}
 }

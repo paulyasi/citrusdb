@@ -90,10 +90,55 @@ class Admin extends App_Controller
 
 	function settings()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['set'] = $this->admin_model->get_settings();
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/admin/settings_view');
+		$this->load->view('tools/admin/settings_view', $data);
+	}
+
+
+	function savesettings()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$settings_array = array(
+				'path_to_ccfile' => $this->input->post('path_to_ccfile'),
+				'default_group' => $this->input->post('default_group'),
+				'default_billing_group' => $this->input->post('default_billing_group'),
+				'default_shipping_group' => $this->input->post('default_shipping_group'),
+				'billingdate_rollover_time' => $this->input->post('billingdate_rollover_time'),
+				'billingweekend_sunday' => $this->input->post('billingweekend_sunday'),
+				'billingweekend_monday' => $this->input->post('billingweekend_monday'),
+				'billingweekend_tuesday' => $this->input->post('billingweekend_tuesday'),
+				'billingweekend_wednesday' => $this->input->post('billingweekend_wednesday'),
+				'billingweekend_thursday' => $this->input->post('billingweekend_thursday'),
+				'billingweekend_friday' => $this->input->post('billingweekend_friday'),
+				'billingweekend_saturday' => $this->input->post('billingweekend_saturday'),
+				'dependent_cancel_url' => $this->input->post('dependent_cancel_url')
+				);
+
+		$this->admin_model->update_settings($settings_array);
+
+		redirect('/tools/admin/settings');
+
 	}
 
 
