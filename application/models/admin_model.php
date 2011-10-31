@@ -24,8 +24,8 @@ class Admin_Model extends CI_Model
 	function get_organization($id)
 	{
 		$query = "SELECT * FROM general WHERE id = $id";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		return $result->result_array();
+		$result = $this->db->query($query) or die ("get organization query failed");
+		return $result->row_array();
 	}
 
 
@@ -40,7 +40,7 @@ class Admin_Model extends CI_Model
 	{
 		$query = "INSERT INTO general (org_name) VALUES ('".lang('new')."')";
 		$result = $this->db->query($query) or die ("add organization query failed");
-		return $this->db->indert_id();
+		return $this->db->insert_id();
 	}
 
 
@@ -53,7 +53,7 @@ class Admin_Model extends CI_Model
 	{
 		$query = "SELECT id,org_name from general";
 		$result = $this->db->query($query) or die ("org list query failed");
-		return $result->result_array()
+		return $result->result_array();
 	}
 
 }

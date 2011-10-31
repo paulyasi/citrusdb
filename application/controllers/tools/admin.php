@@ -7,8 +7,8 @@ class Admin extends App_Controller
 		parent::__construct();
 		$this->load->model('customer_model');
 		$this->load->model('module_model');
-		$this->load->model('billing_model');
 		$this->load->model('user_model');
+		$this->load->model('admin_model');
 	}		
 
 
@@ -31,7 +31,7 @@ class Admin extends App_Controller
 
 		$data['org_list'] = $this->admin_model->org_list();
 		$data['org'] = $this->admin_model->get_organization($id);
-
+		
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
@@ -62,7 +62,7 @@ class Admin extends App_Controller
 				'regular_canceled' => $this->input->post('regular_canceled'),
 				'dependent_pastdue' => $this->input->post('dependent_pastdue'),
 				'dependent_shutoff_notice' => $this->input->post('dependent_shutoff_notice'),
-				'dependent_turnoff' => $this->input->postR('dependent_turnoff'),
+				'dependent_turnoff' => $this->input->post('dependent_turnoff'),
 				'dependent_canceled' => $this->input->post('dependent_canceled'),
 				'default_invoicenote' => $this->input->post('default_invoicenote'),
 				'pastdue_invoicenote' => $this->input->post('pastdue_invoicenote'),
@@ -75,16 +75,16 @@ class Admin extends App_Controller
 				'exportprefix' => $this->input->post('exportprefix') 
 					);
 
-		$this->admin_model->updateorganization($id, $org_data);
+		$this->admin_model->update_organization($id, $org_data);
 
-		redirect('/tools/admin/organization');
+		redirect("/tools/admin/organization/".$id);
 	}
 
 
 	function addorganization()
 	{
-		$newid = $this->admin_model->addorganization();
-		redirect("/tools/admin/organization".$newid);
+		$newid = $this->admin_model->add_organization();
+		redirect("/tools/admin/organization/".$newid);
 	}
 
 

@@ -217,6 +217,7 @@ $lang['editmodules'] = "Edit Modules";
 $lang['editservices'] = "Edit Services";
 $lang['edituser'] = "Edit User";
 $lang['einvoice'] = "Electronic Invoice from";
+$lang['einvoice_footer'] = "E-Invoice Footer";
 $lang['email'] = "email";
 $lang['email_support_notification'] = "Email Support Notification";
 $lang['im_support_notification'] = "IM Support Notification";
