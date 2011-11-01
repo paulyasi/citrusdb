@@ -1,57 +1,29 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
 <html>
 <body bgcolor="#ffffff">
+<h3><?php echo lang('users')?></h3>
+[ <a href="<?php echo $this->url_prefix?>/index.php/tools/admin/newuser"><?php echo lang('addnewuser')?></a> ]
+
+
+<p><table cellpadding=5 cellspacing=1>
+<tr bgcolor="#eeeeee">
+<td><b><?php echo lang('username')?></b></td>
+<td><b><?php echo lang('name')?></b></td>
+<td><?php echo lang('admin')?></td>
+<td><?php echo lang('manager')?></td>
+<td><?php echo lang('email')?></td>
+<td><?php echo lang('screenname')?></td>
+<td></td><tr bgcolor="#eeeeee">
+
 <?php
-echo "<h3>$l_users</h3>";
-// Copyright (C) 2002  Paul Yasi <paul@citrusdb.org>, read the README file for more information
-
-/*----------------------------------------------------------------------------*/
-// Check for authorized accesss
-/*----------------------------------------------------------------------------*/
-if(constant("INDEX_CITRUS") <> 1){
-	echo "You must be logged in to run this.  Goodbye.";
-	exit;	
+foreach ($users AS $user)
+{
+	print "<td>".$user['username']."</td><td>".$user['real_name']."</td><td>".$user['admin']."</td>".
+		"<td>".$user['manager']."</td><td>".$user['email']."</td><td>".$user['screenname']."</td>
+		<td><a href=\"$this->url_prefix/index.php/tools/admin/edituser/".$user['id']."\">".lang('edit')."</a></td>
+		<td><a href=\"$this->url_prefix/index.php/tools/admin/deleteuser/".$user['id']."\">".lang('delete')."</a></td>
+		<tr bgcolor=\"#eeeeee\">\n";
 }
-
-if (!defined("INDEX_CITRUS")) {
-	echo "You must be logged in to run this.  Goodbye.";
-        exit;
-}
-
-// check that the user has admin privileges
-$query = "SELECT * FROM user WHERE username='$user'";
-$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-$result = $DB->Execute($query) or die ("$l_queryfailed");
-$myresult = $result->fields;
-if ($myresult['admin'] == 'n') {
-        echo "$l_youmusthaveadmin<br>";
-        exit;
-}
-
-echo "[ <a href=\"index.php?load=newuser&type=tools\">$l_addnewuser</a> ]";
-
-
-print "<p><table cellpadding=5 cellspacing=1><tr bgcolor=\"#eeeeee\"><td><b>$l_username</b></td><td><b>$l_name</b></td><td>$l_admin</td><td>$l_manager</td><td>$l_email</td><td>$l_screenname</td><td></td><tr bgcolor=\"#eeeeee\">";
-
-        // get the list of users from the table
-        $query = "SELECT * FROM user ORDER BY username";
-        $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	$result = $DB->Execute($query) or die ("$l_queryfailed");
-	while ($myresult = $result->FetchRow())
-	{
-	$myid = $myresult['id'];
-        $myusername = $myresult['username'];
-        $myrealname = $myresult['real_name'];
-	$myadmin = $myresult['admin'];
-	$mymanager = $myresult['manager'];
-	$myemail = $myresult['email'];
-	$myscreenname = $myresult['screenname'];
-
-	print "<td>$myusername</td><td>$myrealname</td><td>$myadmin</td>".
-	  "<td>$mymanager</td><td>$myemail</td><td>$myscreenname</td>
-	<td><a href=\"index.php?load=edituser&type=tools&userid=$myid\">$l_edit</a></td>
-	<td><a href=\"index.php?load=deleteuser&type=tools&uid=$myid\">$l_delete</a></td>
-	<tr bgcolor=\"#eeeeee\">\n";
-	}
 ?>
 </table>
 </body>

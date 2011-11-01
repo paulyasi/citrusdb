@@ -80,4 +80,17 @@ class Admin_Model extends CI_Model
 		$this->db->where('id', 1);
 		$this->db->update('settings', $settings_array);
 	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the list of users from the table
+	 * ------------------------------------------------------------------------
+	 */
+	function get_users()
+	{
+		$query = "SELECT * FROM user ORDER BY username";
+		$result = $this->db->query($query) or die ("get users query failed");
+		return $result->result_array();
+	}
 }
