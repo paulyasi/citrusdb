@@ -31,6 +31,7 @@ class Settings_Model extends CI_Model
 		return $myresult->dependent_cancel_url;
 	}
 
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get the path to the location to save the cc files and other files
@@ -44,6 +45,21 @@ class Settings_Model extends CI_Model
 		$myresult = $result->row_array();
 
 		return $myresult['path_to_ccfile'];
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the default group setting
+	 * ------------------------------------------------------------------------
+	 */
+	function get_default_group()
+	{
+		// check if there is a default_group setup
+		$query = "SELECT default_group FROM settings WHERE id = 1";
+		$result = $this->db->query($query) or die ("get default group query failed");
+		$myresult = $result->row_array();
+		return $myresult['default_group'];
 	}
 
     
