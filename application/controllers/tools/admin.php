@@ -233,12 +233,41 @@ class Admin extends App_Controller
 			exit; 
 		}
 
-		$data['users'] = $this->admin_model->get_user($userid);
+		$data['u'] = $this->user_model->get_user_info($userid);
 
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/edituser_view', $data);
+	}
+
+
+	function saveedituser()
+	{
+		$userid = $base->input['userid'];
+		$username = $base->input['username'];
+		$realname = $base->input['realname'];
+		$admin = $base->input['admin'];
+		$manager = $base->input['manager'];
+		$email = $base->input['email'];
+		$screenname = $base->input['screenname'];
+		$email_notify = $base->input['email_notify'];
+		$screenname_notify = $base->input['screenname_notify'];
+
+		// save user information
+		$query = "UPDATE user ".
+			"SET real_name = '$realname', ".
+			"username = '$username', ".
+			"admin = '$admin', ".
+			"manager = '$manager', ".
+			"email = '$email', ".
+			"screenname = '$screenname', ".
+			"email_notify = '$email_notify', ".
+			"screenname_notify = '$screenname_notify' ".
+			"WHERE id = '$userid'";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+
+		redirect("/tools/admin/edituser/".$userid);
 	}
 
 

@@ -584,6 +584,18 @@ class User_Model extends CI_Model {
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get all the info for this user
+	 * ------------------------------------------------------------------------
+	 */
+	function get_user_info($userid)
+	{
+		$query = "SELECT * FROM user WHERE id = ?";
+		$result = $this->db->query($query, array($userid)) or die ("$l_queryfailed");
+		return $result->row_array();
+	}
+
 } // end class
 
 ?>
