@@ -375,7 +375,11 @@ class User_Model extends CI_Model {
 	/*--------------------------------------------------------------------*/
 	function user_register($user_name,$password1,$password2,$real_name,$admin,$manager) 
 	{
-		global $feedback,$hidden_hash_var;
+		// initialize the feedback array
+		$feedback = array(
+				'message' => "",
+				'status' => FALSE
+				);
 
 		// load the PasswordHash library
 		//require_once('application/libraries/PasswordHash.php');    
@@ -395,7 +399,8 @@ class User_Model extends CI_Model {
 				$result=$this->db->query($sql);
 				if ($result && $result->num_rows() > 0) 
 				{
-					$feedback .=  ' ERROR - USER NAME EXISTS ';
+					$feedback['message'] =  ' ERROR - USER NAME EXISTS ';
+					$feedback['status'] = FALSE;
 					return $feedback;
 				} 
 				else 
@@ -406,7 +411,8 @@ class User_Model extends CI_Model {
 					if (strlen($hash) < 20 ) 
 					{
 						// hash length always greater than 20, if not then something went wrong
-						$feedback .= "Failed to hash new password";
+						$feedback['message'] = "Failed to hash new password";
+						$feedback['status'] = FALSE;
 						return $feedback;
 					}
 					unset ($hasher);
@@ -417,25 +423,29 @@ class User_Model extends CI_Model {
 					$result=$this->db->query($sql) or die ("Insert Query Failed");
 					if (!$result) 
 					{
-						$feedback .= ' ERROR - '.db_error();
+						$feedback['message'] = ' ERROR - '.db_error();
+						$feedback['status'] = FALSE;
 						return $feedback;
 					} 
 					else 
 					{
-						$feedback .= ' Successfully Registered. ';
+						$feedback['message'] = ' Successfully Registered. ';
+						$feedback['status'] = TRUE;
 						return $feedback;
 					}
 				}
 			} 
 			else 
 			{
-				$feedback .=  ' Account Name or Password Invalid ';
+				$feedback['message'] =  ' Account Name or Password Invalid ';
+				$feedback['status'] = FALSE;
 				return $feedback;
 			}
 		} 
 		else 
 		{
-			$feedback .=  ' ERROR - Must Fill In User Name, and Matching Passwords ';
+			$feedback['message'] =  ' ERROR - Must Fill In User Name, and Matching Passwords ';
+			$feedback['status'] = FALSE;
 			return $feedback;
 		}
 	}

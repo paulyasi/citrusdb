@@ -200,19 +200,20 @@ class Admin extends App_Controller
 
 		$feedback = $this->user_model->user_register($new_user_name,$password1,$password2,$real_name,$admin,$manager);
 
-		$this->load->model('settings_model');
-		$default_group = $this->settings_model->get_default_group();
-
-		// if there is a default group, add them to that group
-		if ($default_group != '')
+		if ($feedback['status'] == TRUE)
 		{
-			$this->user_model->add_user_to_group($default_group, $new_user_name);
+			$this->load->model('settings_model');
+			$default_group = $this->settings_model->get_default_group();
+
+			// if there is a default group, add them to that group
+			if ($default_group != '')
+			{
+				$this->user_model->add_user_to_group($default_group, $new_user_name);
+			}
 		}
 
-		if ($feedback) {
-			echo '<FONT COLOR="RED"><H2>'.$feedback.'</H2></FONT>';
-			echo "<p>$new_user_name<p>$password1<p>$password2<p>$real_name";
-		}
+		echo '<FONT COLOR="RED"><H2>'.$feedback['message'].'</H2></FONT>';
+		echo "<p>$new_user_name<p>$password1<p>$password2<p>$real_name";
 
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
