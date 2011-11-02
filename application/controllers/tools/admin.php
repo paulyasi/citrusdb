@@ -191,22 +191,22 @@ class Admin extends App_Controller
 			exit; 
 		}
 
+		$new_user_name = $this->input->post('new_user_name');
 		$password1 = $this->input->post('password1');
 		$password2 = $this->input->post('password2');
-		$new_user_name = $this->input->post('new_user_name');
 		$real_name = $this->input->post('real_name');
 		$admin = $this->input->post('admin');
 		$manager = $this->input->post('manager');
 
-		$this->user_model->user_register($new_user_name,$password1,$password2,$real_name,$admin,$manager);
+		$feedback = $this->user_model->user_register($new_user_name,$password1,$password2,$real_name,$admin,$manager);
 
+		$this->load->model('settings_model');
 		$default_group = $this->settings_model->get_default_group();
 
 		// if there is a default group, add them to that group
 		if ($default_group != '')
-		{	
-			$query = "INSERT INTO groups (groupname,groupmember) VALUES ('$default_group','$new_user_name')";
-			$result = $this->db->query($query) or die ("$l_queryfailed");
+		{
+			$this->user_model->add_user_to_group($default_group, $new_user_name);
 		}
 
 		if ($feedback) {
@@ -214,14 +214,10 @@ class Admin extends App_Controller
 			echo "<p>$new_user_name<p>$password1<p>$password2<p>$real_name";
 		}
 
-		$data['userid'] = $this->admin_model->new_user();
-
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		// redirect to edit user controller?
-
-		$this->load->view('tools/admin/edituser_view', $data);
+		$this->load->view('tools/admin/newuser_view');
 	}
 
 

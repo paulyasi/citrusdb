@@ -109,7 +109,7 @@ class User_Model extends CI_Model {
 	/*--------------------------------------------------------------------*/
 	function user_login($user_name,$password) {
 
-		global $feedback, $DB;
+		global $feedback;
 
 		$ldap_enable = $this->config->item('ldap_enable');
 		$ldap_host = $this->config->item('ldap_host');
@@ -369,64 +369,74 @@ class User_Model extends CI_Model {
 		}
 	} // end user_change_password function
 
+
 	/*--------------------------------------------------------------------*/
 	// Register a new user
 	/*--------------------------------------------------------------------*/
-	function user_register($user_name,$password1,$password2,$real_name,$admin,$manager) {
-		global $feedback,$hidden_hash_var,$DB;
+	function user_register($user_name,$password1,$password2,$real_name,$admin,$manager) 
+	{
+		global $feedback,$hidden_hash_var;
 
 		// load the PasswordHash library
 		//require_once('application/libraries/PasswordHash.php');    
 
-		global $ldap_enable;
-		global $ldap_host;
-		global $ldap_dn;
-		global $ldap_protocol_version;
-		global $ldap_uid_field;
+		$ldap_enable = $this->config->item('ldap_enable');
 
 		//all vars present and passwords match?
-		if ($user_name && ($ldap_enable || ($password1 && $password1==$password2))) {
+		if ($user_name && ($ldap_enable || ($password1 && $password1==$password2))) 
+		{
 			//name is valid?
-			if ($this->account_namevalid($user_name)) {
+			if ($this->account_namevalid($user_name)) 
+			{
 				$user_name=strtolower($user_name);
-				//$password1=strtolower($password1);
 
 				//does the name exist in the database?
 				$sql="SELECT * FROM user WHERE username='$user_name'";
 				$result=$this->db->query($sql);
-				if ($result && $result->num_rows() > 0) {
+				if ($result && $result->num_rows() > 0) 
+				{
 					$feedback .=  ' ERROR - USER NAME EXISTS ';
-					return false;
-				} else {
+					return $feedback;
+				} 
+				else 
+				{
 					// make a new password hash	  
 					//$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
 					$hash = $this->passwordhash->HashPassword($password1);
-					if (strlen($hash) < 20 ) {
+					if (strlen($hash) < 20 ) 
+					{
 						// hash length always greater than 20, if not then something went wrong
 						$feedback .= "Failed to hash new password";
-						return false;
+						return $feedback;
 					}
 					unset ($hasher);
 
 					// then insert it into the database
-					$sql="INSERT INTO user (username,real_name,password,remote_addr,admin,manager) ".
-						"VALUES ('$user_name','$real_name','$hash','$GLOBALS[REMOTE_ADDR]','$admin','$manager')";
+					$sql="INSERT INTO user (username,real_name,password,admin,manager) ".
+						"VALUES ('$user_name','$real_name','$hash','$admin','$manager')";
 					$result=$this->db->query($sql) or die ("Insert Query Failed");
-					if (!$result) {
+					if (!$result) 
+					{
 						$feedback .= ' ERROR - '.db_error();
-						return false;
-					} else {
+						return $feedback;
+					} 
+					else 
+					{
 						$feedback .= ' Successfully Registered. ';
-						return true;
+						return $feedback;
 					}
 				}
-			} else {
+			} 
+			else 
+			{
 				$feedback .=  ' Account Name or Password Invalid ';
-				return false;
+				return $feedback;
 			}
-		} else {
+		} 
+		else 
+		{
 			$feedback .=  ' ERROR - Must Fill In User Name, and Matching Passwords ';
-			return false;
+			return $feedback;
 		}
 	}
 
@@ -556,6 +566,14 @@ class User_Model extends CI_Model {
 		$result = $this->db->query($query) or die ("query failed");
 
 	}
+
+	function add_user_to_group($group_name, $user_name)
+	{
+		$query = "INSERT INTO groups (groupname,groupmember) VALUES (?,?)";
+		$result = $this->db->query($query, array($group_name, $user_name)) or die ("add user to group query failed");
+	}
+
+
 } // end class
 
 ?>
