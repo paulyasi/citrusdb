@@ -17,47 +17,46 @@ if (!$this->config->item('ldap_enable'))
 <p>
 <FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/admin/saveedituser" METHOD="POST">
 <B><?php echo lang('name')?>:</B><BR>
-<INPUT TYPE="TEXT" NAME="realname" VALUE="<?php echo $u['realname']?>" SIZE="20" MAXLENGTH="65">
+<INPUT TYPE="TEXT" NAME="realname" VALUE="<?php echo $u['real_name']?>" SIZE="20" MAXLENGTH="65">
 <P>
-<B>$l_username:</B> <INPUT TYPE=\"TEXT\" NAME=\"username\" VALUE=\"$username\" SIZE=\"20\" MAXLENGTH=\"65\">
+<B><?php echo lang('username')?>:</B> <INPUT TYPE="TEXT" NAME="username" VALUE="<?php echo $u['username']?>" SIZE="20" MAXLENGTH="65">
 <p>
-<B>$l_contactemail:</B> <INPUT TYPE=\"TEXT\" NAME=\"email\" VALUE=\"$email\" SIZE=\"20\" MAXLENGTH=\"65\"><p>
-<B>$l_screenname:</B><INPUT TYPE=\"TEXT\" NAME=\"screenname\" VALUE=\"$screenname\" SIZE=\"20\" MAXLENGTH=\"65\">
+<B><?php echo lang('contactemail')?>:</B> <INPUT TYPE="TEXT" NAME="email" VALUE="<?php echo $u['email']?>" SIZE="20" MAXLENGTH="65"><p>
+<B><?php echo lang('screenname')?>:</B><INPUT TYPE="TEXT" NAME="screenname" VALUE="<?php echo $u['screenname']?>" SIZE="20" MAXLENGTH="65">
 <P>
-<b>$l_privileges:</b><br>
-<table>";
-
-if ($email_notify == 'y') {
-	echo "<td>$l_email_support_notification</td><td><input type=\"radio\" name=email_notify value=\"y\" checked>$l_yes<input type=\"radio\" name=email_notify value=\"n\">$l_no<tr>";
+<b><?php echo lang('privileges')?>:</b><br>
+<table>
+<?php 
+if ($u['email_notify'] == 'y') {
+	echo "<td>".lang('email_support_notification')."</td><td><input type=\"radio\" name=email_notify value=\"y\" checked>".lang('yes')."<input type=\"radio\" name=email_notify value=\"n\">".lang('no')."<tr>";
 } else {
-	echo "<td>$l_email_support_notification</td><td><input type=\"radio\" name=email_notify value=\"y\">$l_yes<input type=\"radio\" name=email_notify value=\"n\" checked>$l_no<tr>";
+	echo "<td>".lang('email_support_notification')."</td><td><input type=\"radio\" name=email_notify value=\"y\">".lang('yes')."<input type=\"radio\" name=email_notify value=\"n\" checked>".lang('no')."<tr>";
 }
 
-if ($screenname_notify == 'y') {
-	echo "<td>$l_im_support_notification</td><td><input type=\"radio\" name=screenname_notify value=\"y\" checked>$l_yes<input type=\"radio\" name=screenname_notify value=\"n\">$l_no<tr>";
+if ($u['screenname_notify'] == 'y') {
+	echo "<td>".lang('im_support_notification')."</td><td><input type=\"radio\" name=screenname_notify value=\"y\" checked>".lang('yes')."<input type=\"radio\" name=screenname_notify value=\"n\">".lang('no')."<tr>";
 } else {
-	echo "<td>$l_im_support_notification</td><td><input type=\"radio\" name=screenname_notify value=\"y\">$l_yes<input type=\"radio\" name=screenname_notify value=\"n\" checked>$l_no<tr>";
+	echo "<td>".lang('im_support_notification')."</td><td><input type=\"radio\" name=screenname_notify value=\"y\">".lang('yes')."<input type=\"radio\" name=screenname_notify value=\"n\" checked>".lang('no')."<tr>";
 }
 
-if ($admin == 'y') {
-	echo "<td>$l_admin</td><td><input type=\"radio\" name=admin value=\"y\" checked>$l_yes<input type=\"radio\" name=admin value=\"n\">$l_no<tr>";
+if ($u['admin'] == 'y') {
+	echo "<td>".lang('admin')."</td><td><input type=\"radio\" name=admin value=\"y\" checked>".lang('yes')."<input type=\"radio\" name=admin value=\"n\">".lang('no')."<tr>";
 } else {
-	echo "<td>$l_admin</td><td><input type=\"radio\" name=admin value=\"y\">$l_yes<input type=\"radio\" name=admin value=\"n\" checked>$l_no<tr>";
+	echo "<td>".lang('admin')."</td><td><input type=\"radio\" name=admin value=\"y\">".lang('yes')."<input type=\"radio\" name=admin value=\"n\" checked>".lang('no')."<tr>";
 }
 
-if ($manager == 'y') {
-	echo "<td>$l_manager</td><td><input type=\"radio\" name=manager value=\"y\" checked>$l_yes<input type=\"radio\" name=manager value=\"n\">$l_no<tr>";
+if ($u['manager'] == 'y') {
+	echo "<td>".lang('manager')."</td><td><input type=\"radio\" name=manager value=\"y\" checked>".lang('yes')."<input type=\"radio\" name=manager value=\"n\">".lang('no')."<tr>";
 } else {
-	echo "<td>$l_manager</td><td><input type=\"radio\" name=manager value=\"y\">$l_yes<input type=\"radio\" name=manager value=\"n\" checked>$l_no<tr>";
+	echo "<td>".lang('manager')."</td><td><input type=\"radio\" name=manager value=\"y\">".lang('yes')."<input type=\"radio\" name=manager value=\"n\" checked>".lang('no')."<tr>";
 }
-
-
-echo "</table>
-<p>
-<input type=hidden name=\"userid\" value=\"$userid\">
-<INPUT TYPE=\"SUBMIT\" NAME=\"submit\" VALUE=\"$l_savechanges\">
-</FORM>";
 ?>
+
+</table>
+<p>
+<input type=hidden name="userid" value="<?php echo $userid?>">
+<INPUT TYPE="SUBMIT" NAME="submit" VALUE="<?php echo lang('savechanges')?>">
+</FORM>
 </body>
 </html>
 

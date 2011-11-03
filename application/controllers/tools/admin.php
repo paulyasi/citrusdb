@@ -233,6 +233,7 @@ class Admin extends App_Controller
 			exit; 
 		}
 
+		$data['userid'] = $userid;
 		$data['u'] = $this->user_model->get_user_info($userid);
 
 		// load the header without the sidebar to get the stylesheet in there
@@ -244,28 +245,20 @@ class Admin extends App_Controller
 
 	function saveedituser()
 	{
-		$userid = $base->input['userid'];
-		$username = $base->input['username'];
-		$realname = $base->input['realname'];
-		$admin = $base->input['admin'];
-		$manager = $base->input['manager'];
-		$email = $base->input['email'];
-		$screenname = $base->input['screenname'];
-		$email_notify = $base->input['email_notify'];
-		$screenname_notify = $base->input['screenname_notify'];
+		$userid = $this->input->post('userid');
 
-		// save user information
-		$query = "UPDATE user ".
-			"SET real_name = '$realname', ".
-			"username = '$username', ".
-			"admin = '$admin', ".
-			"manager = '$manager', ".
-			"email = '$email', ".
-			"screenname = '$screenname', ".
-			"email_notify = '$email_notify', ".
-			"screenname_notify = '$screenname_notify' ".
-			"WHERE id = '$userid'";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$userinfo = array(
+				'username' => $this->input->post('username'),
+				'real_name' => $this->input->post('realname'),
+				'admin' => $this->input->post('admin'),
+				'manager' => $this->input->post('manager'),
+				'email' => $this->input->post('email'),
+				'screenname' => $this->input->post('screenname'),
+				'email_notify' => $this->input->post('email_notify'),
+				'screenname_notify' => $this->input->post('screenname_notify')
+				);
+
+		$this->user_model->update_user_info($userid, $userinfo);
 
 		redirect("/tools/admin/edituser/".$userid);
 	}

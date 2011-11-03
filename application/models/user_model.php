@@ -596,6 +596,19 @@ class User_Model extends CI_Model {
 		return $result->row_array();
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  update the info for this user
+	 * ------------------------------------------------------------------------
+	 */
+	function update_user_info($userid, $userinfo)
+	{
+		// using active record, yipee!
+		$this->db->where('id', $userid);
+		$this->db->update('user', $userinfo);
+	}
+
 } // end class
 
 ?>
