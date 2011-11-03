@@ -264,7 +264,7 @@ class Admin extends App_Controller
 	}
 
 
-	function deleteuser($userid)
+	function deleteuser($uid)
 	{
 		// check if the user has manager privileges first
 		$myresult = $this->user_model->user_privileges($this->user);
@@ -275,12 +275,35 @@ class Admin extends App_Controller
 			exit; 
 		}
 
-		$data['users'] = $this->admin_model->get_user($userid);
+		$data['uid'] = $uid;
 
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/deleteuser_view', $data);
+	}
+
+
+	function savedeleteuser()
+	{
+		$uid = $this->input->post('uid');
+
+		// get their username so we can delete them from groups later
+		$query = "SELECT username FROM user WHERE id = '$uid'";
+		$result = $this->db->query($query) or die ("select username query failed");
+		$myresult = $result->row_array();
+		$username = $myresult['username'];
+
+		// delete the user with that ID
+		$query = "DELETE FROM user WHERE id = '$uid'";
+		$result = $this->db->query($query) or die ("delete user id query failed");
+
+		// remove the user from groups they are a member of
+		$query = "DELETE FROM groups WHERE groupmember = '$username'"; 
+		$result = $this->db->query($query) or die ("delete group member query failed");
+
+		// redirect back to the user list page
+		redirect('/tools/admin/users');
 	}
 
 	function groups()
