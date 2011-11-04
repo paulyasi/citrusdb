@@ -297,19 +297,11 @@ class Admin extends App_Controller
 
 		$uid = $this->input->post('uid');
 
-		// get their username so we can delete them from groups later
-		$query = "SELECT username FROM user WHERE id = '$uid'";
-		$result = $this->db->query($query) or die ("select username query failed");
-		$myresult = $result->row_array();
-		$username = $myresult['username'];
+		$username = $this->user_model->get_username($uid);
 
-		// delete the user with that ID
-		$query = "DELETE FROM user WHERE id = '$uid'";
-		$result = $this->db->query($query) or die ("delete user id query failed");
+		$this->user_model->delete_user($uid);
 
-		// remove the user from groups they are a member of
-		$query = "DELETE FROM groups WHERE groupmember = '$username'"; 
-		$result = $this->db->query($query) or die ("delete group member query failed");
+		$this->user_model->delete_username_from_groups($username);
 
 		// redirect back to the user list page
 		redirect('/tools/admin/users');

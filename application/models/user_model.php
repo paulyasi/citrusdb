@@ -609,6 +609,46 @@ class User_Model extends CI_Model {
 		$this->db->update('user', $userinfo);
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the username for this user id
+	 * ------------------------------------------------------------------------
+	 */
+	function get_username($uid)
+	{
+		$query = "SELECT username FROM user WHERE id = ?";
+		$result = $this->db->query($query, array($uid)) or die ("select username query failed");
+		$myresult = $result->row_array();
+		return $myresult['username'];
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  delete the user
+	 * ------------------------------------------------------------------------
+	 */
+	function delete_user($uid)
+	{
+		// delete the user with that ID
+		$query = "DELETE FROM user WHERE id = '$uid'";
+		$result = $this->db->query($query) or die ("delete user id query failed");
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  delete the user from all groups they are a member of
+	 * ------------------------------------------------------------------------
+	 */
+	function delete_username_from_groups($username)
+	{
+		$query = "DELETE FROM groups WHERE groupmember = ?"; 
+		$result = $this->db->query($query, array($username)) or die ("delete group member query failed");
+	}
+
+
 } // end class
 
 ?>
