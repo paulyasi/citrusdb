@@ -98,7 +98,7 @@ class Module_model extends CI_Model
 		$query = "SELECT * FROM modules ORDER BY sortorder";
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 		
-		return $result;
+		return $result->result_array();
     }
     
 }

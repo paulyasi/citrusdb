@@ -32,9 +32,9 @@ class Dashboard extends App_Controller
 			// get list of the modules that are installed
 			$result = $this->module_model->modulelist();
 
-			foreach($result->result() as $myresult)
+			foreach($result as $myresult)
 			{
-				$modulename = $myresult->modulename;
+				$modulename = $myresult['modulename'];
 
 				// load the tools view for this module
 				// view file in the format modulenametools_view, eg: customertools_view

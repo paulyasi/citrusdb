@@ -10,10 +10,10 @@ echo "<div id=\"tabnav\">";
 // get list of the modules that are installed
 $result = $this->module_model->modulelist();
 
-foreach($result->result() as $myresult)
+foreach($result as $myresult)
 {
-	$commonname = $myresult->commonname;
-	$modulename = $myresult->modulename;
+	$commonname = $myresult['commonname'];
+	$modulename = $myresult['modulename'];
 
 	// change the commonname for base modules to a language compatible name
 	if ($commonname == "Customer") { $commonname = lang('customer'); }

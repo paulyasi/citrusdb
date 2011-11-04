@@ -391,6 +391,15 @@ class Admin extends App_Controller
 
 	function savedeletegroup()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		$gid = $this->input->post('gid');
 
 		$this->user_model->delete_group($gid);
@@ -402,10 +411,21 @@ class Admin extends App_Controller
 
 	function modules()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['modules'] = $this->module_model->modulelist();
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/admin/modules_view');
+		$this->load->view('tools/admin/modules_view', $data);
 	}
 
 
