@@ -93,4 +93,17 @@ class Admin_Model extends CI_Model
 		$result = $this->db->query($query) or die ("get users query failed");
 		return $result->result_array();
 	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 * get the list of users from the table
+	 * ------------------------------------------------------------------------
+	 */
+	function get_groups()
+	{
+		$query = "SELECT * FROM groups ORDER BY groupname";
+		$result = $this->db->query($query) or die ("get groups query failed");
+		return $result->result_array();
+	}
 }
