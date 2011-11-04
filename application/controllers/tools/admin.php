@@ -327,6 +327,68 @@ class Admin extends App_Controller
 	}
 
 
+	function addgroup()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+		
+		$data['users'] = $this->user_model->list_users();
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/addgroup_view', $data);
+	}
+
+
+	function saveaddgroup()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$membername = $this->input->post('membername');
+		$groupname = $this->input->post('groupname');
+
+		$this->user_model->add_to_group($groupname, $membername);
+
+		print "<h3>$l_changessaved</h3>";
+
+		redirect("/tools/admin/groups");
+	}
+
+
+	function deletegroup()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['groups'] = $this->admin_model->get_groups();
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/deletegroup_view', $data);
+	}
+
+
 	function modules()
 	{
 		// load the header without the sidebar to get the stylesheet in there

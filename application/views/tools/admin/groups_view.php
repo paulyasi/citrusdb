@@ -3,7 +3,7 @@
 <body bgcolor="#ffffff">
 <h3><?php echo lang('groups')?></h3>
 
-[ <a href="<?php echo $this->url_prefix?>/index.php/tools/admin/newgroup"><?php echo lang('add')?></a> ]
+[ <a href="<?php echo $this->url_prefix?>/index.php/tools/admin/addgroup"><?php echo lang('add')?></a> ]
 
 <p><table cellpadding=5 cellspacing=1><tr bgcolor="#eeeeee">
 <td><b><?php echo lang('groupname')?></b></td>

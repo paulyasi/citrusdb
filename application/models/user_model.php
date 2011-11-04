@@ -649,6 +649,18 @@ class User_Model extends CI_Model {
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  add this new member to a group
+	 * ------------------------------------------------------------------------
+	 */
+	function add_to_group($groupname, $membername)
+	{
+		$query = "INSERT INTO groups (groupname,groupmember) VALUES (?,?)";
+		$result = $this->db->query($query, array($groupname, $membername)) or die ("add to group query failed");
+	}
+
+
 } // end class
 
 ?>
