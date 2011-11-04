@@ -369,7 +369,7 @@ class Admin extends App_Controller
 	}
 
 
-	function deletegroup()
+	function deletegroup($gid)
 	{
 		// check if the user has manager privileges first
 		$myresult = $this->user_model->user_privileges($this->user);
@@ -380,12 +380,23 @@ class Admin extends App_Controller
 			exit; 
 		}
 
-		$data['groups'] = $this->admin_model->get_groups();
+		$data['gid'] = $gid;
 
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/deletegroup_view', $data);
+	}
+
+
+	function savedeletegroup()
+	{
+		$gid = $this->input->post('gid');
+
+		$this->user_model->delete_group($gid);
+
+		// redirect back to the group list page
+		redirect("/tools/admin/groups");
 	}
 
 

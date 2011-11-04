@@ -661,6 +661,18 @@ class User_Model extends CI_Model {
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  delete a member id from a group
+	 * ------------------------------------------------------------------------
+	 */
+	function delete_group($gid)
+	{
+		$query = "DELETE FROM groups WHERE id = ?";
+		$result = $this->db->query($query, array($gid)) or die ("delete group query failed");
+	}
+
+
 } // end class
 
 ?>
