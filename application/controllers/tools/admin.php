@@ -439,12 +439,10 @@ class Admin extends App_Controller
 			exit; 
 		}
 
-		$data['modules'] = $this->module_model->modulelist();
-
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/admin/addmodule_view', $data);
+		$this->load->view('tools/admin/addmodule_view');
 	}
 
 
@@ -481,7 +479,8 @@ class Admin extends App_Controller
 			exit; 
 		}
 
-		$data['modules'] = $this->module_model->modulelist();
+		$data['module'] = $modulename;
+		$data['permissions'] = $this->module_model->get_module_permissions($modulename);
 
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
@@ -489,6 +488,14 @@ class Admin extends App_Controller
 		$this->load->view('tools/admin/modulepermissions_view', $data);
 	}
 
+
+	function addmodulepermissions($modulename)
+	{
+	}
+
+	function savemodulepermissions()
+	{
+	}
 
 	function billingtypes()
 	{
@@ -517,5 +524,5 @@ class Admin extends App_Controller
 	}
 }
 
-/* End of file user */
-/* Location: ./application/controllers/tools/user.php */
+/* End of file admin */
+/* Location: ./application/controllers/tools/admin.php */

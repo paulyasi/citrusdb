@@ -113,5 +113,21 @@ class Module_model extends CI_Model
 		$result = $this->db->query($query, array($commonname, $modulename, $sortorder)) 
 			or die ("addmodule query failed");
 	}
-    
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get module permission information
+	 * ------------------------------------------------------------------------
+	 */
+	function get_module_permissions($module)
+	{
+		$query = "SELECT * FROM module_permissions WHERE modulename = ? ".
+			"ORDER BY user";
+		$result = $this->db->query($query, array($module)) 
+			or die ("module permissions query failed");
+
+		return $result->result_array();
+	}
+
 }
