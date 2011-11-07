@@ -100,5 +100,18 @@ class Module_model extends CI_Model
 		
 		return $result->result_array();
     }
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  insert a new module into the modules table
+	 * ------------------------------------------------------------------------
+	 */
+	public function addmodule($commonname, $modulename, $sortorder)
+	{
+		$query = "INSERT INTO modules (commonname,modulename,sortorder) ".
+			"VALUES (?,?,?)";
+		$result = $this->db->query($query, array($commonname, $modulename, $sortorder)) 
+			or die ("addmodule query failed");
+	}
     
 }

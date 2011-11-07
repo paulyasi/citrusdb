@@ -428,6 +428,67 @@ class Admin extends App_Controller
 		$this->load->view('tools/admin/modules_view', $data);
 	}
 
+	function addmodule()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['modules'] = $this->module_model->modulelist();
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/addmodule_view', $data);
+	}
+
+
+	function saveaddmodule()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$commonname = $this->input->post('commonname');
+		$modulename = $this->input->post('modulename');
+		$sortorder = $this->input->post('sortorder');
+
+		$this->module_model->addmodule($commonname, $modulename, $sortorder);
+		print "<h3>Modules Updated</h3>";
+
+		redirect('/tools/admin/modules');
+	}
+
+
+	function modulepermissions($modulename)
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['modules'] = $this->module_model->modulelist();
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/modulepermissions_view', $data);
+	}
+
 
 	function billingtypes()
 	{
