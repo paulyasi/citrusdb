@@ -14,9 +14,9 @@ foreach ($modules AS $m)
 	$modulename = $m['modulename'];
 
 	print "<tr bgcolor=\"#eeeeee\"><td>".
-		"<a href=\"index.php?load=$modulename&tooltype=module&type=tools\">$commonname</a></td>".
-		"<td><a href=\"index.php?load=mpermissions&module=$modulename&type=tools\">".
-		"[ $l_edit $l_permission ]</a></td></tr>";
+		"$commonname</td>".
+		"<td><a href=\"$this->url_prefix/index.php/tools/admin/modulepermissions/$modulename\">".
+		"[ ".lang('edit')." ".lang('permission')." ]</a></td></tr>";
 }
 ?>
 </table>
