@@ -655,9 +655,6 @@ class Admin extends App_Controller
 
 		$this->admin_model->remove_billing_type($typeid);
 
-		// remove the billing type
-		$query = "DELETE FROM billing_types WHERE id = ?";
-		$result = $this->db->query($query, array($typeid)) or die ("remove billing type query failed");
 
 		redirect('/tools/admin/billingtypes');
 	}
@@ -665,12 +662,50 @@ class Admin extends App_Controller
 
 	function services()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['masterservices'] = $this->admin_model->get_master_services();
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/admin/services_view');
+		$this->load->view('tools/admin/services_view', $data);
 	}
 
+	function addnewservice()
+	{
+	}
+
+	function servicetaxes()
+	{
+	}
+
+	function linkservices()
+	{
+	}
+
+	function editservice($service_id)
+	{
+	}
+
+	function optionstables()
+	{
+	}
+
+	function editoptions()
+	{
+	}
+
+	function fieldassets()
+	{
+	}
 
 	function mergeaccounts()
 	{

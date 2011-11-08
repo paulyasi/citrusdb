@@ -141,5 +141,12 @@ class Admin_Model extends CI_Model
 	}
 
 
+	function get_master_services()
+	{
+        $query = "SELECT * FROM master_services ORDER BY category, pricerate, service_description";
+		$result = $this->db->query($query) or die ("master services query failed");
+		return $result->result_array();
+	}
+
 }
 /* end admin_model.php */
