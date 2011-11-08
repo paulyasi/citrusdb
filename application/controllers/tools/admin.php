@@ -681,6 +681,9 @@ class Admin extends App_Controller
 
 	function addnewservice()
 	{
+		// need general model to get list of org's
+		$this->load->model('general_model');
+
 		// check if the user has manager privileges first
 		$myresult = $this->user_model->user_privileges($this->user);
 
