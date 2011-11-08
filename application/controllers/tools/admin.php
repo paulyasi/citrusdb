@@ -610,17 +610,11 @@ class Admin extends App_Controller
 			exit; 
 		}
 
-		$method = $base->input['method'];
-		$frequency = $base->input['frequency'];
-		$name = $base->input['name'];
-		$remove = $base->input['remove'];
-		$typeid = $base->input['typeid'];
-		$deletenow = $base->input['deletenow'];
+		$method = $this->input->post('method');
+		$frequency = $this->input->post('frequency');
+		$name = $this->input->post('name');
 
-		// add a billing type
-		$query = "INSERT INTO billing_types (name,frequency,method) VALUES ('$name','$frequency','$method')";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		print "<h3>$l_changessaved</h3> [<a href=\"index.php?load=billing&tooltype=module&type=tools\">done</a>]";
+		$this->admin_model->add_billing_type($name, $frequency, $method);
 
 		redirect('/tools/admin/billingtypes');
 	}

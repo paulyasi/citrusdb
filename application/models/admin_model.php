@@ -113,6 +113,33 @@ class Admin_Model extends CI_Model
 		$query = "SELECT * FROM billing_types ORDER BY name";
 		$result = $this->db->query($query) or die ("get billing types query failed");
 		return $result->result_array();
-
 	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  add a billing type
+	 * ------------------------------------------------------------------------
+	 */
+	function add_billing_type($name, $frequency, $method)
+	{
+		$query = "INSERT INTO billing_types (name,frequency,method) VALUES (?,?,?)";
+		$result = $this->db->query($query, array($name, $frequency, $method)) 
+			or die ("add billing type query failed");
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  remove billing type
+	 * ------------------------------------------------------------------------
+	 */
+	function remove_billing_type($typeid)
+	{
+		$query = "DELETE FROM billing_types WHERE id = ?";
+		$result = $this->db->query($query, array($typeid)) or die ("remove billing type query failed");
+	}
+
+
 }
+/* end admin_model.php */
