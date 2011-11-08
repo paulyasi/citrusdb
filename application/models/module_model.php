@@ -130,4 +130,13 @@ class Module_model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	function add_permissions($module, $permission, $usergroup)
+	{
+		$query = "INSERT INTO module_permissions (modulename,permission,user) values(?,?,?)";
+		$result = $this->db->query($query, array($module, $permission, $usergroup)) 
+			or die ("add permissions query failed");
+	}
+
+
 }

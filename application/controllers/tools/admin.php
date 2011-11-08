@@ -491,9 +491,42 @@ class Admin extends App_Controller
 
 	function addmodulepermissions($modulename)
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['module'] = $modulename;
+		$data['permissions'] = $this->module_model->get_module_permissions($modulename);
+		$data['groupslist'] = $this->user_model->list_groups();
+		$data['userslist'] = $this->user_model->list_users();
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/addmodulepermissions_view', $data);
 	}
 
+
 	function savemodulepermissions()
+	{
+		$module = $this->input->post('module');
+		$permission = $this->input->post('permission');
+		$usergroup = $this->input->post('usergroup');
+
+		$this->module_model->add_permissions($module, $permission, $usergroup);
+
+		print lang('changessaved');
+
+		redirect("/tools/admin/modulepermissions/".$module);
+
+	}
+
+	function removemodulepermissions()
 	{
 	}
 
