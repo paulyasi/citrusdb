@@ -514,6 +514,14 @@ class Admin extends App_Controller
 
 	function savemodulepermissions()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
 		$module = $this->input->post('module');
 		$permission = $this->input->post('permission');
 		$usergroup = $this->input->post('usergroup');
@@ -526,9 +534,50 @@ class Admin extends App_Controller
 
 	}
 
-	function removemodulepermissions()
+	function removemodulepermissions($pid, $module)
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['pid'] = $pid;
+		$data['module'] = $module;
+		
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/removemodulepermissions_view', $data);
 	}
+
+
+	function saveremovemodulepermissions()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		//GET Variables
+		$module = $this->input->post('module');
+		$deletenow = $this->input->post('deletenow');
+		$pid = $this->input->post('pid');
+
+		$this->module_model->remove_permission($pid);
+
+		print lang('changessaved');
+
+		redirect("/tools/admin/modulepermissions/".$module);
+	}
+
 
 	function billingtypes()
 	{

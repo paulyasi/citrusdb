@@ -139,4 +139,10 @@ class Module_model extends CI_Model
 	}
 
 
+	function remove_permission($pid)
+	{
+		$query = "DELETE FROM module_permissions WHERE id = ?";
+		$result = $this->db->query($query, array($pid)) or die ("remove permission query failed");
+	}
+
 }

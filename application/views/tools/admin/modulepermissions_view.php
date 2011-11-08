@@ -28,7 +28,7 @@ foreach ($permissions AS $myresult)
 
   print "<tr bgcolor=\"#eeeeee\"><td>$module</td><td>$permission</td><td>$user".
     "</td><td><a href=\"$this->url_prefix/index.php/tools/admin/".
-	"removepermission/$module/$pid\">[ ".lang('remove')." ]</a></td></tr>";
+	"removemodulepermissions/$pid/$module\">[ ".lang('remove')." ]</a></td></tr>";
 }
 
 ?>
