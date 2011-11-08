@@ -106,4 +106,13 @@ class Admin_Model extends CI_Model
 		$result = $this->db->query($query) or die ("get groups query failed");
 		return $result->result_array();
 	}
+
+
+	function get_billing_types()
+	{
+		$query = "SELECT * FROM billing_types ORDER BY name";
+		$result = $this->db->query($query) or die ("get billing types query failed");
+		return $result->result_array();
+
+	}
 }

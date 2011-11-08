@@ -581,10 +581,91 @@ class Admin extends App_Controller
 
 	function billingtypes()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['billingtypes'] = $this->admin_model->get_billing_types();
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/admin/billingtypes_view');
+		$this->load->view('tools/admin/billingtypes_view', $data);
+	}
+
+
+	function addbillingtype()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$method = $base->input['method'];
+		$frequency = $base->input['frequency'];
+		$name = $base->input['name'];
+		$remove = $base->input['remove'];
+		$typeid = $base->input['typeid'];
+		$deletenow = $base->input['deletenow'];
+
+		// add a billing type
+		$query = "INSERT INTO billing_types (name,frequency,method) VALUES ('$name','$frequency','$method')";
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		print "<h3>$l_changessaved</h3> [<a href=\"index.php?load=billing&tooltype=module&type=tools\">done</a>]";
+
+		redirect('/tools/admin/billingtypes');
+	}
+
+
+	function removebillingtype($typeid)
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['typeid'] = $typeid;
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/removebillingtype_view', $data);
+	}
+
+
+	function saveremovebillingtype()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$typeid = $this->input->post('typeid');
+
+		$this->admin_model->remove_billing_type($typeid);
+
+		// remove the billing type
+		$query = "DELETE FROM billing_types WHERE id = ?";
+		$result = $this->db->query($query, array($typeid)) or die ("remove billing type query failed");
+
+		redirect('/tools/admin/billingtypes');
 	}
 
 
