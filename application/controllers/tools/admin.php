@@ -681,6 +681,56 @@ class Admin extends App_Controller
 
 	function addnewservice()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+		
+		$data['orglist'] = $this->general_model->list_organizations();
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/addnewservice_view');
+	}
+
+
+	function saveaddnewservice()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$servicearray = array(
+				'service_description' => $this->input->post('service_description'),
+				'pricerate' => $this->input->post('pricerate'),
+				'frequency' => $this->input->post('frequency'),
+				'options_table' => $this->input->post('options_table'),
+				'category' => $this->input->post('category'),
+				'selling_active' => $this->input->post('selling_active'),
+				'activate_notify' => $this->input->post('activate_notify'),
+				'shutoff_notify' => $this->input->post('shutoff_notify'),
+				'hide_online' => $this->input->post('hide_online'),
+				'activation_string' => $this->input->post('activation_string'),
+				'usage_label' => $this->input->post('usage_label'),
+				'organization_id' => $this->input->post('organization_id'), 
+				'modify_notify' => $this->input->post('modify_notify'), 
+				'support_notify' => $this->input->post('support_notify'), 
+				'carrier_dependent' => $this->input->post('carrier_dependent')
+				);
+
+		$this->admin_model->add_master_service($servicearray);
+
+		redirect('/tools/admin/services');
 	}
 
 	function servicetaxes()

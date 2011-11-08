@@ -148,5 +148,11 @@ class Admin_Model extends CI_Model
 		return $result->result_array();
 	}
 
+	function add_master_service($servicearray)
+	{
+		
+		$this->db->insert('master_services', $servicearray);
+	}
+
 }
 /* end admin_model.php */
