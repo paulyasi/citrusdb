@@ -25,7 +25,7 @@ class General_Model extends CI_Model
 	function list_organizations()
 	{		
 		$query = "SELECT id,org_name FROM general";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("list organizations query failed");
 	
 		return $result->result_array();
 	}
@@ -39,7 +39,7 @@ class General_Model extends CI_Model
 	function get_org_name($id)
 	{
 		// get the organization info
-		$query = "SELECT org_name FROM general WHERE id = $id LIMIT 1";
+		$query = "SELECT org_name FROM general WHERE id = ? LIMIT 1";
 		$orgresult = $this->db->query($query, array($id)) or die ("queryfailed");
 		$myorgresult = $orgresult->row_array();
 		return $myorgresult['org_name']; 

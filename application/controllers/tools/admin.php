@@ -693,12 +693,12 @@ class Admin extends App_Controller
 			exit; 
 		}
 		
-		$data['orglist'] = $this->general_model->list_organizations();
+		$data['org_list'] = $this->general_model->list_organizations();
 
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/admin/addnewservice_view');
+		$this->load->view('tools/admin/addnewservice_view', $data);
 	}
 
 
@@ -735,16 +735,79 @@ class Admin extends App_Controller
 
 		redirect('/tools/admin/services');
 	}
+	
+	function editservice($service_id)
+	{
+		// need general model to get list of org's
+		$this->load->model('general_model');
+
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+		
+		$data['s'] = $this->admin_model->get_service_info($service_id);
+		$data['org_name'] = $this->general_model->get_org_name($data['s']['organization_id']);
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/editservice_view', $data);
+	}
+
+
+	function saveeditservice()
+	{
+
+		$submit = $base->input['submit'];
+		$sid = $base->input['sid'];
+		$service_description = $base->input['service_description'];
+		$pricerate = $base->input['pricerate'];
+		$frequency = $base->input['frequency'];
+		$options_table = $base->input['options_table'];
+		$category = $base->input['category'];
+		$selling_active = $base->input['selling_active'];
+		$hide_online = $base->input['hide_online'];
+		$activate_notify = $base->input['activate_notify'];
+		$shutoff_notify = $base->input['shutoff_notify'];
+		$modify_notify = $base->input['modify_notify'];
+		$support_notify = $base->input['support_notify'];
+		$activation_string = $base->input['activation_string'];
+		$usage_label = $base->input['usage_label'];
+		$carrier_dependent = $base->input['carrier_dependent'];
+
+		// update the table
+		$query = "UPDATE master_services ".
+			"SET service_description = '$service_description', ".
+			"pricerate = '$pricerate', ".
+			"frequency = '$frequency', ".
+			"options_table = '$options_table', ".
+			"category = '$category', ".
+			"selling_active = '$selling_active', ".
+			"hide_online = '$hide_online', ".
+			"activate_notify = '$activate_notify', ".
+			"shutoff_notify = '$shutoff_notify', ".
+			"modify_notify = '$modify_notify',".
+			"support_notify = '$support_notify',".    
+			"activation_string = '$activation_string', ".
+			"usage_label = '$usage_label', ".
+			"carrier_dependent = '$carrier_dependent' ".
+			"WHERE id = '$sid'";
+
+		$result = $DB->Execute($query) or die ("$l_queryfailed");
+
+		print "<h3>$l_changessaved</h3> [<a href=\"index.php?load=services&tooltype=module&type=tools\">$l_done</a>]";
+	}
 
 	function servicetaxes()
 	{
 	}
 
 	function linkservices()
-	{
-	}
-
-	function editservice($service_id)
 	{
 	}
 

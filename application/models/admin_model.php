@@ -150,9 +150,16 @@ class Admin_Model extends CI_Model
 
 	function add_master_service($servicearray)
 	{
-		
 		$this->db->insert('master_services', $servicearray);
 	}
+
+	function get_service_info($sid)
+	{
+		$query = "SELECT * FROM master_services WHERE id = ?";
+		$result = $this->db->query($query, array($sid)) or die ("get service info query failed");
+		return $result->row_array();
+	}
+
 
 }
 /* end admin_model.php */

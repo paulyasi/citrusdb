@@ -8,7 +8,7 @@
 <option value=""><?php echo lang('choose')?></option>
 <?php
 // pick an organization that this service belongs to
-foreach ($orglist as $myresult) {
+foreach ($org_list as $myresult) {
 	$myid = $myresult['id'];
 	$myorg = $myresult['org_name'];
 	echo "<option value=\"$myid\">$myorg</option>";
