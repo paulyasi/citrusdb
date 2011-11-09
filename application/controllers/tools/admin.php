@@ -834,14 +834,50 @@ class Admin extends App_Controller
 		redirect('/tools/admin/linkservices');
 	}
 
+
+	function optionstables()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+		
+		$data['options_tables'] = $this->admin_model->options_tables();
+		$data['tableresult'] = $this->db->list_tables();
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/optionstables_view', $data);
+	}
+
+
+	function createoptionstable($tablename)
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$this->admin_model->create_options_table($tablename);
+
+		redirect('/tools/admin/optionstables');
+	}
+
+
 	function servicetaxes()
 	{
 	}
 
 
-	function optionstables()
-	{
-	}
 
 	function editoptions()
 	{

@@ -201,5 +201,38 @@ class Admin_Model extends CI_Model
 		$result = $this->db->query($query, array($linkfrom, $linkto)) or die ("add link queryfailed");
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Get a list of unique options_tables named in the master_services table
+	 * ------------------------------------------------------------------------
+	 */
+	function options_tables()
+	{
+		$query = "SELECT DISTINCT options_table FROM master_services";
+		$result = $this->db->query($query) or die ("options tables query failed");
+		return $result->result_array();
+	}
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  create a table, then go to the editoptions.php file		
+	 * ------------------------------------------------------------------------
+	 */
+	function create_options_table($tablename)
+	{
+		// load the dbforge for table creation
+		$this->load->dbforge();
+
+		// put an id field into it by default
+		$this->dbforge->add_field('id');
+		
+		// and a user_services id field
+		$this->dbforge->add_field("user_services int(10) NOT NULL");
+
+		// now finally create the table
+		$this->dbforge->create_table($tablename);
+	}
+
 }
 /* end admin_model.php */
