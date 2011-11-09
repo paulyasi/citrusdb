@@ -234,5 +234,12 @@ class Admin_Model extends CI_Model
 		$this->dbforge->create_table($tablename);
 	}
 
+	function get_tax_rates()
+	{
+		$query = "SELECT * FROM tax_rates";
+		$result = $this->db->query($query) or die ("get tax rates query failed");
+		return $result->result_array();
+	}
+
 }
 /* end admin_model.php */
