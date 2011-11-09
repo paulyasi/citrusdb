@@ -749,7 +749,8 @@ class Admin extends App_Controller
 			echo lang('youmusthaveadmin')."<br>";
 			exit; 
 		}
-		
+
+		$data['service_id'] = $service_id;
 		$data['s'] = $this->admin_model->get_service_info($service_id);
 		$data['org_name'] = $this->general_model->get_org_name($data['s']['organization_id']);
 
@@ -762,45 +763,29 @@ class Admin extends App_Controller
 
 	function saveeditservice()
 	{
+		$service_id = $this->input->post('service_id');
 
-		$submit = $base->input['submit'];
-		$sid = $base->input['sid'];
-		$service_description = $base->input['service_description'];
-		$pricerate = $base->input['pricerate'];
-		$frequency = $base->input['frequency'];
-		$options_table = $base->input['options_table'];
-		$category = $base->input['category'];
-		$selling_active = $base->input['selling_active'];
-		$hide_online = $base->input['hide_online'];
-		$activate_notify = $base->input['activate_notify'];
-		$shutoff_notify = $base->input['shutoff_notify'];
-		$modify_notify = $base->input['modify_notify'];
-		$support_notify = $base->input['support_notify'];
-		$activation_string = $base->input['activation_string'];
-		$usage_label = $base->input['usage_label'];
-		$carrier_dependent = $base->input['carrier_dependent'];
+		$servicearray = array(
+				'service_description' => $this->input->post('service_description'),
+				'pricerate' => $this->input->post('pricerate'),
+				'frequency' => $this->input->post('frequency'),
+				'options_table' => $this->input->post('options_table'),
+				'category' => $this->input->post('category'),
+				'selling_active' => $this->input->post('selling_active'),
+				'hide_online' => $this->input->post('hide_online'),
+				'activate_notify' => $this->input->post('activate_notify'),
+				'shutoff_notify' => $this->input->post('shutoff_notify'),
+				'modify_notify' => $this->input->post('modify_notify'),
+				'support_notify' => $this->input->post('support_notify'),
+				'activation_string' => $this->input->post('activation_string'),
+				'usage_label' => $this->input->post('usage_label'),
+				'carrier_dependent' => $this->input->post('carrier_dependent')
+				);
 
-		// update the table
-		$query = "UPDATE master_services ".
-			"SET service_description = '$service_description', ".
-			"pricerate = '$pricerate', ".
-			"frequency = '$frequency', ".
-			"options_table = '$options_table', ".
-			"category = '$category', ".
-			"selling_active = '$selling_active', ".
-			"hide_online = '$hide_online', ".
-			"activate_notify = '$activate_notify', ".
-			"shutoff_notify = '$shutoff_notify', ".
-			"modify_notify = '$modify_notify',".
-			"support_notify = '$support_notify',".    
-			"activation_string = '$activation_string', ".
-			"usage_label = '$usage_label', ".
-			"carrier_dependent = '$carrier_dependent' ".
-			"WHERE id = '$sid'";
+		$this->admin_model->update_service_info($service_id, $servicearray);
 
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		redirect('/tools/admin/services');
 
-		print "<h3>$l_changessaved</h3> [<a href=\"index.php?load=services&tooltype=module&type=tools\">$l_done</a>]";
 	}
 
 	function servicetaxes()

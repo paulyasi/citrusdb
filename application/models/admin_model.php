@@ -160,6 +160,11 @@ class Admin_Model extends CI_Model
 		return $result->row_array();
 	}
 
+	function update_service_info($id, $service_data)
+	{
+		$this->db->where('id', $id);
+		$this->db->update('master_services', $service_data);
+	}
 
 }
 /* end admin_model.php */
