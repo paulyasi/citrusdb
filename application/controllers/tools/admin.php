@@ -763,6 +763,14 @@ class Admin extends App_Controller
 
 	function saveeditservice()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
 		$service_id = $this->input->post('service_id');
 
 		$servicearray = array(
@@ -788,13 +796,48 @@ class Admin extends App_Controller
 
 	}
 
+
+	function linkservices()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+		
+		$data['master_services'] = $this->admin_model->get_master_services();
+		$data['linkedservices'] = $this->admin_model->linked_services();
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/linkservices_view', $data);
+	}
+
+
+	function savelinkservices()
+	{
+		$linkfrom = $this->input->post('linkfrom');
+		$linkto = $this->input->post('linkto');
+
+		$this->admin_model->add_service_link($linkfrom, $linkto);
+		redirect('/tools/admin/linkservices');
+	}
+
+	function removelinkservices($linkfrom, $linkto)
+	{
+		// remove the link
+		$this->admin_model->remove_service_link($linkfrom, $linkto);
+		redirect('/tools/admin/linkservices');
+	}
+
 	function servicetaxes()
 	{
 	}
 
-	function linkservices()
-	{
-	}
 
 	function optionstables()
 	{

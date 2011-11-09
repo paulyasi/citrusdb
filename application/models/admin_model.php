@@ -166,5 +166,40 @@ class Admin_Model extends CI_Model
 		$this->db->update('master_services', $service_data);
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  print the list of linked services        
+	 * ------------------------------------------------------------------------
+	 */
+	function linked_services()
+	{
+		$query = "SELECT mfrom.id mfrom_id, ".
+			"mfrom.service_description mfrom_description, mto.id mto_id, ".
+			"mto.service_description mto_description, ".
+			"l.linkfrom, l.linkto ".
+			"FROM linked_services l ".
+			"LEFT JOIN master_services mfrom ON mfrom.id = l.linkfrom ".
+			"LEFT JOIN master_services mto ON mto.id = l.linkto";
+		$result = $this->db->query($query) or die ("linked services query failed");
+
+		return $result->result_array();
+	}
+
+
+	function remove_service_link($linkfrom, $linkto)
+	{
+		// remove the link
+		$query = "DELETE FROM linked_services WHERE linkfrom = ? AND linkto = ? LIMIT 1";
+		$result = $this->db->query($query, array($linkfrom, $linkto)) or die ("remove link queryfailed");
+	} 
+
+	function add_service_link($linkfrom, $linkto)
+	{
+		// add a link
+		$query = "INSERT INTO linked_services (linkfrom,linkto) VALUES (?,?)";
+		$result = $this->db->query($query, array($linkfrom, $linkto)) or die ("add link queryfailed");
+	}
+
 }
 /* end admin_model.php */
