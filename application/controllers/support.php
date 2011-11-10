@@ -124,14 +124,6 @@ class Support extends App_Controller {
 		$permission = $this->module_model->permission($this->user, 'support');
 		if ($permission['view'])
 		{
-			// grab the description and addnote field (subnotes) manually to preserve newlines
-			$description = $_POST['description'];
-			$data['description'] = safe_value_with_newlines($description);
-
-			if (!isset($_POST['addnote'])) { $_POST['addnote'] = ""; }
-			$addnote = $_POST['addnote'];
-			$data['addnote'] = safe_value_with_newlines($addnote);
-
 			// load user model so can show list of users to send note to	
 			$this->load->model('user_model');
 
@@ -141,7 +133,10 @@ class Support extends App_Controller {
 			// load the module header common to all module views
 			$this->load->view('module_header_view');
 
+			$data['groupslist'] = $this->user_model->list_groups();
+			$data['userslist'] = $this->user_model->list_users();
 			$data['ticket'] = $this->support_model->get_ticket($id);
+			$data['sub_history'] = $this->support_model->get_sub_history($data['ticket']['id']);
 			$this->load->view('support/editticket_view', $data);
 
 			// the history listing tabs
@@ -168,6 +163,13 @@ class Support extends App_Controller {
 		$serviceid = $base->input['serviceid'];
 		$oldstatus = $base->input['oldstatus'];
 
+		// grab the description and addnote field (subnotes) manually to preserve newlines
+		$description = $_POST['description'];
+		$data['description'] = safe_value_with_newlines($description);
+
+		if (!isset($_POST['addnote'])) { $_POST['addnote'] = ""; }
+		$addnote = $_POST['addnote'];
+		$data['addnote'] = safe_value_with_newlines($addnote);
 
 
 		// first check if user_services_id is empty or zero, if so, set to NULL
@@ -219,10 +221,10 @@ class Support extends App_Controller {
 
 			if ($result->RowCount() > 0) {
 				// we are notifying a group of users
-					while ($myresult = $result->FetchRow()) {
-						$groupmember = $myresult['groupmember'];
-						enotify($DB, $groupmember, $message, $id, $user, $notify, $addnote);
-					} // end while    
+				while ($myresult = $result->FetchRow()) {
+					$groupmember = $myresult['groupmember'];
+					enotify($DB, $groupmember, $message, $id, $user, $notify, $addnote);
+				} // end while    
 			} else {
 				// we are notifying an individual user
 				enotify($DB, $notify, $message, $id, $user, $notify, $addnote);

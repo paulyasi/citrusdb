@@ -260,4 +260,12 @@ class Support_Model extends CI_Model
 		return $data;
 	}
 
+	function get_sub_history($id)
+	{
+		// print the current notes attached to this item
+		$query = "SELECT * FROM sub_history WHERE customer_history_id = ?";
+		$result = $this->db->query($query, array($id)) or die ("sub_history query failed");
+		return $result->result_array();
+	}
+
 }
