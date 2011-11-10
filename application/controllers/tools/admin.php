@@ -894,65 +894,34 @@ class Admin extends App_Controller
 
 	function addtaxrate()
 	{
-		// then we add a new tax
-		$query = "INSERT INTO tax_rates (description,rate,if_field,if_value,".
-			"percentage_or_fixed) VALUES ('$description','$rate','$if_field','$if_value',".
-			"'$percentage_or_fixed')";
+		$description = $this->input->post('description');
+		$rate = $this->input->post('rate');
+		$if_field = $this->input->post('if_field');
+		$if_value = $this->input->post('if_value');
+		$percentage_or_fixed = $this->input->post('percentage_or_fixed');
 
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$this->admin_model->add_tax_rate($description, $rate, $if_field, $if_value, $percentage_or_fixed);
 
-		print "<h3>$l_changessaved</h3> [<a href=\"index.php?load=services&tooltype=module&type=tools\">$l_done</a>]";
-
+		redirect('/tools/admin/taxes');
 	}
 
-	function deletetaxrate()
+	function deletetaxrate($id)
 	{
-		if ($delete) 
-		{
-			if ($deletenow)
-			{
-				// then we delete a tax
-				$query = "DELETE FROM tax_rates WHERE id = '$id'";
-				$result = $DB->Execute($query) or die ("Query Failed");	
+		$data['id'] = $id;
 
-				print "<h3>$l_changessaved</h3> 
-					[<a href=\"index.php?load=services&tooltype=module&type=tools\">$l_done</a>]";
-			}
-			else
-			{
-				// ask if they are sure they want to delete this tax type
-				print "<br><br>";
-				print "<h4>$l_areyousuredelete: $id</h4>";
-				print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
-					"<td align=right width=360>";
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
 
-				// if they hit yes, this will sent them into the delete and remove the tax
-
-				print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";	
-				print "<input type=hidden name=load value=services>";
-				print "<input type=hidden name=type value=tools>";
-				print "<input type=hidden name=tooltype value=module>";
-				print "<input type=hidden name=id value=$id>";
-				print "<input type=hidden name=delete value=on>";
-				print "<input type=hidden name=tax value=on>";
-				print "<input name=deletenow type=submit value=\"  $l_yes  \" class=smallbutton>".
-					"</form></td>";
-
-				// if they hit no, send them back to the service edit screen
-
-				print "<td align=left width=360><form style=\"margin-bottom:0;\" action=\"index.php\" method=post>";
-				print "<input name=done type=submit value=\"  $l_no  \" class=smallbutton>";
-				print "<input type=hidden name=load value=services>";  
-				print "<input type=hidden name=type value=tools>";        
-				print "<input type=hidden name=tooltype value=module>";
-				print "<input type=hidden name=tax value=on>";
-				print "</form></td></table>";
-				print "</blockquote>";		
-
-			}
-		}
+		$this->load->view('tools/admin/deletetaxrate_view', $data);
 
 	}
+
+	function savedeletetaxrate()
+	{
+		$this->admin_model->delete_tax_rate($this->input->post('id'));
+		redirect('/tools/admin/taxes');
+	}
+
 
 	function taxedservices()
 	{

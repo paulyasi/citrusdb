@@ -241,5 +241,22 @@ class Admin_Model extends CI_Model
 		return $result->result_array();
 	}
 
+	
+	function add_tax_rate($description, $rate, $if_field, $if_value, $percentage_or_fixed)
+	{
+		$query = "INSERT INTO tax_rates (description,rate,if_field,if_value,".
+			"percentage_or_fixed) VALUES (?,?,?,?,?)";
+
+		$result = $this->db->query($query, array($description, $rate, $if_field, 
+					$if_value, $percentage_or_fixed)) or die ("add tax rate queryfailed");
+	}
+
+	function delete_tax_rate($id)
+	{
+		$query = "DELETE FROM tax_rates WHERE id = ?";
+		$result = $this->db->query($query, array($id)) or die ("delete tax rate query failed");	
+	}
+
+
 }
 /* end admin_model.php */

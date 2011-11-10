@@ -6,7 +6,7 @@
 <a href="<?php echo $this->url_prefix?>/index.php/tools/admin/addnewservice"><?php echo lang('addnewservice')?></a> | 
 <a href="<?php echo $this->url_prefix?>/index.php/tools/admin/linkservices"><?php echo lang('linkservices')?></a> | 
 <a href="<?php echo $this->url_prefix?>/index.php/tools/admin/optionstables"><?php echo lang('optionstables')?></a> | 
-<a href="<?php echo $this->url_prefix?>/index.php/tools/admin/servicetaxes"><?php echo lang('taxes')?></a> | 
+<a href="<?php echo $this->url_prefix?>/index.php/tools/admin/taxes"><?php echo lang('taxes')?></a> | 
 <a href="<?php echo $this->url_prefix?>/index.php/tools/admin/fieldassets"><?php echo lang('editfieldassets')?></a>
 
 <p><table cellpadding=5 cellspacing=1><tr bgcolor="#eeeeee">
