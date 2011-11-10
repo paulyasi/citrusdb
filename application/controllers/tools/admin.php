@@ -1120,6 +1120,50 @@ class Admin extends App_Controller
 
 		$this->load->view('tools/admin/mergeaccounts_view');
 	}
+
+	function confirmmergeaccounts()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/confirmmergeaccounts_view');
+	}
+
+
+	function savemergeaccounts() 
+	{
+		// get the default billing id in the $to_account
+		$query = "SELECT default_billing_id FROM customer WHERE account_number = '$to_account'";
+		$result = $DB->Execute($query) or die ("default billing id select $l_queryfailed");
+		$myresult = $result->fields;
+		$default_billing_id = $myresult['default_billing_id'];
+
+		// move the services to the new record
+		$query = "UPDATE user_services SET account_number = '$to_account', ".
+			"billing_id = '$default_billing_id' WHERE account_number = '$from_account'";
+		$result = $DB->Execute($query) or die ("user services update $l_queryfailed");
+
+		// move the customer history to the new record
+		$query = "UPDATE customer_history SET account_number = '$to_account' ".
+			"WHERE account_number = '$from_account'";
+		$result = $DB->Execute($query) or die ("customer history update $l_queryfailed");
+
+		// make a note on both records that they were merged
+		$desc = "$l_merged $from_account $l_to $to_account";  
+		create_ticket($DB, $user, NULL, $to_account, 'automatic', $desc);
+		create_ticket($DB, $user, NULL, $from_account, 'automatic', $desc);
+
+		print "<h3>$desc</h3>";
+	}
 }
 
 /* End of file admin */
