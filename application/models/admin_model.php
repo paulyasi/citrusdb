@@ -291,5 +291,36 @@ class Admin_Model extends CI_Model
 		$result = $this->db->query($query, array($id)) or die ("$l_queryfailed");	
 	}
 
+	function get_service_categories()
+	{
+		// get the list of service categories from the master_services table
+		$query = "SELECT DISTINCT(category) FROM master_services ORDER BY category";
+		$result = $this->db->query($query) or die ("category queryfailed");
+		return $result->result_array();
+	}
+
+	function get_field_assets()
+	{
+		$query = "SELECT * FROM master_field_assets";
+		$result = $this->db->query($query) or die ("field assets queryfailed");
+		return $result->result_array();
+	}
+
+	function add_field_asset($description, $status, $weight, $category)
+	{
+		$query = "INSERT INTO master_field_assets (description,status,weight, ".
+			"category) VALUES (?,?,?,?)";
+		$result = $this->db->query($query, array($description, $status, $weight, $category)) 
+			or die ("$l_queryfailed");
+	}
+
+	function change_asset_status($id, $status)
+	{
+		// then we update the status of that id
+		$query = "UPDATE master_field_assets SET status = ? WHERE id = ?";
+		$result = $this->db->query($query, array($status, $id)) 
+			or die ("change asset status queryfailed");
+	}
+
 }
 /* end admin_model.php */

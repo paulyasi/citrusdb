@@ -991,6 +991,15 @@ class Admin extends App_Controller
 
 	function addtaxedservice()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		$linkedservice = $this->input->post('linkedservice');
 		$torate = $this->input->post('torate');
 
@@ -1001,6 +1010,15 @@ class Admin extends App_Controller
 
 	function deletetaxedservice($id)
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		$data['id'] = $id;
 
 		// load the header without the sidebar to get the stylesheet in there
@@ -1011,6 +1029,15 @@ class Admin extends App_Controller
 
 	function savedeletetaxedservice()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		$id = $this->input->post('id');
 
 		$this->admin_model->delete_taxed_service($id);
@@ -1018,16 +1045,76 @@ class Admin extends App_Controller
 		redirect('/tools/admin/taxedservices');
 	}
 
-	function editoptions()
-	{
-	}
 
 	function fieldassets()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$data['service_categories'] = $this->admin_model->get_service_categories();
+		$data['master_field_assets'] = $this->admin_model->get_field_assets();
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/fieldassets_view', $data);
+	}
+
+
+	function addfieldasset() 
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$description = $this->input->post('description');
+		$status = $this->input->post('status');
+		$weight = $this->input->post('weight');
+		$category = $this->input->post('category');
+
+		$this->admin_model->add_field_asset($description, $status, $weight, $category);
+		
+		redirect('/tools/admin/fieldassets');
+	}
+
+	function changefieldassetstatus ($id, $status) 
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$this->admin_model->change_asset_status($id, $status);
+
+		redirect('/tools/admin/fieldassets');
 	}
 
 	function mergeaccounts()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
