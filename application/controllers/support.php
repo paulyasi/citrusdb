@@ -120,10 +120,32 @@ class Support extends App_Controller {
 
 	public function editticket($id)
 	{
-		if ($pallow_modify)
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'support');
+		if ($permission['view'])
 		{
-			include('./modules/support/editticket.php');
-		} else permission_error();
+			// load user model so can show list of users to send note to	
+			$this->load->model('user_model');
+
+			// get the variables for service id if some were passed to us	
+			$serviceid = $this->input->post('serviceid');
+
+			// load the module header common to all module views
+			$this->load->view('module_header_view');
+		
+			$data = $this->service_model->get_service_desc_and_notify($serviceid);
+			$this->load->view('support/editticket_view', $data);
+
+			// the history listing tabs
+			$this->load->view('historyframe_tabs_view');	
+
+			// show html footer
+			$this->load->view('html_footer_view');
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}	
 	}
 
 }
