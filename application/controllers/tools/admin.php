@@ -820,6 +820,15 @@ class Admin extends App_Controller
 
 	function savelinkservices()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		$linkfrom = $this->input->post('linkfrom');
 		$linkto = $this->input->post('linkto');
 
@@ -829,6 +838,15 @@ class Admin extends App_Controller
 
 	function removelinkservices($linkfrom, $linkto)
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		// remove the link
 		$this->admin_model->remove_service_link($linkfrom, $linkto);
 		redirect('/tools/admin/linkservices');
@@ -894,6 +912,15 @@ class Admin extends App_Controller
 
 	function addtaxrate()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		$description = $this->input->post('description');
 		$rate = $this->input->post('rate');
 		$if_field = $this->input->post('if_field');
@@ -907,6 +934,15 @@ class Admin extends App_Controller
 
 	function deletetaxrate($id)
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		$data['id'] = $id;
 
 		// load the header without the sidebar to get the stylesheet in there
@@ -918,6 +954,15 @@ class Admin extends App_Controller
 
 	function savedeletetaxrate()
 	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['manager'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
 		$this->admin_model->delete_tax_rate($this->input->post('id'));
 		redirect('/tools/admin/taxes');
 	}
@@ -934,13 +979,43 @@ class Admin extends App_Controller
 			exit; 
 		}
 
-		$data['options_tables'] = $this->admin_model->options_tables();
-		$data['tableresult'] = $this->db->list_tables();
+		$data['taxed_services'] = $this->admin_model->taxed_services();
+		$data['master_services'] = $this->admin_model->get_master_services();
+		$data['tax_rates'] = $this->admin_model->get_tax_rates();
 
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/taxedservices_view', $data);
+	}
+
+	function addtaxedservice()
+	{
+		$linkedservice = $this->input->post('linkedservice');
+		$torate = $this->input->post('torate');
+
+		$this->admin_model->add_taxed_service($linkedservice, $torate);
+
+		redirect('/tools/admin/taxedservices');
+	}
+
+	function deletetaxedservice($id)
+	{
+		$data['id'] = $id;
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('tools/admin/deletetaxedservice_view', $data);
+	}
+
+	function savedeletetaxedservice()
+	{
+		$id = $this->input->post('id');
+
+		$this->admin_model->delete_taxed_service($id);
+
+		redirect('/tools/admin/taxedservices');
 	}
 
 	function editoptions()

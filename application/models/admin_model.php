@@ -236,7 +236,7 @@ class Admin_Model extends CI_Model
 
 	function get_tax_rates()
 	{
-		$query = "SELECT * FROM tax_rates";
+		$query = "SELECT * FROM tax_rates ORDER BY description";
 		$result = $this->db->query($query) or die ("get tax rates query failed");
 		return $result->result_array();
 	}
@@ -257,6 +257,39 @@ class Admin_Model extends CI_Model
 		$result = $this->db->query($query, array($id)) or die ("delete tax rate query failed");	
 	}
 
+	function taxed_services()
+	{
+		// query the taxed_services and link it with master_service and tax_rates
+		// to get descriptions and rates shown
+
+		$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+			"ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+			"ms.service_description ms_description, ".
+			"tr.id tr_id, tr.description tr_description ".
+			"FROM taxed_services ts ".
+			"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+			"LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id";
+
+		$result = $this->db->query($query) or die ("taxed services query failed");
+		return $result->result_array();
+	}
+
+	function add_taxed_service($linkedservice, $torate)
+	{
+		// then we add a new taxed services link
+		$query = "INSERT INTO taxed_services (master_services_id,tax_rate_id) ".
+			"VALUES (?,?)";
+
+		$result = $this->db->query($query, array($linkedservice, $torate)) 
+			or die ("add taxed service queryfailed");
+	}
+
+	function delete_taxed_service($id)
+	{
+		// then we delete a taxed service link
+		$query = "DELETE FROM taxed_services WHERE id = ?";
+		$result = $this->db->query($query, array($id)) or die ("$l_queryfailed");	
+	}
 
 }
 /* end admin_model.php */
