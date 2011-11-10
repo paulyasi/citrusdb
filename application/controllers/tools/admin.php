@@ -1132,35 +1132,35 @@ class Admin extends App_Controller
 			exit; 
 		}
 
+		$to_account = $this->input->post('to_account');
+		$from_account = $this->input->post('from_account');
+		$data['to_account'] = $to_account;
+		$data['from_account'] = $from_account;
+		$data['m'] = $this->admin_model->get_merge_accounts($from_account, $to_account);
+
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/admin/confirmmergeaccounts_view');
+		$this->load->view('tools/admin/confirmmergeaccounts_view', $data);
 	}
 
 
 	function savemergeaccounts() 
 	{
-		// get the default billing id in the $to_account
-		$query = "SELECT default_billing_id FROM customer WHERE account_number = '$to_account'";
-		$result = $DB->Execute($query) or die ("default billing id select $l_queryfailed");
-		$myresult = $result->fields;
-		$default_billing_id = $myresult['default_billing_id'];
+		$this->load->model('billing_model');
+		$this->load->model('support_model');
 
-		// move the services to the new record
-		$query = "UPDATE user_services SET account_number = '$to_account', ".
-			"billing_id = '$default_billing_id' WHERE account_number = '$from_account'";
-		$result = $DB->Execute($query) or die ("user services update $l_queryfailed");
+		$to_account = $this->input->post('to_account');
+		$from_account = $this->input->post('from_account');
 
-		// move the customer history to the new record
-		$query = "UPDATE customer_history SET account_number = '$to_account' ".
-			"WHERE account_number = '$from_account'";
-		$result = $DB->Execute($query) or die ("customer history update $l_queryfailed");
+		$default_billing_id = $this->billing_model->default_billing_id($to_account);
+
+		$this->admin_model->merge($from_account, $to_account, $default_billing_id);
 
 		// make a note on both records that they were merged
-		$desc = "$l_merged $from_account $l_to $to_account";  
-		create_ticket($DB, $user, NULL, $to_account, 'automatic', $desc);
-		create_ticket($DB, $user, NULL, $from_account, 'automatic', $desc);
+		$desc = lang('merged')." ".$from_account." ".lang('to')." ".$to_account;  
+		$this->support_model->create_ticket($this->user, NULL, $to_account, 'automatic', $desc);
+		$this->support_model->create_ticket($this->user, NULL, $from_account, 'automatic', $desc);
 
 		print "<h3>$desc</h3>";
 	}

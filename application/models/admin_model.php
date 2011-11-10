@@ -322,5 +322,48 @@ class Admin_Model extends CI_Model
 			or die ("change asset status queryfailed");
 	}
 
+	function get_merge_accounts($from_account, $to_account)
+	{
+		// select the customer info for each account and return it
+		$query = "SELECT * FROM customer WHERE account_number = ?";
+		$result = $this->db->query($query, array($to_account)) or die ("to_account select queryfailed");
+		$myresult = $result->row_array();
+		$data['to_name'] = $myresult['name'];
+		$data['to_company'] = $myresult['company'];  
+		$data['to_street'] = $myresult['street'];
+		$data['to_city'] = $myresult['city'];
+		$data['to_state'] = $myresult['state'];  
+		$data['to_zip'] = $myresult['zip'];
+
+		$query = "SELECT * FROM customer WHERE account_number = ?";
+		$result = $this->db->query($query, array($from_account)) or die ("from_account select queryfailed");
+		$myresult = $result->row_array();
+		$data['from_name'] = $myresult['name'];
+		$data['from_company'] = $myresult['company'];  
+		$data['from_street'] = $myresult['street'];
+		$data['from_city'] = $myresult['city'];
+		$data['from_state'] = $myresult['state'];  
+		$data['from_zip'] = $myresult['zip'];
+
+		return $data;
+
+	}
+
+	function merge($from_account, $to_account, $default_billing_id)
+	{
+		// move the services to the new record
+		$query = "UPDATE user_services SET account_number = ?, ".
+			"billing_id = ? WHERE account_number = ?";
+		$result = $this->db->query($query, array($to_account, $default_billing_id, $from_account)) 
+			or die ("user services merge query failed");
+
+		// move the customer history to the new record
+		$query = "UPDATE customer_history SET account_number = ? ".
+			"WHERE account_number = ?";
+		$result = $this->db->query($query, array($to_account, $from_account)) 
+			or die ("customer history merge query failed");
+	}
+
+
 }
 /* end admin_model.php */
