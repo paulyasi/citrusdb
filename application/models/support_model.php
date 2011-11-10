@@ -225,4 +225,39 @@ class Support_Model extends CI_Model
 		}
 	}
 
+	function get_ticket($id)
+	{
+		// get the ticket info to edit
+		$query = "SELECT ch.id ch_id, ch.creation_date ch_creation_date, ".
+			"ch.created_by ch_created_by, ch.notify ch_notify, ".
+			"ch.account_number ch_account_number, ch.status ch_status, ".
+			"ch.description ch_description, ch.linkname, ch.linkurl, c.name c_name, ".
+			"ch.user_services_id ch_user_services_id, ch.closed_by ch_closed_by, ch.closed_date ch_closed_date, ".
+			"ms.service_description service_description ".
+			"FROM customer_history ch ".
+			"LEFT JOIN customer c ON c.account_number = ch.account_number ".
+			"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+			"WHERE ch.id = $id";
+		$result = $this->db->query($query) or die ("ticket query failed");
+		$myresult = $result->row_array();
+
+		$data['id'] = $myresult['ch_id'];
+		$data['creation_date'] = $myresult['ch_creation_date'];
+		$data['created_by'] = $myresult['ch_created_by'];
+		$data['notify'] = $myresult['ch_notify'];
+		$data['accountnum'] = $myresult['ch_account_number'];
+		$data['status'] = $myresult['ch_status'];
+		$data['description'] = $myresult['ch_description'];
+		$data['name'] = $myresult['c_name'];
+		$data['linkname'] = $myresult['linkname'];
+		$data['linkurl'] = $myresult['linkurl'];
+		$data['serviceid'] = $myresult['ch_user_services_id'];
+		$data['closed_by'] = $myresult['ch_closed_by'];
+		$data['closed_date'] = $myresult['ch_closed_date'];
+		$data['service_description'] = $myresult['service_description'];
+
+		return $data;
+	}
+
 }
