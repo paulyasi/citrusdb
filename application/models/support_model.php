@@ -269,7 +269,8 @@ class Support_Model extends CI_Model
 	}
 
 
-	function update_ticket($id, $notify, $status, $description, $reminderdate, $user_services_id)
+	function update_ticket($id, $notify, $status, $description, $reminderdate, 
+			$user_services_id, $oldstatus)
 	{
 		$data = array(
 				'notify' => $notify,
@@ -287,6 +288,14 @@ class Support_Model extends CI_Model
 		if ($reminderdate)
 		{
 			$data['creation_date'] = $reminderdate;
+		}
+
+		// if the oldstatus changed from not done or pending to completed
+		if ((($oldstatus == "not done") OR ($oldstatus == "pending"))
+				AND ($status == "completed")) 
+		{
+			$data['closed_by'] = $this->user;
+			$data['closed_date'] = date('Y-m-d H:i:s');
 		}
 
 		// update the customer history table with data
@@ -311,6 +320,17 @@ class Support_Model extends CI_Model
 				"WHERE id = $id";   
 			$result = $this->db->query($query, array()) 
 				or die ("result $l_queryfailed $query");
+		}
+		// if the oldstatus changed from not done or pending to completed
+		// then mark this user as the one who closed this ticket
+		if ((($oldstatus == "not done") OR ($oldstatus == "pending"))
+				AND ($status == "completed")) 
+		{
+			$query = "UPDATE customer_history SET ".
+				"closed_by = '$user', ".
+				"closed_date = CURRENT_TIMESTAMP ".
+				"WHERE id = $id";
+			$result = $DB->Execute($query) or die ("result $l_queryfailed");    
 		}
 		*/
 

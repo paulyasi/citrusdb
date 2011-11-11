@@ -165,19 +165,7 @@ class Support extends App_Controller {
 		$addnote = $this->input->post('addnote');
 
 		$this->support_model->update_ticket($id, $notify, $status, $description, 
-				$reminderdate, $user_services_id);
-
-		// if the oldstatus changed from not done or pending to completed
-		// then mark this user as the one who closed this ticket
-		if ((($oldstatus == "not done") OR ($oldstatus == "pending"))
-				AND ($status == "completed")) 
-		{
-			$query = "UPDATE customer_history SET ".
-				"closed_by = '$user', ".
-				"closed_date = CURRENT_TIMESTAMP ".
-				"WHERE id = $id";
-			$result = $DB->Execute($query) or die ("result $l_queryfailed");    
-		}
+				$reminderdate, $user_services_id, $oldstatus);
 
 		// if there is a new note added, put that into the sub_history
 		if ($addnote) 
