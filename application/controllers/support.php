@@ -165,52 +165,21 @@ class Support extends App_Controller {
 		$addnote = $this->input->post('addnote');
 
 		$this->support_model->update_ticket($id, $notify, $status, $description, 
-				$reminderdate, $user_services_id, $oldstatus);
+				$reminderdate, $user_services_id, $oldstatus, $addnote);
 
-		// if there is a new note added, put that into the sub_history
-		if ($addnote) 
-		{
-			$query = "INSERT sub_history SET customer_history_id = '$id', ".
-				"creation_date = CURRENT_TIMESTAMP, created_by = '$user', description = '$addnote'";
-			$result = $DB->Execute($query) or die ("sub_history insert $l_queryfailed");
+		// redirect back to ticket listing
+		redirect('/support/tickets');
 
-			// TODO: send email/xmpp notification if new note added to notify user
-			$url = "$url_prefix/index.php?load=support&type=module&editticket=on&id=$id";
-			$message = "$notify: $addnote $url";
+	}
 
-			// if the notify is a group or a user, if a group, then get all the users and notify each individual
-			$query = "SELECT * FROM groups WHERE groupname = '$notify'";
-			$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-			$result = $DB->Execute($query) or die ("Group Query Failed");
 
-			if ($result->RowCount() > 0) 
-			{
-				// we are notifying a group of users
-				while ($myresult = $result->FetchRow()) {
-					$groupmember = $myresult['groupmember'];
-					enotify($DB, $groupmember, $message, $id, $user, $notify, $addnote);
-				} // end while    
-			} 
-			else 
-			{
-				// we are notifying an individual user
-				enotify($DB, $notify, $message, $id, $user, $notify, $addnote);
-			} // end if result    
-
-		} // end if addnote
-
-		// redirect back to the account record
-		if ($notify == $user) 
-		{
-			// then send with ticketuser string
-			print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";
-		} 
-		else 
-		{
-			// send with ticketgroup string
-			print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";
-		}
-
-	} 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  list tickets for this user/group
+	 * ------------------------------------------------------------------------
+	 */
+	function tickets()
+	{
+	}
 
 }

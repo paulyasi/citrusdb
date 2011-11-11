@@ -270,7 +270,7 @@ class Support_Model extends CI_Model
 
 
 	function update_ticket($id, $notify, $status, $description, $reminderdate, 
-			$user_services_id, $oldstatus)
+			$user_services_id, $oldstatus, $addnote)
 	{
 		$data = array(
 				'notify' => $notify,
@@ -302,37 +302,38 @@ class Support_Model extends CI_Model
 		$this->db->where('id', $id);
 		$this->db->update('customer_history', $data);
 
-		/*  
-		if ($reminderdate <> '' AND $user_services_id =='') 
+		// if there is a new note added, put that into the sub_history
+		if ($addnote) 
 		{
-			$query = "UPDATE customer_history SET notify = '$notify', ".
-				"status = '$status', description = '$description', ".
-				"creation_date = '$reminderdate' $user_services_string".
-				"WHERE id = $id";
-			$result = $this->db->query($query, array()) 
-				or die ("result $l_queryfailed $query");
-		} 
-		elseif () 
-		{
-			$query = "UPDATE customer_history SET notify = '$notify', ".
-				"description = '$description', ".
-				"status = '$status' $user_services_string".
-				"WHERE id = $id";   
-			$result = $this->db->query($query, array()) 
-				or die ("result $l_queryfailed $query");
-		}
-		// if the oldstatus changed from not done or pending to completed
-		// then mark this user as the one who closed this ticket
-		if ((($oldstatus == "not done") OR ($oldstatus == "pending"))
-				AND ($status == "completed")) 
-		{
-			$query = "UPDATE customer_history SET ".
-				"closed_by = '$user', ".
-				"closed_date = CURRENT_TIMESTAMP ".
-				"WHERE id = $id";
-			$result = $DB->Execute($query) or die ("result $l_queryfailed");    
-		}
-		*/
+			$query = "INSERT sub_history SET customer_history_id = ?, ".
+				"creation_date = CURRENT_TIMESTAMP, created_by = ?, description = ?";
+			$result = $this->db->query($query, array($id, $this->user, $addnote)) 
+				or die ("sub_history insert $l_queryfailed");
+
+			// TODO: send email/xmpp notification if new note added to notify user
+			$url = "$this->url_prefix/index.php/support/editticket/$id";
+			$message = "$notify: $addnote $url";
+
+			// if the notify is a group or a user, if a group, then get all the users and notify each individual
+			$query = "SELECT * FROM groups WHERE groupname = ?";
+			$result = $this->db->query($query, array($notify)) or die ("Group Query Failed");
+
+			if ($result->num_rows() > 0) 
+			{
+				// we are notifying a group of users
+				foreach ($result->result_array() AS $myresult) 
+				{
+					$groupmember = $myresult['groupmember'];
+					$this->enotify($groupmember, $message, $id, $user, $notify, $addnote);
+				} // end while    
+			} 
+			else 
+			{
+				// we are notifying an individual user
+				$this->enotify($notify, $message, $id, $user, $notify, $addnote);
+			} // end if result    
+
+		} // end if addnote
 
 	}
 
