@@ -249,7 +249,6 @@ class Support_Model extends CI_Model
 		return $data;
 	}
 
-
 	function get_sub_history($id)
 	{
 		// print the current notes attached to this item
