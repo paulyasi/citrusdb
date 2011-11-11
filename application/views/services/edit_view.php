@@ -504,7 +504,7 @@ foreach ($result->result_array() as $myresult) {
 	//    OR ($user == $created_by)) {
 	print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
 		"padding-bottom: 2px; font-size: 9pt; font-weight: bold;\"><a target=\"_parent\" ". 
-		"href=\"index.php?load=support&type=module&editticket=on&id=$id\">".
+		"href=\"$this->url_prefix/index.php/support/editticket/$id\">".
 		"$id</a> &nbsp;</td>";
 	//} else {
 	//print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
@@ -521,8 +521,7 @@ foreach ($result->result_array() as $myresult) {
 		"padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$status &nbsp;</td>";
 	print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
 		"padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">".
-		"<a href=\"index.php?load=services&type=module&edit=on
-		&userserviceid=$serviceid&editbutton=Edit\" target=\"_parent\">
+		"<a href=\"$this->url_prefix/index.php/services/edit/$serviceid\" target=\"_parent\">
 		$serviceid $service_description</a> &nbsp; ";
 
 	if ($linkurl) {
