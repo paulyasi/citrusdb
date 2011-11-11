@@ -115,7 +115,7 @@ foreach($history->result() as $myresult)
 	echo "<br>";
 
 	// get the sub_history printed here
-	$sub_history = $this->support_model->customer_sub_history($this->account_number);
+	$sub_history = $this->support_model->customer_sub_history($id);
 	foreach($sub_history->result() as $mysubresult) 
 	{
 		$mydatetime = $mysubresult['month']."/".$mysubresult['day']." ".$mysubresult['hour'].":".$mysubresult['minute'];

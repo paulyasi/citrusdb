@@ -36,17 +36,6 @@ class Support_Model extends CI_Model
 	}
 
 		
-	function customer_sub_history($customer_history_id)
-	{
-		$query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
-    		"hour(creation_date) as hour, ".
-			"LPAD(minute(creation_date),2,'00') as minute, ".
-    		"created_by, description FROM sub_history ".
-			"WHERE customer_history_id = $customer_history_id";
-		$subresult = $this->db->query($query) or die ("sub_history $l_queryfailed");
-		
-		return $subresult;
-	}
     
     function user_count($user)
 	{
@@ -260,10 +249,16 @@ class Support_Model extends CI_Model
 		return $data;
 	}
 
+
 	function get_sub_history($id)
 	{
 		// print the current notes attached to this item
-		$query = "SELECT * FROM sub_history WHERE customer_history_id = ?";
+		//$query = "SELECT * FROM sub_history WHERE customer_history_id = ?";
+		$query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
+    		"hour(creation_date) as hour, ".
+			"LPAD(minute(creation_date),2,'00') as minute, ".
+    		"creation_date, created_by, description FROM sub_history ".
+			"WHERE customer_history_id = $id";
 		$result = $this->db->query($query, array($id)) or die ("sub_history query failed");
 		return $result->result_array();
 	}
