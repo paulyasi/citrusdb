@@ -268,4 +268,52 @@ class Support_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	function update_ticket($id, $notify, $status, $description, $reminderdate, $user_services_id)
+	{
+		$data = array(
+				'notify' => $notify,
+				'status' => $status,
+				'description' => $description,
+				);
+
+		// check if user_services_id is not empty and not zero before input it
+		if (($user_services_id <> '') AND ($user_services_id <> 0)) 
+		{
+			$data['user_services_id'] = $serviceid;
+		}
+
+		// check if reminder date exists, if so, make that the creation date
+		if ($reminderdate)
+		{
+			$data['creation_date'] = $reminderdate;
+		}
+
+		// update the customer history table with data
+		$this->db->where('id', $id);
+		$this->db->update('customer_history', $data);
+
+		/*  
+		if ($reminderdate <> '' AND $user_services_id =='') 
+		{
+			$query = "UPDATE customer_history SET notify = '$notify', ".
+				"status = '$status', description = '$description', ".
+				"creation_date = '$reminderdate' $user_services_string".
+				"WHERE id = $id";
+			$result = $this->db->query($query, array()) 
+				or die ("result $l_queryfailed $query");
+		} 
+		elseif () 
+		{
+			$query = "UPDATE customer_history SET notify = '$notify', ".
+				"description = '$description', ".
+				"status = '$status' $user_services_string".
+				"WHERE id = $id";   
+			$result = $this->db->query($query, array()) 
+				or die ("result $l_queryfailed $query");
+		}
+		*/
+
+	}
+
 }

@@ -152,52 +152,26 @@ class Support extends App_Controller {
 	}
 
 
-
 	function saveeditticket() 
 	{
-		$id = $base->input['id'];
-		$notify = $base->input['notify'];
-		$status = $base->input['status'];
-		$savechanges = $base->input['savechanges'];
-		$reminderdate = $base->input['reminderdate'];
-		$serviceid = $base->input['serviceid'];
-		$oldstatus = $base->input['oldstatus'];
+		$id = $this->input->post('id');
+		$notify = $this->input->post('notify');
+		$status = $this->input->post('status');
+		$savechanges = $this->input->post('savechanges');
+		$reminderdate = $this->input->post('reminderdate');
+		$serviceid = $this->input->post('serviceid');
+		$oldstatus = $this->input->post('oldstatus');
+		$description = $this->input->post('description');
+		$addnote = $this->input->post('addnote');
 
-		// grab the description and addnote field (subnotes) manually to preserve newlines
-		$description = $_POST['description'];
-		$data['description'] = safe_value_with_newlines($description);
-
-		if (!isset($_POST['addnote'])) { $_POST['addnote'] = ""; }
-		$addnote = $_POST['addnote'];
-		$data['addnote'] = safe_value_with_newlines($addnote);
-
-
-		// first check if user_services_id is empty or zero, if so, set to NULL
-		if (($user_services_id == '') OR ($user_services_id == 0)) {
-			$user_services_string = "";
-		} else {
-			$user_services_string = ", user_services_id = '$serviceid' ";
-		}
-
-		// save the changes to the customer_history  
-		if ($reminderdate <> '') {
-			$query = "UPDATE customer_history SET notify = '$notify', ".
-				"status = '$status', description = '$description', ".
-				"creation_date = '$reminderdate' $user_services_string".
-				"WHERE id = $id";
-		} else {
-			$query = "UPDATE customer_history SET notify = '$notify', ".
-				"description = '$description', ".
-				"status = '$status' $user_services_string".
-				"WHERE id = $id";   
-		}
-
-		$result = $DB->Execute($query) or die ("result $l_queryfailed $query");
+		$this->support_model->update_ticket($id, $notify, $status, $description, 
+				$reminderdate, $user_services_id);
 
 		// if the oldstatus changed from not done or pending to completed
 		// then mark this user as the one who closed this ticket
 		if ((($oldstatus == "not done") OR ($oldstatus == "pending"))
-				AND ($status == "completed")) {
+				AND ($status == "completed")) 
+		{
 			$query = "UPDATE customer_history SET ".
 				"closed_by = '$user', ".
 				"closed_date = CURRENT_TIMESTAMP ".
@@ -206,8 +180,10 @@ class Support extends App_Controller {
 		}
 
 		// if there is a new note added, put that into the sub_history
-		if ($addnote) {
-			$query = "INSERT sub_history SET customer_history_id = '$id', creation_date = CURRENT_TIMESTAMP, created_by = '$user', description = '$addnote'";
+		if ($addnote) 
+		{
+			$query = "INSERT sub_history SET customer_history_id = '$id', ".
+				"creation_date = CURRENT_TIMESTAMP, created_by = '$user', description = '$addnote'";
 			$result = $DB->Execute($query) or die ("sub_history insert $l_queryfailed");
 
 			// TODO: send email/xmpp notification if new note added to notify user
@@ -219,13 +195,16 @@ class Support extends App_Controller {
 			$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 			$result = $DB->Execute($query) or die ("Group Query Failed");
 
-			if ($result->RowCount() > 0) {
+			if ($result->RowCount() > 0) 
+			{
 				// we are notifying a group of users
 				while ($myresult = $result->FetchRow()) {
 					$groupmember = $myresult['groupmember'];
 					enotify($DB, $groupmember, $message, $id, $user, $notify, $addnote);
 				} // end while    
-			} else {
+			} 
+			else 
+			{
 				// we are notifying an individual user
 				enotify($DB, $notify, $message, $id, $user, $notify, $addnote);
 			} // end if result    
@@ -233,10 +212,13 @@ class Support extends App_Controller {
 		} // end if addnote
 
 		// redirect back to the account record
-		if ($notify == $user) {
+		if ($notify == $user) 
+		{
 			// then send with ticketuser string
 			print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";
-		} else {
+		} 
+		else 
+		{
 			// send with ticketgroup string
 			print "<script language=\"JavaScript\">window.location.href = \"index.php?load=tickets&type=base\";</script>";
 		}

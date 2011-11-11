@@ -2,7 +2,7 @@
 
 <a href="<?php echo $this->url_prefix?>/index.php/support">[ <?php echo lang('undochanges')?> ]</a>
 &nbsp; <a href="<?php echo $this->url_prefix?>/index.php/support/tickets">
-[ <?php echo lang('checknotes')?> ]</a>".
+[ <?php echo lang('checknotes')?> ]</a>
 <h3><?php echo lang('ticketnumber')." ".$ticket['id'];?></h3>
 <form style="margin-bottom:0;" 
 action="<?php echo $this->url_prefix?>/index.php/support/saveeditticket" 
