@@ -175,11 +175,22 @@ class Support extends App_Controller {
 
 	/*
 	 * ------------------------------------------------------------------------
-	 *  list tickets for this user/group
+	 *  list tickets for this user
 	 * ------------------------------------------------------------------------
 	 */
-	function tickets()
+	function usertickets()
 	{
+
+	}
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  list tickets for this group
+	 * ------------------------------------------------------------------------
+	 */
+	function usertickets()
+	{
+
 	}
 
 }

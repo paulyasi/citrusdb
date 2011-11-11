@@ -25,10 +25,10 @@ if (!empty($usernamedatetime) AND $created > $usernamedatetime) {
 }
 
 if ($num_rows == 0) {
-  echo "<a href=\"$this->url_prefix/index.php?load=tickets&type=base&ticketuser=$this->user&lastview=$usernamedatetime\" $bgstyle>".
+  echo "<a href=\"$this->url_prefix/index.php/support/usertickets/$this->user/$usernamedatetime\" $bgstyle>".
     "<b style=\"font-weight:normal;\">$this->user($num_rows)</b></a>\n";
 } else {
-  echo "<a href=\"$this->url_prefix/index.php?load=tickets&type=base&ticketuser=$this->user&lastview=$usernamedatetime\" $bgstyle>$this->user($num_rows)</a>\n";    
+  echo "<a href=\"$this->url_prefix/index.php/support/usertickets/$this->user/$usernamedatetime\" $bgstyle>$this->user($num_rows)</a>\n";    
 }
 
 // query the customer_history for messages sent to 
@@ -65,9 +65,9 @@ foreach ($query->result() as $row) {
   }
 
   if ($num_rows == 0) {
-    echo "<a href=\"$this->url_prefix/index.php?load=tickets&type=base&ticketgroup=$groupname&lastview=$groupnamedatetime\" $bgstyle><b style=\"font-weight:normal;\">$groupname($num_rows)</b></a>\n";
+    echo "<a href=\"$this->url_prefix/index.php/support/grouptickets/$groupname/$groupnamedatetime\" $bgstyle><b style=\"font-weight:normal;\">$groupname($num_rows)</b></a>\n";
   } else {
-    echo "<a href=\"$this->url_prefix/index.php?load=tickets&type=base&ticketgroup=$groupname&lastview=$groupnamedatetime\" $bgstyle>$groupname($num_rows)</a>\n";    
+    echo "<a href=\"$this->url_prefix/index.php/support/grouptickets/$groupname/$groupnamedatetime\" $bgstyle>$groupname($num_rows)</a>\n";    
   }
 
 }
