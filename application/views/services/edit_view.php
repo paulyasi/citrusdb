@@ -542,17 +542,17 @@ foreach ($result->result_array() as $myresult) {
 	echo nl2br($description);
 
 	// get the sub_history printed here
-	$query = "SELECT month(creation_date) as month, day(creation_date) as day, ".
-		"hour(creation_date) as hour, LPAD(minute(creation_date),2,'00') as minute, ".
-		"created_by, description FROM sub_history WHERE customer_history_id = $id";  
-	$subresult = $this->db->query($query) or die ("sub_history $l_queryfailed");
-
-	foreach ($subresult->result_array() as $mysubresult) {
-		$mydatetime = $mysubresult['month']."/".$mysubresult['day']." ".$mysubresult['hour'].":".$mysubresult['minute'];    
+	$sub_history = $this->support_model->get_sub_history($id);
+	foreach($sub_history as $mysubresult) 
+	{
+		$mydatetime = $mysubresult['month']."/".$mysubresult['day']." ".$mysubresult['hour'].":".$mysubresult['minute'];
 		$sub_created_by = $mysubresult['created_by'];
 		$sub_description = $mysubresult['description'];
 
-		// add br tags to line breaks with nl2br
+		// if today, show time
+		// if creation date not today, show date/time
+
+		// add br tags to line breaks
 		print "<br>$mydatetime $sub_created_by: ";
 		echo nl2br($sub_description);
 	}
