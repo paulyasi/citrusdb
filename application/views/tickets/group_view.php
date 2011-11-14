@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
-<?php   
+<b style="font-size: 14pt;"><?php echo lang('notesforgroups')?>: <?php echo $notify?></b>
+	<?php   
 foreach ($tickets AS $groupresult) 
 {
 	$id = $groupresult['id'];
@@ -21,14 +22,6 @@ foreach ($tickets AS $groupresult)
 		$servicedescription = '';
 	}
 
-	// print the heading for each group listing
-	if (!isset($previousnotify)) { $previousnotify = ""; }
-	if ($previousnotify <> $notify) {
-		print "<a name=\"$notify\"><p><td bgcolor=\"#ffffff\" width=100% colspan=8> ".
-			"<b style=\"font-size: 14pt;\">$l_notesforgroups: $notify</b></td></a>";
-		$previousnotify = $notify;
-	}
-
 	print "<tr>";
 
 	if (!empty($lastview) AND $mydatetime > $lastview) {
@@ -47,12 +40,12 @@ foreach ($tickets AS $groupresult)
 			"style=\"border-top: 1px solid #888; border-bottom: 1px solid #888;\">";
 	}
 
-	print "<td width=10%><a href=\"$url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
+	print "<td width=10%><a href=\"$this->url_prefix/index.php?load=viewticket&type=fs&ticket=$id&acnum=$accountnum\">$id</a></td>";
 	print "<td width=20%>$creation_date</td>";
 	print "<td width=10%>$created_by</td>";
-	print "<td width=20%><a href=\"$url_prefix/index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
+	print "<td width=20%><a href=\"$this->url_prefix/index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
 	print "<td width=10%>$status</td>";
-	print "<td width=50% colspan=3><a href=\"$url_prefix/index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
+	print "<td width=50% colspan=3><a href=\"$this->url_prefix/index.php?load=viewservice&type=fs&userserviceid=$serviceid&acnum=$accountnum\">$serviceid $service_description</a></td>";
 
 	print "<tr><td width=100% colspan=8> &nbsp; ";
 	echo nl2br($description);
@@ -86,7 +79,7 @@ foreach ($tickets AS $groupresult)
 		"<input type=hidden name=pending value=on>\n".
 		"<input type=hidden name=ticketgroup value=\"$notify\">\n".
 		"<input type=hidden name=id value=$id>\n".
-		"<input type=submit value=\"$l_pending\" class=\"smallbutton\"></form>";
+		"<input type=submit value=\"".lang('pending')."\" class=\"smallbutton\"></form>";
 	print "</td><td>";
 	print "<form action=\"$this->url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">".
 		"<input type=hidden name=load value=tickets>".
@@ -94,7 +87,7 @@ foreach ($tickets AS $groupresult)
 		"<input type=hidden name=completed value=on>".
 		"<input type=hidden name=ticketgroup value=\"$notify\">".
 		"<input type=hidden name=id value=$id>".
-		"<input type=submit value=\"$l_finished\" class=smallbutton></form>";
+		"<input type=submit value=\"".lang('finished')."\" class=smallbutton></form>";
 
 	print "</td></table>";
 	print "</td></table>";            

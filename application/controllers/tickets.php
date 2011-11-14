@@ -28,6 +28,7 @@ class Tickets extends App_Controller {
 			// load the module header common to all module views
 			$this->load->view('module_header_view');
 
+			$data['user'] = $user;
 			$data['tickets'] = $this->support_model->list_tickets($user);
 			$this->load->view('tickets/user_view', $data);
 
@@ -57,7 +58,7 @@ class Tickets extends App_Controller {
 			// load the module header common to all module views
 			$this->load->view('module_header_view');
 
-			$data['group'] = $group;
+			$data['notify'] = $group;
 			$data['tickets'] = $this->support_model->list_tickets($group);
 			$this->load->view('tickets/group_view', $data);
 
