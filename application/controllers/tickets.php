@@ -29,7 +29,7 @@ class Tickets extends App_Controller {
 			$this->load->view('module_header_view');
 
 			$data['tickets'] = $this->support_model->list_tickets($user);
-			$this->load->view('support/ticketuser_view', $data);
+			$this->load->view('tickets/user_view', $data);
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');	
@@ -59,7 +59,7 @@ class Tickets extends App_Controller {
 
 			$data['group'] = $group;
 			$data['tickets'] = $this->support_model->list_tickets($group);
-			$this->load->view('support/ticketgroup_view', $data);
+			$this->load->view('tickets/group_view', $data);
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');	
