@@ -178,7 +178,7 @@ class Support extends App_Controller {
 	 *  list tickets for this user
 	 * ------------------------------------------------------------------------
 	 */
-	function usertickets()
+	function usertickets($user, $lastview = NULL)
 	{
 
 	}
@@ -188,7 +188,7 @@ class Support extends App_Controller {
 	 *  list tickets for this group
 	 * ------------------------------------------------------------------------
 	 */
-	function usertickets()
+	function grouptickets($group, $lastview = NULL)
 	{
 
 	}
