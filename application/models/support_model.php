@@ -331,4 +331,40 @@ class Support_Model extends CI_Model
 
 	}
 
+	function list_tickets($notify, $showall = NULL)
+	{
+		if ($showall) 
+		{
+			$query = "SELECT  ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+				"DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime, ".
+				"ch.account_number, ch.status, ch.description, ch.linkname, ".
+				"ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
+				"FROM customer_history ch ".
+				"INNER JOIN customer c ON ch.account_number = c.account_number ".
+				"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+				"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".      
+				"WHERE notify = ? ORDER BY creation_date DESC LIMIT 50";
+			$result = $this->db->query($query, array($notify)) 
+				or die ("list tickets query failed");
+			return $result->result_array();
+		} 
+		else 
+		{
+			$query = "SELECT  ch.id, ch.creation_date, ch.notify, ch.created_by, ".
+				"DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime, ".
+				"ch.account_number, ch.status, ch.description, ch.linkname, ".
+				"ch.linkurl, ch.user_services_id, ms.service_description, c.name ".
+				"FROM customer_history ch ".
+				"INNER JOIN customer c ON ch.account_number = c.account_number ".
+				"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+				"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".      
+				"WHERE notify = ? AND status IN ('not done','pending') ".
+				"AND to_days(now()) >= to_days(creation_date) ".
+				"ORDER BY creation_date DESC";
+			$result = $this->db->query($query, array($notify)) 
+				or die ("list tickets query failed");
+			return $result->result_array();
+		}
+	}
+
 }
