@@ -15,5 +15,3 @@ $this->load->view('messagetabs_view');
 
 $this->load->view('buttonbar_view');
 
-$this->load->view('searchbox_view');
-

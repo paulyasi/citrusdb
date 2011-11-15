@@ -6,7 +6,6 @@ class Tickets extends App_Controller {
 	{
 		parent::__construct();	
 		$this->load->model('service_model');
-		$this->load->model('schema_model');
 		$this->load->model('module_model');
 		$this->load->model('customer_model');
 		$this->load->model('billing_model');
@@ -25,15 +24,12 @@ class Tickets extends App_Controller {
 		$permission = $this->module_model->permission($this->user, 'support');
 		if ($permission['view'])
 		{
-			// load the module header common to all module views
-			$this->load->view('module_header_view');
+			// show the header common to all dashboard/tool views
+			$this->load->view('dashboard_header_view');
 
 			$data['user'] = $user;
 			$data['tickets'] = $this->support_model->list_tickets($user);
 			$this->load->view('tickets/user_view', $data);
-
-			// the history listing tabs
-			$this->load->view('historyframe_tabs_view');	
 
 			// show html footer
 			$this->load->view('html_footer_view');
@@ -55,15 +51,13 @@ class Tickets extends App_Controller {
 		$permission = $this->module_model->permission($this->user, 'support');
 		if ($permission['view'])
 		{
-			// load the module header common to all module views
-			$this->load->view('module_header_view');
+
+			// show the header common to all dashboard/tool views
+			$this->load->view('dashboard_header_view');
 
 			$data['notify'] = $group;
 			$data['tickets'] = $this->support_model->list_tickets($group);
 			$this->load->view('tickets/group_view', $data);
-
-			// the history listing tabs
-			$this->load->view('historyframe_tabs_view');	
 
 			// show html footer
 			$this->load->view('html_footer_view');
@@ -107,7 +101,7 @@ class Tickets extends App_Controller {
 		$mydate = date("Y-m-d H:i:s");
 		$query = "UPDATE customer_history SET status = 'completed', closed_by = '$user', closed_date = '$mydate' WHERE id = $id";
 		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
-		
+
 		if ($ticketgroup) 
 		{
 			print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup\";</script>";

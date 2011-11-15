@@ -18,7 +18,7 @@ $myuri = $this->uri->uri_string();
 if (!empty($usernamedatetime) AND $created > $usernamedatetime) {
   $bgstyle = "style = \"background-color: #AFA;\"";
   // figures out if viewing the current user tickets
-} elseif ($myuri == "tickets/$this->user") {
+} elseif ($myuri == "tickets/user/$this->user") {
   $bgstyle = "class = \"active\"";
 } else {
   $bgstyle = "";
@@ -57,8 +57,8 @@ foreach ($query->result() as $row) {
 	
   if (!empty($groupnamedatetime) AND $created > $groupnamedatetime) {
     $bgstyle = "style = \"background-color: #AFA;\"";
-    // TODO: figure out if viewing the current ticket group
-  } elseif ($myuri == "tickets/$groupname") {
+    // figure out if viewing the current ticket group
+  } elseif ($myuri == "tickets/group/$groupname") {
 	    $bgstyle = "class = \"active\"";
   	} else {
     	$bgstyle = "";

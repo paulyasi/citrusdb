@@ -11,6 +11,8 @@ class Dashboard extends App_Controller {
 		// show the header common to all dashboard/tool views
 		$this->load->view('dashboard_header_view');
 
+		$this->load->view('searchbox_view');
+
 		// include module searches below here
 		// TODO: put this into a permission model?
 		// First check for permissions to view search modules
