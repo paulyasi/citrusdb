@@ -92,7 +92,7 @@ class Support extends App_Controller {
 			$status = $this->input->post('status');
 			$description = $this->input->post('description');
 			$reminderdate = $this->input->post('reminderdate');
-			$user_services_id = $this->input->post('user_services_id');
+			$user_services_id = $this->input->post('serviceid');
 
 			$newticketnumber = $this->support_model->create_ticket(
 					$this->user, $notify, $this->account_number,
@@ -168,7 +168,7 @@ class Support extends App_Controller {
 				$reminderdate, $user_services_id, $oldstatus, $addnote);
 
 		// redirect back to ticket listing
-		redirect('/support/tickets');
+		redirect('/tickets/user/'.$this->user);
 
 	}
 

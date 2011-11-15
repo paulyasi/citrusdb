@@ -26,18 +26,26 @@ class View extends App_Controller
 	 * Redirects the view to a service listing
 	 * @param: service id
 	 */
-	public function service($service_id)
+	public function service($service_id, $account_number)
 	{		
-		
+		//$_SESSION['account_number'] = $account_number;
+		$this->session->set_userdata('account_number', $account_number);
+		//$this->account_number = $account_number;
+	
+		redirect('services/edit/'.$service_id);
 	}
 	
 	/**
 	 * Redirects the view to a ticket listing
 	 * @param: ticket id
 	 */
-	public function ticket($ticket_id)
+	public function ticket($ticket_id, $account_number)
 	{
+		//$_SESSION['account_number'] = $account_number;
+		$this->session->set_userdata('account_number', $account_number);
+		//$this->account_number = $account_number;
 		
+		redirect('support/editticket/'.$ticket_id);
 	}
 			
 }
