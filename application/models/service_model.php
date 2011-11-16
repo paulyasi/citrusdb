@@ -666,6 +666,17 @@ class Service_model extends CI_Model
 		return $myresult['description'];
 	}
 
+	function field_asset_item_description($item_id)
+	{
+		// get the name of the item being updated from master_field_assets
+		$query = "SELECT ma.description FROM field_asset_items fa ".
+			"LEFT JOIN master_field_assets ma ON ma.id = fa.master_field_assets_id ".
+			"WHERE fa.id = ?";
+		$result = $this->db->query($query, array($item_id)) 
+			or die ("item description query failed");
+		$myresult = $result->row_array();
+		return $myresult['description'];
+	}
 
 	function assign_field_asset($master_field_assets_id, $serial_number, 
 			$sale_type, $tracking_number, $shipping_date, $userserviceid)
@@ -677,7 +688,17 @@ class Service_model extends CI_Model
 		$result = $this->db->query($query, array($master_field_assets_id, $serial_number, 
 					$sale_type, $tracking_number, $shipping_date, $userserviceid)) 
 			or die ("insert field asset item query failed");
+	}
 
+
+	function return_field_asset($return_date, $return_notes, $item_id)
+	{
+		// put this inventory item into a return status  
+		$query = "UPDATE field_asset_items SET ".
+			"status = 'returned', return_date = ?, ".
+			"return_notes = ? WHERE id = ? LIMIT 1";
+		$result = $this->db->query($query, array($return_date, $return_notes, 
+					$item_id)) or die ("return field asset query failed");
 	}
 
 

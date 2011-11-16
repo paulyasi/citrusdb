@@ -70,4 +70,13 @@ class Settings_Model extends CI_Model
 		$myresult = $result->row_array();
 		return $myresult['default_shipping_group'];  
 	}
+		
+	function get_default_billing_group()
+	{
+		// get the default billing group
+		$query = "SELECT default_billing_group FROM settings WHERE id = '1'";
+		$result = $this->db->query($query) or die ("default billing group query failed");
+		$myresult = $result->row_array();
+		return $myresult['default_billing_group'];  
+	}
 }

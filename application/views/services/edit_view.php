@@ -247,9 +247,7 @@ foreach ($result->result_array() as $myresult)
 		print "<td><b>".lang('trackingnumber')."</b></td><td>
 			<a href=\"".$this->config->item('tracking_url')."$tracking_number\">$tracking_number</a></td> ".
 			"<td><b>".lang('shippingdate').":</b></td> <td>$shipping_date</td><td>
-			<a href=\"index.php?optionstable=example_options
-			&userserviceid=$userserviceid&load=services&type=module&return=on
-			&fieldassets=on&item_id=$item_id&fieldassets=return\">".
+			<a href=\"$this->url_prefix/index.php/services/returnfieldasset/$item_id/$userserviceid\">".
 			lang('returndevice')."</a></td></table>";
 	}
 }

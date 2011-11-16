@@ -562,59 +562,60 @@ class Services extends App_Controller {
 	}
 
 
-	function returnfieldasset()
+	function returnfieldasset($item_id, $userserviceid)
 	{
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'services');
+		if ($permission['view'])
+		{
+			// load the module header common to all module views
+			$this->load->view('module_header_view');
+
+			$data['item_id'] = $item_id;
+			$data['userserviceid'] = $userserviceid;
+			$this->load->view('services/returnfieldassets_view', $data);	
+
+			// the history listing tabs
+			$this->load->view('historyframe_tabs_view');	
+
+			// show html footer
+			$this->load->view('html_footer_view');
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}
+	}
+
+	function savereturnfieldasset()
+	{
+		// load the settings model to get the default shipping group	
+		$this->load->model('settings_model');
+		$this->load->model('support_model');
+		
 		// GET Variables
-		$userserviceid = $base->input['userserviceid'];
-		$neworused = $base->input['neworused'];
-		$serial_number = $base->input['serial_number'];
-		$sale_type = $base->input['sale_type'];
-		$tracking_number = $base->input['tracking_number'];
-		$shipping_date = $base->input['shipping_date'];
-		$assign = $base->input['assign'];
-		$ship = $base->input['ship'];
-		$return = $base->input['return'];
-		$returned = $base->input['returned'];
-		$return_date = $base->input['return_date'];
-		$return_notes = $base->input['return_notes'];
-		$item_id = $base->input['item_id'];
-		$master_field_assets_id = $base->input['master_field_assets_id'];
+		$item_id = $this->input->post('item_id');
+		$userserviceid = $this->input->post('userserviceid');
+		$return = $this->input->post('return');
+		$returned = $this->input->post('returned');
+		$return_date = $this->input->post('return_date');
+		$return_notes = $this->input->post('return_notes');
 
-		// put this inventory item into a return status  
-		$query = "UPDATE field_asset_items SET ".
-			"status = 'returned', ".
-			"return_date = '$return_date', ".
-			"return_notes = '$return_notes' ".    
-			"WHERE id = '$item_id' LIMIT 1";
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+		// mark the field asset as returned
+		$this->service_model->return_field_asset($return_date, $return_notes, $item_id);
 
-		// get the name of the item being updated from master_field_assets
-		$query = "SELECT ma.description FROM field_asset_items fa ".
-			"LEFT JOIN master_field_assets ma ON ma.id = fa.master_field_assets_id ".
-			"WHERE fa.id = '$item_id'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
-		$myresult = $result->fields;
-		$description = $myresult['description'];
+		$description = $this->service_model->field_asset_item_description($item_id);
 
-		// get the default billing group
-		$query = "SELECT default_billing_group FROM settings WHERE id = '1'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
-		$myresult = $result->fields;
-		$default_billing_group = $myresult['default_billing_group'];  
+		$default_billing_group = $this->settings_model->get_default_billing_group();
 
 		// leave a note to the billing group that the item was returned
 		$status = "not done";
-		$description = "$l_returned $description $return_date $return_notes";
-		create_ticket($DB, $user, $default_billing_group, $this->account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
-
+		$description = lang('returned')." $description $return_date $return_notes";
+		$this->support_model->create_ticket($this->user, $default_billing_group, $this->account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
 
 		// redirect back to the service edit screen, now showing the returned inventory listed there
 		echo "returned";
-		print "<script language=\"JavaScript\">window.location.href = ".
-			"\"index.php?load=services&type=module\";</script>";  
-
+		redirect('services/edit/'.$userserviceid);
 	} 
 
 	public function history()

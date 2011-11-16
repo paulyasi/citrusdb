@@ -1,25 +1,22 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 
-// ask for return date and return notes and send to returned  
-print "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
-"<table width=720 cellpadding=5 cellspacing=1 border=0>";
-print "<input type=hidden name=userserviceid value=$userserviceid>";
-print "<input type=hidden name=load value=services>";
-print "<input type=hidden name=type value=module>";
-print "<input type=hidden name=returned value=on>";
-print "<input type=hidden name=fieldassets value=on>";
-print "<input type=hidden name=item_id value=\"$item_id\">";
+<form style="margin-bottom:0;" 
+action="<?php echo $this->url_prefix?>/index.php/services/savereturnfieldasset" 
+method=post>
+<table width=720 cellpadding=5 cellspacing=1 border=0>
+<input type=hidden name=userserviceid value=<?php echo $userserviceid?>>
+<input type=hidden name=item_id value="<?php echo $item_id?>">
 
-echo "<table>";
+<table>
 
-//return_date
-$mydate = date("Y-m-d");
-echo "<td><label>$l_returndate: </td><td><input type=text name=return_date value=\"$mydate\"></label></td><tr>";  
+<?php $mydate = date("Y-m-d"); ?>
+<td><label><?php echo lang('returndate')?>: </td>
+<td><input type=text name=return_date value="<?php echo $mydate?>"></label></td><tr>
 
-//return_notes
-echo "<td><label>$l_returnnotes: </td><td><input type=text name=return_notes></label></td><tr>";  
+<td><label><?php echo lang('returnnotes')?>: </td>
+<td><input type=text name=return_notes></label></td><tr>  
 
-// print submit button
-print "<td></td><td><input name=fieldassets type=submit value=\"$l_returndevice\" ".
-"class=smallbutton></td></table></form><p>";
+<td></td><td>
+<input name=fieldassets type=submit value="<?php echo lang('returndevice')?>" class=smallbutton>
+</td></table></form><p>
 
