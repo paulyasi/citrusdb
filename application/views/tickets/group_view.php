@@ -70,24 +70,14 @@ foreach ($tickets AS $groupresult)
 
 	print "<tr><td colspan=8 align=right>";
 	print "<table><td>";
-	print "<form action=\"$this->url_prefix/index.php/support/editticket/$id\" method=POST style=\"margin-bottom:0;\">".
-		"<input type=submit value=\"".lang('edit')."\" class=\"smallbutton\"></form>";
+	print "<a href=\"$this->url_prefix/index.php/support/editticket/$id\">".
+		lang('edit')."</a> | ";
 	print "</td><td>";
-	print "<form action=\"$this->url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">\n".
-		"<input type=hidden name=load value=tickets>\n".
-		"<input type=hidden name=type value=base>\n".
-		"<input type=hidden name=pending value=on>\n".
-		"<input type=hidden name=ticketgroup value=\"$notify\">\n".
-		"<input type=hidden name=id value=$id>\n".
-		"<input type=submit value=\"".lang('pending')."\" class=\"smallbutton\"></form>";
+	print "<a href=\"$this->url_prefix/index.php/tickets/pending/$id/$notify\">\n".
+		lang('pending')."</a> | ";
 	print "</td><td>";
-	print "<form action=\"$this->url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">".
-		"<input type=hidden name=load value=tickets>".
-		"<input type=hidden name=type value=base>".
-		"<input type=hidden name=completed value=on>".
-		"<input type=hidden name=ticketgroup value=\"$notify\">".
-		"<input type=hidden name=id value=$id>".
-		"<input type=submit value=\"".lang('finished')."\" class=smallbutton></form>";
+	print "<a href=\"$this->url_prefix/index.php/tickets/complete/$id/$notify\">".
+		lang('finished')."</a>";
 
 	print "</td></table>";
 	print "</td></table>";            

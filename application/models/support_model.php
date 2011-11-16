@@ -367,4 +367,33 @@ class Support_Model extends CI_Model
 		}
 	}
 
+	
+	/*
+	 * -------------------------------------------------------------------------
+	 * mark the customer_history id as pending
+	 * -------------------------------------------------------------------------
+	 */
+	function pending_ticket($id)
+	{
+		$query = "UPDATE customer_history SET status = 'pending' WHERE id = ?";
+		$result = $this->db->query($query, array($id)) or die ("pending ticket query failed");
+	}
+
+
+	/*
+	 * -------------------------------------------------------------------------
+	 * make the customer_history id as completed
+	 * -------------------------------------------------------------------------
+	 */
+	function complete_ticket($id)
+	{
+		$mydate = date("Y-m-d H:i:s");
+		$query = "UPDATE customer_history SET status = 'completed', ".
+			"closed_by = ?, closed_date = ? WHERE id = ?";
+		$result = $this->db->query($query, array($this->user, $mydate, $id)) 
+			or die ("complete ticket query failed");
+
+	}
+
+
 }

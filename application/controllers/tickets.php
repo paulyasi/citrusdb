@@ -18,12 +18,18 @@ class Tickets extends App_Controller {
 	 *  list tickets for this user
 	 * ------------------------------------------------------------------------
 	 */
-	function user($user, $lastview = NULL)
+	function user($user = NULL, $lastview = NULL)
 	{
 		// check permissions
 		$permission = $this->module_model->permission($this->user, 'support');
 		if ($permission['view'])
 		{
+			// if no user specified, then set to current user
+			if (!$user) 
+			{
+				$user = $this->user;
+			}
+
 			// show the header common to all dashboard/tool views
 			$this->load->view('dashboard_header_view');
 
@@ -71,44 +77,32 @@ class Tickets extends App_Controller {
 
 	function pending($id, $ticketgroup = NULL)
 	{
-		$id = $base->input['id'];
-		$pending = $base->input['pending'];
-		$completed = $base->input['completed'];
-		$showall = $base->input['showall'];
-		$lastview = $base->input['lastview'];
-
 		echo "$id $pending $ticketgroup";
 
-		/*--------------------------------------------------------------------------*/
-		// mark the customer_history id as pending
-		/*--------------------------------------------------------------------------*/
-		$query = "UPDATE customer_history SET status = \"pending\" WHERE id = $id";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		if ($ticketgroup) {
-			print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup\";</script>";
+		$this->support_model->pending_ticket($id);
+
+		if ($ticketgroup) 
+		{
+			redirect('tickets/group/'.$ticketgroup);
 		} 
 		else 
 		{
-			print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user\";</script>";
+			redirect('tickets/user');
 		}
 	}
 
 	function complete($id, $ticketgroup = NULL) 
 	{
-		/*--------------------------------------------------------------------------*/
-		// make the customer_history id as completed
-		/*--------------------------------------------------------------------------*/
-		$mydate = date("Y-m-d H:i:s");
-		$query = "UPDATE customer_history SET status = 'completed', closed_by = '$user', closed_date = '$mydate' WHERE id = $id";
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+
+		$this->support_model->complete_ticket($id);
 
 		if ($ticketgroup) 
 		{
-			print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup\";</script>";
+			redirect('tickets/group/'.$ticketgroup);
 		} 
 		else 
 		{
-			print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user\";</script>";
+			redirect('tickets/user');
 		}
 	}
 

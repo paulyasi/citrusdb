@@ -47,7 +47,7 @@ foreach ($tickets AS $myresult)
 	print "<td width=10%><a href=\"$this->url_prefix/index.php/view/ticket/$id/$accountnum\">$id</a></td>";
 	print "<td width=20%>$creation_date</td>";
 	print "<td width=10%>$created_by</td>";
-	print "<td width=20%><a href=\"$this->url_prefix/index.php?load=viewaccount&type=fs&acnum=$accountnum\">$name</a></td>";
+	print "<td width=20%><a href=\"$this->url_prefix/index.php/view/account/$accountnum\">$name</a></td>";
 	print "<td width=10%>$status</td>";
 	print "<td width=50% colspan=3><a href=\"$this->url_prefix/index.php/view/service/$serviceid/$accountnum\">$serviceid $service_description</a></td>";
 
@@ -74,26 +74,14 @@ foreach ($tickets AS $myresult)
 
 	print "<tr><td colspan=8 align=right>";
 	print "<table><td>";
-	print "<form action=\"$this->url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">".
-		"<input type=hidden name=load value=viewticket>".
-		"<input type=hidden name=type value=fs>".
-		"<input type=hidden name=ticket value=$id>".
-		"<input type=hidden name=acnum value=$accountnum>".
-		"<input type=submit value=\"".lang('edit')."\" class=\"smallbutton\"></form>";
+	print "<a href=\"$this->url_prefix/index.php/view/ticket/$id/$accountnum\">".
+		lang('edit')."</a> | ";
 	print "</td><td>";
-	print "<form action=\"$this->url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">\n".
-		"<input type=hidden name=load value=tickets>\n".
-		"<input type=hidden name=type value=base>\n".
-		"<input type=hidden name=pending value=on>\n".
-		"<input type=hidden name=id value=$id>\n".
-		"<input type=submit value=\"".lang('pending')."\" class=\"smallbutton\"></form>";
+	print "<a href=\"$this->url_prefix/index.php/tickets/pending/$id\">\n".
+		lang('pending')."</a> | ";
 	print "</td><td>";
-	print "<form action=\"$this->url_prefix/index.php\" method=POST style=\"margin-bottom:0;\">".
-		"<input type=hidden name=load value=tickets>".
-		"<input type=hidden name=type value=base>".
-		"<input type=hidden name=completed value=on>".
-		"<input type=hidden name=id value=$id>".
-		"<input type=submit value=\"".lang('finished')."\" class=smallbutton></form>";
+	print "<a href=\"$this->url_prefix/index.php/tickets/complete/$id\">".
+		lang('finished')."</a>";
 
 	print "</td></table>";
 
