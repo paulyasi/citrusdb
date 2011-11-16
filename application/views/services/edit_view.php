@@ -1,5 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed')
-?>
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed') ?>
 <a href="<?php echo $this->url_prefix; ?>/index.php/services">
 <?php 
 echo lang('undochanges') . "</a>";
@@ -246,7 +245,7 @@ foreach ($result->result_array() as $myresult)
 		$return_date, $return_notes</td></table>";
 	} else {
 		print "<td><b>".lang('trackingnumber')."</b></td><td>
-			<a href=\"$tracking_url$tracking_number\">$tracking_number</a></td> ".
+			<a href=\"".$this->config->item('tracking_url')."$tracking_number\">$tracking_number</a></td> ".
 			"<td><b>".lang('shippingdate').":</b></td> <td>$shipping_date</td><td>
 			<a href=\"index.php?optionstable=example_options
 			&userserviceid=$userserviceid&load=services&type=module&return=on

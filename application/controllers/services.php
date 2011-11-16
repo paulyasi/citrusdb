@@ -230,7 +230,7 @@ class Services extends App_Controller {
 		// save the tax exempt status information, make the customer tax exempt
 		$query = "INSERT INTO tax_exempt ".
 			"(account_number, tax_rate_id, customer_tax_id, expdate) ". 
-			"VALUES ('$account_number', '$tax_rate_id','$customer_tax_id','$expdate')";
+			"VALUES ('$this->account_number', '$tax_rate_id','$customer_tax_id','$expdate')";
 		$result = $DB->Execute($query) or die ("$l_queryfailed");
 
 		// redirect back to the service index
@@ -243,7 +243,7 @@ class Services extends App_Controller {
 	{
 		// make the customer tax not-exempt
 		$query = "DELETE FROM tax_exempt WHERE tax_rate_id = '$tax_rate_id' ".
-			"AND account_number = '$account_number'";
+			"AND account_number = '$this->account_number'";
 		$result = $DB->Execute($query) or die ("$l_queryfailed");
 
 		// redirect back to the service index
@@ -523,6 +523,44 @@ class Services extends App_Controller {
 
 	}
 
+	function assignfieldasset() 
+	{
+		// load the settings model to get the default shipping group	
+		$this->load->model('settings_model');
+		$this->load->model('support_model');
+
+		// GET Variables
+		$userserviceid = $this->input->post('userserviceid');
+		$master_field_assets_id = $this->input->post('master_field_assets_id');
+		$serial_number = $this->input->post('serial_number');
+		$sale_type = $this->input->post('sale_type');
+		$tracking_number = $this->input->post('tracking_number');
+		$shipping_date = $this->input->post('shipping_date');
+
+		// assign the field asset to this service
+		$this->service_model->assign_field_asset($master_field_assets_id, $serial_number, 
+				$sale_type, $tracking_number, $shipping_date, $userserviceid);
+
+		// get the description of the field asset just inserted
+		$description = $this->service_model->field_asset_description($master_field_assets_id);
+
+		// get the default shipping group
+		$default_shipping_group = $this->settings_model->get_default_shipping_group();
+
+		// leave a note that the item was assigned
+		$status = "not done";
+		$description = lang('shipped')." $description, ".lang('trackingnumber').": $tracking_number";
+		$trackinglink = $this->config->item('tracking_url')."$tracking_number";
+		
+		$this->support_model->create_ticket($this->user, $default_shipping_group, 
+				$this->account_number, $status, $description, lang('trackpackage'), 
+				$trackinglink, NULL, $userserviceid);
+
+		// redirect back to the service edit screen, now showing the assigned inventory listed there
+		echo "assigned";
+		redirect('services/edit/'.$userserviceid);
+	}
+
 
 	function returnfieldasset()
 	{
@@ -569,7 +607,7 @@ class Services extends App_Controller {
 		// leave a note to the billing group that the item was returned
 		$status = "not done";
 		$description = "$l_returned $description $return_date $return_notes";
-		create_ticket($DB, $user, $default_billing_group, $account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
+		create_ticket($DB, $user, $default_billing_group, $this->account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
 
 
 		// redirect back to the service edit screen, now showing the returned inventory listed there
@@ -578,50 +616,6 @@ class Services extends App_Controller {
 			"\"index.php?load=services&type=module\";</script>";  
 
 	} 
-
-	function assignfieldasset() 
-	{
-
-		// assign the field_asset to this service
-		/*
-		   $serial_number = $base->input['serial_number'];
-		   $sale_type = $base->input['sale_type'];
-		   $tracking_number = $base->input['tracking_number'];
-		   $shipping_date = $base->input['shipping_date'];
-		 */
-
-		$query = "INSERT into field_asset_items ".
-			"(master_field_assets_id, creation_date, serial_number, status, sale_type, shipping_tracking_number, shipping_date, user_services_id ) VALUES ".
-			"('$master_field_assets_id', CURRENT_DATE, '$serial_number', 'infield', '$sale_type', '$tracking_number', '$shipping_date', '$userserviceid')";
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
-
-		// get the name of the item being assigned from master_field_assets
-		$query = "SELECT description FROM master_field_assets ".
-			"WHERE id = '$master_field_assets_id'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
-		$myresult = $result->fields;
-		$description = $myresult['description'];
-
-		// get the default shipping group
-		$query = "SELECT default_shipping_group FROM settings WHERE id = '1'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
-		$myresult = $result->fields;
-		$default_shipping_group = $myresult['default_shipping_group'];  
-
-		// leave a note that the item was assigned
-		$status = "not done";
-		$description = "$l_shipped $description, $l_trackingnumber: $tracking_number";
-		$trackinglink = "$tracking_url"."$tracking_number";
-		create_ticket($DB, $user, $default_shipping_group, $account_number, $status, $description, $l_trackpackage, $trackinglink, NULL, $userserviceid);
-
-		// redirect back to the service edit screen, now showing the assigned inventory listed there
-		echo "assigned";
-		print "<script language=\"JavaScript\">window.location.href = ".
-			"\"index.php?load=services&type=module\";</script>";
-
-	}
 
 	public function history()
 	{

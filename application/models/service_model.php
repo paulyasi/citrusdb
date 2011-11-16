@@ -667,4 +667,18 @@ class Service_model extends CI_Model
 	}
 
 
+	function assign_field_asset($master_field_assets_id, $serial_number, 
+			$sale_type, $tracking_number, $shipping_date, $userserviceid)
+	{
+		$query = "INSERT into field_asset_items (master_field_assets_id, ".
+			"creation_date, serial_number, status, sale_type, ".
+			"shipping_tracking_number, shipping_date, user_services_id ) ".
+			"VALUES (?, CURRENT_DATE, ?, 'infield', ?, ?, ?, ?)";
+		$result = $this->db->query($query, array($master_field_assets_id, $serial_number, 
+					$sale_type, $tracking_number, $shipping_date, $userserviceid)) 
+			or die ("insert field asset item query failed");
+
+	}
+
+
 }

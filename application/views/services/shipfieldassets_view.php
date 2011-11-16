@@ -5,10 +5,10 @@
 
 
 <form style="margin-bottom:0;" 
-action="<?php echo $this->url_prefix?>/index.php/services/assignfieldasset" method=post>".
+action="<?php echo $this->url_prefix?>/index.php/services/assignfieldasset" method=post>
 <table width=720 cellpadding=5 cellspacing=1 border=0>
 <input type=hidden name=userserviceid value="<?php echo $userserviceid?>">
-<input type=hidden name=master_field_assets_id value="<?php echo $master_field_assets_id?>\">
+<input type=hidden name=master_field_assets_id value="<?php echo $master_field_assets_id?>">
 
 <table>
 

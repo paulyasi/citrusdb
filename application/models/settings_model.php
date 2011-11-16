@@ -62,5 +62,12 @@ class Settings_Model extends CI_Model
 		return $myresult['default_group'];
 	}
 
-    
+
+	function get_default_shipping_group()
+	{
+		$query = "SELECT default_shipping_group FROM settings WHERE id = '1'";
+		$result = $this->db->query($query) or die ("default shipping query failed");
+		$myresult = $result->row_array();
+		return $myresult['default_shipping_group'];  
+	}
 }
