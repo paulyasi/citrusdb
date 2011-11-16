@@ -496,9 +496,131 @@ class Services extends App_Controller {
 
 	public function shipfieldassets()
 	{
-		if ($pallow_remove) {
-			include('./modules/customer/fieldassets');
-		} else permission_error();        
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'services');
+		if ($permission['view'])
+		{
+			// load the module header common to all module views
+			$this->load->view('module_header_view');
+
+			// show the services history for this customer
+			$data['userserviceid'] = $this->input->post('userserviceid');
+			$data['master_field_assets_id'] = $this->input->post('master_field_assets_id');
+			$data['description'] = $this->service_model->field_asset_description(
+					$this->input->post('master_field_assets_id'));
+			$this->load->view('services/shipfieldassets_view', $data);	
+
+			// the history listing tabs
+			$this->load->view('historyframe_tabs_view');	
+
+			// show html footer
+			$this->load->view('html_footer_view');
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}
+
+	}
+
+
+	function returnfieldasset()
+	{
+		// GET Variables
+		$userserviceid = $base->input['userserviceid'];
+		$neworused = $base->input['neworused'];
+		$serial_number = $base->input['serial_number'];
+		$sale_type = $base->input['sale_type'];
+		$tracking_number = $base->input['tracking_number'];
+		$shipping_date = $base->input['shipping_date'];
+		$assign = $base->input['assign'];
+		$ship = $base->input['ship'];
+		$return = $base->input['return'];
+		$returned = $base->input['returned'];
+		$return_date = $base->input['return_date'];
+		$return_notes = $base->input['return_notes'];
+		$item_id = $base->input['item_id'];
+		$master_field_assets_id = $base->input['master_field_assets_id'];
+
+		// put this inventory item into a return status  
+		$query = "UPDATE field_asset_items SET ".
+			"status = 'returned', ".
+			"return_date = '$return_date', ".
+			"return_notes = '$return_notes' ".    
+			"WHERE id = '$item_id' LIMIT 1";
+		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+
+		// get the name of the item being updated from master_field_assets
+		$query = "SELECT ma.description FROM field_asset_items fa ".
+			"LEFT JOIN master_field_assets ma ON ma.id = fa.master_field_assets_id ".
+			"WHERE fa.id = '$item_id'";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+		$myresult = $result->fields;
+		$description = $myresult['description'];
+
+		// get the default billing group
+		$query = "SELECT default_billing_group FROM settings WHERE id = '1'";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+		$myresult = $result->fields;
+		$default_billing_group = $myresult['default_billing_group'];  
+
+		// leave a note to the billing group that the item was returned
+		$status = "not done";
+		$description = "$l_returned $description $return_date $return_notes";
+		create_ticket($DB, $user, $default_billing_group, $account_number, $status, $description, NULL, NULL, NULL, $userserviceid);
+
+
+		// redirect back to the service edit screen, now showing the returned inventory listed there
+		echo "returned";
+		print "<script language=\"JavaScript\">window.location.href = ".
+			"\"index.php?load=services&type=module\";</script>";  
+
+	} 
+
+	function assignfieldasset() 
+	{
+
+		// assign the field_asset to this service
+		/*
+		   $serial_number = $base->input['serial_number'];
+		   $sale_type = $base->input['sale_type'];
+		   $tracking_number = $base->input['tracking_number'];
+		   $shipping_date = $base->input['shipping_date'];
+		 */
+
+		$query = "INSERT into field_asset_items ".
+			"(master_field_assets_id, creation_date, serial_number, status, sale_type, shipping_tracking_number, shipping_date, user_services_id ) VALUES ".
+			"('$master_field_assets_id', CURRENT_DATE, '$serial_number', 'infield', '$sale_type', '$tracking_number', '$shipping_date', '$userserviceid')";
+		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+
+		// get the name of the item being assigned from master_field_assets
+		$query = "SELECT description FROM master_field_assets ".
+			"WHERE id = '$master_field_assets_id'";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+		$myresult = $result->fields;
+		$description = $myresult['description'];
+
+		// get the default shipping group
+		$query = "SELECT default_shipping_group FROM settings WHERE id = '1'";
+		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
+		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+		$myresult = $result->fields;
+		$default_shipping_group = $myresult['default_shipping_group'];  
+
+		// leave a note that the item was assigned
+		$status = "not done";
+		$description = "$l_shipped $description, $l_trackingnumber: $tracking_number";
+		$trackinglink = "$tracking_url"."$tracking_number";
+		create_ticket($DB, $user, $default_shipping_group, $account_number, $status, $description, $l_trackpackage, $trackinglink, NULL, $userserviceid);
+
+		// redirect back to the service edit screen, now showing the assigned inventory listed there
+		echo "assigned";
+		print "<script language=\"JavaScript\">window.location.href = ".
+			"\"index.php?load=services&type=module\";</script>";
+
 	}
 
 	public function history()
@@ -535,7 +657,7 @@ class Services extends App_Controller {
 		$data['serviceid'] = $serviceid;
 		$data['removaldate'] = $removaldate;
 		$this->load->view('services/edit_removal_date_view', $data);	
-		
+
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');	
 

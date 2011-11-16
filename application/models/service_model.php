@@ -653,4 +653,18 @@ class Service_model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	function field_asset_description($master_field_assets_id)
+	{
+		// get the name of the item being assigned from master_field_assets
+		$query = "SELECT description FROM master_field_assets ".
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($master_field_assets_id)) 
+			or die ("field assets description query failed");
+		$myresult = $result->row_array();
+
+		return $myresult['description'];
+	}
+
+
 }
