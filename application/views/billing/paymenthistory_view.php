@@ -90,10 +90,9 @@ foreach ($history AS $myresult)
 	{ 
 		if (($userprivileges['manager'] == 'y') OR ($userprivileges['admin'] == 'y')) 
 		{
-			echo "<a href=\"$this->url_prefix/index.php?load=billing&type=module&nsf=on=&".
-				"paymentid=$id&amount=$amount&invoicenum=$invoice_number&".
-				"billingid=$billingid&payment_type=$type\" target=\"_parent\" ".
-				"style=\"font-size: 8pt;\">".lang('mark_as_nsf')."</a>";    
+			echo "<a href=\"$this->url_prefix/index.php/billing/nsf".
+				"/$id/$invoice_number/$amount/$billingid\" ".
+				"target=\"_parent\" style=\"font-size: 8pt;\">".lang('mark_as_nsf')."</a>";    
 		}
 
 		$nsfcount++;
