@@ -243,11 +243,13 @@ class Billing extends App_Controller
 		if ($permission['create'])
 		{
 			// create the billing record
-			$this->billing_model->create_record($organization_id, $this->account_number);
+			$id = $this->billing_model->create_record($organization_id, $this->account_number);
 
 			// log this record creation
 			$this->log_model->activity($this->user,$this->account_number,'create',
-					'billing',0,'success');
+					'billing',$id,'success');
+
+			redirect('/billing/edit/'.$id);
 
 		}
 		else
