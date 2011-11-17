@@ -118,7 +118,7 @@ foreach ($history AS $myresult)
 
 	if (($amount > 0) AND ($status == 'authorized')) 
 	{
-		echo "<a href=\"$this->url_prefix/index.php/billing/receipt/$id\"".
+		echo "<a href=\"$this->url_prefix/index.php/billing/receipt/$id/$billingid/$date/$amount\"".
 			" target=\"_parent\" style=\"font-size: 8pt;\">".lang('receipt')."</a>";     
 	}
 

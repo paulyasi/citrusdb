@@ -1376,12 +1376,44 @@ class Billing extends App_Controller
 		redirect('/billing');
 	}
 
-	public function receipt()
+	public function receipt($paymentid, $billingid, $payment_date, $amount)
 	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/receipt.php');
-		}  else permission_error();
+		// load the service model
+		$this->load->model('service_model');			
+
+		$data['paymentid'] = $paymentid;
+		$data['billingid'] = $billingid;
+		$data['amount'] = $amount;
+
+		$paytype_result = $this->billing_model->get_payment_type($paymentid);
+		$data['payment_type'] = $paytype_result['payment_type'];
+		$data['creditcard_number'] = $paytype_result['creditcard_number'];
+		$data['check_number'] = $paytype_result['check_number'];
+
+		$billing_result = $this->billing_model->billing_and_organization($billingid);
+		$data['billing_name'] = $billing_result['name'];
+		$data['billing_company'] = $billing_result['company'];
+		$data['billing_street'] = $billing_result['street'];
+		$data['billing_city'] = $billing_result['city'];
+		$data['billing_state'] = $billing_result['state'];
+		$data['billing_zip'] = $billing_result['zip'];
+		$data['billing_account_number'] = $billing_result['account_number'];
+		$data['org_name'] = $billing_result['org_name'];
+		$data['org_street'] = $billing_result['org_street'];
+		$data['org_city'] = $billing_result['org_city'];
+		$data['org_state'] = $billing_result['org_state'];
+		$data['org_zip'] = $billing_result['org_zip'];
+
+		$data['payment_details'] = $this->billing_model->payment_details($paymentid);
+
+		// load the date helper for human format dates	
+		$this->load->helper('date');
+		$data['human_date'] = humandate($payment_date);
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$this->load->view('billing/receipt_view', $data);
 	}
 
 }

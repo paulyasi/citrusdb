@@ -744,6 +744,15 @@ class Billing_Model extends CI_Model
 
 	}
 
+	function billing_and_organization($billingid)
+	{
+		$query = "SELECT * FROM billing b ".
+			"LEFT JOIN general g ON g.id = b.organization_id ".
+			"WHERE b.id = ?";
+		$result = $this->db->query($query, array($billingid)) or die ("billing table Query Failed");
+		return $result->row_array();
+	}
+
 	public function get_organization_id($account_number)
 	{
 		$query = "SELECT organization_id FROM billing ".
@@ -781,7 +790,7 @@ class Billing_Model extends CI_Model
 		}
 	}
 
-	
+
 	function rerunitems ($billing_id)
 	{
 		// select the billing detail items that are unpaid
@@ -972,7 +981,7 @@ class Billing_Model extends CI_Model
 
 	}
 
-	
+
 	function get_billing_method($billing_id)
 	{
 		// figure out the billing method so that this can make invoices for any method
@@ -981,7 +990,7 @@ class Billing_Model extends CI_Model
 			"ON t.id = b.billing_type WHERE b.id = $billing_id";
 		$result = $this->db->query($query) or die ("Method Query Failed");
 		$myresult = $result->row_array();	
-		
+
 		return $myresult['method'];
 	}
 
@@ -1650,7 +1659,7 @@ class Billing_Model extends CI_Model
 						"WHERE id = $id";
 					$lessthenresult = $this->db->query($query) or die ("query failed");
 				}
-				
+
 				// increment the row counter
 				$i++;	
 			}
@@ -3222,11 +3231,11 @@ class Billing_Model extends CI_Model
 		$query = "SELECT encrypted_creditcard_number, creditcard_number, ".
 			"creditcard_expire FROM billing WHERE id = '$billing_id'";
 		$result = $this->db->query($query) or die ("Armor Query Failed");
-	
+
 		return $result->row_array();	
 	}
 
-	
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  input the ascii armor card data into billing
@@ -3261,10 +3270,10 @@ class Billing_Model extends CI_Model
 				LEFT JOIN billing b ON h.billing_id = b.id  
 				LEFT JOIN customer c ON b.account_number = c.account_number
 				WHERE b.account_number = ? ORDER BY h.id DESC LIMIT 24";
-		
+
 		$result = $this->db->query($query, array($account_number)) 
 			or die ("query failed");
-	
+
 		return $result->result_array();
 	}	
 
@@ -3285,14 +3294,14 @@ class Billing_Model extends CI_Model
 				LEFT JOIN billing b ON h.billing_id = b.id  
 				LEFT JOIN customer c ON b.account_number = c.account_number
 				WHERE b.account_number = ? ORDER BY h.id DESC";
-		
+
 		$result = $this->db->query($query, array($account_number)) 
 			or die ("query failed");
-	
+
 		return $result->result_array();
 	}	
 
-	
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get some payment history data for history tab
@@ -3317,7 +3326,7 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
-	
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get all payment history data for history tab
@@ -3404,7 +3413,7 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
-	
+
 	function set_nsf_funds($paymentid, $amount, $invoicenum, $billingid)
 	{	
 		// set the account payment_history to nsf
@@ -3482,6 +3491,32 @@ class Billing_Model extends CI_Model
 		$paymentresult = $this->db->query($query, array($paymentid)) 
 			or die ("$l_queryfailed");
 	}	
+
+	function get_payment_type($paymentid)
+	{
+		// grab the payment type, cardnumber, and check number
+		$query = "SELECT payment_type, creditcard_number, check_number ".
+			"FROM payment_history WHERE id = '$paymentid'";
+		$result = $this->db->query($query) or die ("payment history Query Failed");
+		return $result->row_array();
+	}
+
+	function payment_details($paymentid)
+	{
+		$query = "SELECT bd.original_invoice_number, bd.paid_amount,".
+			"bh.from_date, bh.to_date, bd.user_services_id, ".
+			"bd.billed_amount, ms.options_table, ms.service_description, ".
+			"tr.description ".
+			"FROM billing_details bd ".
+			"LEFT JOIN user_services us ON us.id = bd.user_services_id ".
+			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+			"LEFT JOIN taxed_services ts ON ts.id = bd.taxed_services_id ".
+			"LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+			"LEFT JOIN billing_history bh ON bh.id = bd.original_invoice_number ".
+			"WHERE bd.payment_history_id = ? ORDER BY bd.taxed_services_id";
+		$result = $this->db->query($query, array($paymentid)) or die ("Receipt Query Failed");
+		return $result->result_array();
+	}
 
 }
 
