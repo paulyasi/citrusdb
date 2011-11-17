@@ -1616,7 +1616,8 @@ class Billing_Model extends CI_Model
 				"WHERE paid_amount < billed_amount AND invoice_number = $invoicenumber ORDER BY billed_amount DESC";
 			$findresult = $this->db->query($query) or die ("query failed");
 
-			while (($myfindresult = $findresult->result_array()) and ($amount > 0)) 
+			$i = 0;
+			while (($myfindresult = $findresult->row_array($i)) and ($amount > 0)) 
 			{	
 				$id = $myfindresult['id'];
 				$paid_amount = $myfindresult['paid_amount'];
@@ -1649,6 +1650,9 @@ class Billing_Model extends CI_Model
 						"WHERE id = $id";
 					$lessthenresult = $this->db->query($query) or die ("query failed");
 				}
+				
+				// increment the row counter
+				$i++;	
 			}
 
 			//
@@ -3399,6 +3403,77 @@ class Billing_Model extends CI_Model
 
 		return $result->result_array();
 	}
+
+	
+	function set_nsf_funds($paymentid, $amount, $invoicenum, $billingid)
+	{	
+		// set the account payment_history to nsf
+		$query = "UPDATE payment_history ".
+			"SET payment_type = 'nsf', ".
+			"status = 'declined' ".
+			"WHERE id = ?";
+		$paymentresult = $this->db->query($query, array($paymentid)) 
+			or die ("nsf payment history query failed");
+
+		// remove paid_amounts from billing_details
+		// get the resulting list of services to have payments removed from
+		if ($invoice_number > 0) 
+		{
+			// remove payments by invoice number if paid to a particular invoice
+			$query = "SELECT * FROM billing_details ".
+				"WHERE paid_amount > 0 AND invoice_number = ?";
+			$result = $this->db->query($query, array($invoice_number)) 
+				or die ("invoice1 Query Failed");
+		} 
+		else 
+		{
+			// else remove payments where paid anything
+			$query = "SELECT * FROM billing_details ". 
+				"WHERE paid_amount > 0 AND billing_id = ?";
+			$result = $this->db->query($query, array($billingid)) 
+				or die ("billingid query failed");	
+		}
+
+		// go through the list and subtract the payment from each until
+		// the amount is depleted
+		$i = 0;
+		while (($myresult = $result->row_array($i)) and (round($amount,2) > 0)) 
+		{
+			$id = $myresult['id'];
+			$paid_amount = sprintf("%.2f",$myresult['paid_amount']);
+
+			// fix float precision too    
+			if (round($amount,2) >= round($paid_amount,2)) 
+			{
+				$amount = round($amount - $paid_amount, 2);
+				$fillamount = 0;
+
+				$query = "UPDATE billing_details ".
+					"SET paid_amount = ? ".
+					"WHERE id = ?";
+				$greaterthanresult = $this->db->query($query, array($fillamount, $id))
+					or die ("greaterthan query failed");
+
+			} 
+			else 
+			{ 
+				// amount is less than paid_amount
+				$available = $amount;
+				$amount = 0;
+				$fillamount = round($paid_amount - $available,2);
+
+				$query = "UPDATE billing_details ".
+					"SET paid_amount = ? ".
+					"WHERE id = ?";
+				$lessthenresult = $this->db->query($query, array($fillamount, $id)) 
+					or die ("lessthan query failed");
+			}
+
+			// increment row count
+			$i++;
+		}
+	}
+
 
 }
 
