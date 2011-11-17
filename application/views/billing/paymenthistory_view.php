@@ -104,8 +104,8 @@ foreach ($history AS $myresult)
 	{
 		if (($userprivileges['manager'] == 'y') OR ($userprivileges['admin'] == 'y')) 
 		{
-			echo "<a href=\"$this->url_prefix/index.php?load=billing&type=module&deletepayment=on=&".
-				"paymentid=$id\" target=\"_parent\" style=\"font-size: 8pt;\">".lang('delete')."</a>";
+			echo "<a href=\"$this->url_prefix/index.php/billing/deletepayment/$id\" ".
+				"target=\"_parent\" style=\"font-size: 8pt;\">".lang('delete')."</a>";
 		}
 	}
 

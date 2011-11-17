@@ -1230,7 +1230,7 @@ class Billing_Model extends CI_Model
 					// Remove one time services
 					$billed_amount = ($pricerate*$usage_multiple);
 					$today = date("Y-m-d");
-					delete_service($user_services_id, 'onetime', $today);
+					$this->service_model->delete_service($user_services_id, 'onetime', $today);
 				} // end if
 			}
 
@@ -3474,6 +3474,14 @@ class Billing_Model extends CI_Model
 		}
 	}
 
+	function delete_payment($paymentid)
+	{	
+		// delete the payment history item
+		$query = "DELETE FROM payment_history ".
+			"WHERE id = ? LIMIT 1";
+		$paymentresult = $this->db->query($query, array($paymentid)) 
+			or die ("$l_queryfailed");
+	}	
 
 }
 

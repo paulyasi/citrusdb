@@ -1355,6 +1355,27 @@ class Billing extends App_Controller
 		redirect('/billing');
 	}
 
+	public function deletepayment($paymentid)
+	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$data['paymentid'] = $paymentid;
+
+		$this->load->view('billing/deletepayment_view', $data);
+	}
+
+	function savedeletepayment()
+	{
+		// GET Variables
+		$paymentid = $this->input->post('paymentid');
+
+		$this->billing_model->delete_payment($paymentid);
+
+		// redirect back to the billing screen
+		redirect('/billing');
+	}
+
 	public function receipt()
 	{
 		if ($pallow_modify)
@@ -1363,13 +1384,6 @@ class Billing extends App_Controller
 		}  else permission_error();
 	}
 
-	public function deletepayment()
-	{
-		if ($pallow_modify)
-		{
-			include('./modules/billing/deletepayment.php');
-		}  else permission_error();
-	}
 }
 
 /* End of file billing */
