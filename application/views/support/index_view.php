@@ -1,7 +1,5 @@
 <a href="<?php echo $this->url_prefix?>/index.php/customer">
 [ <?php echo lang('undochanges');?> ]</a> &nbsp; 
-<a href="<?php echo $this->url_prefix?>/index.php/support/edit">
-[ <?php echo lang('checknotes')?> ]</a>
 <table cellpadding=5 border=0 cellspacing=1 width=720>
 <td bgcolor="#ccccdd"><b><?php echo lang('createdby');?></b></td>
 <td bgcolor="#ddddee"><?php echo $this->user;?></td><tr>

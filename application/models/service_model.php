@@ -250,7 +250,7 @@ class Service_model extends CI_Model
 			FROM user_services AS user, master_services AS master 
 			WHERE user.master_service_id = master.id 
 			AND user.account_number = '$account_number' AND user.removed = 'y' 
-			ORDER BY user.usage_multiple DESC, master.pricerate DESC";
+			ORDER BY user.end_datetime DESC,user.usage_multiple DESC, master.pricerate DESC";
 		$result = $this->db->query($query) or die ("queryfailed");
 
 		return $result;

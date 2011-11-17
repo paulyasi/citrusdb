@@ -54,12 +54,13 @@ foreach ($record as $billing_record) {
   	}
 
   	$edit_billing_url = $this->ssl_url_prefix . "/index.php/billing/edit/" . $billing_id;
+
+	echo "<td style=\"font-weight: bold;\">$billing_orgname&nbsp;".
+		"<a href=\"$edit_billing_url\">".lang('edit')."$billing_id</a>".
+		"</td><td>$billing_type</td><td>$mystatus</td>".
+		"<td>$newcharges</td><td>$newtaxes</td><td>$pastcharges</td>".
+		"<td>$newtotal</td>";
 }
 ?>
-<td style="font-weight: bold;"><?=$billing_orgname?>&nbsp;
-<a href="<?=$edit_billing_url?>"><?php echo lang('edit') . " " . $billing_id;?></a>
-</td><td><?php echo $billing_type?></td><td><?php echo $mystatus?></td>
-<td><?=$newcharges?></td><td><?=$newtaxes?></td><td><?=$pastcharges?></td>
-<td><?=$newtotal?></td>
 </table>
 <p>
