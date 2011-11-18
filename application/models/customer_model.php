@@ -269,4 +269,49 @@ class Customer_Model extends CI_Model
 		return $myifresult['$if_field'];
 	}
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  change the account manager password by a customer service rep
+	 * ------------------------------------------------------------------------
+	 */ 
+	function change_account_manager_password($account_number, 
+			$new_password1, $new_password2)
+	{
+		// load the PasswordHash library
+		$config = array (
+				'iteration_count_log2' => '8', 
+				'portable_hashes' => 'FALSE'
+				);
+		$this->load->library('PasswordHash', $config);    
+
+		if ($new_password1 == $new_password2) 
+		{
+			// hash the new password
+			$newhash = $this->passwordhash->HashPassword($new_password1);
+			// hash always greater than 20 chars, if not something went wrong
+			if (strlen($newhash) < 20) 
+			{
+				// failed to hash new password
+				return FALSE;
+			} 
+			else 
+			{
+				// set the new password value
+				$query = "UPDATE customer SET ".
+					"account_manager_password = '$newhash' ".
+					"WHERE account_number = '$account_number'";
+				$result = $this->db->query($query) or die ("new password update failed");
+				return TRUE;
+			}
+		} 
+		else 
+		{
+			// passwords do not match
+			return FALSE;
+		}
+	}
+
+
 }
+
+/* end file models/customer_model.php */
