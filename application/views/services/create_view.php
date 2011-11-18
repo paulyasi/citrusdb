@@ -11,7 +11,7 @@ $showall_permission = false;
 if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) 
 {
 	$showall_permission = true;
-	echo "<a href=\"index.php?load=services&type=module&create=on&showall=y\">".
+	echo "<a href=\"$this->url_prefix/index.php/services/create/showall\">".
 		"[ ". lang('showall') ." ]</a>";
 }
 ?>
@@ -31,7 +31,7 @@ if ($showall == 'y' & $showall_permission == true)
 	foreach ($result->result_array() as $myresult) 
 	{
 		$categoryname = $myresult['category'];
-		echo "<a href=\"index.php?/services/create/showall#$categoryname\">$categoryname</a> | \n";
+		echo "<a href=\"$this->url_prefix/index.php/services/create/showall#$categoryname\">$categoryname</a> | \n";
 	}
 
 	// set the query for the service listing
@@ -49,7 +49,7 @@ else
 	foreach ($result->result_array() as $myresult) 
 	{
 		$categoryname = $myresult['category'];
-		echo "<a href=\"index.php/services/create#$categoryname\">$categoryname</a> | \n";
+		echo "<a href=\"$this->url_prefix/index.php/services/create#$categoryname\">$categoryname</a> | \n";
 	}
 
 	$query = "SELECT * FROM master_services m ".

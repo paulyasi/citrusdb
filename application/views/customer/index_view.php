@@ -70,9 +70,9 @@
 
 <?php
   if ($account_manager_password) { 
-    echo "<td><a href=\"" . $this->url_prefix . "/index.php/customer/resetamp\">" . lang('reset') . "</a></td><tr>";
+    echo "<td><a href=\"" . $this->ssl_url_prefix . "/index.php/customer/resetamp\">" . lang('reset') . "</a></td><tr>";
   } else {
-    echo "<td><a href=\"" . $this->url_prefix . "/index.php/customer/resetamp\">" . lang('notset') . "</a></td><tr>";
+    echo "<td><a href=\"" . $this->ssl_url_prefix . "/index.php/customer/resetamp\">" . lang('notset') . "</a></td><tr>";
   }
 ?>
 
