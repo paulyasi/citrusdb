@@ -1,8 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
 
 <a href="<?php echo $this->url_prefix?>/index.php/support">[ <?php echo lang('undochanges')?> ]</a>
-&nbsp; <a href="<?php echo $this->url_prefix?>/index.php/support/tickets">
-[ <?php echo lang('checknotes')?> ]</a>
 <h3><?php echo lang('ticketnumber')." ".$ticket['id'];?></h3>
 <form style="margin-bottom:0;" 
 action="<?php echo $this->url_prefix?>/index.php/support/saveeditticket" 
@@ -24,7 +22,7 @@ name="form1" method=post>
 // print a service id link if there is an associated service
 if ($ticket['serviceid'] > 0) 
 {
-	echo "<a href=\"index.php/services/edit/".$ticket['serviceid']."\">".
+	echo "<a href=\"$this->url_prefix/index.php/services/edit/".$ticket['serviceid']."\">".
 		$ticket['serviceid']." ".$ticket['service_description']."</a>";
 }
 ?>
