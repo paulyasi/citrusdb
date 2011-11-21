@@ -675,11 +675,103 @@ class Services extends App_Controller {
 	}
 
 	// print the history
-	public function vendor()
+	public function vendor($userserviceid)
 	{
-		if ($pallow_remove) {
-			include('./modules/customer/vendor');
-		} else permission_error();
+		// check permissions
+		$permission = $this->module_model->permission($this->user, 'services');
+		if ($permission['create'])
+		{
+			// load the date helper for use when printing service start/end dates
+			$this->load->helper('date');
+
+			// load the module header common to all module views
+			$this->load->view('module_header_view');
+
+			$data['userserviceid'] = $userserviceid;
+
+			// show the vendor history info
+			$myorgresult = $this->service_model->org_and_options($userserviceid);
+			$data['service_org_id'] = $myorgresult['organization_id'];
+			$data['service_org_name'] = $myorgresult['org_name'];
+			$data['optionstable'] = $myorgresult['options_table'];
+			$data['servicedescription'] = $myorgresult['service_description'];
+			$data['creationdate'] = humandate($myorgresult['start_datetime']);
+			$data['enddate'] = humandate($myorgresult['end_datetime']);
+			$data['removed'] = $myorgresult['removed'];
+
+			if ($data['optionstable'] <> '') {
+				$myoptions = $this->service_model->options_attributes($userserviceid, $data['optionstable']);
+				$data['optionsdetails'] = $myoptions[2];
+				$data['optionsdetails2'] = $myoptions[3];
+			}
+
+			$data['vendor_history'] = $this->service_model->vendor_history($userserviceid);
+			$data['vendor_names'] = $this->service_model->vendor_names();
+
+			$this->load->view('services/vendor_history_view', $data);	
+
+			// the history listing tabs
+			$this->load->view('historyframe_tabs_view');	
+
+			// show html footer
+			$this->load->view('html_footer_view');
+		}
+		else
+		{
+			$this->module_model->permission_error();
+		}
+	}
+
+
+	public function savevendor()
+	{
+		// GET Variables
+		$entry_type = $base->input['entry_type'];
+		$entry_date = $base->input['entry_date'];
+		$vendor_name = $base->input['vendor_name'];
+		$vendor_bill_id = $base->input['vendor_bill_id'];
+		$vendor_cost = $base->input['vendor_cost'];
+		$vendor_tax = $base->input['vendor_tax'];
+		$vendor_item_id = $base->input['vendor_item_id'];
+		$vendor_invoice_number = $base->input['vendor_invoice_number'];
+		$vendor_from_date = $base->input['vendor_from_date'];
+		$vendor_to_date = $base->input['vendor_to_date'];
+		$userserviceid = $base->input['userserviceid'];
+		$submit = $base->input['submit'];
+
+
+		/*--------------------------------------------------------------------------*/
+		// make a new entry in the vendor history
+		/*--------------------------------------------------------------------------*/
+
+		// grab the current account_status, and total_price
+		$query = "SELECT SUM(bd.billed_amount) as billed_amount, bd.billing_id ".
+			"FROM billing_details bd ".
+			"LEFT JOIN user_services us ON us.id = bd.user_services_id ".
+			"WHERE bd.user_services_id = '$userserviceid' GROUP BY bd.invoice_number ".
+			"ORDER BY invoice_number DESC LIMIT 1";
+		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+		$myresult = $result->fields;
+		$billed_amount = $myresult['billed_amount'];
+		$userbillingid = $myresult['billing_id'];
+
+		$account_status = billingstatus($userbillingid);
+
+		// insert the new vendor history line item
+		$query = "INSERT into vendor_history ".
+			"(datetime, entry_type, entry_date, vendor_name, vendor_bill_id, ".
+			"vendor_cost, vendor_tax, vendor_item_id, vendor_invoice_number, vendor_from_date, ".
+			"vendor_to_date, user_services_id, account_status, billed_amount) VALUES ".
+			"(NOW(), '$entry_type', '$entry_date', '$vendor_name', '$vendor_bill_id', ".
+			"'$vendor_cost', '$vendor_tax', '$vendor_item_id', '$vendor_invoice_number', '$vendor_from_date',".
+			"'$vendor_to_date','$userserviceid', '$account_status', '$billed_amount')";
+		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+
+		// redirect back to the vendory history, now showing new entry
+		echo "entered";
+		print "<script language=\"JavaScript\">window.location.href = ".
+			"\"index.php?load=services&type=module&vendor=on&userserviceid=$userserviceid\";</script>";
+
 	}
 
 }

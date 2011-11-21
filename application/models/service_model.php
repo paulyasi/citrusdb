@@ -702,4 +702,21 @@ class Service_model extends CI_Model
 	}
 
 
+	function vendor_history($userserviceid)
+	{
+		$query = "SELECT * FROM vendor_history WHERE user_services_id = ? ".
+			"ORDER BY datetime DESC";
+		$result = $this->db->query($query, array($userserviceid)) 
+			or die ("select vendor_history query failed");
+		return $result->result_array();
+	}
+
+	function vendor_names()
+	{
+		// get the list of service categories from the master_services table
+		$query = "SELECT name FROM vendor_names ORDER BY name";
+		$result = $this->db->query($query) or die ("vendor names query failed");
+		return $result->row_array();
+	}
+
 }
