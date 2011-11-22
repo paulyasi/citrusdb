@@ -726,51 +726,33 @@ class Services extends App_Controller {
 	public function savevendor()
 	{
 		// GET Variables
-		$entry_type = $base->input['entry_type'];
-		$entry_date = $base->input['entry_date'];
-		$vendor_name = $base->input['vendor_name'];
-		$vendor_bill_id = $base->input['vendor_bill_id'];
-		$vendor_cost = $base->input['vendor_cost'];
-		$vendor_tax = $base->input['vendor_tax'];
-		$vendor_item_id = $base->input['vendor_item_id'];
-		$vendor_invoice_number = $base->input['vendor_invoice_number'];
-		$vendor_from_date = $base->input['vendor_from_date'];
-		$vendor_to_date = $base->input['vendor_to_date'];
-		$userserviceid = $base->input['userserviceid'];
-		$submit = $base->input['submit'];
+		$entry_type = $this->input->post('entry_type');
+		$entry_date = $this->input->post('entry_date');
+		$vendor_name = $this->input->post('vendor_name');
+		$vendor_bill_id = $this->input->post('vendor_bill_id');
+		$vendor_cost = $this->input->post('vendor_cost');
+		$vendor_tax = $this->input->post('vendor_tax');
+		$vendor_item_id = $this->input->post('vendor_item_id');
+		$vendor_invoice_number = $this->input->post('vendor_invoice_number');
+		$vendor_from_date = $this->input->post('vendor_from_date');
+		$vendor_to_date = $this->input->post('vendor_to_date');
+		$userserviceid = $this->input->post('userserviceid');
 
-
-		/*--------------------------------------------------------------------------*/
-		// make a new entry in the vendor history
-		/*--------------------------------------------------------------------------*/
-
-		// grab the current account_status, and total_price
-		$query = "SELECT SUM(bd.billed_amount) as billed_amount, bd.billing_id ".
-			"FROM billing_details bd ".
-			"LEFT JOIN user_services us ON us.id = bd.user_services_id ".
-			"WHERE bd.user_services_id = '$userserviceid' GROUP BY bd.invoice_number ".
-			"ORDER BY invoice_number DESC LIMIT 1";
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
-		$myresult = $result->fields;
+		$history_insert = $this->service_model->get_status_and_price($userserviceid);
 		$billed_amount = $myresult['billed_amount'];
 		$userbillingid = $myresult['billing_id'];
 
-		$account_status = billingstatus($userbillingid);
+		$account_status = $this->billing_model->billingstatus($userbillingid);
 
 		// insert the new vendor history line item
-		$query = "INSERT into vendor_history ".
-			"(datetime, entry_type, entry_date, vendor_name, vendor_bill_id, ".
-			"vendor_cost, vendor_tax, vendor_item_id, vendor_invoice_number, vendor_from_date, ".
-			"vendor_to_date, user_services_id, account_status, billed_amount) VALUES ".
-			"(NOW(), '$entry_type', '$entry_date', '$vendor_name', '$vendor_bill_id', ".
-			"'$vendor_cost', '$vendor_tax', '$vendor_item_id', '$vendor_invoice_number', '$vendor_from_date',".
-			"'$vendor_to_date','$userserviceid', '$account_status', '$billed_amount')";
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
+		$this->service_model->add_vendor_history($entry_type, $entry_date, $vendor_name, 
+				$vendor_bill_id, $vendor_cost, $vendor_tax, $vendor_item_id, 
+				$vendor_invoice_number, $vendor_from_date, $vendor_to_date, 
+				$userserviceid, $account_status, $billing_id);
 
 		// redirect back to the vendory history, now showing new entry
 		echo "entered";
-		print "<script language=\"JavaScript\">window.location.href = ".
-			"\"index.php?load=services&type=module&vendor=on&userserviceid=$userserviceid\";</script>";
+		redirect('/services/vendor/'.$userserviceid);
 
 	}
 

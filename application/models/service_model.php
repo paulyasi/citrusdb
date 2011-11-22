@@ -716,7 +716,39 @@ class Service_model extends CI_Model
 		// get the list of service categories from the master_services table
 		$query = "SELECT name FROM vendor_names ORDER BY name";
 		$result = $this->db->query($query) or die ("vendor names query failed");
+		return $result->result_array();
+	}
+
+
+	function get_status_and_price($userserviceid)
+	{
+		// grab the current account_status, and total_price
+		$query = "SELECT SUM(bd.billed_amount) as billed_amount, bd.billing_id ".
+			"FROM billing_details bd ".
+			"LEFT JOIN user_services us ON us.id = bd.user_services_id ".
+			"WHERE bd.user_services_id = ? GROUP BY bd.invoice_number ".
+			"ORDER BY invoice_number DESC LIMIT 1";
+		$result = $this->db->query($query, array($userserviceid)) or die ("get status query failed");
 		return $result->row_array();
 	}
 
+
+	function add_vendor_history($entry_type, $entry_date, $vendor_name, 
+				$vendor_bill_id, $vendor_cost, $vendor_tax, $vendor_item_id, 
+				$vendor_invoice_number, $vendor_from_date, $vendor_to_date, 
+				$userserviceid, $account_status, $billing_id)
+	{
+		$query = "INSERT into vendor_history ".
+			"(datetime, entry_type, entry_date, vendor_name, vendor_bill_id, ".
+			"vendor_cost, vendor_tax, vendor_item_id, vendor_invoice_number, vendor_from_date, ".
+			"vendor_to_date, user_services_id, account_status, billed_amount) VALUES ".
+			"(NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?)";
+		$result = $this->db->query($query, array($entry_type, $entry_date, $vendor_name, 
+					$vendor_bill_id, $vendor_cost, $vendor_tax, $vendor_item_id, 
+					$vendor_invoice_number, $vendor_from_date, $vendor_to_date, 
+					$userserviceid, $account_status, $billed_amount)) or die ("add vendor query failed");
+	}
+
 }
+
+/* end service_model.php */
