@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/pastdue" METHOD="POST" name="form1"> 
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/pastdue" METHOD="POST" name="form1"> 
 
 <td><b><?php echo lang('organizationname')?></b></td>
 <td><select name="organization_id">
@@ -90,7 +90,7 @@ foreach ($recentpayments as $payment)
 	<td><?php echo $payment['payment_due_date']?></td>
 	<td><?php echo $payment['categorylist']?></td>
 
-	<td><form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>/index.php/tools/reports/pastdue" method=post>
+	<td><form style="margin-bottom:0;" action="<?php echo $this->url_prefix?>/index.php/reports/pastdue" method=post>
 
 	<select name="changestatus" style="font-size: 9px;">
 	<option value=""><?php lang('choose')?></option>

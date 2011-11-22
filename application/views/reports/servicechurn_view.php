@@ -25,7 +25,7 @@ if ($year)
 ?>
 
 Enter year and month of to see service churn:
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/servicechurn" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/servicechurn" METHOD="POST">
 Year: <input type=text name="year" value="<?php echo $year?>" size=4>
 Month <select name="month">
 <option>01</option>

@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <h3><?php echo lang('revenuereport')?></h3>
 
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/revenue" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/revenue" METHOD="POST">
 <?php echo lang('foritemsbilledduringthisperiod')?><p>
 <table>
 <?php echo lang('from')?>: <input type=text name="day1" value="<?php echo $day1?>"> - 

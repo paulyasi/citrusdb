@@ -41,8 +41,6 @@ class Dashboard extends App_Controller
 				$this->load->view("tools/".$modulename."/index_view");
 			}
 
-			// Show Reports Tools for manager and admin
-			$this->load->view('tools/reports/index_view');
 		}
 
 		if ($privileges['admin'] == 'y')

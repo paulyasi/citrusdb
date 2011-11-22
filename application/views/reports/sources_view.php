@@ -3,7 +3,7 @@
 <body bgcolor="#ffffff">
 <h3><?php echo lang('sourcereport')?>: 
 
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/showsources" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/showsources" METHOD="POST">
 <table>
 <select name="category">
 

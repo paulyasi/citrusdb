@@ -2,7 +2,7 @@
 <html>
 <body bgcolor="#ffffff">
 <h3><?php echo lang('exemptreport')?>: 
-<p><FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/showexempt" METHOD="POST"><table>
+<p><FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/showexempt" METHOD="POST"><table>
 <select name="exempttype">
 <option value="pastdueexempt"><?php echo lang('pastdueexempt')?></option>
 <option value="baddebt"><?php echo lang('bad_debt')?></option>"

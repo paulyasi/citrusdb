@@ -22,7 +22,7 @@ if ($day)
 ?>  
 
 Enter date of pdf notices to view:
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/printnotices" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/printnotices" METHOD="POST">
 Date: <input type=text name="day" value="<?php echo $day?>">
 <input type=hidden name=type value=tools>
 <input type=hidden name=load value=listpdf>

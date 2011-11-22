@@ -15,6 +15,30 @@ class Reports extends App_Controller
 
 	/*
 	 * ------------------------------------------------------------------------
+	 *  Show the reports user if they have permission to view
+	 * ------------------------------------------------------------------------
+	 */
+	public function index()
+	{
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+
+		// check for user privileges to see if the are manager or admin
+		$privileges = $this->user_model->user_privileges($this->user);
+
+		if (($privileges['manager'] == 'y') OR ($privileges['admin'] == 'y'))
+		{
+			// Show Reports Tools for manager and admin
+			$this->load->view('reports/index_view');
+		}
+
+		// the html page footer
+		$this->load->view('html_footer_view');
+
+	}
+
+	/*
+	 * ------------------------------------------------------------------------
 	 *  sends customer summary to view or summary file for download
 	 *  input: style (view|file)
 	 *  input: organization id (for file generated), optional
@@ -353,7 +377,7 @@ class Reports extends App_Controller
 			$this->load->view('header_no_sidebar_view');
 
 			$dataview['orglist'] = $this->general_model->list_organizations();
-			$this->load->view('tools/reports/summary_view', $dataview);
+			$this->load->view('reports/summary_view', $dataview);
 		}
 		else
 		{
@@ -407,7 +431,7 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/revenue_view', $data);
+		$this->load->view('reports/revenue_view', $data);
 	}
 
 	function refunds()
@@ -446,7 +470,7 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/refunds_view', $data);
+		$this->load->view('reports/refunds_view', $data);
 	}
 
 
@@ -512,7 +536,7 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/pastdue_view', $data);
+		$this->load->view('reports/pastdue_view', $data);
 	}
 
 
@@ -575,7 +599,7 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/paymentstatus_view', $data);
+		$this->load->view('reports/paymentstatus_view', $data);
 	}
 
 
@@ -603,7 +627,7 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/services_view', $data);
+		$this->load->view('reports/services_view', $data);
 	}
 
 
@@ -839,7 +863,7 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/showservices_view', $data);
+		$this->load->view('reports/showservices_view', $data);
 	}
 
 
@@ -860,7 +884,7 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/sources_view', $data);
+		$this->load->view('reports/sources_view', $data);
 	}
 
 
@@ -885,7 +909,7 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/showsources_view', $data);
+		$this->load->view('reports/showsources_view', $data);
 	}
 
 
@@ -903,7 +927,7 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/exempt_view');
+		$this->load->view('reports/exempt_view');
 	}
 
 
@@ -928,15 +952,15 @@ class Reports extends App_Controller
 		{
 			case 'pastdueexempt':
 				$data['pastdueexempt'] = $this->reports_model->pastdueexempt();
-				$this->load->view('tools/reports/pastdueexempt_view', $data);
+				$this->load->view('reports/pastdueexempt_view', $data);
 				break;
 			case 'baddebt':
 				$data['baddebt'] = $this->reports_model->baddebt();
-				$this->load->view('tools/reports/baddebt_view', $data);
+				$this->load->view('reports/baddebt_view', $data);
 				break;
 			case 'taxexempt':
 				$data['taxexempt'] = $this->reports_model->taxexempt();
-				$this->load->view('tools/reports/taxexempt_view', $data);
+				$this->load->view('reports/taxexempt_view', $data);
 				break;
 		}
 
@@ -957,7 +981,7 @@ class Reports extends App_Controller
 		// get the day input, if any
 		$data['day'] = $this->input->post('day');
 
-		$this->load->view('tools/reports/printnotices_view', $data);
+		$this->load->view('reports/printnotices_view', $data);
 	}
 
 
@@ -973,10 +997,10 @@ class Reports extends App_Controller
 		// load the header without the sidebar to get the stylesheet in there
 		$this->load->view('header_no_sidebar_view');
 
-		$this->load->view('tools/reports/servicechurn_view', $data);
+		$this->load->view('reports/servicechurn_view', $data);
 	}
 
 }
 
 /* End of file reports */
-/* Location: ./application/controllers/tools/reports.php */
+/* Location: ./application/controllers/reports.php */

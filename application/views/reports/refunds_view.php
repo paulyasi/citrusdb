@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <h3><?php echo lang('creditcard')." ".lang('refundreport')?></h3>
 
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/refunds" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/refunds" METHOD="POST">
 <table>
 <td><?php echo lang('from')?>: <input type=text name="day1" value="<?php echo $day1?>" size=10> - </td>
 <td><?php echo lang('to')?>: <input type=text name="day2" value="<?php echo $day2?>" size=10></td>
