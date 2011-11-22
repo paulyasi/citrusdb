@@ -62,7 +62,7 @@ foreach ($vendor_history AS $myresult)
 </table>
 
 <hr><h3><?php echo lang('add')?></h3>
-<form action="<?php echo $this->url_prefix?>/index.php/savevendor" method=post>
+<form action="<?php echo $this->url_prefix?>/index.php/services/savevendor" method=post>
 <input type=hidden name=userserviceid value=<?php echo $userserviceid?>>
 <table>
 

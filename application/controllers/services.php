@@ -738,9 +738,9 @@ class Services extends App_Controller {
 		$vendor_to_date = $this->input->post('vendor_to_date');
 		$userserviceid = $this->input->post('userserviceid');
 
-		$history_insert = $this->service_model->get_status_and_price($userserviceid);
-		$billed_amount = $myresult['billed_amount'];
-		$userbillingid = $myresult['billing_id'];
+		$billing_status = $this->service_model->get_status_and_price($userserviceid);
+		$billed_amount = $billing_status['billed_amount'];
+		$userbillingid = $billing_status['billing_id'];
 
 		$account_status = $this->billing_model->billingstatus($userbillingid);
 
