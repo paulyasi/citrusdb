@@ -8,8 +8,8 @@
 <a href="<?php echo $this->url_prefix;?>/index.php/dashboard">
 <img src="<?php echo $this->url_prefix;?>/images/search-icon.png" alt="<?php echo lang('search')?>" border=0><br><?php echo lang('search')?></a></td>
 <td width="20%" align=center>
-<a href="<?php echo $this->url_prefix;?>/index.php?load=print/<?php echo $this->account_number;?>">
-<img src="<?php echo $this->url_prefix;?>/images/print-icon.png" alt="<?php echo lang('print')?>" border=0><br><?php echo lang('print')?></a></td>
+<a href="<?php echo $this->url_prefix;?>/index.php/reports/<?php echo $this->account_number;?>">
+<img src="<?php echo $this->url_prefix;?>/images/reports-icon.png" alt="<?php echo lang('reports')?>" border=0><br><?php echo lang('reports')?></a></td>
 <td width="20%" align=center>
 <a href="<?php echo $this->url_prefix;?>/index.php/tools">
 <img src="<?php echo $this->url_prefix;?>/images/admin-icon.png" alt="<?php echo lang('tools');?>" border=0><br><?php echo lang('tools');?></a></td>
