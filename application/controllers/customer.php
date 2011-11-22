@@ -188,8 +188,8 @@ class Customer extends App_Controller
 		// set the billed by for the data array passed to the view
 		$data['billedby'] = $billedby;
 
-		// the module header common to all module views
-		$this->load->view('module_header_view');
+		// the dashboard header common to all dashboard views
+		$this->load->view('dashboard_header_view');
 			
 		// show the new customer form, if specified billed by, selected by default
 		$this->load->view('new_customer_view', $data);

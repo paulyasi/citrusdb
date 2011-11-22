@@ -20,8 +20,8 @@ class Reports extends App_Controller
 	 */
 	public function index()
 	{
-		// load the module header common to all module views
-		$this->load->view('module_header_view');
+		// show the header common to all dashboard/tool views
+		$this->load->view('dashboard_header_view');
 
 		// check for user privileges to see if the are manager or admin
 		$privileges = $this->user_model->user_privileges($this->user);

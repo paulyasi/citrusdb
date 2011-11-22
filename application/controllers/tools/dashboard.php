@@ -18,8 +18,8 @@ class Dashboard extends App_Controller
 	 */
 	public function index()
 	{
-		// load the module header common to all module views
-		$this->load->view('module_header_view');
+		// load the dashboard header common to all dashboard views
+		$this->load->view('dashboard_header_view');
 
 		// show user tools that everyone can use
 		$this->load->view('tools/user/index_view');
