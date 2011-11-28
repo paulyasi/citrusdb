@@ -332,6 +332,7 @@ class Reports_Model extends CI_Model
 		// initialize for multidimensional result array
 		$i = 0;
 		$payments = array();
+		$duedates = array();
 
 		// go through each one and find one with status we want to show
 		foreach ($result->result_array() AS $myresult) 
@@ -424,11 +425,16 @@ class Reports_Model extends CI_Model
 						'pastcharges' => $pastcharges
 						);
 
+				$duedates[$i] = $payment_due_date;
+
 				$i++;
 
 			}
 
 		}
+
+		// sort the payments according to due date
+		array_multisort($duedates, SORT_ASC, $payments);
 
 		return $payments;
 
@@ -455,7 +461,7 @@ class Reports_Model extends CI_Model
 				"AND p.payment_type = ?";
 
 			$result = $this->db->query($query, array($day1, $day2, $organization_id, $showpaymenttype)) 
-			or die ("$l_queryfailed");
+				or die ("$l_queryfailed");
 		}
 
 		return $result->result_array();
@@ -471,7 +477,7 @@ class Reports_Model extends CI_Model
 				"LEFT JOIN billing b ON p.billing_id = b.id ".
 				"WHERE p.creation_date BETWEEN ? AND ? ".
 				"AND p.payment_type = 'creditcard' AND p.status = 'declined'";
-			
+
 			$result = $this->db->query($query, array($day1, $day2)) or die ("$l_queryfailed");
 		} 
 		else 
@@ -482,7 +488,7 @@ class Reports_Model extends CI_Model
 				"WHERE p.creation_date BETWEEN ? AND ? ".
 				"AND b.organization_id = ? ".
 				"AND p.payment_type = 'creditcard' AND p.status = 'declined'";
-			
+
 			$result = $this->db->query($query, array($day1, $day2, $organization_id)) or die ("$l_queryfailed");
 		}
 
@@ -499,7 +505,7 @@ class Reports_Model extends CI_Model
 			$query = "SELECT p.*, b.name, b.phone FROM payment_history p ".
 				"LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
 				"BETWEEN ? AND ? AND p.payment_type <> 'creditcard'";
-		
+
 			$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
 		} 
 		else 
@@ -508,7 +514,7 @@ class Reports_Model extends CI_Model
 				"LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
 				"BETWEEN ? AND ? AND b.organization_id = ? ".
 				"AND p.payment_type <> 'creditcard'";    
-		
+
 			$result = $this->db->query($query, array($day1, $day2, $organization_id)) or die ("query failed");
 		}
 
@@ -526,7 +532,7 @@ class Reports_Model extends CI_Model
 	{
 		$query = "SELECT * FROM master_services ORDER BY service_description";
 		$result = $this->db->query($query) or die ("queryfailed");
-	
+
 		return $result->result_array();
 	}
 
@@ -572,7 +578,7 @@ class Reports_Model extends CI_Model
 	{
 		$query = "SELECT * FROM billing WHERE pastdue_exempt = 'y'";
 		$result = $this->db->query($query) or die ("pastdue exempt query failed");
-		
+
 		return $result->result_array();
 	}
 
@@ -581,7 +587,7 @@ class Reports_Model extends CI_Model
 	{
 		$query = "SELECT * FROM billing WHERE pastdue_exempt = 'bad_debt'";
 		$result = $this->db->query($query) or die ("bad debt query failed");
-		
+
 		return $result->result_array();
 	}
 
