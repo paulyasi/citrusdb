@@ -10,6 +10,7 @@ class Services extends App_Controller {
 		$this->load->model('module_model');
 		$this->load->model('customer_model');
 		$this->load->model('billing_model');
+		$this->load->model('user_model');
 	}
 	
 	
@@ -286,8 +287,18 @@ class Services extends App_Controller {
 			// load the module header common to all module views
 			$this->load->view('module_header_view');
 
+			// get the privileges for this citrus user
+			$data['privileges'] = $this->user_model->user_privileges($this->user);
+
 			// show the services available to add to this customer
-			$data['showall'] = $showall;
+			if ($showall) 
+			{ 
+				$data['showall'] = 'y'; 
+			}
+			else
+			{
+				$data['showall'] = 'n'; 
+			}
 			$this->load->view('services/create_view', $data);	
 
 			// the history listing tabs

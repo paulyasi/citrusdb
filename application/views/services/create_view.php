@@ -4,11 +4,8 @@
 <?php
 // if the user is admin or manager then have the option to show all services
 // query user properties
-$query = "SELECT * FROM user WHERE username='$this->user'";
-$userresult = $this->db->query($query) or die ("query failed");
-$myuserresult = $userresult->row_array();
 $showall_permission = false;
-if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) 
+if (($privileges['manager'] == 'y') OR ($privileges['admin'] == 'y')) 
 {
 	$showall_permission = true;
 	echo "<a href=\"$this->url_prefix/index.php/services/create/showall\">".
