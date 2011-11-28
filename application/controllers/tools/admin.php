@@ -1164,6 +1164,46 @@ class Admin extends App_Controller
 
 		print "<h3>$desc</h3>";
 	}
+
+	function changepass($id)
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['admin'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$data['id'] = $id;
+		$this->load->view('tools/admin/changepass_view', $data);
+	}
+
+	function savechangepass()
+	{
+		// check if the user has manager privileges first
+		$myresult = $this->user_model->user_privileges($this->user);
+
+		if ($myresult['admin'] == 'n') 
+		{
+			echo lang('youmusthaveadmin')."<br>";
+			exit; 
+		}
+
+		$id = $this->input->post('id');
+		$new_password1 = $this->input->post('new_password1');
+		$new_password2 = $this->input->post('new_password2');
+
+		$feedback = $this->user_model->admin_change_password($id, $new_password1,$new_password2);
+
+		echo '<FONT COLOR="RED"><H2>'.$feedback.'</H2></FONT>';
+
+	}
+
 }
 
 /* End of file admin */

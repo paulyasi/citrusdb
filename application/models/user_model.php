@@ -371,6 +371,47 @@ class User_Model extends CI_Model {
 
 
 	/*--------------------------------------------------------------------*/
+	// Change the password for by an administrator
+	/*--------------------------------------------------------------------*/
+	function admin_change_password ($id, $new_password1,$new_password2) 
+	{
+		//new passwords present and match?
+		if ($new_password1 && ($new_password1==$new_password2)) 
+		{
+			$sql="SELECT password FROM user WHERE id = ? LIMIT 1";
+			$result=$this->db->query($sql, array($id)) or die ("Query Failed");
+			$mypassresult = $result->row_array();
+			$checkhash = $mypassresult['password'];
+
+			if (!$result || $result->num_rows() < 1) 
+			{
+				$feedback = " User not found";
+				return $feedback;	  
+			} 
+			else 
+			{
+				$newhash = $this->passwordhash->HashPassword($new_password1);
+				if (strlen($newhash) < 20) 
+				{
+					$feedback = "Failed to hash new password";
+					return $feedback;
+				}
+
+				$sql="UPDATE user SET password= ? WHERE id = ?";
+				$result=$this->db->query($sql, array($newhash, $id)) or die ("Query Failed");
+				$feedback = ' Password Changed ';
+				return $feedback;
+			}
+		} 
+		else 
+		{
+			$feedback = ' New Passwords Must Match ';
+			return $feedback;
+		}
+	} // end admin_change_password function
+
+
+	/*--------------------------------------------------------------------*/
 	// Register a new user
 	/*--------------------------------------------------------------------*/
 	function user_register($user_name,$password1,$password2,$real_name,$admin,$manager) 
