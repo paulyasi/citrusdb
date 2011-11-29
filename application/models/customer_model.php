@@ -172,7 +172,7 @@ class Customer_Model extends CI_Model
 		$query = "SELECT * FROM cancel_reason";
 		$cancelreasonresult = $this->db->query($query) or die ("$l_queryfailed");
 
-		return $cancelreasonresult;
+		return $cancelreasonresult->result_array();
 	}
 
 	public function update_billingaddress()

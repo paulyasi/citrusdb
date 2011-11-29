@@ -77,6 +77,7 @@ class Customer extends App_Controller
 
 			// show the edit customer form
 			$data = $this->customer_model->record($this->account_number);
+			$data['cancelreasons'] = $this->customer_model->select_cancel_reasons();
 			$this->load->view('customer/edit_view', $data);
 
 			// the history listing tabs
@@ -90,6 +91,7 @@ class Customer extends App_Controller
 			$this->module_model->permission_error();
 		}
 	}
+
 
 	public function updatebillingaddress()
 	{

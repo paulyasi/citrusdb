@@ -81,14 +81,16 @@
 <?php
 // print the current reason and
 // print list of reasons to choose from
-$data = $this->customer_model->select_cancel_reasons();
-foreach ($data->result() as $myresult)
+foreach ($cancelreasons as $myresult)
 {
-   $myid = $myresult->id;
-   $myreason = $myresult->reason;
-   if ($cancel_reason == $myid) {
+   $myid = $myresult['id'];
+   $myreason = $myresult['reason'];
+   if ($cancel_reason == $myid) 
+   {
      echo "<option value=\"$myid\" selected>$myreason</option>";
-   } else {
+   } 
+   else 
+   {
      echo "<option value=\"$myid\">$myreason</option>";
    }
 }
