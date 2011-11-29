@@ -7,6 +7,8 @@ class Customer extends App_Controller
 		parent::__construct();
 		$this->load->model('customer_model');
 		$this->load->model('module_model');
+		$this->load->model('user_model');
+		$this->load->model('support_model');
     }		
 	
     /*
@@ -21,9 +23,12 @@ class Customer extends App_Controller
 
 		if ($permission['view'])
 		{
+			$this->load->model('support_model');
+			$this->load->model('user_model');
+
 			// load the module header common to all module views
 			$this->load->view('module_header_view');
-			
+
 			// show the customer information (name, address, etc)
 			$data = $this->customer_model->record($this->account_number);
 			$this->load->view('customer/index_view', $data);
@@ -38,45 +43,45 @@ class Customer extends App_Controller
 			$data['categories'] = $this->service_model->service_categories(
 					$this->account_number);
 			$this->load->view('services/heading_view', $data);
-			
+
 			// output the list of services
 			$data['services'] = $this->service_model->list_services(
 					$this->account_number);
 			$this->load->view('services/index_view', $data);
-			
+
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');			
-			
+
 			// the html page footer
 			$this->load->view('html_footer_view');
-			
+
 		}
 		else
 		{
-			
+
 			$this->module_model->permission_error();
-			
+
 		}	
-		
+
 	}
-	
+
 	public function edit()
 	{
 		// check permissions
 		$permission = $this->module_model->permission($this->user, 'customer');
-		
+
 		if ($permission['modify'])
 		{
 			// the module header common to all module views
 			$this->load->view('module_header_view');
-			
+
 			// show the edit customer form
 			$data = $this->customer_model->record($this->account_number);
 			$this->load->view('customer/edit_view', $data);
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');			
-			
+
 			// show html footer
 			$this->load->view('html_footer_view');
 		}
@@ -89,12 +94,12 @@ class Customer extends App_Controller
 	public function updatebillingaddress()
 	{
 		$this->customer_model->update_billingaddress();
-			
+
 		print "<h3>" . lang('changessaved') . "<h3>";
-		
+
 		// redirect them back to the customer record view
 		redirect('/customer');
-		
+
 	}
 
 	public function save()
@@ -103,24 +108,24 @@ class Customer extends App_Controller
 		//$this->id = $this->input->post('id');
 
 		$customer_data = array(
-			'name' => $this->input->post('name'),
-			'company' => $this->input->post('company'),
-			'street' => $this->input->post('street'),
-			'city' => $this->input->post('city'),
-			'state' => $this->input->post('state'),
-			'country' => $this->input->post('country'),
-			'zip' => $this->input->post('zip'),
-			'phone' => $this->input->post('phone'),
-			'alt_phone' => $this->input->post('alt_phone'),
-			'fax' => $this->input->post('fax'),
-			'source' => $this->input->post('source'),
-			'contact_email' => $this->input->post('contact_email'),
-			'secret_question' => $this->input->post('secret_question'),
-			'secret_answer' => $this->input->post('secret_answer'),
-			'cancel_date' => $this->input->post('cancel_date'),
-			'cancel_reason' => $this->input->post('cancel_reason'),
-			'notes' => $this->input->post('notes')
-		);
+				'name' => $this->input->post('name'),
+				'company' => $this->input->post('company'),
+				'street' => $this->input->post('street'),
+				'city' => $this->input->post('city'),
+				'state' => $this->input->post('state'),
+				'country' => $this->input->post('country'),
+				'zip' => $this->input->post('zip'),
+				'phone' => $this->input->post('phone'),
+				'alt_phone' => $this->input->post('alt_phone'),
+				'fax' => $this->input->post('fax'),
+				'source' => $this->input->post('source'),
+				'contact_email' => $this->input->post('contact_email'),
+				'secret_question' => $this->input->post('secret_question'),
+				'secret_answer' => $this->input->post('secret_answer'),
+				'cancel_date' => $this->input->post('cancel_date'),
+				'cancel_reason' => $this->input->post('cancel_reason'),
+				'notes' => $this->input->post('notes')
+				);
 
 		$old_street = $this->input->post('old_street');
 		$old_city = $this->input->post('old_city');
@@ -134,7 +139,7 @@ class Customer extends App_Controller
 		// save the data to the customer record
 		$data = $this->customer_model->save_record(
 				$this->account_number, $customer_data);
-  
+
 		// add a log entry that this customer record was viewed
 		$this->log_model->activity($this->user,$this->account_number,'edit',
 				'customer',0,'success');
@@ -189,17 +194,17 @@ class Customer extends App_Controller
 
 		// the dashboard header common to all dashboard views
 		$this->load->view('dashboard_header_view');
-			
+
 		// set the organization list and billed by
 		$data['billedby'] = $billedby;
 		$data['organizations'] = $this->general_model->list_organizations();
 
 		// show the new customer form, if specified billed by, selected by default
 		$this->load->view('new_customer_view', $data);
-		
+
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');			
-			
+
 		// show html footer
 		$this->load->view('html_footer_view');
 	}
@@ -214,7 +219,7 @@ class Customer extends App_Controller
 	{
 		// check permissions
 		$permission = $this->module_model->permission($this->user, 'customer');
-		
+
 		if ($permission['create'])
 		{
 			// load the billing model too so we can create a billing record with create record
@@ -299,7 +304,7 @@ class Customer extends App_Controller
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');			
-			
+
 			// show html footer
 			$this->load->view('html_footer_view');
 
@@ -505,7 +510,7 @@ class Customer extends App_Controller
 		print "</blockquote>";
 	}
 
-	
+
 	/*
 	 * --------------------------------------------------------------------------------
 	 *  perform the uncancel by undeleting the customer record and associated things
@@ -516,7 +521,7 @@ class Customer extends App_Controller
 		// load the billing model so I can get the next billingdate			
 		$this->load->model('billing_model');			
 		$this->load->model('log_model');			
-		
+
 		// undelete the customer record
 		$query = "UPDATE customer ".
 			"SET cancel_date = NULL, ".
@@ -526,7 +531,7 @@ class Customer extends App_Controller
 
 		// update the default billing records with new billing dates
 		$mydate = $this->billing_model->get_nextbillingdate();
-		
+
 		$query = "UPDATE billing ".
 			"SET next_billing_date = '$mydate', ".
 			"from_date = '$mydate', ".

@@ -6,6 +6,7 @@ class Tickets extends App_Controller {
 	{
 		parent::__construct();	
 		$this->load->model('service_model');
+		$this->load->model('user_model');
 		$this->load->model('module_model');
 		$this->load->model('customer_model');
 		$this->load->model('billing_model');

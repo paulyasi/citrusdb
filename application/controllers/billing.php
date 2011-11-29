@@ -9,6 +9,7 @@ class Billing extends App_Controller
 		$this->load->model('billing_model');
 		$this->load->model('module_model');
 		$this->load->model('user_model');
+		$this->load->model('support_model');
 	}		
 	
     /*

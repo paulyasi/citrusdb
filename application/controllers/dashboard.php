@@ -7,6 +7,8 @@ class Dashboard extends App_Controller {
 	 */
 	public function index() 
 	{
+		$this->load->model('user_model');
+		$this->load->model('support_model');
 
 		// show the header common to all dashboard/tool views
 		$this->load->view('dashboard_header_view');

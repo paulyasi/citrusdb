@@ -11,6 +11,7 @@ class Services extends App_Controller {
 		$this->load->model('customer_model');
 		$this->load->model('billing_model');
 		$this->load->model('user_model');
+		$this->load->model('support_model');
 	}
 	
 	
@@ -25,20 +26,9 @@ class Services extends App_Controller {
 		$permission = $this->module_model->permission($this->user, 'services');
 		if ($permission['view'])
 		{
-		
-			$this->load->view('header_with_sidebar_view');
-		
-			// get the customer title info, name and company
-			$data = $this->customer_model->title($this->account_number);
-			$this->load->view('customer_in_sidebar_view', $data);
+			// load the module header common to all module views
+			$this->load->view('module_header_view');
 			
-			$this->load->view('moduletabs_view');
-			
-			$this->load->model('support_model');
-			$this->load->view('messagetabs_view');
-			
-			$this->load->view('buttonbar_view');
-
 			$data['categories'] = $this->service_model->service_categories($this->account_number);
 			$this->load->view('services/heading_view', $data);
 
@@ -71,20 +61,9 @@ class Services extends App_Controller {
 		$permission = $this->module_model->permission($this->user, 'services');
 		if ($permission['view'])
 		{
-
-			$this->load->view('header_with_sidebar_view');
-
-			// get the customer title info, name and company
-			$data = $this->customer_model->title($this->account_number);
-			$this->load->view('customer_in_sidebar_view', $data);
-
-			$this->load->view('moduletabs_view');
-
-			$this->load->model('support_model');
-			$this->load->view('messagetabs_view');
-
-			$this->load->view('buttonbar_view');
-
+			// load the module header common to all module views
+			$this->load->view('module_header_view');
+			
 			$data['categories'] = $this->service_model->service_categories($this->account_number);
 			$this->load->view('services/heading_view', $data);
 
@@ -113,25 +92,15 @@ class Services extends App_Controller {
 	 */
 	public function edit($userserviceid)
 	{
-		$this->load->view('header_with_sidebar_view');
-
-		// get the customer title info, name and company
-		$data = $this->customer_model->title($this->account_number);
-		$this->load->view('customer_in_sidebar_view', $data);
-
-		$this->load->view('moduletabs_view');
-
-		$this->load->model('support_model');
-		$this->load->view('messagetabs_view');
-
-		$this->load->view('buttonbar_view');
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
 
 		// load the date helper for use when printing service start/end dates
 		$this->load->helper('date');
-		
+
 		$data['userserviceid'] = $userserviceid;
 		$this->load->view('services/edit_view', $data);	
-		
+
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');	
 
@@ -261,7 +230,7 @@ class Services extends App_Controller {
 	{
 		// load the ticket model to save a note about this
 		$this->load->model('support_model');
-		
+
 		$userserviceid = $this->input->post('userserviceid');
 		$master_service_id = $this->input->post('master_service_id');
 
@@ -431,7 +400,7 @@ class Services extends App_Controller {
 		$data['servicedescription'] = $this->input->post('servicedescription');
 		$data['removal_date'] = $removal_date;
 		$this->load->view('services/delete_prompt', $data);
-		
+
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');	
 
@@ -562,7 +531,7 @@ class Services extends App_Controller {
 		$status = "not done";
 		$description = lang('shipped')." $description, ".lang('trackingnumber').": $tracking_number";
 		$trackinglink = $this->config->item('tracking_url')."$tracking_number";
-		
+
 		$this->support_model->create_ticket($this->user, $default_shipping_group, 
 				$this->account_number, $status, $description, lang('trackpackage'), 
 				$trackinglink, NULL, $userserviceid);
@@ -603,7 +572,7 @@ class Services extends App_Controller {
 		// load the settings model to get the default shipping group	
 		$this->load->model('settings_model');
 		$this->load->model('support_model');
-		
+
 		// GET Variables
 		$item_id = $this->input->post('item_id');
 		$userserviceid = $this->input->post('userserviceid');

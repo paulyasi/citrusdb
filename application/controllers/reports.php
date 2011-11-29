@@ -8,6 +8,7 @@ class Reports extends App_Controller
 		$this->load->model('customer_model');
 		$this->load->model('module_model');
 		$this->load->model('user_model');
+		$this->load->model('support_model');
 		$this->load->model('billing_model');
 		$this->load->model('reports_model');
 	}		

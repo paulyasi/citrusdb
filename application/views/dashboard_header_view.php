@@ -10,8 +10,8 @@ $this->session->userdata('user_name')
 );
 $this->load->view('recently_viewed_view', $data);
 
-$this->load->model('support_model');
-$this->load->view('messagetabs_view');
+$data['usergroups'] = $this->user_model->user_groups($this->user);
+$this->load->view('messagetabs_view', $data);
 
 $this->load->view('buttonbar_view');
 

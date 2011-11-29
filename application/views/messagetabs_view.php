@@ -36,11 +36,10 @@ if ($num_rows == 0) {
 //$query = "SELECT * FROM groups WHERE groupmember = '$this->user' ";
 //$supportresult = $this->db->query($query) 
 //  or die ("$l_queryfailed");
-$query = $this->db->get_where('groups', array('groupmember' => $this->user));
   
-foreach ($query->result() as $row) {
-  
-  $groupname = $row->groupname;
+foreach ($usergroups as $row) 
+{
+  $groupname = $row['groupname'];
 
   // get the ticketdatetime for this group, the last time tickets.php was loaded for $groupname
   $ticketdatetime = $groupname . 'datetime';

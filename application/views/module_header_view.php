@@ -11,8 +11,8 @@ $this->load->view('customer_in_sidebar_view', $data);
 $this->load->view('moduletabs_view');
 
 // show the tickets messages tabs for this user 
-$this->load->model('support_model');
-$this->load->view('messagetabs_view');
+$data['usergroups'] = $this->user_model->user_groups($this->user);
+$this->load->view('messagetabs_view', $data);
 
 // show the buttons across the top (new, search, tools, etc)
 $this->load->view('buttonbar_view');

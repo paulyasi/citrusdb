@@ -714,6 +714,17 @@ class User_Model extends CI_Model {
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get a list of groups this user belongs to
+	 * ------------------------------------------------------------------------
+	 */
+	function user_groups($user)
+	{
+		$query = $this->db->get_where('groups', array('groupmember' => $user));
+		return $query->result_array();
+	}
+
 } // end class
 
 ?>
