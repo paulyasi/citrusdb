@@ -8,18 +8,14 @@
 <form action="<?php echo $this->url_prefix?>/index.php/customer/create" method=POST>
 <table cellpadding=5 cellspacing=1 border=0 width=720>
 
+<td bgcolor="#ccccdd"><b><?php echo lang('organizationname')?></b></td>
+<td bgcolor="#ddddee"><select name="organization_id">
+
 <?php
-// print list of organizations to choose from
-$query = "SELECT id,org_name FROM general";
-$result = $this->db->query($query) or die ("query failed");
-
-echo "<td bgcolor=\"#ccccdd\"><b>". lang('organizationname') ."</b></td>".
-"<td bgcolor=\"#ddddee\"><select name=\"organization_id\">";
-
-foreach($result->result() as $myresult)
+foreach($organizations as $myresult)
 {
-	$myid = $myresult->id;
-	$myorg = $myresult->org_name;
+	$myid = $myresult['id'];
+	$myorg = $myresult['org_name'];
 	if ($myid == $billedby) 
 	{
 		echo "<option value=\"$myid\" selected>$myorg</option>";

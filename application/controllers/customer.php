@@ -185,12 +185,15 @@ class Customer extends App_Controller
 	// show the form for adding a new customer
 	public function newcustomer($billedby = NULL)
 	{
-		// set the billed by for the data array passed to the view
-		$data['billedby'] = $billedby;
+		$this->load->model('general_model');
 
 		// the dashboard header common to all dashboard views
 		$this->load->view('dashboard_header_view');
 			
+		// set the organization list and billed by
+		$data['billedby'] = $billedby;
+		$data['organizations'] = $this->general_model->list_organizations();
+
 		// show the new customer form, if specified billed by, selected by default
 		$this->load->view('new_customer_view', $data);
 		
