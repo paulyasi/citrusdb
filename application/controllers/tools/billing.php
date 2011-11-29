@@ -466,7 +466,7 @@ class Billing extends App_Controller
 		print "$billingdate";
 
 		/*--------------------------------------------------------------------------*/
-		// TODO: make a file and sign it first to verify the passphrase entered
+		// make a file and sign it first to verify the passphrase entered
 		// before we start making a new batch for them
 		/*--------------------------------------------------------------------------*/
 		// get the path where to store the cc data
@@ -598,6 +598,82 @@ class Billing extends App_Controller
 
 	/*
 	 * ------------------------------------------------------------------------
+	 *  show form to re-export a credit card batch by id
+	 * ------------------------------------------------------------------------
+	 */
+	function fixexportcc()
+	{
+		// load the general model so we can get a list of organizations
+		$this->load->model('general_model');
+
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$data['orglist'] = $this->general_model->list_organizations();
+		$this->load->view('tools/billing/fixexportcc_view', $data);
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  perform re-export of credit card batch by id
+	 * ------------------------------------------------------------------------
+	 */
+	function savefixexportcc()
+	{
+		// load the settings model for later use
+		$this->load->model('settings_model');
+		$this->load->model('general_model');
+
+		$organization_id = $this->input->post('organization_id');
+		$passphrase = $this->input->post('passphrase');
+		$batchid = $this->input->post('batchid');
+
+		/*--------------------------------------------------------------------------*/
+		// make a file and sign it first to verify the passphrase entered
+		// before we start making a new batch for them
+		/*--------------------------------------------------------------------------*/
+		// get the path where to store the cc data
+		$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
+		
+		// make a file to sign
+		$signfilename = "$path_to_ccfile/signtext.tmp";
+		$signhandle = fopen($signfilename, 'w') or die ("cannot open $signfilename");
+
+		// write some example text to sign with a private key
+		$signtext = "Sign this";
+		fwrite($signhandle, $signtext);
+
+		// close the file
+		fclose($signhandle);
+
+		// load the encryption helper for use when calling gpg things
+		$this->load->helper('encryption');
+		
+		$gpgsigncommand = $this->config->item('gpg_sign')." $signfilename";
+		$signed = sign_command($gpgsigncommand, $passphrase);
+
+		// if there is a gpg error, stop here
+		if (substr($signed,0,5) == "error") 
+		{
+			die ("Signature Error: $signed");
+		}      
+
+		echo lang('batch').": $batchid<p>\n";
+
+		// export the batch file
+		$exportfilename = $this->billing_model->export_card_batch($organization_id, $batchid, 
+				$path_to_ccfile, $passphrase);
+
+		// log this export activity
+		$this->log_model->activity($this->user,0,'export','creditcard',$batchid,'success');
+
+		echo lang('wrotefile')." $exportfilename<br><a href=\"$this->ssl_url_prefix/index.php/tools/dashboard/downloadfile/$exportfilename\"><u class=\"bluelink\">".lang('downloadfile')." $exportfilename</u></a><p>";	
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
 	 *  show the importcc form page
 	 * ------------------------------------------------------------------------
 	 */
@@ -619,7 +695,7 @@ class Billing extends App_Controller
 	{
 		// load the settings model 
 		$this->load->model('settings_model');
-	
+
 		// POST Variables
 		$userfile = $_FILES['userfile']['tmp_name'];
 
@@ -671,7 +747,7 @@ class Billing extends App_Controller
 
 				// letters Y or N at the beginning, the rest does not matter 
 				$response_id = substr ($response_code,0,1);    
-				
+
 				$mytyperesult = $this->billing_model->get_billing_method_attributes($billing_id);
 
 				$billingmethod = $mytyperesult['t_method'];
@@ -1067,7 +1143,7 @@ class Billing extends App_Controller
 		// create the refund batch for this choice
 		$exportfilename = $this->billing_model->export_card_refunds($organization_id, 
 				$path_to_ccfile, $passphrase);
-		
+
 		// log this export activity
 		$this->log_model->activity($this->user,0,'export','creditcard',0,'success');
 
