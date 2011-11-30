@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <h3><?php echo lang('servicereport')?>:
-<FORM ACTION="<?php echo $this->url_prefix?>/index.php/tools/reports/showservices" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/showservices" METHOD="POST">
 <table>
 <select name="service_id">
 

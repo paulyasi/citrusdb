@@ -5,7 +5,7 @@
 // show the form to pick what day to view
 $day_1  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")));
 ?>
-<FORM ACTION="<?php echo $this->url_prefix?>index.php/reports/paymentstatus" METHOD="POST">
+<FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/paymentstatus" METHOD="POST">
 <table>
 <td><?php echo lang('from')?>: <input type=text name="day1" value="<?php echo $day_1?>"></td>
 <td> - <?php echo lang('to')?>: <input type=text name="day2"value="<?php echo $day_1?>"></td>
