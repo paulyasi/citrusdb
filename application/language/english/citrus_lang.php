@@ -87,6 +87,7 @@ $lang['bad_debt'] = "Bad Debt";
 $lang['batch'] = "Batch";
 $lang['beforeyoucanaddanewmodule'] = "Before you can add a new module you must put your new module folder inside";
 $lang['belongsto'] = "Belongs To";
+$lang['billed'] = "Billed";
 $lang['billedamount'] = "Billed Amount";
 $lang['billing'] = "Billing";
 $lang['billingcompany'] = "Billing Company";

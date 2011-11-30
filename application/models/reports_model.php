@@ -174,6 +174,7 @@ class Reports_Model extends CI_Model
 		// show payments for a specified date range according to 
 		// their service category
 		$query = "SELECT ROUND(SUM(bd.paid_amount),2) AS CategoryTotal, 
+			ROUND(SUM(bd.billed_amount),2) AS CategoryBilled,
 			COUNT(DISTINCT us.id) As ServiceCount, 
 			ms.category service_category, 
 			ms.service_description, service_description,  
@@ -198,6 +199,7 @@ class Reports_Model extends CI_Model
 		// show credits for a specified date range according to 
 		// their credit_options description
 		$query = "SELECT ROUND(SUM(bd.paid_amount),2) AS CategoryTotal, 
+			ROUND(SUM(bd.billed_amount),2) AS CategoryBilled,
 			COUNT(DISTINCT us.id) As ServiceCount, 
 			cr.description credit_description, 
 			g.org_name g_org_name 
@@ -222,6 +224,7 @@ class Reports_Model extends CI_Model
 		// show service refunds for a specified date range according to 
 		// their refund_date
 		$query = "SELECT ROUND(SUM(bd.refund_amount),2) AS CategoryTotal,
+			ROUND(SUM(bd.billed_amount),2) AS CategoryBilled,
 			COUNT(DISTINCT us.id) As ServiceCount,  
 			ms.category service_category, 
 			ms.service_description service_description, 
@@ -265,6 +268,7 @@ class Reports_Model extends CI_Model
 		// their tax rate description
 		$query = "SELECT ROUND(SUM(bd.paid_amount),2)
 			AS CategoryTotal,
+			ROUND(SUM(bd.billed_amount),2) AS CategoryBilled,
 			   COUNT(DISTINCT bd.id) As ServiceCount,
 			   tr.description tax_description
 				   FROM billing_details bd
@@ -288,6 +292,7 @@ class Reports_Model extends CI_Model
 		// their tax rate description
 		$query = "SELECT ROUND(SUM(bd.refund_amount),2) 
 			AS CategoryTotal,
+			ROUND(SUM(bd.billed_amount),2) AS CategoryBilled,
 			   COUNT(DISTINCT bd.id) As ServiceCount,  
 			   tr.description tax_description  
 				   FROM billing_details bd 

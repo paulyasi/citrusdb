@@ -26,35 +26,40 @@ foreach ($orglist as $myresult) {
 <table><td><?php echo lang('service')?></td>
 <td><?php echo lang('organizationname')?></td>
 <td><?php echo lang('category')?></td>
-<td><?php echo lang('amount')?></td><td></td>
+<td><?php echo lang('billed')?></td>
+<td><?php echo lang('paid')?></td><td></td>
 <tr>
 <?php
 foreach ($servicerevenue AS $myresult) 
 {
 	$category_total = $myresult['CategoryTotal'];
+	$category_billed = $myresult['CategoryBilled'];
 	$service_description = $myresult['service_description'];
 	$service_category = $myresult['service_category'];
 	$count = $myresult['ServiceCount'];
 	$org_name = $myresult['g_org_name'];
 	echo "<td>$service_description</td><td>$org_name</td>
 		<td>$service_category</td>
-		<td>$category_total </td><td>($count)</td><tr>";
+		<td>$category_billed</td><td>$category_total </td><td>($count)</td><tr>";
 }
 ?>
 
 </table>
 <p><table><td><?php echo lang('credit')?></td>
 <td><?php echo lang('organizationname')?></td>
-<td><?php echo lang('amount')?></td><td></td><tr>
+<td><?php echo lang('billed')?></td>
+<td><?php echo lang('paid')?></td><td></td><tr>
 
 <?php
 foreach ($creditrevenue AS $myresult) 
 {
 	$category_total = $myresult['CategoryTotal'];
+	$category_billed = $myresult['CategoryBilled'];
 	$count = $myresult['ServiceCount'];
 	$credit_description = $myresult['credit_description'];
 	$org_name = $myresult['g_org_name'];
-	echo "<td>$credit_description</td><td>$org_name</td><td>$category_total</td><td>($count)</td><tr>";
+	echo "<td>$credit_description</td><td>$org_name</td><td>$category_billed</td>".
+		"<td>$category_total</td><td>($count)</td><tr>";
 }
 ?>
 
@@ -62,17 +67,20 @@ foreach ($creditrevenue AS $myresult)
 <p><table><td><?php echo lang('refund')?></td>
 <td><?php echo lang('organizationname')?></td>
 <td><?php echo lang('category')?></td>
-<td><?php echo lang('amount')?></td><td></td><tr>
+<td><?php echo lang('billed')?></td>
+<td><?php echo lang('paid')?></td><td></td><tr>
 
 <?php
 foreach ($refundrevenue AS $myresult) 
 {
 	$category_total = $myresult['CategoryTotal'];
+	$category_billed = $myresult['CategoryBilled'];
 	$service_category = $myresult['service_category'];
 	$count = $myresult['ServiceCount'];
 	$org_name = $myresult['g_org_name'];
 	$service_description = $myresult['service_description'];
-	echo "<td>$service_description</td><td>$org_name</td><td>$service_category</td><td>$category_total</td><td>($count)</td><tr>";
+	echo "<td>$service_description</td><td>$org_name</td><td>$service_category</td>".
+		"<td>$category_billed</td><td>$category_total</td><td>($count)</td><tr>";
 }
 ?>
 
@@ -97,15 +105,17 @@ foreach ($discountrevenue AS $myresult)
 <hr>
 
 <p><table><td><?php echo lang('tax')?></td>
-<td><?php echo lang('amount')?></td><td></td><tr>
+<td><?php echo lang('billed')?></td>
+<td><?php echo lang('paid')?></td><td></td><tr>
 	
 <?php
 foreach ($taxrevenue AS $myresult) 
 {
 	$category_total = $myresult['CategoryTotal'];
+	$category_billed = $myresult['CategoryBilled'];
 	$count = $myresult['ServiceCount'];
 	$tax_description = $myresult['tax_description'];
-	echo "<td>$tax_description</td><td>$category_total</td><td>($count)</td><tr>";
+	echo "<td>$tax_description</td><td>$category_billed</td><td>$category_total</td><td>($count)</td><tr>";
 }
 ?>
 </table>  
@@ -113,25 +123,21 @@ foreach ($taxrevenue AS $myresult)
 <p><table><td><?php echo lang('tax')." ".lang('refund');?></td>
 <td><?php echo lang('organizationname')?></td>
 <td><?php echo lang('category')?></td>
-<td><?php echo lang('amount')?></td><td></td><tr>
+<td><?php echo lang('billed')?></td>
+<td><?php echo lang('paid')?></td><td></td><tr>
 
 <?php
 foreach ($taxrefunds AS $myresul) 
 {
 	$category_total = $myresult['CategoryTotal'];
+	$category_billed = $myresult['CategoryBilled'];
 	$tax_description = $myresult['tax_description'];
 	$count = $myresult['ServiceCount'];
-	echo "<td>$tax_description</td><td></td><td>$l_tax</td><td>$category_total</td><td>($count)</td><tr>";
+	echo "<td>$tax_description</td><td></td><td>".lang('tax')."</td><td>$category_billed</td>".
+		"<td>$category_total</td><td>($count)</td><tr>";
 }
 ?>
 </table>
 
 </body>
 </html>
-
-
-
-
-
-
-
