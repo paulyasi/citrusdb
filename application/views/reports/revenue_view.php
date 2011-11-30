@@ -9,7 +9,7 @@
 
 <td><b><?php echo lang('organizationname')?></b></td>
 <td><select name="organization_id">
-<option value=""><?php echo lang('choose')?></option>
+<option value="all"><?php echo lang('showall')?></option>
 <?php
 foreach ($orglist as $myresult) {
 	$myid = $myresult['id'];
@@ -67,20 +67,18 @@ foreach ($creditrevenue AS $myresult)
 <p><table><td><?php echo lang('refund')?></td>
 <td><?php echo lang('organizationname')?></td>
 <td><?php echo lang('category')?></td>
-<td><?php echo lang('billed')?></td>
-<td><?php echo lang('paid')?></td><td></td><tr>
+<td><?php echo lang('refund')?></td><td></td><tr>
 
 <?php
 foreach ($refundrevenue AS $myresult) 
 {
 	$category_total = $myresult['CategoryTotal'];
-	$category_billed = $myresult['CategoryBilled'];
 	$service_category = $myresult['service_category'];
 	$count = $myresult['ServiceCount'];
 	$org_name = $myresult['g_org_name'];
 	$service_description = $myresult['service_description'];
 	echo "<td>$service_description</td><td>$org_name</td><td>$service_category</td>".
-		"<td>$category_billed</td><td>$category_total</td><td>($count)</td><tr>";
+		"<td>$category_total</td><td>($count)</td><tr>";
 }
 ?>
 
@@ -123,17 +121,15 @@ foreach ($taxrevenue AS $myresult)
 <p><table><td><?php echo lang('tax')." ".lang('refund');?></td>
 <td><?php echo lang('organizationname')?></td>
 <td><?php echo lang('category')?></td>
-<td><?php echo lang('billed')?></td>
-<td><?php echo lang('paid')?></td><td></td><tr>
+<td><?php echo lang('refund')?></td><td></td><tr>
 
 <?php
-foreach ($taxrefunds AS $myresul) 
+foreach ($taxrefunds AS $myresult) 
 {
 	$category_total = $myresult['CategoryTotal'];
-	$category_billed = $myresult['CategoryBilled'];
 	$tax_description = $myresult['tax_description'];
 	$count = $myresult['ServiceCount'];
-	echo "<td>$tax_description</td><td></td><td>".lang('tax')."</td><td>$category_billed</td>".
+	echo "<td>$tax_description</td><td></td><td>".lang('tax')."</td>".
 		"<td>$category_total</td><td>($count)</td><tr>";
 }
 ?>
