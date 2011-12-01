@@ -266,7 +266,7 @@ class Customer_Model extends CI_Model
 			"WHERE account_number = '$account_number'";
 		$ifresult = $this->db->query($ifquery) or die ("Query Failed");	
 		$myifresult = $ifresult->row_array();
-		return $myifresult['$if_field'];
+		return $myifresult[$if_field];
 	}
 
 	/*

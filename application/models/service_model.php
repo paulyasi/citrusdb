@@ -208,7 +208,7 @@ class Service_model extends CI_Model
 			"ORDER BY category";
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 
-		return $result;
+		return $result->result_array();
 	}
 
 
@@ -238,7 +238,7 @@ class Service_model extends CI_Model
 
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 
-		return $result;
+		return $result->result_array();
 	}
 
 
@@ -291,9 +291,12 @@ class Service_model extends CI_Model
 	}
 
 
-	// query the taxes and fees that this customer has
+	// query the taxes and fees that this service has
 	function checktaxes($user_services_id) 
 	{
+		// make a new multi dimensional array to hold the results
+		$tax_array = array();
+		$i = 0;
 
 		$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
 			"ts.tax_rate_id ts_rateid, ms.id ms_id, ".
@@ -315,7 +318,7 @@ class Service_model extends CI_Model
 
 		$result = $this->db->query($query) or die ("$l_queryfailed");
 
-		foreach ($result->result() as $taxresult) {
+		foreach ($result->result_array() as $taxresult) {
 			$account_number = $taxresult['us_account_number'];
 			$service_description = $taxresult['ms_description'];
 			$tax_description = $taxresult['tr_description'];
@@ -332,7 +335,7 @@ class Service_model extends CI_Model
 			// to this customer
 			if ($if_field <> '')
 			{
-				$checkvalue = $this->customer_model->check_if_field($if_field, $my_account_number);
+				$checkvalue = $this->customer_model->check_if_field($if_field, $account_number);
 			} else {
 				$checkvalue = TRUE;
 				$if_value = TRUE;
@@ -362,7 +365,15 @@ class Service_model extends CI_Model
 					// round the tax to two decimal places
 					$tax_amount = sprintf("%.2f", $tax_amount);
 
-					print "<tr><td></td>".
+					$tax_array[$i] = array(
+							'tax_description' => $tax_description,
+							'tax_amount' => $tax_amount,
+							'tax_rate_id' => $tax_rate_id,
+							'exempt' => FALSE
+							);
+
+					/*
+					   print "<tr><td></td>".
 						"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
 						"colspan=3>$tax_description</td>".
 						"<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
@@ -375,8 +386,17 @@ class Service_model extends CI_Model
 						"<input type=hidden name=taxrate value=\"$tax_rate_id\">".
 						"<input name=exempt type=submit value=\"$l_exempt\" ".
 						"class=smallbutton></form></td></tr>";
-
+					*/
 				} else {
+					$tax_array[$i] = array(
+							'tax_description' => $tax_description,
+							'tax_amount' => $tax_amount,
+							'tax_rate_id' => $tax_rate_id,
+							'exempt' => TRUE,
+							'customer_tax_id' => $customer_tax_id,
+							'customer_tax_id_expdate' => $customer_tax_id_expdate
+							);
+					/*
 					// print the exempt tax
 					print "<tr style=\"font-size: 9pt;\"><td></td>".
 						"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
@@ -392,11 +412,17 @@ class Service_model extends CI_Model
 						"<input type=hidden name=taxrate value=\"$tax_rate_id\">".
 						"<input name=notexempt type=submit value=\"$l_notexempt\" ".
 						"class=smallbutton></form></td></tr>";
+						*/
 				} // end if exempt tax
 
 			} // end if_field
 
-		} // end while
+			// increment array counter
+			$i++;
+
+		} // end foreach
+
+		return $tax_array;
 
 	} // end checktaxes function
 

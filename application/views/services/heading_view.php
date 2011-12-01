@@ -26,9 +26,9 @@ else
 		" . lang('showall') . "</a> ";
 }
 
-foreach ($categories->result() as $myresult) 
+foreach ($categories as $myresult) 
 {
-	$categoryname = $myresult->category;
+	$categoryname = $myresult['category'];
 	
 	$myuri = $this->uri->segment(2);	
 	

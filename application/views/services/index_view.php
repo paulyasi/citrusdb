@@ -11,12 +11,12 @@
    
 
 <?php 
-foreach ($services->result() as $myresult)
+foreach ($services as $myresult)
 {
 	// select the options_table to get data for the details column
 	 
-	$options_table = $myresult->options_table;
-	$id = $myresult->id;
+	$options_table = $myresult['options_table'];
+	$id = $myresult['id'];
 	
 	if ($options_table <> '') {
 		// get the data from the options table and put into variables
@@ -37,16 +37,16 @@ foreach ($services->result() as $myresult)
 		$optiondetails2 = '';
 	}
 	
-	$master_service_id = $myresult->master_service_id;
-	$service_organization_id = $myresult->master_organization_id;
-	$start_datetime = $myresult->start_datetime;
-	$billing_id = $myresult->billing_id;
-	$pricerate = $myresult->pricerate;
-	$usage_multiple = $myresult->usage_multiple;
-	$frequency = $myresult->frequency;
-	$salesperson = $myresult->salesperson;
-	$service_description = $myresult->service_description;
-	$support_notify = $myresult->support_notify;
+	$master_service_id = $myresult['master_service_id'];
+	$service_organization_id = $myresult['master_organization_id'];
+	$start_datetime = $myresult['start_datetime'];
+	$billing_id = $myresult['billing_id'];
+	$pricerate = $myresult['pricerate'];
+	$usage_multiple = $myresult['usage_multiple'];
+	$frequency = $myresult['frequency'];
+	$salesperson = $myresult['salesperson'];
+	$service_description = $myresult['service_description'];
+	$support_notify = $myresult['support_notify'];
 	
 	// get the billing frequency and organization from billing model
 	$freqresult = $this->billing_model->frequency_and_organization($billing_id);
@@ -60,14 +60,14 @@ foreach ($services->result() as $myresult)
 
 echo "<tr onMouseOver='h(this);' onmouseout='deh(this);' onmouseup='window.location.href=\"services/edit/$id\";' bgcolor=\"#ddddee\">";
 ?>
-	<td><?=$id?></td>
-	<td><?=$service_description?></td>
-	<td><?=$optiondetails?></td>
-	<td><?=$optiondetails2?></td>
-	<td><?=$totalprice?></td>
-	<td><?=$frequency?></td>
-	<td><?=$billing_id?> (<?=$org_name?>)</td>
-	<td><?=$salesperson?></td><td>
+	<td><?php echo $id?></td>
+	<td><?php echo $service_description?></td>
+	<td><?php echo $optiondetails?></td>
+	<td><?php echo $optiondetails2?></td>
+	<td><?php echo $totalprice?></td>
+	<td><?php echo $frequency?></td>
+	<td><?php echo $billing_id?> (<?php echo $org_name?>)</td>
+	<td><?php echo $salesperson?></td><td>
 <?php
 	if ($frequency > $billing_freq) {
 		print "<b>" . lang('fixbillingfrequencyerror') . "</b>";
@@ -91,11 +91,47 @@ echo "<tr onMouseOver='h(this);' onmouseout='deh(this);' onmouseup='window.locat
 
 	// check for taxes for this service
 	$mytaxoutput = $this->service_model->checktaxes($id);
+
+	foreach ($mytaxoutput AS $t)
+	{
+		if ($t['exempt'] == FALSE)
+		{
+			print "<tr><td></td>".
+				"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+				"colspan=3>".$t['tax_description']."</td>".
+				"<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
+				"colspan=4>".$t['tax_amount']."</td>".
+				"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
+				"<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
+				"<input type=hidden name=load value=services>".
+				"<input type=hidden name=type value=module>".
+				"<input type=hidden name=edit value=on>".
+				"<input type=hidden name=taxrate value=\"".$t['tax_rate_id']."\">".
+				"<input name=exempt type=submit value=\"".lang('exempt')."\" ".
+				"class=smallbutton></form></td></tr>";
+		} else {
+			// print the exempt tax
+			print "<tr style=\"font-size: 9pt;\"><td></td>".
+				"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+				"colspan=3>".$t['tax_description']."</td>".
+				"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+				"colspan=4>".lang('exempt').": ".$t['customer_tax_id'].
+				" ".$t['customer_tax_id_expdate']."</td>".
+				"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
+				"<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
+				"<input type=hidden name=load value=services>".
+				"<input type=hidden name=type value=module>".
+				"<input type=hidden name=edit value=on>".
+				"<input type=hidden name=taxrate value=\"".$t['tax_rate_id']."\">".
+				"<input name=notexempt type=submit value=\"".lang('notexempt')."\" ".
+				"class=smallbutton></form></td></tr>";
+		} // end if exempt tax
+	}
 	
-	echo $mytaxoutput;
+	//echo $mytaxoutput;
 
 }
- 
+
 print "</table></td></table></form>";
 
 

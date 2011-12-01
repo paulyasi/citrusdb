@@ -16,13 +16,13 @@
 <table cellpadding=4 cellspacing=0 border=0 width=259>
   
 <tr>
-<td style="font-size: 12pt;"><?=$name?></td>
+<td style="font-size: 12pt;"><?php echo $name?></td>
 
 <tr>
-<td style="font-size: 12pt;"><?=$company?></td>
+<td style="font-size: 12pt;"><?php echo $company?></td>
   
 <tr>
-<td><?=$street?></td>
+<td><?php echo $street?></td>
   
 <tr>
 <td><?php echo "$city $state $zip";?></td>
@@ -43,28 +43,28 @@
 <table cellpadding=3 cellspacing=0 border=0 width=360>
 
 <td width=160><b><?php echo lang('signupdate');?></b></td>
-<td width=200><?=$signup_date?></td><tr>
+<td width=200><?php echo $signup_date?></td><tr>
 
 <td valign=top><b><?php echo lang('canceldate');?></b></td>
-<td class=redbold><?=$cancel_date?><br> <?=$cancel_reason?></td><tr>
+<td class=redbold><?php echo $cancel_date?><br> <?php echo $cancel_reason?></td><tr>
   
 <td><b><?php echo lang('source');?></b></td>
-<td><?=$source?></td><tr>
+<td><?php echo $source?></td><tr>
   
 <td><b><?php echo lang('contactemail');?></b></td>
-<td><?=$contactemail?></td><tr>
+<td><?php echo $contactemail?></td><tr>
   
 <td><b><?php echo lang('secret_question');?></b></td>
-<td><?=$secret_question?></td><tr>
+<td><?php echo $secret_question?></td><tr>
   
 <td><b><?php echo lang('secret_answer');?></b></td>
-<td><?=$secret_answer?></td><tr>
+<td><?php echo $secret_answer?></td><tr>
  
 <td><b><?php echo lang('defaultbillingid');?></b></td>
-<td><?=$default_billing_id?></td><tr>
+<td><?php echo $default_billing_id?></td><tr>
   
 <td><b><?php echo lang('country');?></b></td>
-<td><?=$country?></td><tr>
+<td><?php echo $country?></td><tr>
   
 <td><b><?php echo lang('acctmngrpasswd');?></b></td>
 

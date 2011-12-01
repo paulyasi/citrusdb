@@ -589,7 +589,7 @@ class Billing_Model extends CI_Model
 						"WHERE account_number = '$my_account_number'";
 					$ifresult = $this->db->query($ifquery) or die ("Query Failed");
 					$myifresult = $ifresult->row_array();
-					$checkvalue = $myifresult[0];
+					$checkvalue = $myifresult[$if_field];
 				} else {
 					$checkvalue = TRUE;
 					$if_value = TRUE;
@@ -1126,7 +1126,7 @@ class Billing_Model extends CI_Model
 						"WHERE account_number = '$my_account_number'";
 					$ifresult = $this->db->query($ifquery) or die ("Query Failed");	
 					$myifresult = $ifresult->row_array();
-					$checkvalue = $myifresult[0];
+					$checkvalue = $myifresult[$if_field];
 				} else {
 					$checkvalue = TRUE;
 					$if_value = TRUE;
