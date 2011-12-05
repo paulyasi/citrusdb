@@ -8,10 +8,8 @@
 
 <?php								  
 // print list of organizations to choose from
-$query = "SELECT id,org_name FROM general";
-$result = $this->db->query($query) or die ("queryfailed");
 echo "<b>" . lang('organizationname') . "</b> <select name=\"organization_id\">";
-foreach ($result->result_array() as $myresult)
+foreach ($orglist as $myresult)
 {
 	$myid = $myresult['id'];
 	$myorg = $myresult['org_name'];

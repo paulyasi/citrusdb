@@ -209,11 +209,15 @@ class Billing extends App_Controller
 		
 		if ($permission['modify'])
 		{
+			// load the general model to get organizations list
+			$this->load->model('general_model');
+
 			// the module header common to all module views
 			$this->load->view('module_header_view');
 			
 			// show the add billing record form
-			$this->load->view('billing/add_billing_record_view');
+			$data['orglist'] = $this->general_model->list_organizations();
+			$this->load->view('billing/add_billing_record_view', $data);
 
 			// the history listing tabs
 			$this->load->view('historyframe_tabs_view');			
