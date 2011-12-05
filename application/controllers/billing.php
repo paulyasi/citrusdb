@@ -30,13 +30,18 @@ class Billing extends App_Controller
 			// get the billing id
 			$billing_id = $this->billing_model->default_billing_id($this->account_number);
 			
+			
 			// show the billing information (name, address, etc)
 			$data = $this->billing_model->record($billing_id);
+			
+			// get the user privileges info
+			$data['userprivileges'] = $this->user_model->user_privileges($this->user);
+			
+			// show the index view
 			$this->load->view('billing/index_view', $data);
 			
 			// show any alternate billing types
 			$data['alternate'] = $this->billing_model->alternates($this->account_number, $billing_id);
-			$data['userprivileges'] = $this->user_model->user_privileges($this->user);
 			$this->load->view('billing/alternate_view', $data);
 			
 			// the history listing tabs

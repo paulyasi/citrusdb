@@ -9,11 +9,7 @@
 <a href=<?php echo $this->url_prefix?>/index.php/billing/rerun/<?php echo $billing_id;?>>[ <?php echo lang('rerun');?> ]</a>
 
 <?php
-// query user properties
-$query = "SELECT * FROM user WHERE username='$this->user' LIMIT 1";
-$userresult = $this->db->query($query) or die ("$l_queryfailed");
-$myuserresult = $userresult->row_array();
-if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
+if (($userprivileges['manager'] == 'y') OR ($userprivileges['admin'] == 'y')) {
 	echo "<br><a href=\"$this->url_prefix/index.php/billing/invmaint/$billing_id\">".lang('invoicemaintenance')."</a> | 
 	<a href=\"$this->url_prefix/index.php/billing/refund/$billing_id\">".lang('refundreport')."</a> | 
 	<a href=\"$this->url_prefix/index.php/billing/turnoff/$billing_id\">".lang('turnoff')."</a> | 
