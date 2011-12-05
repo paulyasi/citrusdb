@@ -187,7 +187,8 @@ class Service_model extends CI_Model
 		$query = "SELECT ms.organization_id, ms.options_table, ".
 			"ms.service_description, ms.support_notify, g.org_name, us.removed, ".
 			"date(us.end_datetime) AS end_datetime, ".
-			"date(us.start_datetime) AS start_datetime ".
+			"date(us.start_datetime) AS start_datetime, ".
+			"ms.usage_label, us.usage_multiple, us.billing_id ".
 			"FROM user_services us ".
 			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
 			"LEFT JOIN general g ON g.id = ms.organization_id ".
@@ -291,6 +292,51 @@ class Service_model extends CI_Model
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 * get the named fields from the options attributes not numbered
+	 * ------------------------------------------------------------------------
+	 */
+	function options_values($service_id, $options_table)
+	{
+		$query = "SELECT * FROM $options_table WHERE user_services = '$service_id'";
+		$optionsresult = $this->db->query($query) or die ("$l_queryfailed");
+		return $optionsresult->row_array();
+	}
+
+	function options_urls($fieldname)
+	{
+		// list any applicable options attribute url links
+		$query = "SELECT * FROM options_urls WHERE fieldname = ?";				
+		$urlresult = $this->db->query($query, array($fieldname)) or die ("URL $l_queryfailed");
+		return $urlresult->result_array();
+	}
+
+	function removed_status($userserviceid)
+	{
+		// check if the service is removed or and not canceled
+		// show the undelete button only if an account it not canceled
+		$query = "SELECT us.removed, c.cancel_date FROM user_services us ".
+			"LEFT JOIN customer c ON c.account_number = us.account_number ".
+			"WHERE us.id = $userserviceid";
+		$removedresult = $this->db->query($query) or die ("query failed");
+		return $removedresult->row_array();
+	}
+	
+	function field_inventory($userserviceid)
+	{
+		$query = "SELECT afa.id, mfa.description, afa.creation_date, afa.serial_number, ".
+			"afa.status, afa.sale_type, afa.shipping_tracking_number, afa.shipping_date, ".
+			"afa.return_date, afa.return_notes ".
+			"FROM field_asset_items afa ".
+			"LEFT JOIN master_field_assets mfa ON mfa.id = afa.master_field_assets_id ".
+			"LEFT JOIN user_services us ON us.id = afa.user_services_id ".
+			"WHERE us.id = '$userserviceid'";
+
+		$result = $this->db->query($query) or die ("$query query failed");
+		return $result->result_array();
+	}
+
 	// query the taxes and fees that this service has
 	function checktaxes($user_services_id) 
 	{
@@ -374,19 +420,19 @@ class Service_model extends CI_Model
 
 					/*
 					   print "<tr><td></td>".
-						"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
-						"colspan=3>$tax_description</td>".
-						"<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
-						"colspan=4>$tax_amount</td>".
-						"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
-						"<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
-						"<input type=hidden name=load value=services>".
-						"<input type=hidden name=type value=module>".
-						"<input type=hidden name=edit value=on>".
-						"<input type=hidden name=taxrate value=\"$tax_rate_id\">".
-						"<input name=exempt type=submit value=\"$l_exempt\" ".
-						"class=smallbutton></form></td></tr>";
-					*/
+					   "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+					   "colspan=3>$tax_description</td>".
+					   "<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
+					   "colspan=4>$tax_amount</td>".
+					   "<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
+					   "<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
+					   "<input type=hidden name=load value=services>".
+					   "<input type=hidden name=type value=module>".
+					   "<input type=hidden name=edit value=on>".
+					   "<input type=hidden name=taxrate value=\"$tax_rate_id\">".
+					   "<input name=exempt type=submit value=\"$l_exempt\" ".
+					   "class=smallbutton></form></td></tr>";
+					 */
 				} else {
 					$tax_array[$i] = array(
 							'tax_description' => $tax_description,
@@ -399,20 +445,20 @@ class Service_model extends CI_Model
 					/*
 					// print the exempt tax
 					print "<tr style=\"font-size: 9pt;\"><td></td>".
-						"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
-						"colspan=3>$tax_description</td>".
-						"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
-						"colspan=4>$l_exempt: $customer_tax_id ".
-						"$customer_tax_id_expdate</td>".
-						"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
-						"<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
-						"<input type=hidden name=load value=services>".
-						"<input type=hidden name=type value=module>".
-						"<input type=hidden name=edit value=on>".
-						"<input type=hidden name=taxrate value=\"$tax_rate_id\">".
-						"<input name=notexempt type=submit value=\"$l_notexempt\" ".
-						"class=smallbutton></form></td></tr>";
-						*/
+					"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+					"colspan=3>$tax_description</td>".
+					"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\" ".
+					"colspan=4>$l_exempt: $customer_tax_id ".
+					"$customer_tax_id_expdate</td>".
+					"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
+					"<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
+					"<input type=hidden name=load value=services>".
+					"<input type=hidden name=type value=module>".
+					"<input type=hidden name=edit value=on>".
+					"<input type=hidden name=taxrate value=\"$tax_rate_id\">".
+					"<input name=notexempt type=submit value=\"$l_notexempt\" ".
+					"class=smallbutton></form></td></tr>";
+					 */
 				} // end if exempt tax
 
 			} // end if_field
@@ -642,7 +688,7 @@ class Service_model extends CI_Model
 			"WHERE us.id = '$user_services_id' LIMIT 1";
 		$result = $this->db->query($query) 
 			or die ("get service desc and notify queryfailed");
-		
+
 		return $result->row_array();
 	}
 
@@ -651,7 +697,7 @@ class Service_model extends CI_Model
 		// get the info about the service
 		$query = "SELECT * FROM master_services WHERE id = $serviceid";
 		$result = $this->db->query($query) or die ("$query master_services select $l_queryfailed");
-	
+
 		return $result->row_array();	
 	}
 
@@ -661,7 +707,7 @@ class Service_model extends CI_Model
 		$query = "SELECT service_description FROM master_services WHERE id = ?";
 		$result = $this->db->query($query, array($service_id)) or die ("service name $l_queryfailed");
 		$myresult = $result->row_array();
-	
+
 		return $myresult['service_description'];
 	}
 
@@ -760,9 +806,9 @@ class Service_model extends CI_Model
 
 
 	function add_vendor_history($entry_type, $entry_date, $vendor_name, 
-				$vendor_bill_id, $vendor_cost, $vendor_tax, $vendor_item_id, 
-				$vendor_invoice_number, $vendor_from_date, $vendor_to_date, 
-				$userserviceid, $account_status, $billing_id)
+			$vendor_bill_id, $vendor_cost, $vendor_tax, $vendor_item_id, 
+			$vendor_invoice_number, $vendor_from_date, $vendor_to_date, 
+			$userserviceid, $account_status, $billing_id)
 	{
 		$query = "INSERT into vendor_history ".
 			"(datetime, entry_type, entry_date, vendor_name, vendor_bill_id, ".
@@ -774,6 +820,22 @@ class Service_model extends CI_Model
 					$vendor_invoice_number, $vendor_from_date, $vendor_to_date, 
 					$userserviceid, $account_status, $billed_amount)) or die ("add vendor query failed");
 	}
+
+	function get_field_assets($userserviceid)
+	{
+		$query = "SELECT m.category FROM master_services m ".
+			"LEFT JOIN user_services u ON u.master_service_id = m.id ".
+			"WHERE u.id = ?";
+		$result = $this->db->query($query, array($userserviceid)) or die ("$l_queryfailed");
+		$myresult = $result->row_array();
+		$category = $myresult['category'];
+
+		$query = "SELECT * FROM master_field_assets WHERE status = 'current' ".
+			"AND category = ?";
+		$result = $this->db->query($query, array($category)) or die ("$query $l_queryfailed");
+		return $result;
+	}
+
 
 }
 

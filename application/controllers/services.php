@@ -99,6 +99,23 @@ class Services extends App_Controller {
 		$this->load->helper('date');
 
 		$data['userserviceid'] = $userserviceid;
+		
+		// get the privileges for this citrus user
+		$data['privileges'] = $this->user_model->user_privileges($this->user);
+
+		// get the organization info for the service
+		$data['myorgresult'] = $this->service_model->org_and_options($userserviceid);
+
+		// check if the service has been removed
+		$data['removedstatus'] = $this->service_model->removed_status($userserviceid);
+
+		// get the field inventory assigned to this service
+		$data['fieldinventory'] = $this->service_model->field_inventory($userserviceid);
+
+		// get a list of field assets that can be assigned
+		$data['field_asset_result'] = $this->service_model->get_field_assets($userserviceid);
+
+		// show the edit view
 		$this->load->view('services/edit_view', $data);	
 
 		// the history listing tabs

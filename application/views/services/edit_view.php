@@ -2,17 +2,11 @@
 <a href="<?php echo $this->url_prefix; ?>/index.php/services">
 <?php 
 echo lang('undochanges') . "</a>";
-  
-// print the link to vendor history if user is a manager/admin
-$query = "SELECT * FROM user WHERE username='$this->user'";
-$userresult = $this->db->query($query) or die ("query failed");
-$myuserresult = $userresult->row_array();
-if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
+
+if (($privileges['manager'] == 'y') OR ($privileges['admin'] == 'y')) {
 	echo " | <a href=\"$this->url_prefix/index.php/services/vendor/$userserviceid\">
 		" . lang('vendor_history') . "</a>";
 }
-
-$myorgresult = $this->service_model->org_and_options($userserviceid);
 
 $service_org_id = $myorgresult['organization_id'];
 $service_org_name = $myorgresult['org_name'];
@@ -22,15 +16,10 @@ $creationdate = humandate($myorgresult['start_datetime']);
 $enddate = humandate($myorgresult['end_datetime']);
 $removed = $myorgresult['removed'];
 $support_notify = $myorgresult['support_notify'];
+$usage_multiple = $myorgresult['usage_multiple'];
+$usage_label = $myorgresult['usage_label'];
+$billing_id = $myorgresult['billing_id'];
 
-// check for optionstable, skip this step if there isn't one
-if ($optionstable <> '') 
-{
-	$query = "SELECT * FROM $optionstable ".
-		"WHERE user_services = '$userserviceid'";
-	$result = $this->db->query($query) or die ("$l_queryfailed");
-	$myresult = $result->row_array();
-}
 
 // print form to edit the things in the options table
 print "<h4>". lang('edit') .": $userserviceid $servicedescription ($service_org_name)".
@@ -48,22 +37,26 @@ print "<input type=hidden name=servicedescription ".
 "value=$userserviceid>\n";
 
 // check for optionstable, skip this step if there isn't one	
-if ($optionstable <> '') {
+if ($optionstable <> '') 
+{
+	// get the data from the options table and put into variables
+	$myvalues = $this->service_model->options_values($userserviceid, $optionstable);
+
 	// list out the fields in the options table for that service
 	$fields = $this->schema_model->columns($this->db->database, $optionstable);
-	
+
 	// initialize fieldlist
 	$fieldlist = "";
-	
+
 	$i = 0;
 	foreach($fields->result() as $v) {
 		//echo "Name: $v->name ";
 		//echo "Type: $v->type <br>";
-		
+
 		$fieldname = $v->COLUMN_NAME;
 		$fieldflags = $v->DATA_TYPE;
 		$fieldtype = $v->COLUMN_TYPE; // for enum has value: enum('1','2') etc.
-				
+
 		if ($fieldname <> "id" AND $fieldname <> "user_services") 
 		{			
 			if ($fieldflags == "enum") 
@@ -72,7 +65,7 @@ if ($optionstable <> '') {
 					"<td bgcolor=\"#ddddee\">\n";
 				// print all the items listed in the enum
 				$this->schema_model->enum_select($fieldtype, $fieldname, NULL);
-				
+
 				echo "</td><tr>\n";
 			} 
 			elseif ($fieldflags == "text"
@@ -84,32 +77,29 @@ if ($optionstable <> '') {
 			{
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 					"<td bgcolor=\"#ddddee\"><textarea cols=40 rows=6 ".
-					"name=\"$fieldname\">$myresult[$fieldname]</textarea>";
+					"name=\"$fieldname\">$myvalues[$fieldname]</textarea>";
 				echo "</td><tr>\n";
 			} 
 			elseif ($fieldname == "description")
 			{
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 					"<td bgcolor=\"#ddddee\"><input size=40 maxlength=44 type=text name=\"$fieldname\" ".
-					"value=\"$myresult[$fieldname]\">";
+					"value=\"$myvalues[$fieldname]\">";
 				echo "</td><tr>\n";
 			} 
 			else 
 			{				
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 					"<td bgcolor=\"#ddddee\"><input type=text name=\"$fieldname\" ".
-					" value=\"$myresult[$fieldname]\">\n";	
-							
-				
-				// list any applicable options attribute url links
-				$query = "SELECT * FROM options_urls WHERE fieldname = '$fieldname'";				
-				$urlresult = $this->db->query($query) or die ("URL $l_queryfailed");
+					" value=\"$myvalues[$fieldname]\">\n";	
+
+
 				$j = $i + 1; // to get the next field for multi field queries
-				foreach ($urlresult->result_array() as $urlmyresult) 
+				$optionsurls = $this->service_model->options_urls($fieldname);
+				foreach ($optionsurls as $urlmyresult) 
 				{	  	    
 					$myoptions = $this->service_model->options_attributes($userserviceid, $optionstable);
-					
-					// assign the query from the search to the query string
+
 					// replace the s1 and s2 place holders with the actual variables
 					$s1 = $myoptions[$i];
 					$s2 = $myoptions[$j]; 
@@ -127,9 +117,9 @@ if ($optionstable <> '') {
 							"onclick=\"popupPage('$url'); return false;\">$urlname</a>";
 					}
 				}
-				
+
 				echo "</td><tr>\n";
-				
+
 			}
 			$fieldlist .= ',' . $fieldname;
 		}
@@ -142,19 +132,12 @@ if ($optionstable <> '') {
 
 
 //
-// check if the service is removed or and not canceled
-// show the undelete button only if an account it not canceled
-$query = "SELECT us.removed, c.cancel_date FROM user_services us ".
-"LEFT JOIN customer c ON c.account_number = us.account_number ".
-"WHERE us.id = $userserviceid";
-$removedresult = $this->db->query($query) or die ("query failed");
-$myremovedresult = $removedresult->row_array();
-$removed = $myremovedresult['removed'];
+$removed = $removedstatus['removed'];
 
-if (!isset($myremovedresult['cancel_date'])) {
-	$myremovedresult['cancel_date'] = "";
+if (!isset($removedstatus['cancel_date'])) {
+	$removedstatus['cancel_date'] = "";
 }
-$cancel_date = $myremovedresult['cancel_date'];
+$cancel_date = $removedstatus['cancel_date'];
 
 if ($removed == 'y' AND $cancel_date == '') 
 {
@@ -198,17 +181,7 @@ if ($support_notify) {
 
 print "<table width=720 cellpadding=5 cellspacing=1 border=0>\n";
 
-$query = "SELECT afa.id, mfa.description, afa.creation_date, afa.serial_number, ".
-"afa.status, afa.sale_type, afa.shipping_tracking_number, afa.shipping_date, ".
-"afa.return_date, afa.return_notes ".
-"FROM field_asset_items afa ".
-"LEFT JOIN master_field_assets mfa ON mfa.id = afa.master_field_assets_id ".
-"LEFT JOIN user_services us ON us.id = afa.user_services_id ".
-"WHERE us.id = '$userserviceid'";
-
-$result = $this->db->query($query) or die ("$query query failed");
-
-foreach ($result->result_array() as $myresult) 
+foreach ($fieldinventory as $myresult) 
 {
 	$item_id = $myresult['id'];
 	$description = $myresult['description'];
@@ -242,7 +215,7 @@ foreach ($result->result_array() as $myresult)
 		<td style=\"color:$textcolor;\">$sale_type</td> <tr>";
 	if ($status == 'returned') {
 		print "<td style=\"color:$textcolor;\">".lang('returndate').": 
-		$return_date, $return_notes</td></table>";
+			$return_date, $return_notes</td></table>";
 	} else {
 		print "<td><b>".lang('trackingnumber')."</b></td><td>
 			<a href=\"".$this->config->item('tracking_url')."$tracking_number\">$tracking_number</a></td> ".
@@ -257,20 +230,8 @@ print "</table>\n";
 
 /*----------------------------------------------------------------------*/
 // print the add field assets form section
-
-$query = "SELECT m.category FROM master_services m ".
-"LEFT JOIN user_services u ON u.master_service_id = m.id ".
-"WHERE u.id = '$userserviceid'";
-$result = $this->db->query($query) or die ("$l_queryfailed");
-$myresult = $result->row_array();
-$category = $myresult['category'];
-
-$query = "SELECT * FROM master_field_assets WHERE status = 'current' ".
-	"AND category = '$category'";
-$result = $this->db->query($query) or die ("$query $l_queryfailed");
-
 // only show choices if field asset items are compatible with the service category
-if ($result->num_rows() > 0) {
+if ($field_asset_result->num_rows() > 0) {
 
 	print "<form style=\"margin-bottom:0;\" 
 		action=\"".$this->url_prefix."/index.php/services/shipfieldassets\" method=post>".
@@ -284,7 +245,7 @@ if ($result->num_rows() > 0) {
 	print "<td bgcolor=\"#ddddee\"><select name=master_field_assets_id><option selected>".
 		"".lang('choose')."</option>\n";
 
-	foreach ($result->result_array() as $myresult) {
+	foreach ($field_asset_result->result_array() as $myresult) {
 		$master_field_assets_id = $myresult['id'];
 		$description = $myresult['description'];
 		print "<option value=$master_field_assets_id>$description</option>\n";
@@ -302,15 +263,6 @@ if ($result->num_rows() > 0) {
 print "<form action=\"".$this->url_prefix."/index.php/services/usage\" method=post>
 <table width=720 cellpadding=5 cellspacing=1 border=0>";
 print "<input type=hidden name=userserviceid value=$userserviceid>";
-
-$query = "SELECT * FROM user_services u ".
-"LEFT JOIN master_services m ON u.master_service_id = m.id ".
-"WHERE u.id = '$userserviceid'";
-$result = $this->db->query($query) or die ("$l_queryfailed");
-$myresult = $result->row_array();
-$usage_multiple = $myresult['usage_multiple'];
-$usage_label = $myresult['usage_label'];
-$account_number = $myresult['account_number'];
 
 // print the usage_multiple entry field
 // if there is a usage label, use that instead of the generic name
@@ -335,22 +287,15 @@ print "<input type=hidden name=userserviceid value=$userserviceid>";
 echo "<td bgcolor=\"ccccdd\"width=180><b>". lang('billingid') ."</b></td>".
 "<td bgcolor=\"#ddddee\">";
 
-$query = "SELECT * FROM user_services WHERE id = '$userserviceid'";
-$result = $this->db->query($query) or die ("$l_queryfailed");
-$myresult = $result->row_array();
-$billing_id = $myresult['billing_id'];
-$account_number = $myresult['account_number'];
-
 // print a list of billing id's that have the account number associated with
 // them and match the organization_id for this service
-
 print "<select name=billing_id><option selected value=$billing_id>".
 "$billing_id</option>";
 
 $query = "SELECT b.id,bt.name,g.org_name FROM billing b ".
 "LEFT JOIN general g ON g.id = b.organization_id ".
 "LEFT JOIN billing_types bt ON bt.id = b.billing_type ".
-"WHERE b.account_number = '$account_number' AND ".
+"WHERE b.account_number = '$this->account_number' AND ".
 "g.id = '$service_org_id'";
 
 $result = $this->db->query($query) or die ("$l_queryfailed");
