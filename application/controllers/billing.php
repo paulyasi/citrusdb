@@ -62,11 +62,15 @@ class Billing extends App_Controller
 		
 		if ($permission['modify'])
 		{
+			// load the admin model to get a list of billing types
+			$this->load->model('admin_model');
+			
 			// the module header common to all module views
 			$this->load->view('module_header_view');
 			
 			// show the edit customer form
 			$data = $this->billing_model->record($billing_id);
+			$data['billing_types'] = $this->admin_model->get_billing_types();
 			$this->load->view('billing/edit_view', $data);
 
 			// the history listing tabs

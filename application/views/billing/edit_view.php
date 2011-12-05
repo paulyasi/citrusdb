@@ -67,9 +67,7 @@ $billing_form_url = "$this->ssl_url_prefix" . "/index.php/billing/save";
 	
 <?php
 print "<select name=\"billing_type\">\n";
-$query = "SELECT * FROM billing_types ORDER BY name";
-$result = $this->db->query($query) or die ("query failed");
-foreach ($result->result_array() as $myresult){
+foreach ($billing_types as $myresult){
 
 	$bt_id = $myresult['id'];
 	$bt_name = $myresult['name'];

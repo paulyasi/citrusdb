@@ -50,7 +50,7 @@ if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')) {
 <td valign=top width=360>		
 	<table cellpadding=5 border=0 cellspacing=1 width=360>
 	<td bgcolor="#ccccdd"><b><?php echo lang('billingstatus')?></b></td><td bgcolor="#ddddee"><b><?php echo $mystatus;?></b></td><tr>
-	<td bgcolor="#ccccdd" width=180><b><?php echo lang('billingtype')?></b></td><td bgcolor="#ddddee" width=180><?php echo $billing_type;?></td><tr>
+	<td bgcolor="#ccccdd" width=180><b><?php echo lang('billingtype')?></b></td><td bgcolor="#ddddee" width=180><?php echo $billing_type_name;?></td><tr>
 	<td bgcolor="#ccccdd"><b><?php echo lang('ccnumber')?></b></td><td bgcolor="#ddddee"><?php echo $creditcard_number;?></td><tr>
 	<td bgcolor="#ccccdd"><b><?php echo lang('ccexpire')?></b></td><td bgcolor="#ddddee"><?php echo $creditcard_expire;?></td><tr>
 	<td bgcolor="#ccccdd"><b><?php echo lang('nextbillingdate')?></b></td><td bgcolor="#ddddee"><?php echo $next_billing_date;?></td><tr>

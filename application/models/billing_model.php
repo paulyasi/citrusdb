@@ -162,7 +162,8 @@ class Billing_Model extends CI_Model
 		$data['phone'] = $myresult['b_phone'];
 		$data['fax'] = $myresult['b_fax'];
 		$data['contact_email'] = $myresult['b_email'];
-		$data['billing_type'] = $myresult['t_name'];
+		$data['billing_type'] = $myresult['b_type'];
+		$data['billing_type_name'] = $myresult['t_name'];
 		$data['creditcard_number'] = $myresult['b_ccnum'];
 		$data['creditcard_expire'] = $myresult['b_ccexp'];
 		$data['billing_status'] = $myresult['b_status'];
