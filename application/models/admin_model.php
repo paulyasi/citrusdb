@@ -294,7 +294,7 @@ class Admin_Model extends CI_Model
 	function get_service_categories()
 	{
 		// get the list of service categories from the master_services table
-		$query = "SELECT DISTINCT(category) FROM master_services ORDER BY category";
+		$query = "SELECT DISTINCT category FROM master_services ORDER BY category";
 		$result = $this->db->query($query) or die ("category queryfailed");
 		return $result->result_array();
 	}

@@ -3,11 +3,8 @@
 
 <?php
 // if the user is admin or manager then have the option to show all services
-// query user properties
-$showall_permission = false;
-if (($privileges['manager'] == 'y') OR ($privileges['admin'] == 'y')) 
+if ($showall_permission == TRUE)
 {
-	$showall_permission = true;
 	echo "<a href=\"$this->url_prefix/index.php/services/create/showall\">".
 		"[ ". lang('showall') ." ]</a>";
 }
@@ -25,7 +22,7 @@ if ($showall == 'y' & $showall_permission == true)
 	$query = "SELECT DISTINCT category FROM master_services ".
 		"ORDER BY category";
 	$result = $this->db->query($query) or die ("query failed");
-	foreach ($result->result_array() as $myresult) 
+	foreach ($service_categories as $myresult) 
 	{
 		$categoryname = $myresult['category'];
 		echo "<a href=\"$this->url_prefix/index.php/services/create/showall#$categoryname\">$categoryname</a> | \n";

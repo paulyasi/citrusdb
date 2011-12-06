@@ -275,6 +275,14 @@ class Services extends App_Controller {
 
 			// get the privileges for this citrus user
 			$data['privileges'] = $this->user_model->user_privileges($this->user);
+			if (($data['privileges']['manager'] == 'y') OR ($data['privileges']['admin'] == 'y'))
+			{
+				$data['showall_permission'] = TRUE;
+			}
+			else
+			{
+				$data['showall_permission'] = FALSE;
+			}
 
 			// show the services available to add to this customer
 			if ($showall) 
@@ -284,6 +292,13 @@ class Services extends App_Controller {
 			else
 			{
 				$data['showall'] = 'n'; 
+			}
+
+			// get list of service categories if they have asked to show the all
+			if ($data['showall'] == 'y' AND $data['showall_permission'] == TRUE)
+			{
+				$this->load->model('admin_model');
+				$data['service_categories'] = $this->admin_model->get_service_categories();
 			}
 			$this->load->view('services/create_view', $data);	
 

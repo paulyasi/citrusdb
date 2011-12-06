@@ -2,12 +2,6 @@
 // list the service options after they clicked on the add button.
 echo "<a href=\"".$this->url_prefix."/index.php/services\">
 [ ". lang('undochanges') ."</a> ]";
-$myresult = $this->service_model->service_with_org($serviceid);
-$servicename = $myresult['service_description'];
-$options_table_name = $myresult['options_table'];
-$usage_label = $myresult['usage_label'];
-$service_org_id = $myresult['organization_id'];
-$service_org_name = $myresult['org_name'];
 ?>
 
 <script language=javascript>
