@@ -1,7 +1,7 @@
 <?php   
 	if ($this->customer_model->is_not_canceled($this->account_number))
    	{
-		echo "<a href=\"services/create\">[ ".
+		echo "<a href=\"$this->url_prefix/index.php/services/create\">[ ".
 		lang('addservice') . " ]</a>";
    	}
 ?>
