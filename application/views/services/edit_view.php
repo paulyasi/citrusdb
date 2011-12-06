@@ -8,17 +8,6 @@ if (($privileges['manager'] == 'y') OR ($privileges['admin'] == 'y')) {
 		" . lang('vendor_history') . "</a>";
 }
 
-$service_org_id = $myorgresult['organization_id'];
-$service_org_name = $myorgresult['org_name'];
-$optionstable = $myorgresult['options_table'];
-$servicedescription = $myorgresult['service_description'];
-$creationdate = humandate($myorgresult['start_datetime']);
-$enddate = humandate($myorgresult['end_datetime']);
-$removed = $myorgresult['removed'];
-$support_notify = $myorgresult['support_notify'];
-$usage_multiple = $myorgresult['usage_multiple'];
-$usage_label = $myorgresult['usage_label'];
-$billing_id = $myorgresult['billing_id'];
 
 
 // print form to edit the things in the options table
@@ -292,14 +281,8 @@ echo "<td bgcolor=\"ccccdd\"width=180><b>". lang('billingid') ."</b></td>".
 print "<select name=billing_id><option selected value=$billing_id>".
 "$billing_id</option>";
 
-$query = "SELECT b.id,bt.name,g.org_name FROM billing b ".
-"LEFT JOIN general g ON g.id = b.organization_id ".
-"LEFT JOIN billing_types bt ON bt.id = b.billing_type ".
-"WHERE b.account_number = '$this->account_number' AND ".
-"g.id = '$service_org_id'";
-
-$result = $this->db->query($query) or die ("$l_queryfailed");
-foreach ($result->result_array() as $myresult) {
+foreach ($org_billing_types->result_array() as $myresult) 
+{
 	$mybilling_id = $myresult['id'];
 	$org_name = $myresult['org_name'];
 	$billing_type = $myresult['name'];
@@ -333,29 +316,18 @@ if ($optionstable) {
 	echo "<td bgcolor=\"ccccdd\"width=180><b>". lang('changeservice') ."</b></td>".
 		"<td bgcolor=\"#ddddee\">\n";
 
-	$query = "SELECT * FROM user_services us ".
-		"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-		"WHERE us.id = $userserviceid";
-	$result = $this->db->query($query) or die ("$l_queryfailed");
-	$myresult = $result->row_array();
-	$master_service_id = $myresult['master_service_id'];
-	$service_description = $myresult['service_description'];
-
 	// print a list of services that share the same attributes and organization_id
-
 	print "<select name=master_service_id><option selected ".
-		"value=$master_service_id>$service_description (".lang('current').")</option>\n";
+		"value=$master_service_id>$servicedescription (".lang('current').")</option>\n";
 
-	$query = "SELECT * FROM master_services ".
-		"WHERE options_table = '$optionstable' ".
-		"AND selling_active = 'y' ".
-		"AND organization_id = $service_org_id";
-	$result = $this->db->query($query) or die ("$l_queryfailed");
-	foreach ($result->result_array() as $myresult) {
+	$sharesoptions = $this->service_model->services_sharing_options($optionstable, $service_org_id);
+	foreach ($sharesoptions as $myresult) 
+	{
 		$new_master_service_id = $myresult['id'];
 		$service_description = $myresult['service_description'];
 		// print listing without showing the current service
-		if ($new_master_service_id <> $master_service_id) {
+		if ($new_master_service_id <> $master_service_id) 
+		{
 			print "<option value=$new_master_service_id>$service_description</option>\n";
 		}
 	}
@@ -387,16 +359,9 @@ echo "<table cellspacing=0 cellpadding=0 border=0>".
 "<td bgcolor=\"#ccccdd\" style=\"padding: 4px;\" width=261>".
 "<b>".lang('service')."</b></td>";
 
-$query = "SELECT  ch.id, ch.creation_date, ".
-"ch.created_by, ch.notify, ch.status, ch.description, ch.linkname, ".
-"ch.linkname, ch.linkurl, ch.user_services_id, us.master_service_id, ".
-"ms.service_description FROM customer_history ch ".
-"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
-"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-"WHERE ch.user_services_id = '$userserviceid' ORDER BY ch.creation_date DESC";
-$result = $this->db->query($query) or die ("$l_queryfailed");
 $linecount = 0;
-foreach ($result->result_array() as $myresult) {
+foreach ($servicehistory as $myresult) 
+{
 	$id = $myresult['id'];
 	$creation_date = $myresult['creation_date'];
 	$created_by = $myresult['created_by'];
@@ -432,27 +397,10 @@ foreach ($result->result_array() as $myresult) {
 	}
 
 
-	// THIS WILL NOT BE BLOCKED ANYMORE, ESPECIALLY WHEN THE SUBNOTES ARE ADDED
-	// BEING ABLE TO CLICK ON TICKETS WILL BE A REQUIRED FEATURE
-	// if the user is and admin or manager then have the ability to click a
-	// link and open the ticket editor
-	// also allow users to edit their own notes
-	//  $query = "SELECT * FROM user WHERE username='$user'";
-	//$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-	//$userresult = $DB->Execute($query) or die ("$l_queryfailed");
-	//$myuserresult = $userresult->fields;
-	//$showall_permission = false;
-	//if (($myuserresult['manager'] == 'y') OR ($myuserresult['admin'] == 'y')
-	//    OR ($user == $created_by)) {
 	print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
 		"padding-bottom: 2px; font-size: 9pt; font-weight: bold;\"><a target=\"_parent\" ". 
 		"href=\"$this->url_prefix/index.php/support/editticket/$id\">".
 		"$id</a> &nbsp;</td>";
-	//} else {
-	//print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
-	//  "padding-bottom: 2px; font-size: 9pt;\">$id &nbsp;</td>";
-	//}
-
 	print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".
 		"padding-bottom: 2px; font-size: 9pt; font-weight: bold;\">$creation_date &nbsp;</td>";
 	print "<td style=\"border-top: 1px solid grey; padding-top: 2px; ".

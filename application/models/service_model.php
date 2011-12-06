@@ -188,7 +188,7 @@ class Service_model extends CI_Model
 			"ms.service_description, ms.support_notify, g.org_name, us.removed, ".
 			"date(us.end_datetime) AS end_datetime, ".
 			"date(us.start_datetime) AS start_datetime, ".
-			"ms.usage_label, us.usage_multiple, us.billing_id ".
+			"ms.usage_label, us.usage_multiple, us.billing_id, us.master_service_id ".
 			"FROM user_services us ".
 			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
 			"LEFT JOIN general g ON g.id = ms.organization_id ".
@@ -888,6 +888,21 @@ class Service_model extends CI_Model
 		return $result->result_array();
 	}
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get a list of services that use the same options tables
+	 * ------------------------------------------------------------------------
+	 */
+	function services_sharing_options($optionstable, $service_org_id) 
+	{
+		$query = "SELECT * FROM master_services ".
+			"WHERE options_table = '$optionstable' ".
+			"AND selling_active = 'y' ".
+			"AND organization_id = $service_org_id";
+		$result = $this->db->query($query, array($optionstable, $service_org_id)) 
+			or die ("$l_queryfailed");
+		return $result->result_array();
+	}
 
 }
 

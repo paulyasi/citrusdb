@@ -104,7 +104,19 @@ class Services extends App_Controller {
 		$data['privileges'] = $this->user_model->user_privileges($this->user);
 
 		// get the organization info for the service
-		$data['myorgresult'] = $this->service_model->org_and_options($userserviceid);
+		$myorgresult = $this->service_model->org_and_options($userserviceid);
+		$data['service_org_id'] = $myorgresult['organization_id'];
+		$data['service_org_name'] = $myorgresult['org_name'];
+		$data['optionstable'] = $myorgresult['options_table'];
+		$data['master_service_id'] = $myorgresult['master_service_id'];
+		$data['servicedescription'] = $myorgresult['service_description'];
+		$data['creationdate'] = humandate($myorgresult['start_datetime']);
+		$data['enddate'] = humandate($myorgresult['end_datetime']);
+		$data['removed'] = $myorgresult['removed'];
+		$data['support_notify'] = $myorgresult['support_notify'];
+		$data['usage_multiple'] = $myorgresult['usage_multiple'];
+		$data['usage_label'] = $myorgresult['usage_label'];
+		$data['billing_id'] = $myorgresult['billing_id'];
 
 		// check if the service has been removed
 		$data['removedstatus'] = $this->service_model->removed_status($userserviceid);
@@ -114,6 +126,14 @@ class Services extends App_Controller {
 
 		// get a list of field assets that can be assigned
 		$data['field_asset_result'] = $this->service_model->get_field_assets($userserviceid);
+
+		// get a list of the billing types that could be assigned to this service
+		$data['org_billing_types'] = $this->billing_model->org_alternates(
+				$this->account_number, 
+				$data['service_org_id']);
+
+		// get customer history for this service
+		$data['servicehistory'] = $this->support_model->service_history($userserviceid);
 
 		// show the edit view
 		$this->load->view('services/edit_view', $data);	
