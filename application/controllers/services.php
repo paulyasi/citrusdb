@@ -294,12 +294,24 @@ class Services extends App_Controller {
 				$data['showall'] = 'n'; 
 			}
 
+
+			// get the default billing organization id for this account
+			$org_id = $this->billing_model->get_organization_id($this->account_number);
+
+			$this->load->model('admin_model');
 			// get list of service categories if they have asked to show the all
 			if ($data['showall'] == 'y' AND $data['showall_permission'] == TRUE)
 			{
-				$this->load->model('admin_model');
 				$data['service_categories'] = $this->admin_model->get_service_categories();
+				$data['master_service_list'] = $this->service_model->get_master_service_list();
 			}
+			else
+			{
+				$data['service_categories'] = $this->admin_model->get_org_service_categories($org_id);
+				$data['master_service_list'] = $this->service_model->get_org_master_service_list($org_id);
+			}
+
+			// load the create service view
 			$this->load->view('services/create_view', $data);	
 
 			// the history listing tabs

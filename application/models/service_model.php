@@ -836,6 +836,58 @@ class Service_model extends CI_Model
 		return $result;
 	}
 
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the list of all active master services
+	 * ------------------------------------------------------------------------
+	 */
+	function get_master_service_list()
+	{
+		// set the query for the service listing
+		$query = "SELECT * FROM master_services m ".
+			"LEFT JOIN general g ON g.id = m.organization_id ".
+			"WHERE selling_active = 'y' ".
+			"ORDER BY category, pricerate, service_description";
+		$result = $this->db->query($query) or die ("get master service list queryfailed");
+		return $result->result_array();
+	} 
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the list of master services that can be assigned to this organization
+	 * ------------------------------------------------------------------------
+	 */
+	function get_org_master_service_list($organization_id)
+	{
+		$query = "SELECT * FROM master_services m ".
+			"WHERE selling_active = 'y' AND hide_online <> 'y' ".
+			"AND organization_id = ? ".
+			"ORDER BY category, pricerate, service_description";
+		$result = $this->db->query($query, array($organization_id)) 
+			or die ("get org master service list queryfailed");
+		return $result->result_array();
+	}
+
+
+	function linked_services($master_service_id)
+	{
+		$query = "SELECT mfrom.id mfrom_id, ".
+			"mfrom.service_description mfrom_description, ".
+			"mto.id mto_id, mto.service_description mto_description, ".
+			"mto.pricerate mto_pricerate, l.linkfrom, l.linkto ".
+			"FROM linked_services l ".
+			"LEFT JOIN master_services mfrom ON mfrom.id = l.linkfrom ".
+			"LEFT JOIN master_services mto ON mto.id = l.linkto ".
+			"WHERE l.linkfrom = ?";
+
+		$result = $this->db->query($query, array($master_service_id)) 
+			or die ("query failed");
+
+		return $result->result_array();
+	}
+
 
 }
 

@@ -299,6 +299,14 @@ class Admin_Model extends CI_Model
 		return $result->result_array();
 	}
 
+	function get_org_service_categories($organization_id)
+	{
+		$query = "SELECT DISTINCT category FROM master_services ".
+			"WHERE organization_id = ? ORDER BY category";
+		$result = $this->db->query($query, array($organization_id)) or die ("query failed");
+		return $result->result_array();
+	}
+
 	function get_field_assets()
 	{
 		$query = "SELECT * FROM master_field_assets";

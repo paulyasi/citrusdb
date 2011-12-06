@@ -10,48 +10,29 @@ if ($showall_permission == TRUE)
 }
 ?>
 
-<?php
-$my_organization_id = $this->billing_model->get_organization_id($this->account_number);
-?>
 <p>
 
 <?php
 if ($showall == 'y' & $showall_permission == true) 
 {
 	// print list of categories to choose from
-	$query = "SELECT DISTINCT category FROM master_services ".
-		"ORDER BY category";
-	$result = $this->db->query($query) or die ("query failed");
 	foreach ($service_categories as $myresult) 
 	{
 		$categoryname = $myresult['category'];
 		echo "<a href=\"$this->url_prefix/index.php/services/create/showall#$categoryname\">$categoryname</a> | \n";
 	}
 
-	// set the query for the service listing
-	$query = "SELECT * FROM master_services m ".
-		"LEFT JOIN general g ON g.id = m.organization_id ".
-		"WHERE selling_active = 'y' ".
-		"ORDER BY category, pricerate, service_description";
 } 
 else 
 {
 	// print list of categories to choose from
-	$query = "SELECT DISTINCT category FROM master_services ".
-		"WHERE organization_id = '$my_organization_id' ORDER BY category";
-	$result = $this->db->query($query) or die ("query failed");
-	foreach ($result->result_array() as $myresult) 
+	foreach ($service_categories as $myresult) 
 	{
 		$categoryname = $myresult['category'];
 		echo "<a href=\"$this->url_prefix/index.php/services/create#$categoryname\">$categoryname</a> | \n";
 	}
 
-	$query = "SELECT * FROM master_services m ".
-		"WHERE selling_active = 'y' AND hide_online <> 'y' ".
-		"AND organization_id = '$my_organization_id' ".
-		"ORDER BY category, pricerate, service_description";
 }
-$result = $this->db->query($query) or die ("$l_queryfailed");
 // Print HTML table of servicesresults
 ?>
 <table border=0 cellspacing=1 cellpadding=5 width=720>
@@ -64,7 +45,7 @@ $result = $this->db->query($query) or die ("$l_queryfailed");
 <?php
 $previouscategory = "";
 
-foreach ($result->result_array() as $myrow) 
+foreach ($master_service_list as $myrow) 
 {
 	// print category heading
 	if ($myrow['category'] <> $previouscategory) 
@@ -88,24 +69,15 @@ foreach ($result->result_array() as $myrow)
 		"</form></td></tr>\n"; 
 
 	// print the list of linked services under the service they are linked to      
-	$query = "SELECT mfrom.id mfrom_id, ".
-		"mfrom.service_description mfrom_description, ".
-		"mto.id mto_id, mto.service_description mto_description, ".
-		"mto.pricerate mto_pricerate, l.linkfrom, l.linkto ".
-		"FROM linked_services l ".
-		"LEFT JOIN master_services mfrom ON mfrom.id = l.linkfrom ".
-		"LEFT JOIN master_services mto ON mto.id = l.linkto ".
-		"WHERE l.linkfrom = ".$myrow['id'];
+	$linked_services = $this->service_model->linked_services($myrow['id']);
 
-	$lresult = $this->db->query($query) or die ("query failed");
-
-	foreach ($lresult->result_array() as $lmyresult) 
+	foreach ($linked_services as $lmyresult) 
 	{
 		$todesc = $lmyresult['mto_description'];
 		$toprice = $lmyresult['mto_pricerate'];
 		print "<tr bgcolor=\"#ffffff\" cellpadding=0 cellspacing=0><td></td><td style=\"font-size: 10px\"; colspan=5 bgcolor=\"#eeeeff\"> + $todesc ".lang('currency')."$toprice</td></tr>\n";
 	}
 } 
-echo "</table>\n";
-
 ?>
+</table>
+
