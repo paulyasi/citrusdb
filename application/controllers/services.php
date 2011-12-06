@@ -389,6 +389,21 @@ class Services extends App_Controller {
 		// load the add service options view
 		$data['serviceid'] = $serviceid;
 		$data['detail1'] = $detail1;
+
+		// get the service organization info to show when adding the service
+		$myresult = $this->service_model->service_with_org($serviceid);
+		$data['servicename'] = $myresult['service_description'];
+		$data['options_table_name'] = $myresult['options_table'];
+		$data['usage_label'] = $myresult['usage_label'];
+		$data['service_org_id'] = $myresult['organization_id'];
+		$data['service_org_name'] = $myresult['org_name'];
+
+		// get a list of the billing types that could be assigned to this service
+		$data['org_billing_types'] = $this->billing_model->org_alternates(
+				$this->account_number, 
+				$data['service_org_id']);
+
+		// load the add service options form view
 		$this->load->view('services/add_options_form_view', $data);
 
 		// the history listing tabs

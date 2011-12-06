@@ -118,19 +118,13 @@ print"<td bgcolor=\"#ddddee\"><input type=text name=\"usagemultiple\" ".
 print "<td bgcolor=\"#ddaaee\"><b>".lang('organizationname')."</b></td>".
 "<td bgcolor=\"#ddaaee\">";
 
-$query = "SELECT b.id,bt.name,g.org_name FROM billing b ".
-"LEFT JOIN general g ON g.id = b.organization_id ".
-"LEFT JOIN billing_types bt ON b.billing_type = bt.id  ".
-"WHERE b.account_number = '$account_number' AND ".
-"g.id = '$service_org_id'";
 
-$result = $this->db->query($query) or die ("query failed");
-if (!$result || $result->num_rows() < 1){
+if (!$org_billing_types || $org_billing_types->num_rows() < 1){
 	echo "<b>".lang('willcreatebillingrecord')." $service_org_name</b>".
 		"<input type=hidden name=create_billing value=$service_org_id>";	
 } else {
 	echo "<select name=billing_id>";
-	foreach ($result->result_array() as $myresult) 
+	foreach ($org_billing_types->result_array() as $myresult) 
 	{
 		$billing_id = $myresult['id'];
 		$org_name = $myresult['org_name'];

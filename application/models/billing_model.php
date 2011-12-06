@@ -95,7 +95,7 @@ class Billing_Model extends CI_Model
 	
 	/*
 	 * ------------------------------------------------------------------------
-	 *  get alternate billing types
+	 *  get alternate billing types for this billing id
 	 * ------------------------------------------------------------------------
 	 */
 	public function alternates($account_number, $billing_id)
@@ -113,6 +113,24 @@ class Billing_Model extends CI_Model
 	
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get alternate billing types for this service orgnization id
+	 * ------------------------------------------------------------------------
+	 */
+	public function org_alternates($account_number, $org_id)
+	{
+		$query = "SELECT b.id,bt.name,g.org_name FROM billing b ".
+			"LEFT JOIN general g ON g.id = b.organization_id ".
+			"LEFT JOIN billing_types bt ON b.billing_type = bt.id  ".
+			"WHERE b.account_number = ? AND g.id = ?";
+
+		$result = $this->db->query($query, array($account_number, $org_id)) or die ("query failed");
+		return $result;
+	}
+
+
 	/*
 	 * -------------------------------------------------------------------------
 	 *  save record information
@@ -124,8 +142,8 @@ class Billing_Model extends CI_Model
 		$this->db->where('id', $billing_id);
 		$this->db->update('billing', $billing_data);
 	}
-	
-	
+
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  return information from the billing record
@@ -142,7 +160,7 @@ class Billing_Model extends CI_Model
 			"b.prev_billing_date b_prev_billing_date, b.from_date b_from_date, ".
 			"b.to_date b_to_date, b.payment_due_date b_payment_due_date, ".
 			"b.rerun_date b_rerun_date, b.po_number b_po_number, b.notes b_notes, ".
-		  "b.automatic_receipt b_automatic_receipt, ".
+			"b.automatic_receipt b_automatic_receipt, ".
 			"b.organization_id b_organization_id,  t.id t_id, t.name t_name ".
 			"FROM billing b ".
 			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
@@ -186,7 +204,7 @@ class Billing_Model extends CI_Model
 			$lastfour = substr($data['creditcard_number'], -4);
 			$data['creditcard_number'] = "$firstdigit" . "***********" . "$lastfour";
 		}
-		
+
 		// get the billing status for this record
 		$data['mystatus'] = $this->billingstatus($billing_id);		
 
@@ -195,7 +213,7 @@ class Billing_Model extends CI_Model
 		$orgresult = $this->db->query($query) or die ("queryfailed");
 		$myorgresult = $orgresult->row();
 		$data['organization_name'] = $myorgresult->org_name;
-		
+
 		return $data;
 
 	}
