@@ -20,10 +20,6 @@ foreach ($master_services AS $myresult)
 </select>
 <p><?php echo lang('to')?>: <select name=linkto>
 
-$query = "SELECT * FROM master_services ORDER BY service_description";
-$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-$result = $DB->Execute($query) or die ("$l_queryfailed");
-	
 <?php
 foreach ($master_services AS $myresult)
 {
