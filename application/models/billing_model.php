@@ -3537,6 +3537,25 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the invoice numbers for printed or einvoice batches 
+     *  NOTE: not recent_invoice_number used for credit card batches
+	 * ------------------------------------------------------------------------
+	 */
+	function get_invoice_batch($batchid)
+	{
+		$query = "SELECT DISTINCT d.invoice_number, b.contact_email, b.id, ".
+			"b.account_number ".
+			"FROM billing_details d ".
+			"LEFT JOIN billing b on b.id = d.billing_id ".
+			"WHERE d.batch = ?";
+		$result = $this->db->query($query, array($batchid)) or die ("$l_queryfailed");
+		return $result->result_array();
+	}
+
+
 }
 
 

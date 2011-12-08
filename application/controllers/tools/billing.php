@@ -398,9 +398,8 @@ class Billing extends App_Controller
 								);
 
 						// insert any linked_services into the user_services table
-						$query = "SELECT * FROM linked_services WHERE linkfrom = $serviceid";
-						$result = $this->db->query($query) or die ("$l_queryfailed");
-						foreach($result->result_array() AS $myresult) 
+						$linked_services = $this->service_model->linked_services($serviceid);
+						foreach($linked_services AS $myresult) 
 						{
 							$linkto = $myresult['linkto'];
 							// insert the linked service now
@@ -941,9 +940,7 @@ class Billing extends App_Controller
 		// Print the invoice
 		/*-------------------------------------------------------------------*/
 		// query the batch for the invoices to do
-		$query = "SELECT DISTINCT d.invoice_number FROM billing_details d 
-			WHERE batch = '$batchid'";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$invoice_batch = $this->billing_model->get_invoice_batch($batchid);
 
 		// Show the control box on top of everthing else
 		//echo "<div id=\"popbox\">
@@ -954,7 +951,7 @@ class Billing extends App_Controller
 
 		$pdf = new FPDF();
 
-		foreach ($result->result_array() AS $myresult) 
+		foreach ($invoice_batch AS $myresult) 
 		{
 			// get the invoice data to process now
 			$invoice_number = $myresult['invoice_number'];
@@ -1079,13 +1076,9 @@ class Billing extends App_Controller
 		/*-------------------------------------------------------------------*/
 
 		// query the batch for the invoices to do
-		$query = "SELECT DISTINCT d.invoice_number, b.contact_email, b.id, b.account_number  
-			FROM billing_details d 
-			LEFT JOIN billing b ON b.id = d.billing_id
-			WHERE d.batch = '$batchid'";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$invoice_batch = $this->billing_model->get_invoice_batch($batchid);
 
-		foreach ($result->result_array() AS $myresult) 
+		foreach ($invoice_batch AS $myresult) 
 		{
 			// get the invoice data to process now
 			$invoice_number = $myresult['invoice_number'];

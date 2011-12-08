@@ -31,11 +31,6 @@ if ($num_rows == 0) {
   echo "<a href=\"$this->url_prefix/index.php/tickets/user/$this->user/$usernamedatetime\" $bgstyle>$this->user($num_rows)</a>\n";    
 }
 
-// query the customer_history for messages sent to 
-// groups the user belongs to
-//$query = "SELECT * FROM groups WHERE groupmember = '$this->user' ";
-//$supportresult = $this->db->query($query) 
-//  or die ("$l_queryfailed");
   
 foreach ($usergroups as $row) 
 {
