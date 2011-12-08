@@ -385,12 +385,7 @@ class Customer extends App_Controller
 				$removal_date = $this->billing_model->get_nextbillingdate();
 			} else {
 				// figure out the customer's current next billing anniversary date
-				$query = "SELECT b.next_billing_date FROM customer c " .
-					"LEFT JOIN billing b ON c.default_billing_id = b.id ".
-					"WHERE c.account_number = '$this->account_number'";
-				$result = $this->db->query($query) or die ("$query $l_queryfailed");
-				$myresult = $result->row_array();
-				$next_billing_date = $myresult['next_billing_date'];
+				$next_billing_date = $this->billing_model->default_next_billing_date($this->account_number);
 
 				// split date into pieces
 				$datepieces = explode('-', $next_billing_date);
@@ -412,10 +407,8 @@ class Customer extends App_Controller
 			}
 
 			// figure out all the services that the customer has and delete each one.
-			$query = "SELECT * FROM user_services 
-				WHERE account_number = '$this->account_number' AND removed <> 'y'";
-			$result = $this->db->query($query) or die ("query failed");
-			foreach ($result->result_array() as $myserviceresult) 
+			$servicelisting = $this->service_model->list_services($this->account_number);
+			foreach ($servicelisting as $myserviceresult) 
 			{
 				$userserviceid = $myserviceresult['id'];
 				$this->service_model->delete_service($userserviceid,'canceled',
@@ -424,45 +417,8 @@ class Customer extends App_Controller
 						'delete','service',$userserviceid,'success');
 			}
 
-			// set cancel date and removal date of customer record
-			$query = "UPDATE customer ".
-				"SET cancel_date = CURRENT_DATE, ". 
-				"cancel_reason = '$cancel_reason' ".
-				"WHERE account_number = '$this->account_number'";
-			$result = $this->db->query($query) or die ("query failed");
-
-			// set next_billing_date to NULL since it normally won't be billed again
-			$query = "UPDATE billing ".
-				"SET next_billing_date = NULL ". 
-				"WHERE account_number = '$this->account_number'";
-			$result = $this->db->query($query) or die ("query failed");   
-
-			// get the text of the cancel reason to use in the note
-			$query = "SELECT * FROM cancel_reason " . 
-				"WHERE id = '$cancel_reason'";
-			$result = $this->db->query($query) or die ("query failed");
-			$myresult = $result->row_array();
-			$cancel_reason_text = $myresult['reason'];
-
-			// add cancel ticket to customer_history
-			// if they are carrier dependent, send a note to
-			// the billing_noti
-			$desc = lang('canceled') . ": $cancel_reason_text";
-			$this->support_model->create_ticket($this->user, NULL, 
-					$this->account_number, 'automatic', $desc);
-
-			// get the billing_id for the customer's payment_history
-			$query = "SELECT default_billing_id FROM customer " . 
-				"WHERE account_number = '$this->account_number'";
-			$result = $this->db->query($query) or die ("$l_queryfailed");
-			$myresult = $result->row_array();
-			$default_billing_id = $myresult['default_billing_id'];
-
-			// add a canceled entry to the payment_history
-			$query = "INSERT INTO payment_history ".
-				"(creation_date, billing_id, status) ".
-				"VALUES (CURRENT_DATE,'$default_billing_id','canceled')";
-			$paymentresult = $this->db->query($query) or die ("$l_queryfailed");
+			// set cancel date and leave cancel histories for this customer
+			$this->customer_model->cancel_customer($cancel_reason, $this->account_number);
 
 			// log this customer being canceled/deleted
 			$this->log_model->activity($this->user,$this->account_number,
@@ -479,6 +435,7 @@ class Customer extends App_Controller
 
 
 	}
+
 
 
 	/*
