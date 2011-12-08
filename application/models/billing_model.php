@@ -3595,6 +3595,14 @@ class Billing_Model extends CI_Model
 			or die ("set rerun date queryfailed");
 	}
 
+	function set_rerun_item($id)
+	{
+		$query = "UPDATE billing_details SET rerun = 'y' ".
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($id)) 
+			or die ("$l_queryfailed");
+	}
+
 }
 
 

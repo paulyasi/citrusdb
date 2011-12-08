@@ -339,10 +339,7 @@ class Billing extends App_Controller
 					if ($myfield == $mykey) 
 					{
 						// set the rerun flag for this billing_detail id value to 'y'
-						$query = "UPDATE billing_details SET rerun = 'y' ".
-							"WHERE id = ?";
-						$result = $this->db->query($query, array($this->input->post($mykey))) 
-							or die ("$l_queryfailed");
+						$this->billing_model->set_rerun_item($this->input->post($mykey));
 					}
 				}
 			}
@@ -375,35 +372,26 @@ class Billing extends App_Controller
 	public function saveresetaddr()
 	{
 		// get the customer information
-		$query = "SELECT * FROM customer WHERE account_number = $this->account_number";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
-		$myresult = $result->row_array();
+		$myresult = $this->customer_model->record($this->account_number);
 
-		$name = $myresult['name'];
-		$company = $myresult['company'];
-		$street = $myresult['street'];
-		$city = $myresult['city'];
-		$state = $myresult['state'];
-		$zip = $myresult['zip'];
-		$country = $myresult['country'];
-		$phone = $myresult['phone'];
-		$fax = $myresult['fax'];
-		$contact_email = $myresult['contact_email'];
 		$default_billing_id = $myresult['default_billing_id'];	
+	
+		$billing_data = array(
+				'name' => $myresult['name'],
+				'company' => $myresult['company'],
+				'street' => $myresult['street'],
+				'city' => $myresult['city'],
+				'state' => $myresult['state'],
+				'zip' => $myresult['zip'],
+				'country' => $myresult['country'],
+				'phone' => $myresult['phone'],
+				'fax' => $myresult['fax'],
+				'contact_email' => $myresult['contact_email']
+				);
 
 		// save billing address
-		$query = "UPDATE billing 
-			SET name = '$name',
-				company = '$company',
-				street = '$street',
-				city = '$city',
-				state = '$state',
-				zip = '$zip',
-				country = '$country',
-				phone = '$phone',
-				fax = '$fax',
-				contact_email = '$contact_email' WHERE id = $default_billing_id";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$this->billing_model->save_record($default_billing_id, $billing_data);
+		
 		print "<h3>".lang('changessaved')."<h3>";
 
 		redirect ('/billing');	
