@@ -312,6 +312,49 @@ class Customer_Model extends CI_Model
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  make customer canceled on record and in histories
+	 * ------------------------------------------------------------------------
+	 */
+	function cancel_customer($cancel_reason, $account_number)
+	{
+		$query = "UPDATE customer ".
+			"SET cancel_date = CURRENT_DATE, ". 
+			"cancel_reason = '$cancel_reason' ".
+			"WHERE account_number = '$account_number'";
+		$result = $this->db->query($query) or die ("query failed");
+			
+		// set next_billing_date to NULL since it normally won't be billed again
+		$query = "UPDATE billing ".
+			"SET next_billing_date = NULL ". 
+			"WHERE account_number = '$account_number'";
+		$result = $this->db->query($query) or die ("query failed");   
+
+		// get the text of the cancel reason to use in the note
+		$query = "SELECT * FROM cancel_reason " . 
+			"WHERE id = '$cancel_reason'";
+		$result = $this->db->query($query) or die ("query failed");
+		$myresult = $result->row_array();
+		$cancel_reason_text = $myresult['reason'];
+
+		// add cancel ticket to customer_history
+		// if they are carrier dependent, send a note to
+		// the billing_noti
+		$desc = lang('canceled') . ": $cancel_reason_text";
+		$this->support_model->create_ticket($this->user, NULL, 
+				$account_number, 'automatic', $desc);
+
+		// get the billing_id for the customer's payment_history
+		$default_billing_id = $this->billing_model->default_billing_id($account_number);
+
+		// add a canceled entry to the payment_history
+		$query = "INSERT INTO payment_history ".
+			"(creation_date, billing_id, status) ".
+			"VALUES (CURRENT_DATE,'$default_billing_id','canceled')";
+		$paymentresult = $this->db->query($query) or die ("$l_queryfailed");
+	}
+
 }
 
 /* end file models/customer_model.php */

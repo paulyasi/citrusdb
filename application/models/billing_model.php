@@ -3555,6 +3555,22 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the next billing date for the default billing id for this account
+	 * ------------------------------------------------------------------------
+	 */
+	function default_next_billing_date($account_number)
+	{
+		$query = "SELECT b.next_billing_date FROM customer c " .
+			"LEFT JOIN billing b ON c.default_billing_id = b.id ".
+			"WHERE c.account_number = ?";
+		$result = $this->db->query($query, array($account_number)) or die ("$query $l_queryfailed");
+		$myresult = $result->row_array();
+		return $myresult['next_billing_date'];
+	}
+
 
 }
 
