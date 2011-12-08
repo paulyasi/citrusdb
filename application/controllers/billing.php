@@ -275,11 +275,16 @@ class Billing extends App_Controller
 
 	public function rerun($billing_id)
 	{
+		// load the date helper for human format dates	
+		$this->load->helper('date');
+
 		// load the module header common to all module views
 		$this->load->view('module_header_view');
 
 		// clear any rerun date so it's ready for a new one	
-		$data = $this->billing_model->clearrerundate($billing_id);	
+		$this->billing_model->clearrerundate($billing_id);	
+
+		$data['billing_id'] = $billing_id;
 
 		// load the reset addr view prompt
 		$data['rerunitems'] = $this->billing_model->rerunitems($billing_id);	
@@ -297,28 +302,27 @@ class Billing extends App_Controller
 	public function savererun()
 	{
 		// GET Variables
-		$billing_id = $base->input['billing_id'];
-		$fieldlist = $base->input['fieldlist'];
+		$billing_id = $this->input->post('billing_id');
+		$fieldlist = $this->input->post('fieldlist');
+		echo "$billing_id $fieldlist";
 
 		// set the rerun date to the next available billing date
-		$mydate = get_nextbillingdate();
+		$mydate = $this->billing_model->get_nextbillingdate();
 
 		// make sure the rerun date is not set to the same as the next_billing_date
-		$query = "SELECT next_billing_date FROM billing WHERE id = '$billing_id'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		$myresult = $result->fields;	
-		$next_billing_date = $myresult['next_billing_date'];
+		$next_billing_date = $this->billing_model->billing_next_billing_date($billing_id);
 
-		if ($next_billing_date == $mydate) {
-			echo "<h3>$l_rerundateerror</h3>".
+		if ($next_billing_date == $mydate) 
+		{
+			echo "<h3>".lang('rerundateerror')."</h3>".
 				"<center><form style=\"margin-bottom:0;\" action=\"index.php\">".
-				"<input name=done type=submit value=\" $l_ok  \" class=smallbutton>".
+				"<input name=done type=submit value=\"".lang('ok')."\" class=smallbutton>".
 				"<p></center>";
-		} else {
-			$query = "UPDATE billing SET rerun_date = '$mydate' ".
-				"WHERE id = '$billing_id'";
-			$result = $DB->Execute($query) or die ("$l_queryfailed");
+		} 
+		else 
+		{
+			// set the rerun date and mark items to rerun
+			$this->billing_model->set_rerun_date($mydate, $billing_id);
 
 			// parse the fieldlist to set the rerun flag for the items chosen     
 			// add the services to the user_services table and the options table
@@ -327,23 +331,23 @@ class Billing extends App_Controller
 			// loop through post_vars associative/hash to get field values
 			$array_fieldlist = explode(",",$fieldlist);
 
-			foreach ($base->input as $mykey => $myvalue) {
-				foreach ($array_fieldlist as $myfield) {
-					//print "$mykey<br>";
-					if ($myfield == $mykey) {
-						$fieldvalues .= ',\'' . $myvalue . '\'';
+			foreach ($_POST as $mykey => $myvalue) 
+			{
+				foreach ($array_fieldlist as $myfield) 
+				{
+					print "KEY: $mykey<br>";
+					if ($myfield == $mykey) 
+					{
 						// set the rerun flag for this billing_detail id value to 'y'
 						$query = "UPDATE billing_details SET rerun = 'y' ".
-							"WHERE id = '$myvalue'";
-						$result = $DB->Execute($query) or die ("$l_queryfailed");
-
-						// TODO: do I need to unset all the other things rerun items too?  
-
+							"WHERE id = ?";
+						$result = $this->db->query($query, array($this->input->post($mykey))) 
+							or die ("$l_queryfailed");
 					}
 				}
 			}
 
-			print "<h3>$l_changessaved<h3>";
+			print "<h3>".lang('changessaved')."<h3>";
 			redirect('/billing');
 
 		}
@@ -438,7 +442,7 @@ class Billing extends App_Controller
 	{
 		// get id input from form
 		$billing_id = $this->input->post('billing_id');
-	
+
 		// set the payment history to turnoff
 		$this->billing_model->turnedoff_status($billing_id);	
 
@@ -517,7 +521,7 @@ class Billing extends App_Controller
 	{
 		// get id input from form
 		$billing_id = $this->input->post('billing_id');
-	
+
 		// set the payment history to turnoff
 		$this->billing_model->authorized_status($billing_id);	
 
@@ -559,7 +563,7 @@ class Billing extends App_Controller
 	{
 		// get id input from form
 		$billing_id = $this->input->post('billing_id');
-	
+
 		// set the payment history to cancelwfee
 		$this->billing_model->cancelwfee_status($billing_id);	
 
@@ -602,7 +606,7 @@ class Billing extends App_Controller
 	{
 		// get id input from form
 		$billing_id = $this->input->post('billing_id');
-	
+
 		// set the payment history to cancelwfee
 		$this->billing_model->collections_status($billing_id);	
 
@@ -985,7 +989,7 @@ class Billing extends App_Controller
 		// just mark the amount as refunded in the database
 		if ($method <> 'creditcard') 
 		{
-		$this->billing_model->manual_detail_refund_amount($detailid, $refundamount);
+			$this->billing_model->manual_detail_refund_amount($detailid, $refundamount);
 
 			print "<h2 style=\"color: red;\">".lang('method_warning')."</h2>";
 		}
@@ -1027,7 +1031,7 @@ class Billing extends App_Controller
 			echo "\"$firstline\" ";
 			die ("Error first line of ciphertext format");
 		}
-	
+
 		if ($lastline <> "-----END PGP MESSAGE-----") 
 		{
 			echo "\"$lastline\" ";
@@ -1104,7 +1108,7 @@ class Billing extends App_Controller
 
 		// check user privileges to see if we show them things like nsf or delete payment links
 		$data['userprivileges'] = $this->user_model->user_privileges($this->user);
-		
+
 		$this->load->view('billing/paymenthistory_view', $data);
 	}
 
@@ -1131,7 +1135,7 @@ class Billing extends App_Controller
 		$this->load->view('billing/detailhistory_view', $data);
 	}
 
-	
+
 	public function nsf($paymentid, $invoice_number, $amount, $billingid)
 	{
 		// load the header without the sidebar to get the stylesheet in there

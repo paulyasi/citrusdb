@@ -23,8 +23,9 @@ function checkitems(fieldArray)
 
 <blockquote><table border=0 cellspacing=0 cellpadding=3>
 <?php
-// initialize rerun items to check later
-$rerunitems = 0;
+// initialize rerun items count to check later
+$itemcount = 0;
+$fieldlist = "";
 
 $current_invoice_line = 0;
 $current_invoice_total = 0;
@@ -36,16 +37,16 @@ if(!$rerunitems)
 }
 else
 {
-echo "<td></td><td><?php echo lang('invoice');?></td>
-<td><?php echo lang('id');?></td><td><?php echo lang('date');?></td>
-<td><?php echo lang('service');?></td><td><?php echo lang('price');?></td><tr>";
+	echo "<td></td><td><?php echo lang('invoice');?></td>
+		<td><?php echo lang('id');?></td><td><?php echo lang('date');?></td>
+		<td><?php echo lang('service');?></td><td><?php echo lang('price');?></td><tr>";
 
 	foreach ($rerunitems as $myresult) 
 	{
 		$detail_id = $myresult['bd_id'];
 		$original_invoice_number = $myresult['original_invoice_number'];
 		$service_id = $myresult['us_id'];
-		$creation_date = humandate($myresult['creation_date'], $lang);
+		$creation_date = humandate($myresult['creation_date']);
 		$user_services_id = $myresult['user_services_id'];
 		$detail_total = sprintf("%.2f",$myresult['billed_amount'] - $myresult['paid_amount']);
 		$description = $myresult['service_description'];
@@ -104,7 +105,7 @@ echo "<td></td><td><?php echo lang('invoice');?></td>
 		$fieldlist .= ',' . $fieldname;
 
 		// add to the number of items rerun
-		$rerunitems++;
+		$itemcount++;
 	}
 
 	// print the last line with the previous invoices current total before resetting it
@@ -118,7 +119,7 @@ echo "<td></td><td><?php echo lang('invoice');?></td>
 	// print the yes/no buttons if there are items to rerun
 	// else print an error that there are no items to be rerun
 
-	if ($rerunitems > 0) 
+	if ($itemcount > 0) 
 	{
 		print "<table cellpadding=15 cellspacing=0 border=0 width=720>".
 			"<td align=right width=360>";
@@ -130,10 +131,8 @@ echo "<td></td><td><?php echo lang('invoice');?></td>
 		print "<input name=save type=submit value=\" ".lang('yes')." \" class=smallbutton>".
 			"</form></td>";
 		print "<td align=left width=360><form style=\"margin-bottom:0;\" ".
-			"action=\"index.php\" method=post>";
+			"action=\"$this->url_prefix/index.php/billing\" method=post>";
 
-		print "<input type=hidden name=load value=billing>";
-		print "<input type=hidden name=type value=module>";
 		print "<input name=done type=submit value=\" ".lang('no')."  \" class=smallbutton>";
 		print "</form></td></table>";
 	} 

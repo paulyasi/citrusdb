@@ -3566,11 +3566,34 @@ class Billing_Model extends CI_Model
 		$query = "SELECT b.next_billing_date FROM customer c " .
 			"LEFT JOIN billing b ON c.default_billing_id = b.id ".
 			"WHERE c.account_number = ?";
-		$result = $this->db->query($query, array($account_number)) or die ("$query $l_queryfailed");
+		$result = $this->db->query($query, array($account_number)) 
+			or die ("default_next_billing_date queryfailed");
 		$myresult = $result->row_array();
 		return $myresult['next_billing_date'];
 	}
 
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  get the next billing date for the specific billing id 
+	 * ------------------------------------------------------------------------
+	 */
+	function billing_next_billing_date($billing_id)
+	{
+		$query = "SELECT next_billing_date FROM billing WHERE id = ?";
+		$result = $this->db->query($query, array($billing_id)) 
+			or die ("billing_next_billing_date queryfailed");
+		$myresult = $result->row_array();	
+		return $myresult['next_billing_date'];
+	}
+
+	function set_rerun_date($mydate, $billing_id)
+	{
+		$query = "UPDATE billing SET rerun_date = ? ".
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($mydate, $billing_id)) 
+			or die ("set rerun date queryfailed");
+	}
 
 }
 
