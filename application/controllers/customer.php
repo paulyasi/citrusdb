@@ -459,36 +459,7 @@ class Customer extends App_Controller
 		$this->load->model('billing_model');			
 		$this->load->model('log_model');			
 
-		// undelete the customer record
-		$query = "UPDATE customer ".
-			"SET cancel_date = NULL, ".
-			"cancel_reason = NULL ".
-			"WHERE account_number = '$this->account_number'";
-		$result = $this->db->query($query) or die ("update customer query failed");
-
-		// update the default billing records with new billing dates
-		$mydate = $this->billing_model->get_nextbillingdate();
-
-		$query = "UPDATE billing ".
-			"SET next_billing_date = '$mydate', ".
-			"from_date = '$mydate', ".
-			"payment_due_date = '$mydate' ".
-			"WHERE account_number = '$this->account_number'";
-		$result = $this->db->query($query) or die ("update billing $l_queryfailed");  
-
-		// get the default billing id and billing type for automati_to_date
-		$query = "SELECT c.default_billing_id,b.billing_type,b.from_date ".
-			"FROM customer c ".
-			"LEFT JOIN billing b ON b.id = c.default_billing_id ".
-			"WHERE c.account_number = '$this->account_number'";
-		$result = $this->db->query($query) or die ("Billing Query Failed");
-		$myresult = $result->row_array();	
-		$billing_id = $myresult['default_billing_id'];
-		$billing_type = $myresult['billing_type'];
-		$from_date = $myresult['from_date'];
-
-		// set the to_date automatically
-		$this->billing_model->automatic_to_date($from_date, $billing_type, $billing_id);
+		$this->customer_model->undelete_customer($this->account_number);
 
 		// log this uncancel
 		$this->log_model->activity($this->user,$this->account_number,'uncancel','customer',0,'success');
