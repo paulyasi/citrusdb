@@ -326,32 +326,10 @@ class Customer extends App_Controller
 	 */
 	public function whycancel($now = NULL)
 	{
-		// ask what reason they are canceling
-		print lang('whycanceling') . "<p>";
-		print "<form style=\"margin-bottom:0;\" ".
-			"action=\"" . $this->url_prefix . "/index.php/customer/delete/$now\" ".
-			"name=\"cancelform\" method=post>";
-
-		// print list of reasons to choose from
-		$query = "SELECT * FROM cancel_reason";
-		$result = $this->db->query($query) or die ("query failed");
-		echo "<select name=\"cancel_reason\" ".
-			"onChange=\"document.cancelform.deletenow.disabled=false\">".
-			"<option value=\"\">Choose One...</option>";
-
-		foreach ($result->result_array() as $myresult) 
-		{
-			$myid = $myresult['id'];
-			$myreason = $myresult['reason'];
-			echo "<option value=\"$myid\">$myreason</option>";
-		}
-
-		echo "</select><p>";
-
-		// make sure the select one, use javascript to disable this until they pick 
-		// a value for cancel reason
-		print "<input disabled name=deletenow id=deletenow type=submit ".
-			"value=\"" . lang('cancelcustomer') . "\" class=smallbutton></form><p>";
+		$data['now'] = $now;
+		
+		$data['cancelreasons'] = $this->customer_model->select_cancel_reasons();
+		$this->load->view('customer/whycancel_view', $data);
 	}
 
 
