@@ -9,6 +9,7 @@ class Dashboard extends App_Controller {
 	{
 		$this->load->model('user_model');
 		$this->load->model('support_model');
+		$this->load->model('module_model');
 
 		// show the header common to all dashboard/tool views
 		$this->load->view('dashboard_header_view');
@@ -16,35 +17,15 @@ class Dashboard extends App_Controller {
 		$this->load->view('searchbox_view');
 
 		// include module searches below here
-		// TODO: put this into a permission model?
+		
 		// First check for permissions to view search modules
-		$groupname = array();
-		$modulelist = array();
-		$query = $this->db->get_where('groups', array('groupmember' => $this->user));
-
-		foreach($query->result() as $myresult) {
-			array_push($groupname,$myresult->groupname);
-		}
-		$groups = array_unique($groupname);
-		array_push($groups,$this->user);
-
-		while (list($key,$value) = each($groups)) {
-			$query = $this->db->get_where('module_permissions', array('user' => $value));
-			foreach($query->result() as $myresult) {
-				array_push($modulelist,$myresult->modulename);
-			}
-		}
-		$viewable = array_unique($modulelist);
-
+		$viewable = $this->module_model->module_permission_list($this->user);
 
 		// Search Modules Menu
-
-		//$query = "SELECT * FROM modules ORDER BY sortorder";
-		//$result = $this->db->query($query) or die ("$l_queryfailed");
-		$query = $this->db->order_by('sortorder', "asc")->get('modules');
-		foreach($query->result() as $myresult) {
-			$commonname = $myresult->commonname;
-			$modulename = $myresult->modulename;
+		$modulelist = $this->module_model->modulelist();
+		foreach($modulelist as $myresult) {
+			$commonname = $myresult['commonname'];
+			$modulename = $myresult['modulename'];
 
 			if (in_array ($modulename, $viewable)) {
 				$viewthis = $modulename . '/search_view';
