@@ -821,16 +821,9 @@ class Billing extends App_Controller
 		// get the invoicenum input
 		$invoicenum = $this->input->post('invoicenum');
 
-		// Delete the invoice, delete from billing history where id = $invoicenum
-		$query = "DELETE FROM billing_history WHERE id = $invoicenum";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$this->billing_model->delete_invoice($invoicenum);
 
-		// delete from billing_details where invoice_number = $invoicenum
-		$query = "DELETE FROM billing_details ".
-			"WHERE invoice_number = $invoicenum";                                          
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-
-		print "$l_deleted $invoicenum";
+		print lang('deleted')." ".$invoicenum;
 	}
 
 

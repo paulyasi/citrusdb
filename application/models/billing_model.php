@@ -3587,6 +3587,7 @@ class Billing_Model extends CI_Model
 		return $myresult['next_billing_date'];
 	}
 
+
 	function set_rerun_date($mydate, $billing_id)
 	{
 		$query = "UPDATE billing SET rerun_date = ? ".
@@ -3595,6 +3596,7 @@ class Billing_Model extends CI_Model
 			or die ("set rerun date queryfailed");
 	}
 
+	
 	function set_rerun_item($id)
 	{
 		$query = "UPDATE billing_details SET rerun = 'y' ".
@@ -3602,6 +3604,22 @@ class Billing_Model extends CI_Model
 		$result = $this->db->query($query, array($id)) 
 			or die ("$l_queryfailed");
 	}
+
+
+	function delete_invoice($invoicenum)
+	{
+		// Delete the invoice, delete from billing history where id = $invoicenum
+		$query = "DELETE FROM billing_history WHERE id = ?";
+		$result = $this->db->query($query, array($invoicenum)) 
+			or die ("delete_invoice billing_history failed");
+
+		// delete from billing_details where invoice_number = $invoicenum
+		$query = "DELETE FROM billing_details ".
+			"WHERE invoice_number = ?";                                          
+		$result = $this->db->query($query, array($invoicenum)) 
+			or die ("delete_invoice billing_details failed");
+	}
+
 
 }
 
