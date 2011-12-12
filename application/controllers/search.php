@@ -83,19 +83,31 @@ class Search extends App_Controller {
   
   			if($page == 1)
    			{
-      			echo lang('previous');
+				// disabled button
+      			echo "<form name=prevform>".
+					"<input type=submit value=\"".lang('previous')."\" disabled>".
+					"</form>";	
     		} 
     		else 
     		{
-    			echo "<a href=\"$this->url_prefix/index.php/search/listresults/".
-    				($page - 1) . "/$perpage/&id=$this->id&s1=$this->s1".
-    				"&s2=$this->s2&s3=$this->s3&s4=$this->s4&s5=$this->s5".
-    				"\">".lang('previous')."</a> ";	
+    			echo "<form name=prevform action=\"$this->url_prefix/index.php/search/listresults/".
+    				($page - 1) . "/$perpage/\" method=POST>".
+					"<input type=hidden name=id value=\"$this->id\">".
+					"<input type=hidden name=s1 value=\"$this->s1\">".				
+					"<input type=hidden name=s2 value=\"$this->s2\">".
+					"<input type=hidden name=s3 value=\"$this->s3\">".
+					"<input type=hidden name=s4 value=\"$this->s4\">".				
+					"<input type=hidden name=s5 value=\"$this->s5\">".
+    				"<input type=submit value=\"".lang('previous')."\">".
+					"</form>";	
   			}
   
   			if($page == $pager->numPages)
     		{
-      			echo lang('next');
+				echo "<form name=nextform action=\"$this->url_prefix/index.php/search/listresults/".
+					($page +1)."/$perpage/\" method=POST>".
+					"<input type=submit value=\"".lang('next')."\" disabled>".
+					"</form>";
     		} 
     		else 
     		{
@@ -107,13 +119,20 @@ class Search extends App_Controller {
 					"<input type=hidden name=s3 value=\"$this->s3\">".
 					"<input type=hidden name=s4 value=\"$this->s4\">".
 					"<input type=hidden name=s5 value=\"$this->s5\">".
-					"<input type=submit value=\"".lang('next')."\"></form>";
+					"<input type=submit value=\"".lang('next')."\">".
+					"</form>";
 			}
-
-			echo " | <a href=\"$this->url_prefix/index.php/search/listresults/".
-				$numpages."/".$perpage."/&id=$this->id&s1=$this->s1&s2=$this->s2&".
-				"s3=$this->s3&s4=$this->s4&s5=$this->s5".
-				"\">".lang('last')."</a>";
+    			echo "<form name=nextform action=\"$this->url_prefix/index.php/search/listresults/".
+					$numpages."/$perpage/\" method=POST>".
+					"<input type=hidden name=id value=\"$this->id\">".
+					"<input type=hidden name=s1 value=\"$this->s1\">".
+					"<input type=hidden name=s2 value=\"$this->s2\">".
+					"<input type=hidden name=s3 value=\"$this->s3\">".
+					"<input type=hidden name=s4 value=\"$this->s4\">".
+					"<input type=hidden name=s5 value=\"$this->s5\">".
+					"<input type=submit value=\"".lang('last')."\">".
+					"</form>";
+				
 
 			echo " | ";
 			echo lang('results_per_page');
