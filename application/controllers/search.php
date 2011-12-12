@@ -19,19 +19,21 @@ class Search extends App_Controller {
 		$this->s4 = $this->input->get_post('s4');
 		$this->s5 = $this->input->get_post('s5');
 
+		echo "$this->id $this->s1";
+
 		// figure out which type of search it is from the searches table
 		$query = $this->db->get_where('searches', array('id' => $this->id));
 		$myresult = $query->row();
 		
 		// assign the query from the search to the query string
 		// replace the s1 thru s5 etc place holders with the actual variables
-		$searchquery = str_replace("%s1%", $this->s1, $myresult->query);
-		$searchquery = str_replace("%s2%", $this->s2, $searchquery);
-		$searchquery = str_replace("%s3%", $this->s3, $searchquery);
-		$searchquery = str_replace("%s4%", $this->s4, $searchquery);
-		$searchquery = str_replace("%s5%", $this->s5, $searchquery);
+		$this->searchquery = str_replace("%s1%", $this->s1, $myresult->query);
+		$this->searchquery = str_replace("%s2%", $this->s2, $this->searchquery);
+		$this->searchquery = str_replace("%s3%", $this->s3, $this->searchquery);
+		$this->searchquery = str_replace("%s4%", $this->s4, $this->searchquery);
+		$this->searchquery = str_replace("%s5%", $this->s5, $this->searchquery);
 
-		$this->result = $this->db->query($searchquery) or die ("search result queryfailed");
+		$this->result = $this->db->query($this->searchquery) or die ("search result queryfailed");
 		
 		// print the search page heading
 		echo "<h3>";
@@ -67,14 +69,16 @@ class Search extends App_Controller {
 		$num_of_results = $this->result->num_rows();
 		echo "$num_of_results " . lang('found');
 		if ($num_of_results > $perpage)
-		{
+		{			
+			// load the pager helper to calculate page numbers
+			$this->load->helper('pager');
   			$pager = getPagerData($num_of_results, $perpage, $page);
   			$offset = $pager->offset;
   			$limit = $pager->limit;
   			$page = $pager->page;
   			$numpages = $pager->numPages;
-  			$pagedquery = $query . " limit $offset, $limit"; 
-  			$this->result = $this->db->query($pagedquery) or die ("this $l_queryfailed");
+  			$pagedquery = $this->searchquery . " limit $offset, $limit"; 
+  			$this->result = $this->db->query($pagedquery) or die ("page query failed");
   			echo lang('page') . " " . $page . " " . lang('of') . " " . $numpages . " | ";
   
   			if($page == 1)
@@ -86,7 +90,7 @@ class Search extends App_Controller {
     			echo "<a href=\"$this->url_prefix/index.php/search/listresults/".
     				($page - 1) . "/$perpage/&id=$this->id&s1=$this->s1".
     				"&s2=$this->s2&s3=$this->s3&s4=$this->s4&s5=$this->s5".
-    				">".lang('previous')."</a> ";	
+    				"\">".lang('previous')."</a> ";	
   			}
   
   			if($page == $pager->numPages)
@@ -95,29 +99,54 @@ class Search extends App_Controller {
     		} 
     		else 
     		{
-    			echo "<a href=\"$this->url_prefix/index.php/search/listresults/".
-					($page +1) . "/$perpage/&id=$this->id&s1=$this->s1".
-					"&s2=$this->s2&s3=$this->s3&s4=$this->s4&s5=$this->s5"
-					">$l_next</a>";
+    			echo "<form name=nextform action=\"$this->url_prefix/index.php/search/listresults/".
+					($page +1)."/$perpage/\" method=POST>".
+					"<input type=hidden name=id value=\"$this->id\">".
+					"<input type=hidden name=s1 value=\"$this->s1\">".
+					"<input type=hidden name=s2 value=\"$this->s2\">".
+					"<input type=hidden name=s3 value=\"$this->s3\">".
+					"<input type=hidden name=s4 value=\"$this->s4\">".
+					"<input type=hidden name=s5 value=\"$this->s5\">".
+					"<input type=submit value=\"".lang('next')."\"></form>";
 			}
 
-			echo " | <a href=\"$this->url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&".
-				"s3=$s3&s4=$s4&s5=$s5&page="
-				. $numpages . "&perpage=$perpage&pagetype=$pagetype\">$l_last</a>";
+			echo " | <a href=\"$this->url_prefix/index.php/search/listresults/".
+				$numpages."/".$perpage."/&id=$this->id&s1=$this->s1&s2=$this->s2&".
+				"s3=$this->s3&s4=$this->s4&s5=$this->s5".
+				"\">".lang('last')."</a>";
 
 			echo " | ";
 			echo lang('results_per_page');
-			echo " <form name=\"resultsper\">
-				<select name=\"perchoice\" onChange=\"window.location=document.resultsper.perchoice.options[document.resultsper.perchoice.selectedIndex].value\">
-				<option selected value=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=$perpage\">$perpage</option>
-				<option value=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=20\">20</option>
-				<option value=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=50\">50</option>
-				<option value=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=100\">100</option>
-				<option value=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=500\">500</option>
-				<option value=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=1000\">1000</option>
-				<option value=\"index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=10000\">10000</option>
-				</select>
-				</form>";
+			echo " <form name=\"resultsper\" action=\"$this->url_prefix/index.php/search/listresults\" ".
+				"method=POST>".
+				"<input type=hidden name=id value=\"$this->id\">".
+				"<input type=hidden name=s1 value=\"$this->s1\">".
+				"<input type=hidden name=s2 value=\"$this->s2\">".
+				"<input type=hidden name=s3 value=\"$this->s3\">".
+				"<input type=hidden name=s4 value=\"$this->s4\">".
+				"<input type=hidden name=s5 value=\"$this->s5\">".
+				
+				"<select name=\"perchoice\" onChange=\"window.location=".
+				"document.resultsper.perchoice.options[document.resultsper.perchoice.selectedIndex].value\">".
+
+                "<option selected value=\"$this->url_prefix/index.php/search/listresults/".
+				"$page/$perpage\">$perpage</option>".
+
+				"<option value=\"$this->url_prefix/index.php/search/listresults/".
+				"$page/20/\">20</option>".
+
+				"<option value=\"$this->url_prefix/index.php/search/listresults/".
+				"$page/50\">50</option>".
+
+				"<option value=\"$this->url_prefix/index.php/search/listresults/".
+				"$page/100/&id=$this->id&s1=$this->s1&s2=$this->s2&s3=$this->s3".
+				"&s4=$this->s4&s5=$this->s5&page=$page&perpage=20\">100</option>".
+
+				"<option value=\"$this->url_prefix/index.php/search/listresults/".
+				"$page/1000/&id=$this->id&s1=$this->s1&s2=$this->s2&s3=$this->s3".
+				"&s4=$this->s4&s5=$this->s5&page=$page&perpage=20\">1000</option>".
+				
+				"</select></form>";
 		}
 
 		// record view link
