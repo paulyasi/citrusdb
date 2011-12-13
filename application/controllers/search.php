@@ -166,13 +166,26 @@ class Search extends App_Controller {
 		}
 
 		// record view link
-		echo "&nbsp;&nbsp;&nbsp;&nbsp; <a href=\"$this->url_prefix/index.php/recordview/".
-			"$page/1/?type=fs&id=$this->id&s1=$this->s1&s2=$this->s2".
-			"&s3=$this->s3&s4=$this->s4&s5=$this->s5\">".
-			lang ('recordview') . "</a> | ";
-		echo "<a href=\"$this->url_prefix/index.php/listresults/$page/$perpage/".
-			"?type=fs&id=$this->id&s1=$this->s1&s2=$this->s2&s3=$this->s3&s4=$this->s4".
-			"&s5=$this->s5\">" . lang('listview') . "</a><br>";
+		echo "&nbsp;&nbsp;&nbsp;&nbsp; <form method=post ".
+			"action=\"$this->url_prefix/index.php/search/recordview/$page/1/\">".
+			"<input type=hidden name=id value=\"$this->id\">".
+			"<input type=hidden name=s1 value=\"$this->s1\">".
+			"<input type=hidden name=s2 value=\"$this->s2\">".
+			"<input type=hidden name=s3 value=\"$this->s3\">".
+			"<input type=hidden name=s4 value=\"$this->s4\">".
+			"<input type=hidden name=s5 value=\"$this->s5\">".
+			"<input type=submit value=\"".lang('recordview')."\">".
+			"</form> ";
+
+		echo "<form method=post action=\"$this->url_prefix/index.php/search/listresults/$page/20\">".
+			"<input type=hidden name=id value=\"$this->id\">".
+			"<input type=hidden name=s1 value=\"$this->s1\">".
+			"<input type=hidden name=s2 value=\"$this->s2\">".
+			"<input type=hidden name=s3 value=\"$this->s3\">".
+			"<input type=hidden name=s4 value=\"$this->s4\">".
+			"<input type=hidden name=s5 value=\"$this->s5\">".
+			"<input type=submit value=\"".lang('listview')."\">".
+			"</form><br>";
 
 		foreach($this->result->result() as $myresult)
 		{
