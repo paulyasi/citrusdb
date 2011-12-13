@@ -136,8 +136,7 @@ class Search extends App_Controller {
 
 			echo " | ";
 			echo lang('results_per_page');
-			echo " <form name=\"resultsper\" action=\"$this->url_prefix/index.php/search/listresults\" ".
-				"method=POST>".
+			echo " <form name=\"resultsper\" method=POST>".
 				"<input type=hidden name=id value=\"$this->id\">".
 				"<input type=hidden name=s1 value=\"$this->s1\">".
 				"<input type=hidden name=s2 value=\"$this->s2\">".
@@ -145,11 +144,11 @@ class Search extends App_Controller {
 				"<input type=hidden name=s4 value=\"$this->s4\">".
 				"<input type=hidden name=s5 value=\"$this->s5\">".
 				
-				"<select name=\"perchoice\" onChange=\"window.location=".
-				"document.resultsper.perchoice.options[document.resultsper.perchoice.selectedIndex].value\">".
+				"<select name=\"perchoice\" onchange=\"".
+				"this.form.action=this.options[this.selectedIndex].value;".
+				"this.form.submit()\">".
 
-                "<option selected value=\"$this->url_prefix/index.php/search/listresults/".
-				"$page/$perpage\">$perpage</option>".
+                "<option selected value=\"$this->url_prefix/index.php/search/listresults/$page/$perpage\">$perpage</option>".
 
 				"<option value=\"$this->url_prefix/index.php/search/listresults/".
 				"$page/20/\">20</option>".
@@ -158,12 +157,10 @@ class Search extends App_Controller {
 				"$page/50\">50</option>".
 
 				"<option value=\"$this->url_prefix/index.php/search/listresults/".
-				"$page/100/&id=$this->id&s1=$this->s1&s2=$this->s2&s3=$this->s3".
-				"&s4=$this->s4&s5=$this->s5&page=$page&perpage=20\">100</option>".
+				"$page/100\">100</option>".
 
 				"<option value=\"$this->url_prefix/index.php/search/listresults/".
-				"$page/1000/&id=$this->id&s1=$this->s1&s2=$this->s2&s3=$this->s3".
-				"&s4=$this->s4&s5=$this->s5&page=$page&perpage=20\">1000</option>".
+				"$page/1000\">1000</option>".
 				
 				"</select></form>";
 		}
