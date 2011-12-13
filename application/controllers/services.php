@@ -215,34 +215,41 @@ class Services extends App_Controller {
 
 	public function taxexempt() 
 	{
+		$tax_rate_id = $this->input->post('taxrateid');
+		
 		// ask the user for customer tax id, and exempt id expiration date
-		print "<a href=\"index.php?load=services&type=module\">[ $l_undochanges ]</a>";
-		print "<h4>$l_exempt</h4><form action=\"index.php\" method=post>".
+		print "<a href=\"$this->url_prefix/index.php/services/\">[ ".lang('undochanges')." ]</a>";
+		
+		print "<h4>".lang('exempt')."</h4><form method=post ".
+			"action=\"$this->url_prefix/index.php/services/savetaxexempt\">".
 			"<table width=720 cellpadding=5 cellspacing=1 border=0>";
-		print "<input type=hidden name=load value=services>";
-		print "<input type=hidden name=type value=module>";
-		print "<input type=hidden name=edit value=on>";
-		print "<input type=hidden name=taxrate value=\"$tax_rate_id\">";
-		echo "<td bgcolor=\"ccccdd\"width=180><b>$l_taxexemptid</b></td>".
+		
+		print "<input type=hidden name=taxrateid value=\"$tax_rate_id\">";
+		
+		echo "<td bgcolor=\"ccccdd\"width=180><b>".lang('taxexemptid')."</b></td>".
 			"<td bgcolor=\"#ddddee\"><input type=text name=customer_tax_id></td><tr>\n";
-		echo "<td bgcolor=\"ccccdd\"width=180><b>$l_expirationdate</b></td>".
+		
+		echo "<td bgcolor=\"ccccdd\"width=180><b>".lang('expirationdate')."</b></td>".
 			"<td bgcolor=\"#ddddee\"><input type=text name=expdate></td><tr>\n";
+		
 		print "<td></td><td><input name=saveexempt type=submit ".
-			"value=\"$l_savechanges\" class=smallbutton></td></table></form>";
+			"value=\"".lang('savechanges')."\" class=smallbutton></td></table></form>";
 	}
 
 
 	public function savetaxexempt() 
-	{ 
-		// save the tax exempt status information, make the customer tax exempt
-		$query = "INSERT INTO tax_exempt ".
-			"(account_number, tax_rate_id, customer_tax_id, expdate) ". 
-			"VALUES ('$this->account_number', '$tax_rate_id','$customer_tax_id','$expdate')";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+	{
+	   	$tax_rate_id = $this->input->post('taxrateid');
+	   	$customer_tax_id = $this->input->post('customer_tax_id');
+		$expdate = $this->input->post('expdate');
+
+		$this->billing_model->set_tax_exempt($this->account_number,
+											 $tax_rate_id,
+											 $customer_tax_id,
+											 $expdate);
 
 		// redirect back to the service index
-		print "<script language=\"JavaScript\">window.location.href = ".
-			"\"index.php?load=services&type=module\";</script>";
+		redirect('/services/');
 	}
 
 
@@ -254,8 +261,8 @@ class Services extends App_Controller {
 		$result = $DB->Execute($query) or die ("$l_queryfailed");
 
 		// redirect back to the service index
-		print "<script language=\"JavaScript\">window.location.href = ".
-			"\"index.php?load=services&type=module\";</script>";
+		redirect('/services/');
+		
 	}
 
 	/*

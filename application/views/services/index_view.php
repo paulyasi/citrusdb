@@ -102,11 +102,9 @@ echo "<tr onMouseOver='h(this);' onmouseout='deh(this);' onmouseup='window.locat
 				"<td bgcolor=\"#eeeeff\"  style=\"font-size: 8pt;\" ".
 				"colspan=4>".$t['tax_amount']."</td>".
 				"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
-				"<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
-				"<input type=hidden name=load value=services>".
-				"<input type=hidden name=type value=module>".
-				"<input type=hidden name=edit value=on>".
-				"<input type=hidden name=taxrate value=\"".$t['tax_rate_id']."\">".
+				"<form style=\"margin-bottom:0;\" ".
+				"action=\"$this->url_prefix/index.php/services/taxexempt\" method=post>".
+				"<input type=hidden name=taxrateid value=\"".$t['tax_rate_id']."\">".
 				"<input name=exempt type=submit value=\"".lang('exempt')."\" ".
 				"class=smallbutton></form></td></tr>";
 		} else {

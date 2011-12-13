@@ -3621,6 +3621,19 @@ class Billing_Model extends CI_Model
 	}
 
 
+	// save the tax exempt status information, make the customer tax exempt
+	function set_tax_exempt($account_number, $tax_rate_id, $customer_tax_id, $expdate)
+	{
+		$query = "INSERT INTO tax_exempt ".
+			"(account_number, tax_rate_id, customer_tax_id, expdate) ". 
+			"VALUES (?, ?, ?, ?)";
+		$result = $this->db->query($query, array($account_number,
+												 $tax_rate_id,
+												 $customer_tax_id,
+												 $expdate))
+			or die ("savetaxexempt queryfailed");
+	}
+	
 }
 
 
