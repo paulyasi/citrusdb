@@ -20,7 +20,7 @@
 
 <table width=500>   
 <td valign=top>
-<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/listresults/1/20" 
+<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/results/1/20" 
 METHOD="POST" name="namesearch">
 <?php echo lang('name') . "/"; echo lang('company'); ?></td><td>
 <input type=text name=s1>
@@ -30,7 +30,7 @@ class=smallbutton onclick="nameformat();">
 </form>
 
 </td><tr><td valign=top>
-<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/listresults/1/20" 
+<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/results/1/20" 
 METHOD="POST" name="phonesearch">
 <?php echo lang('phonenumber');?> </td><td>
 <input type=text name=s1>
@@ -42,7 +42,7 @@ class=smallbutton onclick="phoneformat();">
 
 
 </td><tr><td valign=top>
-<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/listresults/1/20" 
+<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/results/1/20" 
 METHOD="POST">
 <?php echo lang('signupdaterange'); ?> </td>
 <td><input type=text name=s1 size=9> <?php echo lang('to'); ?> 
@@ -52,7 +52,7 @@ METHOD="POST">
 
 
 </td><tr><td valign=top>
-<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/listresults/1/20" 
+<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/results/1/20" 
 METHOD="POST">
 <?php echo lang('street'); ?> </td>
 <td><input type=text name=s1 size=20><input type=hidden name=id value=12>

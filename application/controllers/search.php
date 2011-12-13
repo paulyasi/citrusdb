@@ -19,8 +19,6 @@ class Search extends App_Controller {
 		$this->s4 = $this->input->get_post('s4');
 		$this->s5 = $this->input->get_post('s5');
 
-		echo "$this->id $this->s1";
-
 		// figure out which type of search it is from the searches table
 		$query = $this->db->get_where('searches', array('id' => $this->id));
 		$myresult = $query->row();
@@ -41,10 +39,15 @@ class Search extends App_Controller {
 		echo "</h3>";
 		echo "<table cellpadding=5 cellspacing=1 border=0>";
 	}
+
 	
-	public function listresults($page, $perpage)
+	/*
+	 * -------------------------------------------------------------------------
+	 *  show search results
+	 * -------------------------------------------------------------------------
+	 */
+	public function results($page, $perpage, $recordview = NULL)
 	{
-        
 		$fields = $this->result->list_fields();
 
 		// print the the column titles
@@ -90,8 +93,15 @@ class Search extends App_Controller {
     		} 
     		else 
     		{
-    			echo "<form name=prevform action=\"$this->url_prefix/index.php/search/listresults/".
-    				($page - 1) . "/$perpage/\" method=POST>".
+    			echo "<form name=prevform action=\"$this->url_prefix/index.php/search/results/".
+    				($page - 1) . "/$perpage/";
+
+				if ($recordview)
+				{
+					echo "record";
+				}
+
+				echo "\" method=POST>".
 					"<input type=hidden name=id value=\"$this->id\">".
 					"<input type=hidden name=s1 value=\"$this->s1\">".				
 					"<input type=hidden name=s2 value=\"$this->s2\">".
@@ -104,15 +114,23 @@ class Search extends App_Controller {
   
   			if($page == $pager->numPages)
     		{
-				echo "<form name=nextform action=\"$this->url_prefix/index.php/search/listresults/".
-					($page +1)."/$perpage/\" method=POST>".
+				echo "<form name=nextform action=\"$this->url_prefix/index.php/search/results/".
+					($page +1)."/$perpage/";
+				echo "\" method=POST>".
 					"<input type=submit value=\"".lang('next')."\" disabled>".
 					"</form>";
     		} 
     		else 
     		{
-    			echo "<form name=nextform action=\"$this->url_prefix/index.php/search/listresults/".
-					($page +1)."/$perpage/\" method=POST>".
+    			echo "<form name=nextform action=\"$this->url_prefix/index.php/search/results/".
+					($page +1)."/$perpage/";
+
+				if ($recordview)
+				{
+					echo "record";
+				}
+
+				echo "\" method=POST>".
 					"<input type=hidden name=id value=\"$this->id\">".
 					"<input type=hidden name=s1 value=\"$this->s1\">".
 					"<input type=hidden name=s2 value=\"$this->s2\">".
@@ -122,8 +140,15 @@ class Search extends App_Controller {
 					"<input type=submit value=\"".lang('next')."\">".
 					"</form>";
 			}
-    			echo "<form name=nextform action=\"$this->url_prefix/index.php/search/listresults/".
-					$numpages."/$perpage/\" method=POST>".
+    			echo "<form name=nextform action=\"$this->url_prefix/index.php/search/results/".
+					$numpages."/$perpage/";
+
+				if ($recordview)
+				{
+					echo "record";
+				}
+
+				echo "\" method=POST>".
 					"<input type=hidden name=id value=\"$this->id\">".
 					"<input type=hidden name=s1 value=\"$this->s1\">".
 					"<input type=hidden name=s2 value=\"$this->s2\">".
@@ -148,18 +173,18 @@ class Search extends App_Controller {
 				"this.form.action=this.options[this.selectedIndex].value;".
 				"this.form.submit()\">".
 
-                "<option selected value=\"$this->url_prefix/index.php/search/listresults/$page/$perpage\">$perpage</option>".
+                "<option selected value=\"$this->url_prefix/index.php/search/results/$page/$perpage\">$perpage</option>".
 
-				"<option value=\"$this->url_prefix/index.php/search/listresults/".
+				"<option value=\"$this->url_prefix/index.php/search/results/".
 				"$page/20/\">20</option>".
 
-				"<option value=\"$this->url_prefix/index.php/search/listresults/".
+				"<option value=\"$this->url_prefix/index.php/search/results/".
 				"$page/50\">50</option>".
 
-				"<option value=\"$this->url_prefix/index.php/search/listresults/".
+				"<option value=\"$this->url_prefix/index.php/search/results/".
 				"$page/100\">100</option>".
 
-				"<option value=\"$this->url_prefix/index.php/search/listresults/".
+				"<option value=\"$this->url_prefix/index.php/search/results/".
 				"$page/1000\">1000</option>".
 				
 				"</select></form>";
@@ -167,7 +192,7 @@ class Search extends App_Controller {
 
 		// record view link
 		echo "&nbsp;&nbsp;&nbsp;&nbsp; <form method=post ".
-			"action=\"$this->url_prefix/index.php/search/recordview/$page/1/\">".
+			"action=\"$this->url_prefix/index.php/search/results/$page/1/record/\">".
 			"<input type=hidden name=id value=\"$this->id\">".
 			"<input type=hidden name=s1 value=\"$this->s1\">".
 			"<input type=hidden name=s2 value=\"$this->s2\">".
@@ -177,7 +202,7 @@ class Search extends App_Controller {
 			"<input type=submit value=\"".lang('recordview')."\">".
 			"</form> ";
 
-		echo "<form method=post action=\"$this->url_prefix/index.php/search/listresults/$page/20\">".
+		echo "<form method=post action=\"$this->url_prefix/index.php/search/results/$page/20\">".
 			"<input type=hidden name=id value=\"$this->id\">".
 			"<input type=hidden name=s1 value=\"$this->s1\">".
 			"<input type=hidden name=s2 value=\"$this->s2\">".
@@ -267,10 +292,66 @@ class Search extends App_Controller {
 				}
 			}
 
-			foreach ($myresult as $key => $value) 
+			if ($recordview == TRUE)
 			{
-				echo "<td>$value</td>\n";   
-			}	
+				echo "<hr noshade>";
+				
+				// set the new account number to view
+				$this->session->set_userdata('account_number', $acnum);
+				$this->account_number = $acnum;
+				
+				// load the models necessary
+				$this->load->model('customer_model');
+				$this->load->model('module_model');
+				$this->load->model('user_model');
+				$this->load->model('support_model');
+				$this->load->model('user_model');
+				
+				/*
+				 * ---------------------------------------------------------------------
+				 *  below here is the similar to the customer controller's index method
+				 * ---------------------------------------------------------------------
+				 */
+				/*
+				// load the module header common to all module views
+				$this->load->view('module_header_view');
+				*/
+				// show the customer information (name, address, etc)
+				$data = $this->customer_model->record($this->account_number);
+				$this->load->view('customer/index_view', $data);
+				
+				// show a small preview of billing info
+				$this->load->model('billing_model');
+				$data['record'] = $this->billing_model->record_list($this->account_number);
+				$this->load->view('billing/mini_index_view', $data);
+				
+				// show the services that they have assigned to them
+				$this->load->model('service_model');			
+				$data['categories'] = $this->service_model->service_categories(
+					$this->account_number);
+				$this->load->view('services/heading_view', $data);
+				
+				// output the list of services
+				$data['services'] = $this->service_model->list_services(
+					$this->account_number);
+				$this->load->view('services/index_view', $data);
+
+				/*
+				// the history listing tabs
+				$this->load->view('historyframe_tabs_view');			
+				
+				// the html page footer
+				$this->load->view('html_footer_view');
+				*/
+				
+			}
+			else
+			{
+				foreach ($myresult as $key => $value) 
+				{
+					echo "<td>$value</td>\n";   
+				}
+			}
 		} 
 
 		if (empty($key)) 
@@ -280,27 +361,80 @@ class Search extends App_Controller {
 				lang('clickheretotryagain')."</a>";
 		} 
 
-	} // end listrecords
+	} // end results function
 
 
-	public function recordview()
+	public function recordview($page)
 	{
-		// record view link
-		echo "&nbsp;&nbsp;&nbsp;&nbsp; <a href=\"$this->url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=1&pagetype=record\">$l_recordview</a> | ";
-		echo "<a href=\"$this->url_prefix/index.php?load=dosearch&type=fs&id=$id&s1=$s1&s2=$s2&s3=$s3&s4=$s4&s5=$s5&page=$page&perpage=20&pagetype=list\">$l_listview</a><br>";
+		// record view button
+		echo "&nbsp;&nbsp;&nbsp;&nbsp; <form method=post ".
+			"action=\"$this->url_prefix/index.php/search/recordview/$page/1/\">".
+			"<input type=hidden name=id value=\"$this->id\">".
+			"<input type=hidden name=s1 value=\"$this->s1\">".
+			"<input type=hidden name=s2 value=\"$this->s2\">".
+			"<input type=hidden name=s3 value=\"$this->s3\">".
+			"<input type=hidden name=s4 value=\"$this->s4\">".
+			"<input type=hidden name=s5 value=\"$this->s5\">".
+			"<input type=submit value=\"".lang('recordview')."\">".
+			"</form> ";
 
+		// listview button
+		echo "<form method=post action=\"$this->url_prefix/index.php/search/results/$page/20\">".
+			"<input type=hidden name=id value=\"$this->id\">".
+			"<input type=hidden name=s1 value=\"$this->s1\">".
+			"<input type=hidden name=s2 value=\"$this->s2\">".
+			"<input type=hidden name=s3 value=\"$this->s3\">".
+			"<input type=hidden name=s4 value=\"$this->s4\">".
+			"<input type=hidden name=s5 value=\"$this->s5\">".
+			"<input type=submit value=\"".lang('listview')."\">".
+			"</form><br>";
+		echo "<hr noshade>";
+		
 		// set the new account number to view
-		$account_number = $acnum;
-		$_SESSION['account_number'] = $account_number;
+		$this->session->set_userdata('account_number', $account_number);
 
-		// print the customer record within the result page
-		echo "<hr noshde>";
-		$load = "customer"; // allow load of customer record
-		$type = "module";
-		$this->load->view('customer/index_view');
-		$load = "dosearch"; // allow search result load after
-		$type = "fs";   
-		echo '</table>'; 
+		// load the models necessary
+		$this->load->model('customer_model');
+		$this->load->model('module_model');
+		$this->load->model('user_model');
+		$this->load->model('support_model');
+		$this->load->model('user_model');
+
+		/*
+		 * ---------------------------------------------------------------------
+		 *  below here is the similar to the customer controller's index method
+		 * ---------------------------------------------------------------------
+		 */		
+		// load the module header common to all module views
+		$this->load->view('module_header_view');
+		
+		// show the customer information (name, address, etc)
+		$data = $this->customer_model->record($this->account_number);
+		$this->load->view('customer/index_view', $data);
+		
+		// show a small preview of billing info
+		$this->load->model('billing_model');
+		$data['record'] = $this->billing_model->record_list($this->account_number);
+		$this->load->view('billing/mini_index_view', $data);
+		
+		// show the services that they have assigned to them
+		$this->load->model('service_model');			
+		$data['categories'] = $this->service_model->service_categories(
+			$this->account_number);
+		$this->load->view('services/heading_view', $data);
+		
+		// output the list of services
+		$data['services'] = $this->service_model->list_services(
+			$this->account_number);
+		$this->load->view('services/index_view', $data);
+		
+		// the history listing tabs
+		$this->load->view('historyframe_tabs_view');			
+		
+		// the html page footer
+		$this->load->view('html_footer_view');
+
+		
 	}
 
 }
