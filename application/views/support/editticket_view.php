@@ -77,7 +77,7 @@ print "</optgroup></select>\n";
 <td bgcolor="#ddddee"><input type=text value="<?php echo $ticket['creation_date']?>" name="reminderdate">
 <a href="#" onClick="cal.select(document.forms['form1'].reminderdate,'anchor1','yyyy-MM-dd'); return false;"NAME="anchor1" ID="anchor1" style="color:blue">[<?php echo lang('select')?>]</a></td>
 
-<td bgcolor="#ccccdd"><b>$l_link</b></td><td bgcolor="#ddddee">
+<td bgcolor="#ccccdd"><b><?php echo lang('link')?></b></td><td bgcolor="#ddddee">
 <a href="<?php echo $ticket['linkurl']?>"><?php echo $ticket['linkname']?></a></td><tr>
 
 <td bgcolor="#ccccdd"><b><?php echo lang('description')?></b></td><td colspan=3 bgcolor="#ddddee">
