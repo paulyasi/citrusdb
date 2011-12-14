@@ -116,11 +116,9 @@ echo "<tr onMouseOver='h(this);' onmouseout='deh(this);' onmouseup='window.locat
 				"colspan=4>".lang('exempt').": ".$t['customer_tax_id'].
 				" ".$t['customer_tax_id_expdate']."</td>".
 				"<td bgcolor=\"#eeeeff\" style=\"font-size: 8pt;\">".
-				"<form style=\"margin-bottom:0;\" action=\"index.php\" method=post>".
-				"<input type=hidden name=load value=services>".
-				"<input type=hidden name=type value=module>".
-				"<input type=hidden name=edit value=on>".
-				"<input type=hidden name=taxrate value=\"".$t['tax_rate_id']."\">".
+				"<form style=\"margin-bottom:0;\" ".
+				"action=\"$this->url_prefix/index.php/services/nottaxexempt\" method=post>".
+				"<input type=hidden name=taxrateid value=\"".$t['tax_rate_id']."\">".
 				"<input name=notexempt type=submit value=\"".lang('notexempt')."\" ".
 				"class=smallbutton></form></td></tr>";
 		} // end if exempt tax

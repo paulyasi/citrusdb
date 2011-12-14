@@ -3633,6 +3633,16 @@ class Billing_Model extends CI_Model
 												 $expdate))
 			or die ("savetaxexempt queryfailed");
 	}
+
+	
+	// make the customer tax not-exempt
+	function remove_tax_exempt($account_number, $tax_rate_id)
+	{
+		$query = "DELETE FROM tax_exempt WHERE tax_rate_id = ? ".
+			"AND account_number = ?";
+		$result = $this->db->query($query, array($tax_rate_id, $account_number))
+			or die ("remove tax exempt queryfailed");
+	}
 	
 }
 

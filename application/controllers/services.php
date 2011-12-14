@@ -219,21 +219,11 @@ class Services extends App_Controller {
 		
 		// ask the user for customer tax id, and exempt id expiration date
 		print "<a href=\"$this->url_prefix/index.php/services/\">[ ".lang('undochanges')." ]</a>";
+
+		$data['tax_rate_id'] = $tax_rate_id;
 		
-		print "<h4>".lang('exempt')."</h4><form method=post ".
-			"action=\"$this->url_prefix/index.php/services/savetaxexempt\">".
-			"<table width=720 cellpadding=5 cellspacing=1 border=0>";
-		
-		print "<input type=hidden name=taxrateid value=\"$tax_rate_id\">";
-		
-		echo "<td bgcolor=\"ccccdd\"width=180><b>".lang('taxexemptid')."</b></td>".
-			"<td bgcolor=\"#ddddee\"><input type=text name=customer_tax_id></td><tr>\n";
-		
-		echo "<td bgcolor=\"ccccdd\"width=180><b>".lang('expirationdate')."</b></td>".
-			"<td bgcolor=\"#ddddee\"><input type=text name=expdate></td><tr>\n";
-		
-		print "<td></td><td><input name=saveexempt type=submit ".
-			"value=\"".lang('savechanges')."\" class=smallbutton></td></table></form>";
+		// load the module header common to all module views
+		$this->load->view('services/taxexempt_view', $data);	
 	}
 
 
@@ -252,13 +242,15 @@ class Services extends App_Controller {
 		redirect('/services/');
 	}
 
-
-	public function savenottaxexempt() 
+	
+	public function nottaxexempt() 
 	{
-		// make the customer tax not-exempt
-		$query = "DELETE FROM tax_exempt WHERE tax_rate_id = '$tax_rate_id' ".
-			"AND account_number = '$this->account_number'";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$tax_rate_id = $this->input->post('taxrateid');
+
+		echo $tax_rate_id;
+		
+		$this->billing_model->remove_tax_exempt($this->account_number,
+												$tax_rate_id);
 
 		// redirect back to the service index
 		redirect('/services/');
