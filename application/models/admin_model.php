@@ -23,8 +23,8 @@ class Admin_Model extends CI_Model
 	 */
 	function get_organization($id)
 	{
-		$query = "SELECT * FROM general WHERE id = $id";
-		$result = $this->db->query($query) or die ("get organization query failed");
+		$query = "SELECT * FROM general WHERE id = ?";
+		$result = $this->db->query($query, array($id)) or die ("get organization query failed");
 		return $result->row_array();
 	}
 
