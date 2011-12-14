@@ -100,12 +100,9 @@ class Support extends App_Controller {
 					$user_services_id);
 
 			// if the note is marked as completed, insert the completed by data too
-			if ($status == 'completed') {
-				$query = "UPDATE customer_history SET ".
-					"closed_by = '$user', ".
-					"closed_date = CURRENT_TIMESTAMP ".
-					"WHERE id = $newticketnumber";
-				$result = $DB->Execute($query) or die ("closed by $l_queryfailed"); 
+			if ($status == 'completed')
+			{
+				$this->support_model->complete_ticket($newticketnumber);
 			}
 
 			redirect('/customer');	
@@ -233,48 +230,6 @@ class Support extends App_Controller {
 
 	}
 
-	function pendingticket($id, $ticketgroup = NULL)
-	{
-		$id = $base->input['id'];
-		$pending = $base->input['pending'];
-		$completed = $base->input['completed'];
-		$showall = $base->input['showall'];
-		$lastview = $base->input['lastview'];
-
-		echo "$id $pending $ticketgroup";
-
-		/*--------------------------------------------------------------------------*/
-		// mark the customer_history id as pending
-		/*--------------------------------------------------------------------------*/
-		$query = "UPDATE customer_history SET status = \"pending\" WHERE id = $id";
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-		if ($ticketgroup) {
-			print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup\";</script>";
-		} 
-		else 
-		{
-			print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user\";</script>";
-		}
-	}
-
-	function completeticket($id, $ticketgroup = NULL) 
-	{
-		/*--------------------------------------------------------------------------*/
-		// make the customer_history id as completed
-		/*--------------------------------------------------------------------------*/
-		$mydate = date("Y-m-d H:i:s");
-		$query = "UPDATE customer_history SET status = 'completed', closed_by = '$user', closed_date = '$mydate' WHERE id = $id";
-		$result = $DB->Execute($query) or die ("$query $l_queryfailed");
-		
-		if ($ticketgroup) 
-		{
-			print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketgroup=$ticketgroup\";</script>";
-		} 
-		else 
-		{
-			print "<script language=\"JavaScript\">window.location.href = \"$url_prefix/index.php?load=tickets&type=base&ticketuser=$user\";</script>";
-		}
-	}
 
 
 }

@@ -397,9 +397,8 @@ class Services extends App_Controller {
 
 
 		// insert any linked_services into the user_services table
-		$query = "SELECT * FROM linked_services WHERE linkfrom = $serviceid";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
-		foreach($result->result_array() AS $myresult) {
+		$linked_services = $this->service_model->linked_services($serviceid);
+		foreach($linked_services AS $myresult) {
 			$linkto = $myresult['linkto'];
 
 			$this->service_model->create_service($this->account_number, $linkto, $billing_id,
