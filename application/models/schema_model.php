@@ -23,10 +23,10 @@ class Schema_model extends CI_Model
 	{
 		$query = "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, COLUMN_DEFAULT, 
 			COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS 
-			WHERE table_name = '$table'
-			AND table_schema = '$database'";	
+			WHERE table_name = ? AND table_schema = ?";	
 
-			$result = $this->db->query($query) or die ("Schema Query Failed"); 
+		$result = $this->db->query($query, array($table, $database))
+				or die ("columns Query Failed"); 
 
 		return $result;
 	}
