@@ -23,9 +23,14 @@ class Service_model extends CI_Model
 		// insert the new service into the user_services table
 		$query = "INSERT into user_services (account_number, master_service_id, ".
 			"billing_id, start_datetime, salesperson, usage_multiple) ".
-			"VALUES ('$account_number', '$master_service_id', '$billing_id',".
-			"'$mydate', '$this->user', '$usage_multiple')";
-		$result = $this->db->query($query) or die ("create_service $l_queryfailed");
+			"VALUES (?, ?, ?, ?, ?, ?)";
+		$result = $this->db->query($query, array($account_number,
+												 $master_service_id,
+												 $billing_id,
+												 $mydate,
+												 $this->user,
+												 $usage_multiple))
+			or die ("create_service insert failed");
 
 		// use the mysql_insert_id command to get the ID of the row the insert
 		// was to for the options table query
@@ -36,8 +41,9 @@ class Service_model extends CI_Model
 		if ($options_table_name <> '') {
 			$query = "INSERT into $options_table_name ".
 				"(user_services,$attribute_fieldname_string) ".
-				"VALUES ($myinsertid,$attribute_fieldvalue_string)";
-			$result = $this->db->query($query) or die ("create_service $query");
+				"VALUES (?,$attribute_fieldvalue_string)";
+			$result = $this->db->query($query, array($myinsertid))
+				or die ("create_service insert options failed");
 		}
 
 		return $myinsertid;
@@ -53,9 +59,11 @@ class Service_model extends CI_Model
 	function save_changes($userserviceid, $optionstable, $fieldvalues)
 	{
 		$query = "UPDATE $optionstable SET $fieldvalues ".
-			"WHERE user_services = $userserviceid";
-		$result = $this->db->query($query) or die ("save_changes query failed");
-	}	
+			"WHERE user_services = ?";
+		$result = $this->db->query($query, array($userserviceid))
+			or die ("save_changes query failed");
+	}
+	
 
 	/*
 	 * ------------------------------------------------------------------------
@@ -65,9 +73,10 @@ class Service_model extends CI_Model
 	function change_usage($userserviceid, $usage_multiple)
 	{
 		// update the database if they changed the usage_multiple
-		$query = "UPDATE user_services SET usage_multiple = $usage_multiple ".
-			"WHERE id = $userserviceid";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$query = "UPDATE user_services SET usage_multiple = ? ".
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($usage_multiple, $userserviceid))
+			or die ("change_usage queryfailed");
 	}
 
 
@@ -79,9 +88,10 @@ class Service_model extends CI_Model
 	function change_billing($userserviceid, $billing_id) 
 	{
 		// update the database if they changed the billing ID
-		$query = "UPDATE user_services SET billing_id = $billing_id ".
-			"WHERE id = $userserviceid";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$query = "UPDATE user_services SET billing_id = ? ".
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($billing_id, $userserviceid))
+			or die ("change_billing queryfailed");
 	
 	}
 
@@ -96,8 +106,10 @@ class Service_model extends CI_Model
 		// get the old master service id
 		$query = "SELECT billing_id, usage_multiple, master_service_id ".
 			"FROM user_services ".
-			"WHERE id = $userserviceid";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($userserviceid))
+			or die ("change_servicetype select failed");
+		
 		$oldmasterresult = $result->row_array();
 		$old_master_service_id = $oldmasterresult['master_service_id'];
 		$billing_id = $oldmasterresult['billing_id'];
@@ -105,8 +117,10 @@ class Service_model extends CI_Model
 
 		// get the name of the options table, always the same
 		$query = "SELECT options_table FROM master_services ".
-			"WHERE id = $master_service_id";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($master_service_id))
+			or die ("change_servicetype select options failed");
+		
 		$master_service_results = $result->row_array();
 		$options_table_name = $master_service_results['options_table'];
 
@@ -117,22 +131,26 @@ class Service_model extends CI_Model
 		$fieldlist = '';
 		$fieldvalues = '';
 		
-		foreach($fields->result() as $f) {
+		foreach($fields->result() as $f)
+		{
 			$fieldname = $f->COLUMN_NAME;
-			if ($fieldname <> "id" AND $fieldname <> "user_services") {
+			if ($fieldname <> "id" AND $fieldname <> "user_services")
+			{
 				$fieldlist .= ',' . $fieldname;
 			}
 		}
+		
 		$fieldlist = substr($fieldlist, 1);
 
 		// get the values out of those fields from the options table
 		$query = "SELECT $fieldlist from $options_table_name ".
 			"WHERE user_services = $userserviceid";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query, array($userserviceid)) or die ("fieldlist values queryfailed");
 		$options_table_result = $result->row_array();
 
 		$array_fieldlist = explode(",",$fieldlist);
-		foreach($array_fieldlist as $myfield) {
+		foreach($array_fieldlist as $myfield)
+		{
 			$myvalue = $options_table_result["$myfield"];
 			$fieldvalues .= ',\'' . $myvalue . '\'';
 		}  
@@ -156,9 +174,10 @@ class Service_model extends CI_Model
 
 		// move the notes from the old service to the new service
 		$query = "UPDATE customer_history ".
-			"SET user_services_id = '$new_user_service_id' ".
-			"WHERE user_services_id = '$userserviceid'";
-		$updateresult = $this->db->query($query) or die ("$query $l_queryfailed");
+			"SET user_services_id = ? ".
+			"WHERE user_services_id = ?";
+		$updateresult = $this->db->query($query, array($new_user_service_id, $userserviceid))
+			or die ("update customer history failed");
 
 
 	}
@@ -173,8 +192,8 @@ class Service_model extends CI_Model
 	{
 		$query = "SELECT * FROM master_services ms ". 
 			"LEFT JOIN general g ON g.id = ms.organization_id ". 
-			"WHERE ms.id = $serviceid";
-		$result = $this->db->query($query) or die ("query failed");
+			"WHERE ms.id = ?";
+		$result = $this->db->query($query, array($serviceid)) or die ("service_with_org failed");
 		$myresult = $result->row_array();	
 
 		return $myresult;
@@ -192,8 +211,8 @@ class Service_model extends CI_Model
 			"FROM user_services us ".
 			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
 			"LEFT JOIN general g ON g.id = ms.organization_id ".
-			"WHERE us.id = '$userserviceid'";
-		$orgresult = $this->db->query($query) or die ("$l_queryfailed");
+			"WHERE us.id = ?";
+		$orgresult = $this->db->query($query, array($userserviceid)) or die ("org_and_options queryfailed");
 		$myorgresult = $orgresult->row_array();
 
 		return $myorgresult;
@@ -205,9 +224,9 @@ class Service_model extends CI_Model
 		$query = "SELECT DISTINCT category FROM user_services AS user, ".
 			"master_services AS master ".
 			"WHERE user.master_service_id = master.id ".
-			"AND user.account_number = '$account_number' AND removed <> 'y' ".
+			"AND user.account_number = ? AND removed <> 'y' ".
 			"ORDER BY category";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query, array($account_number)) or die ("service_categories failed");
 
 		return $result->result_array();
 	}
@@ -222,9 +241,13 @@ class Service_model extends CI_Model
 				"master.organization_id master_organization_id ".
 				"FROM user_services AS user, master_services AS master ".
 				"WHERE user.master_service_id = master.id ".
-				"AND user.account_number = '$account_number' AND removed <> 'y' ".
-				"AND master.category = '$category' ".
-				"ORDER BY user.usage_multiple DESC, master.pricerate DESC";		
+				"AND user.account_number = ? AND removed <> 'y' ".
+				"AND master.category = ? ".
+				"ORDER BY user.usage_multiple DESC, master.pricerate DESC";
+			
+			$result = $this->db->query($query, array($account_number, $category))
+				or die ("list_services queryfailed");
+			
 		}
 		else
 		{
@@ -233,11 +256,13 @@ class Service_model extends CI_Model
 				"master.organization_id master_organization_id ".
 				"FROM user_services AS user, master_services AS master ".
 				"WHERE user.master_service_id = master.id ".
-				"AND user.account_number = '$account_number' AND removed <> 'y' ".
-				"ORDER BY user.usage_multiple DESC, master.pricerate DESC";		
-		}
+				"AND user.account_number = ? AND removed <> 'y' ".
+				"ORDER BY user.usage_multiple DESC, master.pricerate DESC";
 
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+			$result = $this->db->query($query, array($account_number))
+				or die ("list_services queryfailed");
+			
+		}
 
 		return $result->result_array();
 	}
@@ -250,30 +275,21 @@ class Service_model extends CI_Model
 			master.pricerate, master.frequency 
 			FROM user_services AS user, master_services AS master 
 			WHERE user.master_service_id = master.id 
-			AND user.account_number = '$account_number' AND user.removed = 'y' 
+			AND user.account_number = ? AND user.removed = 'y' 
 			ORDER BY user.end_datetime DESC,user.usage_multiple DESC, master.pricerate DESC";
-		$result = $this->db->query($query) or die ("queryfailed");
+		$result = $this->db->query($query, array($account_number))
+			or die ("list_history queryfailed");
 
 		return $result;
 	}
 
-
-	function list_services_in_category($account_number, $category)
-	{
-		$query = "SELECT user.*, master.service_description, master.options_table, ".
-			"master.pricerate, master.frequency, master.support_notify, ".
-			"master.organization_id master_organization_id ".
-			"FROM user_services AS user, master_services AS master ".
-			"WHERE user.master_service_id = master.id ".
-			"AND user.account_number = '$account_number' AND removed <> 'y' ".
-			"AND master.category = '$category' ".
-			"ORDER BY user.usage_multiple DESC, master.pricerate DESC";
-	}
-
+	
 	function options_attributes($service_id, $options_table)
 	{
-		$query = "SELECT * FROM $options_table WHERE user_services = '$service_id'";
-		$optionsresult = $this->db->query($query) or die ("$l_queryfailed");
+		$query = "SELECT * FROM $options_table WHERE user_services = ?";
+		$optionsresult = $this->db->query($query, array($service_id))
+			or die ("options_attributes select failed");
+		
 		if ($optionsresult->num_rows() > 0)
 		{
 			$myoptions = $optionsresult->row_array();
@@ -300,17 +316,23 @@ class Service_model extends CI_Model
 	function options_values($service_id, $options_table)
 	{
 		$query = "SELECT * FROM $options_table WHERE user_services = '$service_id'";
-		$optionsresult = $this->db->query($query) or die ("$l_queryfailed");
+		$optionsresult = $this->db->query($query, array($service_id))
+			or die ("options_values queryfailed");
+
 		return $optionsresult->row_array();
 	}
+	
 
 	function options_urls($fieldname)
 	{
 		// list any applicable options attribute url links
 		$query = "SELECT * FROM options_urls WHERE fieldname = ?";				
-		$urlresult = $this->db->query($query, array($fieldname)) or die ("URL $l_queryfailed");
+		$urlresult = $this->db->query($query, array($fieldname))
+			or die ("options_urls queryfailed");
+		
 		return $urlresult->result_array();
 	}
+	
 
 	function removed_status($userserviceid)
 	{
@@ -318,8 +340,10 @@ class Service_model extends CI_Model
 		// show the undelete button only if an account it not canceled
 		$query = "SELECT us.removed, c.cancel_date FROM user_services us ".
 			"LEFT JOIN customer c ON c.account_number = us.account_number ".
-			"WHERE us.id = $userserviceid";
-		$removedresult = $this->db->query($query) or die ("query failed");
+			"WHERE us.id = ?";
+		$removedresult = $this->db->query($query, array($userserviceid))
+			or die ("removed_status query failed");
+		
 		return $removedresult->row_array();
 	}
 	
@@ -331,11 +355,12 @@ class Service_model extends CI_Model
 			"FROM field_asset_items afa ".
 			"LEFT JOIN master_field_assets mfa ON mfa.id = afa.master_field_assets_id ".
 			"LEFT JOIN user_services us ON us.id = afa.user_services_id ".
-			"WHERE us.id = '$userserviceid'";
+			"WHERE us.id = ?";
 
-		$result = $this->db->query($query) or die ("$query query failed");
+		$result = $this->db->query($query, array($userserviceid)) or die ("field_inventory query failed");
 		return $result->result_array();
 	}
+	
 
 	// query the taxes and fees that this service has
 	function checktaxes($user_services_id) 
@@ -360,11 +385,12 @@ class Service_model extends CI_Model
 			"LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ". 
 			"LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
 			"AND te.tax_rate_id = tr.id ".
-			"WHERE us.removed = 'n' AND us.id = '$user_services_id'";
+			"WHERE us.removed = 'n' AND us.id = ?";
 
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query, array($user_services_id)) or die ("checktaxes queryfailed");
 
-		foreach ($result->result_array() as $taxresult) {
+		foreach ($result->result_array() as $taxresult)
+		{
 			$account_number = $taxresult['us_account_number'];
 			$service_description = $taxresult['ms_description'];
 			$tax_description = $taxresult['tr_description'];
@@ -451,9 +477,10 @@ class Service_model extends CI_Model
 			"FROM user_services us ".
 			"LEFT JOIN master_services ms ".
 			"ON ms.id = us.master_service_id ".
-			"WHERE us.account_number = $account_number ".
+			"WHERE us.account_number = ? ".
 			"AND us.removed <> 'y' AND ms.carrier_dependent = 'y'";
-		$removedresult = $this->db->query($query) or die ("$l_queryfailed");
+		$removedresult = $this->db->query($query, array($account_number))
+			or die ("carrier_dependent queryfailed");
 
 		// get the rows returned by the dependent query
 		$count = $removedresult->num_rows();
@@ -472,38 +499,53 @@ class Service_model extends CI_Model
 	function delete_service($userserviceid, $service_notify_type, $removal_date)
 	{
 		// check if there is a removal date or blank
-		if (empty($removal_date)) {
+		if (empty($removal_date))
+		{
 			$query = "UPDATE user_services SET removed = 'y', ".
-				"end_datetime = NOW() WHERE id = $userserviceid";	  
-		} else {
+				"end_datetime = NOW() WHERE id = ?";
+
+			$result = $this->db->query($query, array($userserviceid))
+				or die ("delete_service 1 query failed");
+			
+		}
+		else
+		{
 			$query = "UPDATE user_services SET removed = 'y', ".
 				"end_datetime = NOW(), ".
-				"removal_date = '$removal_date' ".
-				"WHERE id = $userserviceid";
+				"removal_date = ? ".
+				"WHERE id = ?";
+
+			$result = $this->db->query($query, array($removal_date, $userserviceid))
+				or die ("delete_service 2 query failed");
+
 		}
 
-		$result = $this->db->query($query) or die ("query failed");
 
 		// put a note in the customer_history that this service was removed
 		// get the account_number and master_service_id first
-		$query = "SELECT * FROM user_services WHERE id = '$userserviceid'";
-		$result = $this->db->query($query) or die ("query failed");
+		$query = "SELECT account_number, master_service_id FROM user_services ".
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($userserviceid))
+			or die ("select account from user_services failed");
 		$myresult = $result->row_array();
 		$account_number = $myresult['account_number'];
 		$master_service_id = $myresult['master_service_id'];
 
-		if ($service_notify_type <> "change") {
+		if ($service_notify_type <> "change")
+		{
 			$this->service_message($service_notify_type, $account_number,
 					$master_service_id, $userserviceid, NULL, NULL);
-		}	
+		}
+		
 	} // end delete_service
 
 
 	function update_removal_date($serviceid, $removaldate)
 	{
-		$query = "UPDATE user_services SET removal_date = '$removaldate' ".
-			"WHERE id = '$serviceid'";
-		$result = $this->db->query($query) or die ("due date update $l_queryfailed");
+		$query = "UPDATE user_services SET removal_date = ? ".
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($removaldate, $serviceid))
+			or die ("update_removal_date queryfailed");
 	}
 
 
@@ -532,8 +574,9 @@ class Service_model extends CI_Model
 		/*-------------------------*/
 
 		// get the name of the service
-		$query = "SELECT * FROM master_services WHERE id = $master_service_id";
-		$result = $this->db->query($query) or die ("service_message query failed");
+		$query = "SELECT * FROM master_services WHERE id = ?";
+		$result = $this->db->query($query, array($master_service_id))
+			or die ("service_message master_services select failed");
 		$myresult = $result->row_array();	
 		$servicename = $myresult['service_description'];
 		$activate_notify = $myresult['activate_notify']; // added
@@ -648,25 +691,31 @@ class Service_model extends CI_Model
 	}
 
 
+	/*
+	 * -------------------------------------------------------------------------
+	 *  to prepare support note form get the service description and support_notify
+	 * -------------------------------------------------------------------------
+	 */
 	public function get_service_desc_and_notify($user_services_id)
 	{	
-		// to prepare support note form get the service description and support_notify
 		$query = "SELECT us.id user_services_id, us.master_service_id, ms.id, ".
 			"ms.service_description, ms.support_notify ".
 			"FROM user_services us ".
 			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-			"WHERE us.id = '$user_services_id' LIMIT 1";
-		$result = $this->db->query($query) 
+			"WHERE us.id = ? LIMIT 1";
+		$result = $this->db->query($query, array($user_services_id)) 
 			or die ("get service desc and notify queryfailed");
 
 		return $result->row_array();
 	}
 
+	
 	public function get_service_info($serviceid)
 	{
 		// get the info about the service
-		$query = "SELECT * FROM master_services WHERE id = $serviceid";
-		$result = $this->db->query($query) or die ("$query master_services select $l_queryfailed");
+		$query = "SELECT * FROM master_services WHERE id = ?";
+		$result = $this->db->query($query, array($serviceid))
+			or die ("get_service_info queryfailed");
 
 		return $result->row_array();	
 	}
@@ -675,7 +724,8 @@ class Service_model extends CI_Model
 	public function get_service_name($service_id)
 	{
 		$query = "SELECT service_description FROM master_services WHERE id = ?";
-		$result = $this->db->query($query, array($service_id)) or die ("service name $l_queryfailed");
+		$result = $this->db->query($query, array($service_id))
+			or die ("get_service_name queryfailed");
 		$myresult = $result->row_array();
 
 		return $myresult['service_description'];
@@ -708,18 +758,23 @@ class Service_model extends CI_Model
 		return $myresult['description'];
 	}
 
+	
 	function field_asset_item_description($item_id)
 	{
 		// get the name of the item being updated from master_field_assets
 		$query = "SELECT ma.description FROM field_asset_items fa ".
 			"LEFT JOIN master_field_assets ma ON ma.id = fa.master_field_assets_id ".
 			"WHERE fa.id = ?";
+		
 		$result = $this->db->query($query, array($item_id)) 
-			or die ("item description query failed");
+			or die ("item description query failed");		
+
 		$myresult = $result->row_array();
+		
 		return $myresult['description'];
 	}
 
+	
 	function assign_field_asset($master_field_assets_id, $serial_number, 
 			$sale_type, $tracking_number, $shipping_date, $userserviceid)
 	{
@@ -727,6 +782,7 @@ class Service_model extends CI_Model
 			"creation_date, serial_number, status, sale_type, ".
 			"shipping_tracking_number, shipping_date, user_services_id ) ".
 			"VALUES (?, CURRENT_DATE, ?, 'infield', ?, ?, ?, ?)";
+
 		$result = $this->db->query($query, array($master_field_assets_id, $serial_number, 
 					$sale_type, $tracking_number, $shipping_date, $userserviceid)) 
 			or die ("insert field asset item query failed");
@@ -739,8 +795,12 @@ class Service_model extends CI_Model
 		$query = "UPDATE field_asset_items SET ".
 			"status = 'returned', return_date = ?, ".
 			"return_notes = ? WHERE id = ? LIMIT 1";
-		$result = $this->db->query($query, array($return_date, $return_notes, 
-					$item_id)) or die ("return field asset query failed");
+
+		$result = $this->db->query($query, array($return_date,
+												 $return_notes, 
+												 $item_id))
+			or die ("return field asset query failed");
+		
 	}
 
 
@@ -750,14 +810,17 @@ class Service_model extends CI_Model
 			"ORDER BY datetime DESC";
 		$result = $this->db->query($query, array($userserviceid)) 
 			or die ("select vendor_history query failed");
+
 		return $result->result_array();
 	}
 
+	
 	function vendor_names()
 	{
 		// get the list of service categories from the master_services table
 		$query = "SELECT name FROM vendor_names ORDER BY name";
 		$result = $this->db->query($query) or die ("vendor names query failed");
+
 		return $result->result_array();
 	}
 
@@ -770,7 +833,9 @@ class Service_model extends CI_Model
 			"LEFT JOIN user_services us ON us.id = bd.user_services_id ".
 			"WHERE bd.user_services_id = ? GROUP BY bd.invoice_number ".
 			"ORDER BY invoice_number DESC LIMIT 1";
-		$result = $this->db->query($query, array($userserviceid)) or die ("get status query failed");
+		$result = $this->db->query($query, array($userserviceid))
+			or die ("get_status_and_price query failed");
+		
 		return $result->row_array();
 	}
 
@@ -785,24 +850,39 @@ class Service_model extends CI_Model
 			"vendor_cost, vendor_tax, vendor_item_id, vendor_invoice_number, vendor_from_date, ".
 			"vendor_to_date, user_services_id, account_status, billed_amount) VALUES ".
 			"(NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?)";
-		$result = $this->db->query($query, array($entry_type, $entry_date, $vendor_name, 
-					$vendor_bill_id, $vendor_cost, $vendor_tax, $vendor_item_id, 
-					$vendor_invoice_number, $vendor_from_date, $vendor_to_date, 
-					$userserviceid, $account_status, $billed_amount)) or die ("add vendor query failed");
+		$result = $this->db->query($query, array($entry_type,
+												 $entry_date,
+												 $vendor_name, 
+												 $vendor_bill_id,
+												 $vendor_cost,
+												 $vendor_tax,
+												 $vendor_item_id, 
+												 $vendor_invoice_number,
+												 $vendor_from_date,
+												 $vendor_to_date, 
+												 $userserviceid,
+												 $account_status,
+												 $billed_amount))
+			or die ("add vendor query failed");
 	}
+	
 
 	function get_field_assets($userserviceid)
 	{
 		$query = "SELECT m.category FROM master_services m ".
 			"LEFT JOIN user_services u ON u.master_service_id = m.id ".
 			"WHERE u.id = ?";
-		$result = $this->db->query($query, array($userserviceid)) or die ("$l_queryfailed");
+		$result = $this->db->query($query, array($userserviceid))
+			or die ("get_field_assets master_services failed");
+
 		$myresult = $result->row_array();
 		$category = $myresult['category'];
 
 		$query = "SELECT * FROM master_field_assets WHERE status = 'current' ".
 			"AND category = ?";
-		$result = $this->db->query($query, array($category)) or die ("$query $l_queryfailed");
+		$result = $this->db->query($query, array($category))
+			or die ("get_field_assets master_field_assets failed");
+
 		return $result;
 	}
 
@@ -819,7 +899,8 @@ class Service_model extends CI_Model
 			"LEFT JOIN general g ON g.id = m.organization_id ".
 			"WHERE selling_active = 'y' ".
 			"ORDER BY category, pricerate, service_description";
-		$result = $this->db->query($query) or die ("get master service list queryfailed");
+		$result = $this->db->query($query) or die ("get_master_service_list queryfailed");
+		
 		return $result->result_array();
 	} 
 
@@ -836,7 +917,8 @@ class Service_model extends CI_Model
 			"AND organization_id = ? ".
 			"ORDER BY category, pricerate, service_description";
 		$result = $this->db->query($query, array($organization_id)) 
-			or die ("get org master service list queryfailed");
+			or die ("get_org_master_service_list queryfailed");
+		
 		return $result->result_array();
 	}
 
@@ -853,10 +935,11 @@ class Service_model extends CI_Model
 			"WHERE l.linkfrom = ?";
 
 		$result = $this->db->query($query, array($master_service_id)) 
-			or die ("query failed");
+			or die ("linked_services query failed");
 
 		return $result->result_array();
 	}
+	
 
 	/*
 	 * ------------------------------------------------------------------------
@@ -870,7 +953,8 @@ class Service_model extends CI_Model
 			"AND selling_active = 'y' ".
 			"AND organization_id = $service_org_id";
 		$result = $this->db->query($query, array($optionstable, $service_org_id)) 
-			or die ("$l_queryfailed");
+			or die ("services_sharing_options queryfailed");
+		
 		return $result->result_array();
 	}
 
