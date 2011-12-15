@@ -14,10 +14,13 @@ class Support_Model extends CI_Model
     {
         parent::__construct();
     }
-    
-	//---------------------------------------------------------------------------
-	// query the customer_history for the specific account_number
-	//---------------------------------------------------------------------------
+
+
+	/*
+	 * ---------------------------------------------------------------------------
+	 * query the customer_history for the specific account_number
+	 * ---------------------------------------------------------------------------
+	 */
 	function customer_history($account_number)
 	{
 		$query = "SELECT  ch.id, ch.creation_date, ".
@@ -26,12 +29,14 @@ class Support_Model extends CI_Model
 			"ms.service_description FROM customer_history ch ".
 			"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
 			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-			"WHERE ch.account_number = '$account_number' ORDER BY ch.id DESC LIMIT 25";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+			"WHERE ch.account_number = ? ORDER BY ch.id DESC LIMIT 25";
+		$result = $this->db->query($query, array($account_number))
+			or die ("customer_history queryfailed");
 		
 		return $result;
 	}
 
+	
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get customer history notes for just this service
@@ -52,16 +57,22 @@ class Support_Model extends CI_Model
 	}
 
 
-
+	/*
+	 * -------------------------------------------------------------------------
+	 *  query the customer_history for the number of 
+	 *  waiting messages sent to that user
+	 * -------------------------------------------------------------------------
+	 */
 	function user_count($user)
 	{
-		// query the customer_history for the number of 
-		// waiting messages sent to that user
 		$supportquery = "SELECT id, DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime ".
-			"FROM customer_history WHERE notify = '$user' ".
+			"FROM customer_history WHERE notify = ? ".
 			"AND status = \"not done\" AND date(creation_date) <= CURRENT_DATE ORDER BY id DESC";
-		$supportresult = $this->db->query($supportquery) or die ("$l_queryfailed");
+		$supportresult = $this->db->query($supportquery, array($user))
+			or die ("user_count queryfailed");
+		
 		$num_rows = $supportresult->num_rows();
+
 		if ($num_rows > 0) 
 		{
 			$mysupportresult = $supportresult->row();
@@ -75,12 +86,14 @@ class Support_Model extends CI_Model
 		return array('num_rows' => $num_rows, 'created' => $created);
 	}
 
+	
 	function group_count($groupname)
 	{
 		$query = "SELECT id, DATE_FORMAT(creation_date, '%Y%m%d%H%i%s') AS mydatetime ".
-			"FROM customer_history WHERE notify = '$groupname' ".
+			"FROM customer_history WHERE notify = ? ".
 			"AND status = \"not done\" AND date(creation_date) <= CURRENT_DATE ORDER BY id DESC";
-		$gpresult = $this->db->query($query) or die ("$l_queryfailed");
+		$gpresult = $this->db->query($query, array($groupname))
+			or die ("group_count queryfailed");
 
 		$num_rows = $gpresult->num_rows();
 		if ($num_rows > 0) 
@@ -97,8 +110,11 @@ class Support_Model extends CI_Model
 	}
 
 
-
-	// generic ticket creation function
+	/*
+	 * -------------------------------------------------------------------------
+	 *  generic ticket creation function
+	 * -------------------------------------------------------------------------
+	 */
 	function create_ticket($user, $notify, $account_number, $status,
 			$description, $linkname = NULL, $linkurl = NULL,
 			$reminderdate = NULL, $user_services_id = NULL)
@@ -111,16 +127,35 @@ class Support_Model extends CI_Model
 				$query = "INSERT into customer_history ".
 					"(creation_date, created_by, notify, account_number,".
 					"status, description, linkurl, linkname, user_services_id) ".
-					"VALUES ('$reminderdate', '$user', '$notify', '$account_number',".
-					"'$status', '$description', '$linkurl', '$linkname', '$user_services_id')";
+					"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+				$result = $this->db->query($query, array($reminderdate,
+														 $user,
+														 $notify,
+														 $account_number,
+														 $status,
+														 $description,
+														 $linkurl,
+														 $linkname,
+														 $user_services_id))
+					or die ("create_ticket query failed");				
 			} 
 			else 
 			{
 				$query = "INSERT into customer_history ".
 					"(creation_date, created_by, notify, account_number,".
 					"status, description, linkurl, linkname) ".
-					"VALUES ('$reminderdate', '$user', '$notify', '$account_number',".
-					"'$status', '$description', '$linkurl', '$linkname')";
+					"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+				$result = $this->db->query($query, array($reminderdate,
+														 $user,
+														 $notify,
+														 $account_number,
+														 $status,
+														 $description,
+														 $linkurl,
+														 $linkname))
+					or die ("create_ticket query failed");
 			}
 		} 
 		else 
@@ -131,28 +166,45 @@ class Support_Model extends CI_Model
 				$query = "INSERT into customer_history ".
 					"(creation_date, created_by, notify, account_number,".
 					"status, description, linkurl, linkname, user_services_id) ".
-					"VALUES (CURRENT_TIMESTAMP, '$user', '$notify', '$account_number',".
-					"'$status', '$description', '$linkurl', '$linkname', '$user_services_id')";
+					"VALUES (CURRENT_TIMESTAMP, ?, ?, ?,?, ?, ?, ?, ?)";
+				
+				$result = $this->db->query($query, array($user,
+														 $notify,
+														 $account_number,
+														 $status,
+														 $description,
+														 $linkurl,
+														 $linkname,
+														 $user_services_id))
+					or die ("create_ticket query failed");				
 			} 
 			else 
 			{
 				$query = "INSERT into customer_history ".
 					"(creation_date, created_by, notify, account_number,".
 					"status, description, linkurl, linkname) ".
-					"VALUES (CURRENT_TIMESTAMP, '$user', '$notify', '$account_number',".
-					"'$status', '$description', '$linkurl', '$linkname')";      
+					"VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?)";
+				
+				$result = $this->db->query($query, array($user,
+														 $notify,
+														 $account_number,
+														 $status,
+														 $description,
+														 $linkurl,
+														 $linkname))
+					or die ("create_ticket query failed");
 			}
 		}
 
-		$result = $this->db->query($query) or die ("create_ticket query failed");
 		$ticketnumber = $this->db->insert_id();
 
 		$url = "$this->url_prefix/index.php/support/editticket/$ticketnumber";
 		$message = "$notify: $description $url";
 
 		// if the notify is a group or a user, if a group, then get all the users and notify each individual
-		$query = "SELECT * FROM groups WHERE groupname = '$notify'";
-		$result = $this->db->query($query) or die ("Group Query Failed");
+		$query = "SELECT * FROM groups WHERE groupname = ?";
+		$result = $this->db->query($query, array($notify))
+			or die ("create_ticket group Query Failed");
 
 		if ($result->num_rows() > 0) 
 		{
@@ -188,43 +240,53 @@ class Support_Model extends CI_Model
 			$description)
 	{
 		$query = "SELECT email,screenname,email_notify,screenname_notify ".
-			"FROM user WHERE username = '$user'";
-		$result = $this->db->query($query) or die ("select screename queryfailed");
+			"FROM user WHERE username = ?";
+		$result = $this->db->query($query, array($user))
+			or die ("select screename queryfailed");
 		$myresult = $result->row_array();
+		
 		$email = $myresult['email'];
 		$screenname = $myresult['screenname'];
 		$email_notify = $myresult['email_notify'];
 		$screenname_notify = $myresult['screenname_notify'];
 
-
 		// if they have specified a screenname then send them a jabber notification
-		if (($this->config->item('xmpp_server')) && ($screenname) && ($screenname_notify == 'y')) {
+		if (($this->config->item('xmpp_server')) && ($screenname) && ($screenname_notify == 'y'))
+		{
 			include 'libraries/XMPPHP/XMPP.php';
 
 			// edit this to use database jabber user defined in config file
-			$conn = new XMPPHP_XMPP("$xmpp_server", 5222, "$this->config->item('xmpp_user')", "$this->config->item('xmpp_password')", 'xmpphp', "$this->config->item('xmpp_domain')", $printlog=false, $loglevel=XMPPHP_Log::LEVEL_INFO);
+			$conn = new XMPPHP_XMPP("$xmpp_server", 5222, "$this->config->item('xmpp_user')",
+									"$this->config->item('xmpp_password')", 'xmpphp',
+									"$this->config->item('xmpp_domain')",
+									$printlog=false, $loglevel=XMPPHP_Log::LEVEL_INFO);
 
-			try {
+			try
+			{
 				$conn->connect();
 				$conn->processUntil('session_start');
 				$conn->presence();
 				$conn->message("$screenname", "$message");
 				$conn->disconnect();
-			} catch(XMPPHP_Exception $e) {
+			}
+			catch(XMPPHP_Exception $e)
+			{
 				//die($e->getMessage());
 				$xmppmessage = $e->getMessage();
 				echo "$xmppmessage";
 			}
+			
 		}
 
 		// if they have specified an email then send them an email notification
-		if (($email) && ($email_notify == 'y')) {
-
+		if (($email) && ($email_notify == 'y'))
+		{
 			// HTML Email Headers
 			$to = $email;
 			// truncate the description to fit in the subject
 			$description = substr($description, 0, 40);    
-			$subject = lang('ticketnumber') . "$ticketnumber" . lang('to') . ": $tousergroup ". lang('from') . ": $fromuser $description";
+			$subject = lang('ticketnumber') . "$ticketnumber" . lang('to') . ": $tousergroup ".
+				lang('from') . ": $fromuser $description";
 			mail ($to, $subject, $message);
 
 		}
@@ -243,8 +305,9 @@ class Support_Model extends CI_Model
 			"LEFT JOIN customer c ON c.account_number = ch.account_number ".
 			"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
 			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-			"WHERE ch.id = $id";
-		$result = $this->db->query($query) or die ("ticket query failed");
+			"WHERE ch.id = ?";
+		$result = $this->db->query($query, array($id))
+			or die ("get_ticket query failed");
 		$myresult = $result->row_array();
 
 		$data['id'] = $myresult['ch_id'];
@@ -265,6 +328,7 @@ class Support_Model extends CI_Model
 		return $data;
 	}
 
+	
 	function get_sub_history($id)
 	{
 		// print the current notes attached to this item
@@ -273,8 +337,10 @@ class Support_Model extends CI_Model
 			"hour(creation_date) as hour, ".
 			"LPAD(minute(creation_date),2,'00') as minute, ".
 			"creation_date, created_by, description FROM sub_history ".
-			"WHERE customer_history_id = $id";
-		$result = $this->db->query($query, array($id)) or die ("sub_history query failed");
+			"WHERE customer_history_id = ?";
+		$result = $this->db->query($query, array($id))
+			or die ("sub_history query failed");
+		
 		return $result->result_array();
 	}
 
@@ -318,7 +384,7 @@ class Support_Model extends CI_Model
 			$query = "INSERT sub_history SET customer_history_id = ?, ".
 				"creation_date = CURRENT_TIMESTAMP, created_by = ?, description = ?";
 			$result = $this->db->query($query, array($id, $this->user, $addnote)) 
-				or die ("sub_history insert $l_queryfailed");
+				or die ("update_ticket sub_history insert queryfailed");
 
 			// TODO: send email/xmpp notification if new note added to notify user
 			$url = "$this->url_prefix/index.php/support/editticket/$id";
@@ -326,7 +392,7 @@ class Support_Model extends CI_Model
 
 			// if the notify is a group or a user, if a group, then get all the users and notify each individual
 			$query = "SELECT * FROM groups WHERE groupname = ?";
-			$result = $this->db->query($query, array($notify)) or die ("Group Query Failed");
+			$result = $this->db->query($query, array($notify)) or die ("update_ticket Group Query Failed");
 
 			if ($result->num_rows() > 0) 
 			{
@@ -346,6 +412,7 @@ class Support_Model extends CI_Model
 		} // end if addnote
 
 	}
+	
 
 	function list_tickets($notify, $showall = NULL)
 	{
@@ -362,6 +429,7 @@ class Support_Model extends CI_Model
 				"WHERE notify = ? ORDER BY creation_date DESC LIMIT 50";
 			$result = $this->db->query($query, array($notify)) 
 				or die ("list tickets query failed");
+			
 			return $result->result_array();
 		} 
 		else 
@@ -379,6 +447,7 @@ class Support_Model extends CI_Model
 				"ORDER BY creation_date DESC";
 			$result = $this->db->query($query, array($notify)) 
 				or die ("list tickets query failed");
+			
 			return $result->result_array();
 		}
 	}
@@ -413,3 +482,5 @@ class Support_Model extends CI_Model
 
 
 }
+
+/* end support_model */

@@ -43,8 +43,8 @@ class User_Model extends CI_Model {
 	function user_privileges($username)
 	{
 		$query = "SELECT admin,manager,email,screenname,email_notify,screenname_notify ".
-			"FROM user WHERE username = '$username' LIMIT 1";
-		$result = $this->db->query($query);
+			"FROM user WHERE username = ? LIMIT 1";
+		$result = $this->db->query($query, array($username));
 
 		return $result->row_array();
 	}
@@ -56,9 +56,9 @@ class User_Model extends CI_Model {
 	{
 		$ipaddress = $_SERVER["REMOTE_ADDR"];
 
-		$query = "SELECT * FROM login_failures WHERE ip = '$ipaddress' ".
+		$query = "SELECT * FROM login_failures WHERE ip = ? ".
 			"AND DATE(logintime) = CURRENT_DATE";
-		$result = $this->db->query($query);
+		$result = $this->db->query($query, array($ipaddress));
 
 		$attempts = $result->num_rows();
 
@@ -149,8 +149,8 @@ class User_Model extends CI_Model {
 							} 
 							else {
 								// LDAP login successful, now get user info
-								$sql="SELECT * FROM user WHERE username='$user_name' ";
-								$result = $this->db->query($sql);
+								$sql="SELECT * FROM user WHERE username = ? ";
+								$result = $this->db->query($sql, array($user_name));
 
 								if (!$result ||  $result->num_rows() < 1){
 
@@ -210,9 +210,9 @@ class User_Model extends CI_Model {
 							return false;
 						}
 
-						$sql="UPDATE user SET password='$newhash' ".
-							"WHERE username='$user_name' LIMIT 1";
-						$passresult=$this->db->query($sql) or die ("Query Failed");
+						$sql="UPDATE user SET password = ? ".
+							"WHERE username = ? LIMIT 1";
+						$passresult=$this->db->query($sql, array($newhash, $user_name)) or die ("Query Failed");
 
 					} else {
 						$passwordmatch = 0;
@@ -245,8 +245,8 @@ class User_Model extends CI_Model {
 				}
 
 				$sql="UPDATE user SET remote_addr='$GLOBALS[REMOTE_ADDR]' ".
-					"WHERE username='$user_name'";
-				$result = $this->db->query($sql);
+					"WHERE username = ?";
+				$result = $this->db->query($sql, array($user_name));
 
 				if (!$result) {
 					$feedback .= ' ERROR - '.db_error();
@@ -278,8 +278,8 @@ class User_Model extends CI_Model {
 		$ipaddress = $_SERVER["REMOTE_ADDR"];
 
 		$query="INSERT INTO login_failures(ip,logintime) ".
-			"VALUES ('$ipaddress',CURRENT_TIMESTAMP)";
-		$result=$this->db->query($query) or die ("Log Insert Failed");
+			"VALUES (?,CURRENT_TIMESTAMP)";
+		$result=$this->db->query($query, array($ipaddress)) or die ("Log Insert Failed");
 
 		$this->log_model->activity($user_name,0,'login','dashboard',0,'failure');
 
@@ -329,8 +329,8 @@ class User_Model extends CI_Model {
 				// check that old password is valid
 				//$hasher = new PasswordHash($this->hash_cost_log2, $this->hash_portable);
 
-				$sql="SELECT password FROM user WHERE username='$change_user_name' LIMIT 1";
-				$result=$this->db->query($sql) or die ("Query Failed");
+				$sql="SELECT password FROM user WHERE username = ? LIMIT 1";
+				$result=$this->db->query($sql, array($change_user_name)) or die ("Query Failed");
 				$mypassresult = $result->row_array();
 				$checkhash = $mypassresult['password'];
 
@@ -349,9 +349,9 @@ class User_Model extends CI_Model {
 						return $feedback;
 					}
 
-					$sql="UPDATE user SET password='$newhash' ".
-						"WHERE username='$change_user_name'";
-					$result=$this->db->query($sql) or die ("Query Failed");
+					$sql="UPDATE user SET password = ? ".
+						"WHERE username = ?";
+					$result=$this->db->query($sql, array($newhash, $change_user_name)) or die ("Query Failed");
 					$feedback = ' Password Changed ';
 					return $feedback;
 				}
@@ -436,8 +436,8 @@ class User_Model extends CI_Model {
 				$user_name=strtolower($user_name);
 
 				//does the name exist in the database?
-				$sql="SELECT * FROM user WHERE username='$user_name'";
-				$result=$this->db->query($sql);
+				$sql="SELECT * FROM user WHERE username = ?";
+				$result=$this->db->query($sql, array($user_name));
 				if ($result && $result->num_rows() > 0) 
 				{
 					$feedback['message'] =  ' ERROR - USER NAME EXISTS ';
@@ -460,8 +460,9 @@ class User_Model extends CI_Model {
 
 					// then insert it into the database
 					$sql="INSERT INTO user (username,real_name,password,admin,manager) ".
-						"VALUES ('$user_name','$real_name','$hash','$admin','$manager')";
-					$result=$this->db->query($sql) or die ("Insert Query Failed");
+						"VALUES (?,?,?,?,?)";
+					$result=$this->db->query($sql, array($user_name, $real_name, $hash, $admin, $manager))
+						or die ("Insert Query Failed");
 					if (!$result) 
 					{
 						$feedback['message'] = ' ERROR - '.db_error();
@@ -493,46 +494,14 @@ class User_Model extends CI_Model {
 
 
 	/*--------------------------------------------------------------------*/
-	// Get their user id
-	/*--------------------------------------------------------------------*/
-	function user_getid() {
-		global $G_USER_RESULT;
-		//see if we have already fetched this user from the db, if not, fetch it
-		if (!$G_USER_RESULT) {
-			$G_USER_RESULT=db_query("SELECT * FROM user WHERE username='" . $this->user_getname() . "'");
-		}
-		if ($G_USER_RESULT && db_numrows($G_USER_RESULT) > 0) {
-			return db_result($G_USER_RESULT,0,'user_id');
-		} else {	
-			return false;
-		}
-	}
-
-	/*--------------------------------------------------------------------*/
 	// Get their real name
 	/*--------------------------------------------------------------------*/
 	function user_getrealname($username) {
-		$query = "SELECT * FROM user WHERE username = '$username'";
-		$result = $this->db->query($query) or die ("Query Failed");
+		$query = "SELECT * FROM user WHERE username = ?";
+		$result = $this->db->query($query, array($username)) or die ("Query Failed");
 		$myresult = $result->row_array();
 		$real_name = $myresult['real_name'];
 		return $real_name;
-	}
-
-	/*--------------------------------------------------------------------*/
-	// Get their email address
-	/*--------------------------------------------------------------------*/
-	function user_getemail() {
-		global $G_USER_RESULT;
-		//see if we have already fetched this user from the db, if not, fetch it
-		if (!$G_USER_RESULT) {
-			$G_USER_RESULT=db_query("SELECT * FROM user WHERE username='" . $this->user_getname() . "'");
-		}
-		if ($G_USER_RESULT && db_numrows($G_USER_RESULT) > 0) {
-			return db_result($G_USER_RESULT,0,'email');
-		} else {
-			return false;
-		}
 	}
 
 
@@ -614,7 +583,8 @@ class User_Model extends CI_Model {
 			"email_notify = '$email_notify', ".
 			"screenname_notify = '$screenname_notify' ".
 			"WHERE username = '$this->user'";
-		$result = $this->db->query($query) or die ("query failed");
+		$result = $this->db->query($query, array($email, $screenname, $email_notify, $screenname_notify, $this->user))
+			or die ("query failed");
 
 	}
 
@@ -633,7 +603,7 @@ class User_Model extends CI_Model {
 	function get_user_info($userid)
 	{
 		$query = "SELECT * FROM user WHERE id = ?";
-		$result = $this->db->query($query, array($userid)) or die ("$l_queryfailed");
+		$result = $this->db->query($query, array($userid)) or die ("query failed");
 		return $result->row_array();
 	}
 
@@ -673,8 +643,8 @@ class User_Model extends CI_Model {
 	function delete_user($uid)
 	{
 		// delete the user with that ID
-		$query = "DELETE FROM user WHERE id = '$uid'";
-		$result = $this->db->query($query) or die ("delete user id query failed");
+		$query = "DELETE FROM user WHERE id = ?";
+		$result = $this->db->query($query, array($uid)) or die ("delete user id query failed");
 	}
 
 
