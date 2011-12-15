@@ -26,7 +26,7 @@ class Settings_Model extends CI_Model
 	{		
 		// get the dependent_cancel_url from the settings table
 		$query = "SELECT dependent_cancel_url FROM settings WHERE id = 1";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("dependent_cancel_url queryfailed");
 		$myresult = $result->row();
 		return $myresult->dependent_cancel_url;
 	}
@@ -41,7 +41,7 @@ class Settings_Model extends CI_Model
 	{
 		// get the path_to_citrus
 		$query = "SELECT path_to_ccfile FROM settings WHERE id = 1";
-		$result = $this->db->query($query) or die ("query failed");
+		$result = $this->db->query($query) or die ("get_path_to_ccfile query failed");
 		$myresult = $result->row_array();
 
 		return $myresult['path_to_ccfile'];
@@ -71,6 +71,7 @@ class Settings_Model extends CI_Model
 		return $myresult['default_shipping_group'];  
 	}
 		
+
 	function get_default_billing_group()
 	{
 		// get the default billing group
@@ -79,4 +80,7 @@ class Settings_Model extends CI_Model
 		$myresult = $result->row_array();
 		return $myresult['default_billing_group'];  
 	}
+	
 }
+
+/* end settings_model */
