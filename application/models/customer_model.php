@@ -19,8 +19,10 @@ class Customer_Model extends CI_Model
 	{
 		// get the customer name, and company
 		$query = "SELECT name,company FROM customer ".
-			"WHERE account_number = $this->account_number";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+			"WHERE account_number = ?";
+		$result = $this->db->query($query, array($account_number))
+			or die ("customer title queryfailed");
+		
 		$myresult = $result->row();
 		$data['account_number'] = $this->account_number;
 		$data['acct_name'] = $myresult->name;
@@ -32,8 +34,9 @@ class Customer_Model extends CI_Model
 	function record($account_number)
 	{
 		// get the all customer record information
-		$query = "SELECT * FROM customer WHERE account_number = $account_number";
-		$result = $this->db->query($query) or die ("customer info $l_queryfailed");
+		$query = "SELECT * FROM customer WHERE account_number = ?";
+		$result = $this->db->query($query, array($account_number))
+			or die ("customer record queryfailed");
 		$myresult = $result->row();	
 
 		// get the cancel reason text
@@ -83,11 +86,15 @@ class Customer_Model extends CI_Model
 				'cancel_reason' => $cancel_reason);	
 	}
 
+
+	/*
+	 * -------------------------------------------------------------------------
+	 * if the cancel date is empty, then put NULL in the cancel and removal date
+	 * -------------------------------------------------------------------------
+	 */
 	public function save_record($account_number, $customer_data)
 	{
 
-		// build update query, try with ActiveRecord from CI
-		// if the cancel date is empty, then put NULL in the cancel and removal date
 		if ($customer_data['cancel_date'] == "")
 		{               
 			$customer_data['cancel_date'] = NULL;
@@ -103,9 +110,14 @@ class Customer_Model extends CI_Model
 
 	}
 
+
+	/*
+	 * -------------------------------------------------------------------------
+	 *  customer_data in an assoc array with these values	 
+	 * -------------------------------------------------------------------------
+	 */
 	public function create_record($customer_data)
 	{
-		// customer_data in an assoc array with these values
 		$name = $customer_data['name'];
 		$company = $customer_data['company'];
 		$street = $customer_data['street'];
@@ -124,13 +136,25 @@ class Customer_Model extends CI_Model
 		$account_manager_password = $customer_data['account_manager_password'];
 
 		// insert a new customer record
-		$query = "INSERT into customer (signup_date, name, company, street, city, 
-			state, country, zip, phone, alt_phone, fax, contact_email, secret_question, 
-			secret_answer, source) 
-				VALUES (CURRENT_DATE, '$name', '$company', '$street', '$city', '$state', 
-						'$country', '$zip', '$phone', '$alt_phone','$fax', '$contact_email', 
-						'$secret_question','$secret_answer','$source')";
-		$result = $this->db->query($query) or die ("query failed");
+		$query = "INSERT into customer (signup_date, name, company, street, city, ".
+			"state, country, zip, phone, alt_phone, fax, contact_email, ".
+			"secret_question, secret_answer, source) ".
+			"VALUES (CURRENT_DATE, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$result = $this->db->query($query, array($name,
+												 $company,
+												 $street,
+												 $city,
+												 $state,
+												 $country,
+												 $zip,
+												 $phone,
+												 $alt_phone,
+												 $fax,
+												 $contact_email,
+												 $secret_question,
+												 $secret_answer,
+												 $source))
+			or die ("create_record query failed");
 
 		$myinsertid = $this->db->insert_id();  
 
@@ -148,16 +172,20 @@ class Customer_Model extends CI_Model
 		$query = "INSERT into billing (account_number,next_billing_date,from_date,
 			payment_due_date,name,company,street,city,state,country,zip,phone,fax,
 			contact_email,organization_id) 
-				VALUES ('$account_number','$mydate','$mydate','$mydate','$name','$company',
-						'$street','$city','$state','$country','$zip','$phone','$fax',
-						'$contact_email','$organization_id')";
-		$result = $this->db->query($query) or die ("query failed");	
+				VALUES (?,?,?,?,?,?,
+						?,?,?,?,?,?,?,
+					    ?,?)";
+		$result = $this->db->query($query, array($account_number, $mydate, $mydate, $mydate, $name, $company,
+												 $street, $city, $state, $country, $zip, $phone, $fax,
+												 $contact_email, $organization_id))
+			or die ("customer_record billing insert query failed");	
 
 		// set the default billing ID for the customer record
 		$billingid = $this->db->insert_id();
-		$query = "UPDATE customer SET default_billing_id = '$billingid' ".
-			"WHERE account_number = $account_number";
-		$result = $this->db->query($query) or die ("query failed");
+		$query = "UPDATE customer SET default_billing_id = ? ".
+			"WHERE account_number = ?";
+		$result = $this->db->query($query, account($billingid, $account_number))
+			or die ("update customer default_billing_id failed");
 
 		// return the account number and default billing id of the new customer
 		$data['account_number'] = $account_number;
@@ -170,17 +198,19 @@ class Customer_Model extends CI_Model
 	public function select_cancel_reasons()
 	{
 		$query = "SELECT * FROM cancel_reason";
-		$cancelreasonresult = $this->db->query($query) or die ("$l_queryfailed");
+		$cancelreasonresult = $this->db->query($query) or die ("select_cancel_reasons failed");
 
 		return $cancelreasonresult->result_array();
 	}
 
-	public function update_billingaddress()
+	
+	public function update_billingaddress($account_number)
 	{		
 		// update their billing address after we prompt them if they want to
 		// get the customer information
-		$query = "SELECT * FROM customer WHERE account_number = $this->account_number";
-		$result = $this->db->query($query) or die ("query failed");
+		$query = "SELECT * FROM customer WHERE account_number = ?";
+		$result = $this->db->query($query, array($account_number))
+			or die ("select customer update billingaddress failed");
 		$myresult = $result->row_array();
 
 		$street = $myresult['street'];
@@ -195,30 +225,35 @@ class Customer_Model extends CI_Model
 
 		// save billing address
 		$query = "UPDATE billing ".
-			"SET street = '$street', ".
-			"city = '$city', ".
-			"state = '$state', ".
-			"zip = '$zip', ".
-			"country = '$country', ".
-			"phone = '$phone', ".
-			"fax = '$fax', ".
-			"contact_email = '$contact_email' WHERE id = $default_billing_id";
-		$result = $this->db->query($query) or die ("query failed");
+			"SET street = ?, ".
+			"city = ?, ".
+			"state = ?, ".
+			"zip = ?, ".
+			"country = ?, ".
+			"phone = ?, ".
+			"fax = ?, ".
+			"contact_email = ? WHERE id = ?";
+		$result = $this->db->query($query, array($street,
+												 $city,
+												 $state,
+												 $zip,
+												 $country,
+												 $phone,
+												 $fax,
+												 $contact_email,
+												 $default_billing_id))
+			or die ("update_billingaddress failed");
 
 	}
 
-	public function cancel_reason($cancel_reason_id)
-	{
-
-		return $cancel_reason;
-	}
-
+	
 	public function is_not_canceled($account_number)  
 	{
 		// hide the Add Service function if the customer is canceled
 		$query = "SELECT cancel_date FROM customer ".
-			"WHERE account_number = $account_number AND cancel_date is NULL";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+			"WHERE account_number = ? AND cancel_date is NULL";
+		$result = $this->db->query($query, array($account_number))
+			or die ("is_not_canceled failed");
 		$notcanceled = $result->num_rows();
 		if ($notcanceled == 1) 
 		{ 
@@ -235,8 +270,9 @@ class Customer_Model extends CI_Model
 	{
 		// figure out the signup anniversary removal date
 		$query = "SELECT signup_date FROM customer 
-			WHERE account_number = '$account_number'";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+			WHERE account_number = ?";
+		$result = $this->db->query($query, array($account_number))
+			or die ("get_anniversary_removal_date failed");
 		$myresult = $result->row_array();	
 		$signup_date = $myresult['signup_date'];
 		list($myyear, $mymonth, $myday) = preg_split("/-/", $signup_date);
@@ -263,12 +299,14 @@ class Customer_Model extends CI_Model
 	public function check_if_field($if_field, $account_number)
 	{
 		$ifquery = "SELECT $if_field FROM customer ".
-			"WHERE account_number = '$account_number'";
-		$ifresult = $this->db->query($ifquery) or die ("Query Failed");	
+			"WHERE account_number = ?";
+		$ifresult = $this->db->query($ifquery, array($account_number))
+			or die ("check_if_field failed");	
 		$myifresult = $ifresult->row_array();
 		return $myifresult[$if_field];
 	}
 
+	
 	/*
 	 * ------------------------------------------------------------------------
 	 *  change the account manager password by a customer service rep
@@ -298,9 +336,10 @@ class Customer_Model extends CI_Model
 			{
 				// set the new password value
 				$query = "UPDATE customer SET ".
-					"account_manager_password = '$newhash' ".
-					"WHERE account_number = '$account_number'";
-				$result = $this->db->query($query) or die ("new password update failed");
+					"account_manager_password = ? ".
+					"WHERE account_number = ?";
+				$result = $this->db->query($query, array($newhash, $account_number))
+					or die ("new password update failed");
 				return TRUE;
 			}
 		} 
@@ -321,20 +360,23 @@ class Customer_Model extends CI_Model
 	{
 		$query = "UPDATE customer ".
 			"SET cancel_date = CURRENT_DATE, ". 
-			"cancel_reason = '$cancel_reason' ".
-			"WHERE account_number = '$account_number'";
-		$result = $this->db->query($query) or die ("query failed");
+			"cancel_reason = ? ".
+			"WHERE account_number = ?";
+		$result = $this->db->query($query, array($cancel_reason, $account_number))
+			or die ("cancel_customer update customer query failed");
 			
 		// set next_billing_date to NULL since it normally won't be billed again
 		$query = "UPDATE billing ".
 			"SET next_billing_date = NULL ". 
-			"WHERE account_number = '$account_number'";
-		$result = $this->db->query($query) or die ("query failed");   
-
+			"WHERE account_number = ?";
+		$result = $this->db->query($query, array($account_number))
+			or die ("cancel_customer update billing query failed");   
+		
 		// get the text of the cancel reason to use in the note
 		$query = "SELECT * FROM cancel_reason " . 
-			"WHERE id = '$cancel_reason'";
-		$result = $this->db->query($query) or die ("query failed");
+			"WHERE id = ?";
+		$result = $this->db->query($query, array($cancel_reason))
+			or die ("cancel_customer select reason query failed");
 		$myresult = $result->row_array();
 		$cancel_reason_text = $myresult['reason'];
 
@@ -351,8 +393,9 @@ class Customer_Model extends CI_Model
 		// add a canceled entry to the payment_history
 		$query = "INSERT INTO payment_history ".
 			"(creation_date, billing_id, status) ".
-			"VALUES (CURRENT_DATE,'$default_billing_id','canceled')";
-		$paymentresult = $this->db->query($query) or die ("$l_queryfailed");
+			"VALUES (CURRENT_DATE, ?,'canceled')";
+		$paymentresult = $this->db->query($query, array($default_billing_id))
+			or die ("cancel_customer payment insert queryfailed");
 	}
 
 
@@ -362,25 +405,28 @@ class Customer_Model extends CI_Model
 		$query = "UPDATE customer ".
 			"SET cancel_date = NULL, ".
 			"cancel_reason = NULL ".
-			"WHERE account_number = '$account_number'";
-		$result = $this->db->query($query) or die ("undelete_customer update customer query failed");
+			"WHERE account_number = ?";
+		$result = $this->db->query($query, array($account_number))
+			or die ("undelete_customer update customer query failed");
 
 		// update the default billing records with new billing dates
 		$mydate = $this->billing_model->get_nextbillingdate();
 
 		$query = "UPDATE billing ".
-			"SET next_billing_date = '$mydate', ".
-			"from_date = '$mydate', ".
-			"payment_due_date = '$mydate' ".
-			"WHERE account_number = '$account_number'";
-		$result = $this->db->query($query) or die ("update billing queryfailed");  
+			"SET next_billing_date = ?, ".
+			"from_date = ?, ".
+			"payment_due_date = ? ".
+			"WHERE account_number = ?";
+		$result = $this->db->query($query, array($mydate, $mydate, $mydate, $account_number))
+			or die ("undelete_customer update billing failed");  
 
 		// get the default billing id and billing type for automati_to_date
 		$query = "SELECT c.default_billing_id,b.billing_type,b.from_date ".
 			"FROM customer c ".
 			"LEFT JOIN billing b ON b.id = c.default_billing_id ".
-			"WHERE c.account_number = '$account_number'";
-		$result = $this->db->query($query) or die ("undelete_customer Billing Query Failed");
+			"WHERE c.account_number = ?";
+		$result = $this->db->query($query, array($account_number))
+			or die ("undelete_customer select billing failed");
 		$myresult = $result->row_array();	
 		$billing_id = $myresult['default_billing_id'];
 		$billing_type = $myresult['billing_type'];

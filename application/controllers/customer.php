@@ -95,7 +95,7 @@ class Customer extends App_Controller
 
 	public function updatebillingaddress()
 	{
-		$this->customer_model->update_billingaddress();
+		$this->customer_model->update_billingaddress($this->account_number);
 
 		print "<h3>" . lang('changessaved') . "<h3>";
 
