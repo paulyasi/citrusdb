@@ -30,10 +30,11 @@ class Reports_Model extends CI_Model
 			"LEFT JOIN master_services m ON u.master_service_id = m.id ".
 			"LEFT JOIN billing b ON u.billing_id = b.id ".
 			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
-			"WHERE b.organization_id = '$organization_id' ".
+			"WHERE b.organization_id = ? ".
 			"AND t.method <> 'free' AND u.removed <> 'y'";
 
-		$result = $this->db->query($query) or die ("Services Query Failed");
+		$result = $this->db->query($query, array($organization_id))
+			or die ("services_by_org Query Failed");
 
 		return $result->result_array();
 
@@ -63,13 +64,15 @@ class Reports_Model extends CI_Model
 			"AND te.tax_rate_id = tr.id ".
 			"LEFT JOIN billing b ON us.billing_id = b.id ".
 			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
-			"WHERE b.organization_id = '$organization_id' ".
+			"WHERE b.organization_id = ? ".
 			"AND us.removed <> 'y'";
 
-		$taxresult = $this->db->query($query) or die ("Taxes Query Failed");
+		$taxresult = $this->db->query($query, array($organization_id))
+			or die ("taxes_by_org Query Failed");
 
 		return $taxresult->result_array;
 	}
+
 
 	/*
 	 * ------------------------------------------------------------------------
@@ -80,20 +83,23 @@ class Reports_Model extends CI_Model
 	{
 		$query = "SELECT ms.service_description, ms.pricerate, ms.category, ".
 			"ms.frequency FROM master_services ms ".
-			"WHERE ms.id = '$id'";
-		$serviceresult = $this->db->query($query) or die ("Services Query Failed");
+			"WHERE ms.id = ?";
+		$serviceresult = $this->db->query($query, array($id))
+			or die ("master_services_info Query Failed");
 
 		return $serviceresult->result_array();
 	}
 
+	
 	function taxed_services($id)
 	{
 		$query = "SELECT tr.description, tr.rate, ms.service_description, ".
 			"ms.category FROM tax_rates tr ".
 			"LEFT JOIN taxed_services ts ON ts.tax_rate_id = tr.id ".
 			"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".	
-			"WHERE ts.id = '$id'";
-		$taxresult = $this->db->query($query) or die ("Taxes Query Failed");
+			"WHERE ts.id = ?";
+		$taxresult = $this->db->query($query, array($id))
+			or die ("taxed_services Query Failed");
 
 		return $taxresult->result_array();
 	}
@@ -115,9 +121,10 @@ class Reports_Model extends CI_Model
 			"LEFT JOIN billing_types bt ON b.billing_type = bt.id ".
 			"LEFT JOIN general g ON m.organization_id = g.id ".
 			"WHERE u.removed <> 'y' AND bt.method <> 'free' ".
-			"AND b.organization_id = '$organization_id' AND m.pricerate > '0' ". 
+			"AND b.organization_id = ? AND m.pricerate > '0' ". 
 			"AND m.frequency > '0' GROUP BY bt.method ORDER BY TotalNumber";
-		$result = $this->db->query($query) or die ("query failed");
+		$result = $this->db->query($query, array($organization_id))
+			or die ("total_services query failed");
 
 		return $result->result_array();
 
@@ -138,24 +145,28 @@ class Reports_Model extends CI_Model
 			"LEFT JOIN billing b ON b.id = u.billing_id ".
 			"LEFT JOIN billing_types bt ON b.billing_type = bt.id ".
 			"LEFT JOIN general g ON m.organization_id = g.id ".
-			"WHERE u.removed <> 'y' AND b.organization_id = '$organization_id' ".
+			"WHERE u.removed <> 'y' AND b.organization_id = ? ".
 			"AND m.frequency > '0' GROUP BY m.category ORDER BY TotalNumber";
-		$result = $this->db->query($query) or die ("query failed");
+		$result = $this->db->query($query, array($organization_id))
+			or die ("services_in_categories query failed");
 
 		return $result->result_array();
 
 	}
 
+	
 	function number_of_customers()
 	{
 		// get the number of customers
 		$query = "SELECT COUNT(*) FROM customer WHERE cancel_date is NULL";
-		$result = $this->db->query($query) or die ("query failed");
+		$result = $this->db->query($query) or die ("number_of_customers query failed");
 		$myresult = $result->row_array();
+
 		return $myresult['COUNT(*)'];
 
 	}
 
+	
 	function number_of_non_free_customers()
 	{
 		// get the number of customers who are not free
@@ -163,8 +174,9 @@ class Reports_Model extends CI_Model
 			LEFT JOIN billing b ON b.id = c.default_billing_id 
 			LEFT JOIN billing_types bt ON b.billing_type = bt.id
 			WHERE cancel_date is NULL AND bt.method <> 'free'";
-		$result = $this->db->query($query) or die ("query failed");
+		$result = $this->db->query($query) or die ("number_of_non_free_customers query failed");
 		$myresult = $result->row_array();
+
 		return $myresult['COUNT(*)'];
 	}
 
@@ -189,7 +201,8 @@ class Reports_Model extends CI_Model
 				AND bd.taxed_services_id IS NULL 
 				GROUP BY ms.id ORDER BY ms.category";
 			
-			$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+			$result = $this->db->query($query, array($day1, $day2))
+				or die ("servicerevenue query failed");
 		}
 		else
 		{
@@ -207,7 +220,8 @@ class Reports_Model extends CI_Model
 					AND bd.taxed_services_id IS NULL AND g.id = ? 
 					GROUP BY ms.id ORDER BY ms.category";
 			
-			$result = $this->db->query($query, array($day1, $day2, $org_id)) or die ("query failed");
+			$result = $this->db->query($query, array($day1, $day2, $org_id))
+				or die ("servicerevenue 2 query failed");
 		}
 
 
@@ -237,7 +251,8 @@ class Reports_Model extends CI_Model
 					AND ms.id = 1  
 					GROUP BY cr.description"; 
 
-					$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+					$result = $this->db->query($query, array($day1, $day2))
+						or die ("creditrevenue query failed");
 		}
 		else
 		{
@@ -256,9 +271,12 @@ class Reports_Model extends CI_Model
 					AND ms.id = 1  
 					GROUP BY cr.description"; 
 
-					$result = $this->db->query($query, array($day1, $day2, $org_id)) or die ("query failed");
+					$result = $this->db->query($query, array($day1, $day2, $org_id))
+						or die ("creditrevenue 2 query failed");
 		}
+
 		return $result->result_array();
+		
 	}
 
 
@@ -284,7 +302,8 @@ class Reports_Model extends CI_Model
 				AND bd.taxed_services_id IS NULL 
 				GROUP BY ms.id"; 
 
-				$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+				$result = $this->db->query($query, array($day1, $day2))
+					or die ("refundrevenue query failed");
 		}
 		else
 		{
@@ -304,8 +323,10 @@ class Reports_Model extends CI_Model
 					AND bd.taxed_services_id IS NULL and g.id = ? 
 					GROUP BY ms.id"; 
 
-					$result = $this->db->query($query, array($day1, $day2, $org_id)) or die ("query failed");
+					$result = $this->db->query($query, array($day1, $day2, $org_id))
+						or die ("refunerevenue 2 query failed");
 		}
+		
 		return $result->result_array();
 
 	}
@@ -323,7 +344,8 @@ class Reports_Model extends CI_Model
 				"WHERE ph.creation_date BETWEEN ? AND ? ".
 				"AND ph.payment_type = 'discount'";
 
-			$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+			$result = $this->db->query($query, array($day1, $day2))
+				or die ("discountrevenue query failed");
 		}
 		else
 		{
@@ -335,13 +357,16 @@ class Reports_Model extends CI_Model
 				"WHERE ph.creation_date BETWEEN ? AND ? ".
 				"AND ph.payment_type = 'discount' AND bi.organization_id = ?";
 
-			$result = $this->db->query($query, array($day1, $day2, $org_id)) or die ("query failed");
+			$result = $this->db->query($query, array($day1, $day2, $org_id))
+				or die ("discountrevenue 2 query failed");
 
 		}
 
 		return $result->result_array();
 	}
 
+
+	
 	function taxrevenue($day1, $day2)
 	{
 		// show taxes for a specified date range according to
@@ -359,7 +384,8 @@ class Reports_Model extends CI_Model
 				   AND bd.taxed_services_id IS NOT NULL
 				   GROUP BY tr.id";
 
-		$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+		$result = $this->db->query($query, array($day1, $day2))
+			or die ("taxrevenue query failed");
 
 		return $result->result_array();
 
@@ -382,7 +408,8 @@ class Reports_Model extends CI_Model
 				   AND bd.taxed_services_id IS NOT NULL 
 				   GROUP BY tr.id";
 
-		$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+		$result = $this->db->query($query, array($day1, $day2))
+			or die ("taxrefunds query failed");
 
 		return $result->result_array();
 
@@ -396,7 +423,8 @@ class Reports_Model extends CI_Model
 			"LEFT JOIN billing bi ON bi.id = ph.billing_id ".
 			"WHERE ph.status = 'credit' AND bi.organization_id = ? ".
 			"AND ph.creation_date BETWEEN ? AND ?";
-		$result = $this->db->query($query, array($organization_id, $day1, $day2)) or die ("query failed");
+		$result = $this->db->query($query, array($organization_id, $day1, $day2))
+			or die ("refunds query failed");
 
 		return $result->result_array();
 	}
@@ -411,7 +439,8 @@ class Reports_Model extends CI_Model
 			"WHERE b.organization_id = ? ".
 			"GROUP BY ph.billing_id ORDER BY ph.billing_id";
 
-		$result = $this->db->query($query, array($organization_id)) or die ("recentpayments query failed");
+		$result = $this->db->query($query, array($organization_id))
+			or die ("recentpayments query failed");
 
 		// initialize for multidimensional result array
 		$i = 0;
@@ -436,9 +465,13 @@ class Reports_Model extends CI_Model
 					"LEFT JOIN billing_details bd ON bd.billing_id = b.id ".
 					"LEFT JOIN billing_history bh ON bd.invoice_number = bh.id ".
 					"LEFT JOIN customer c ON c.account_number = b.account_number ".
-					"WHERE ph.id = $recentpaymentid AND b.pastdue_exempt <> 'y' AND ".
+					"WHERE ph.id = ? AND b.pastdue_exempt <> 'y' AND ".
 					"c.cancel_date IS NULL AND ".
-					"ph.status = '$viewstatus' AND bd.billed_amount > bd.paid_amount LIMIT 1";
+					"ph.status = ? AND bd.billed_amount > bd.paid_amount LIMIT 1";
+				
+				$paymentresult = $this->db->query($query, array($recentpaymentid, $viewstatus))
+					or die ("paymentresult queryfailed");
+				
 			} 
 			elseif (($viewstatus == 'cancelwfee') OR ($viewstatus == 'canceled') 
 					OR ($viewstatus == 'collections')) 
@@ -451,8 +484,12 @@ class Reports_Model extends CI_Model
 					"LEFT JOIN billing_details bd ON bd.billing_id = b.id ".
 					"LEFT JOIN billing_history bh ON bd.invoice_number = bh.id ".
 					"LEFT JOIN customer c ON c.account_number = b.account_number ".
-					"WHERE ph.id = $recentpaymentid AND ".
-					"ph.status = '$viewstatus' AND bd.billed_amount > bd.paid_amount LIMIT 1";
+					"WHERE ph.id = ? AND ".
+					"ph.status = ? AND bd.billed_amount > bd.paid_amount LIMIT 1";
+				
+				$paymentresult = $this->db->query($query, array($recentpaymentid, $viewstatus))
+					or die ("paymentresult queryfailed");
+				
 			} 
 			elseif ($viewstatus == 'pastdueexempt') 
 			{
@@ -463,11 +500,14 @@ class Reports_Model extends CI_Model
 					"LEFT JOIN billing_details bd ON bd.billing_id = b.id ".
 					"LEFT JOIN billing_history bh ON bd.invoice_number = bh.id ".
 					"LEFT JOIN customer c ON c.account_number = b.account_number ".
-					"WHERE ph.id = $recentpaymentid AND b.pastdue_exempt = 'y' ".
-					"AND c.cancel_date IS NULL AND bd.billed_amount > bd.paid_amount LIMIT 1";	
+					"WHERE ph.id = ? AND b.pastdue_exempt = 'y' ".
+					"AND c.cancel_date IS NULL AND bd.billed_amount > bd.paid_amount LIMIT 1";
+				
+				$paymentresult = $this->db->query($query, array($recentpaymentid))
+					or die ("paymentresult queryfailed");
+				
 			}
 
-			$paymentresult = $this->db->query($query) or die ("paymentresult $l_queryfailed");
 			foreach ($paymentresult->result_array() AS $mypaymentresult) 
 			{    
 				$account_number = $mypaymentresult['account_number'];
@@ -484,8 +524,9 @@ class Reports_Model extends CI_Model
 				$categorylist = "";
 				$query = "SELECT DISTINCT m.category FROM user_services u ".
 					"LEFT JOIN master_services m ON u.master_service_id = m.id ".
-					"WHERE u.billing_id = '$billing_id' AND removed <> 'y'";
-				$categoryresult = $this->db->query($query) or die ("category $l_queryfailed");
+					"WHERE u.billing_id = ? AND removed <> 'y'";
+				$categoryresult = $this->db->query($query, array($billing_id))
+					or die ("distince category query failed");
 				foreach ($categoryresult->result_array() AS $mycategoryresult) 
 				{
 					$categorylist .= $mycategoryresult['category'];
@@ -535,7 +576,8 @@ class Reports_Model extends CI_Model
 				"LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
 				"BETWEEN ? AND ? AND p.payment_type = ?";
 
-			$result = $this->db->query($query, array($day1, $day2, $showpaymenttype)) or die ("queryfailed");
+			$result = $this->db->query($query, array($day1, $day2, $showpaymenttype))
+				or die ("paymentstatus 1 queryfailed");
 		} 
 		else 
 		{
@@ -545,7 +587,7 @@ class Reports_Model extends CI_Model
 				"AND p.payment_type = ?";
 
 			$result = $this->db->query($query, array($day1, $day2, $organization_id, $showpaymenttype)) 
-				or die ("$l_queryfailed");
+				or die ("paymentstatus 2 queryfailed");
 		}
 
 		return $result->result_array();
@@ -562,7 +604,8 @@ class Reports_Model extends CI_Model
 				"WHERE p.creation_date BETWEEN ? AND ? ".
 				"AND p.payment_type = 'creditcard' AND p.status = 'declined'";
 
-			$result = $this->db->query($query, array($day1, $day2)) or die ("$l_queryfailed");
+			$result = $this->db->query($query, array($day1, $day2))
+				or die ("distinctdeclined 1 queryfailed");
 		} 
 		else 
 		{
@@ -573,7 +616,8 @@ class Reports_Model extends CI_Model
 				"AND b.organization_id = ? ".
 				"AND p.payment_type = 'creditcard' AND p.status = 'declined'";
 
-			$result = $this->db->query($query, array($day1, $day2, $organization_id)) or die ("$l_queryfailed");
+			$result = $this->db->query($query, array($day1, $day2, $organization_id))
+				or die ("distinctdeclined 2 queryfailed");
 		}
 
 		return $result->result_array();
@@ -590,7 +634,8 @@ class Reports_Model extends CI_Model
 				"LEFT JOIN billing b ON p.billing_id = b.id WHERE p.creation_date ".
 				"BETWEEN ? AND ? AND p.payment_type <> 'creditcard'";
 
-			$result = $this->db->query($query, array($day1, $day2)) or die ("query failed");
+			$result = $this->db->query($query, array($day1, $day2))
+				or die ("noncardpayments 2 query failed");
 		} 
 		else 
 		{
@@ -599,7 +644,8 @@ class Reports_Model extends CI_Model
 				"BETWEEN ? AND ? AND b.organization_id = ? ".
 				"AND p.payment_type <> 'creditcard'";    
 
-			$result = $this->db->query($query, array($day1, $day2, $organization_id)) or die ("query failed");
+			$result = $this->db->query($query, array($day1, $day2, $organization_id))
+				or die ("noncardpayments 2 query failed");
 		}
 
 		return $result->result_array();
@@ -631,8 +677,9 @@ class Reports_Model extends CI_Model
 			"LEFT JOIN billing_types bt ON bt.id = bi.billing_type " .
 			"LEFT JOIN customer cu ON us.account_number = cu.account_number " .
 			"LEFT JOIN cancel_reason cr ON cu.cancel_reason = cr.id " .
-			"WHERE ms.id = '$service_id'";
-		$result = $this->db->query($query) or die ("$query $l_queryfailed");
+			"WHERE ms.id = ?";
+		$result = $this->db->query($query, array($service_id))
+			or die ("distinctservices queryfailed");
 
 		return $result->result_array();
 	}
@@ -651,7 +698,8 @@ class Reports_Model extends CI_Model
 			"LEFT JOIN customer cu ON cu.account_number = us.account_number " .
 			"WHERE ms.category = ? ".
 			"AND date(us.start_datetime) BETWEEN ? AND ?";
-		$result = $this->db->query($query, array($category, $day1, $day2)) or die ("$query $l_queryfailed");
+		$result = $this->db->query($query, array($category, $day1, $day2))
+			or die ("servicesources queryfailed");
 
 		return $result->result_array();
 
@@ -670,7 +718,7 @@ class Reports_Model extends CI_Model
 	function baddebt()
 	{
 		$query = "SELECT * FROM billing WHERE pastdue_exempt = 'bad_debt'";
-		$result = $this->db->query($query) or die ("bad debt query failed");
+		$result = $this->db->query($query) or die ("baddebt query failed");
 
 		return $result->result_array();
 	}
@@ -687,6 +735,7 @@ class Reports_Model extends CI_Model
 
 		return $result->result_array();
 	}
+	
 
 	function servicechurn($month, $year)
 	{
@@ -706,7 +755,8 @@ class Reports_Model extends CI_Model
 			"WHERE date(us.start_datetime) <= ? ".
 			"AND ((date(us.end_datetime) >= ?) OR (us.removed <> 'y')) ".
 			"AND ms.frequency > 0 AND t.method <> 'free' GROUP BY ms.id ORDER BY category";
-		$totalresult = $this->db->query($query, array($lastofmonth, $firstofmonth)) or die ("$query $l_queryfailed");
+		$totalresult = $this->db->query($query, array($lastofmonth, $firstofmonth))
+			or die ("servicechurn select total customers queryfailed");
 		foreach ($totalresult->result_array() AS $mytotalresult) 
 		{
 			$service_description = $mytotalresult['service_description'];
@@ -719,7 +769,8 @@ class Reports_Model extends CI_Model
 			$query = "SELECT count(*) AS count FROM user_services us ".
 				"WHERE YEAR(us.end_datetime) = ? ".
 				"AND MONTH(us.end_datetime) = ? AND us.master_service_id = ?";
-			$endresult = $this->db->query($query, array($year, $month, $msid)) or die ("$query $l_queryfailed");
+			$endresult = $this->db->query($query, array($year, $month, $msid))
+				or die ("servicechurn count services queryfailed");
 			$myendresult = $endresult->row_array();
 			$lostcount = $myendresult['count'];
 
@@ -741,3 +792,5 @@ class Reports_Model extends CI_Model
 	}
 
 }
+
+/* end reports_model */
