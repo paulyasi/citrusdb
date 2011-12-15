@@ -20,17 +20,22 @@ class Module_model extends CI_Model
 		// Check for permissions to view module
     	$groupname = array();
     	$modulelist = array();
-    	$query = "SELECT * FROM groups WHERE groupmember = '$user'";
-    	$result = $this->db->query($query) or die ("First Permission Query Failed");	
+    	$query = "SELECT * FROM groups WHERE groupmember = ?";
+    	$result = $this->db->query($query, array($user))
+			or die ("First Permission Query Failed");	
+
     	foreach ($result->result() as $myresult)
 		{
 			array_push($groupname,$myresult->groupname);
     	}
+		
     	$groups = array_unique($groupname);
     	array_push($groups,$user);
 	
-	    $query = "SELECT user,permission FROM module_permissions WHERE modulename = '$modulename'";
-	    $result = $this->db->query($query) or die ("Second Permission Query Failed");	
+	    $query = "SELECT user,permission FROM module_permissions WHERE modulename = ?";
+	    $result = $this->db->query($query, array($modulename))
+			or die ("Second Permission Query Failed");
+		
 	    foreach ($result->result() as $myresult)
 		{
 			if (in_array ($myresult->user, $groups))
@@ -59,6 +64,7 @@ class Module_model extends CI_Model
     	}
     } // end permission function
 
+	
 	function permission_error()
 	{
 		die ("You don't have permission to use this function");
@@ -70,19 +76,23 @@ class Module_model extends CI_Model
     	// get a list of modules we are allowed to view
     	$groupname = array();
     	$modulelist = array();
-		$query = "SELECT * FROM groups WHERE groupmember = '$user'";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$query = "SELECT * FROM groups WHERE groupmember = ?";
+		$result = $this->db->query($query, array($user))
+			or die ("module_permission groups select failed");
+
 		foreach($result->result() as $myresult)
 		{
 			array_push($groupname,$myresult->groupname);
 		}
+		
     	$groups = array_unique($groupname);
     	array_push($groups,$this->user);
 
     	while (list($key,$value) = each($groups))
     	{
-        	$query = "SELECT * FROM module_permissions WHERE user = '$value' ";
-			$result = $this->db->query($query) or die ("$l_queryfailed");
+        	$query = "SELECT * FROM module_permissions WHERE user = ? ";
+			$result = $this->db->query($query, array($value))
+				or die ("select module_permissions failed");
 			foreach($result->result() as $myresult)
 			{
         		array_push($modulelist,$myresult->modulename);
@@ -92,15 +102,17 @@ class Module_model extends CI_Model
     	return array_unique($modulelist);
     
     }
+	
     
     public function modulelist()
     {
 		$query = "SELECT * FROM modules ORDER BY sortorder";
-		$result = $this->db->query($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("modulelist query failed");
 		
 		return $result->result_array();
     }
 
+	
 	/*
 	 * ------------------------------------------------------------------------
 	 *  insert a new module into the modules table
