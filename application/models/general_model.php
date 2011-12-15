@@ -2,8 +2,8 @@
 
 /**
  * 
- * Settings class gives you access to the settings table info
- * that control overall settings for citrus
+ * General model class gives you access to the general table
+ * that control organization settings for citrus
  * 
  * @author pyasi
  *
