@@ -4,6 +4,7 @@
 <LINK href="<?php echo $this->url_prefix;?>/citrus.css" type=text/css rel=STYLESHEET>
 <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
 <SCRIPT LANGUAGE="JavaScript" SRC="<?php echo $this->url_prefix?>/js/CalendarPopup.js"></SCRIPT>
+<script language="javascript" src="<?php echo $this->url_prefix?>/js/prototype.js"></script>
    <SCRIPT LANGUAGE="JavaScript">
    var cal = new CalendarPopup();
 

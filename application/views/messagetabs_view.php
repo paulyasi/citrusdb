@@ -1,5 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-echo "<hr><div id=\"tabnav\">\n";
+echo "<div id=\"tabnav\">\n";
 
 // get the ticketdatetime for the user, the last time tickets.php was loaded for $user
 $ticketdatetime = $this->user . 'datetime';

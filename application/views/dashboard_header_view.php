@@ -9,9 +9,20 @@ $data['recent'] = $this->log_model->recently_viewed(
 $this->session->userdata('user_name')
 );
 $this->load->view('recently_viewed_view', $data);
+?>
+<hr>
+<div id="messagetabs">
+</div>
 
-$data['usergroups'] = $this->user_model->user_groups($this->user);
-$this->load->view('messagetabs_view', $data);
+<script language="javascript">
+new Ajax.PeriodicalUpdater('messagetabs', '<?php echo $this->url_prefix?>/index.php/tickets/messagetabs',
+{
+method: 'get',
+frequency: 300,
+});
+</script></form>
+
+<?php
 
 $this->load->view('buttonbar_view');
 

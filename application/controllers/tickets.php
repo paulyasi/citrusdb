@@ -12,8 +12,21 @@ class Tickets extends App_Controller {
 		$this->load->model('billing_model');
 		$this->load->model('support_model');
 	}
-	
 
+
+
+	/*
+	 * -------------------------------------------------------------------------
+	 *  load the message tabs output for ajax requests
+	 * -------------------------------------------------------------------------
+	 */
+	function messagetabs()
+	{
+		$data['usergroups'] = $this->user_model->user_groups($this->user);
+		$this->load->view('messagetabs_view', $data);
+	}
+
+	
 	/*
 	 * ------------------------------------------------------------------------
 	 *  list tickets for this user
