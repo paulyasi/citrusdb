@@ -52,7 +52,7 @@
 <td><?php echo $source?></td><tr>
   
 <td><b><?php echo lang('contactemail');?></b></td>
-<td><?php echo $contactemail?></td><tr>
+<td><?php echo mailto($contactemail, $contactemail)?></td><tr>
   
 <td><b><?php echo lang('secret_question');?></b></td>
 <td><?php echo $secret_question?></td><tr>

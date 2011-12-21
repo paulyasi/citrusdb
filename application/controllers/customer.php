@@ -396,7 +396,8 @@ class Customer extends App_Controller
 			}
 
 			// set cancel date and leave cancel histories for this customer
-			$this->customer_model->cancel_customer($cancel_reason, $this->account_number);
+			$cancelticket = $this->customer_model->cancel_customer($cancel_reason,
+																   $this->account_number);
 
 			// log this customer being canceled/deleted
 			$this->log_model->activity($this->user,$this->account_number,

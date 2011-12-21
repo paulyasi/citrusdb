@@ -40,7 +40,8 @@ if (($userprivileges['manager'] == 'y') OR ($userprivileges['admin'] == 'y')) {
 	<td bgcolor="#ccccdd"><b><?php echo lang('country')?></b></td><td bgcolor="#ddddee"><?php echo $country;?></td><tr>
 	<td bgcolor="#ccccdd"><b><?php echo lang('phone')?></b></td><td bgcolor="#ddddee"><?php echo $phone;?></td><tr>
 	<td bgcolor="#ccccdd"><b><?php echo lang('fax')?></b></td><td bgcolor="#ddddee"><?php echo $fax;?></td><tr>
-	<td bgcolor="#ccccdd"><b><?php echo lang('contactemail')?></b></td><td bgcolor="#ddddee"><?php echo $contact_email;?></td><tr>
+	<td bgcolor="#ccccdd"><b><?php echo lang('contactemail')?></b></td><td bgcolor="#ddddee">
+	 <?php echo mailto($contact_email,$contact_email);?></td><tr>
 	</table>
 </td>
 <td valign=top width=360>		

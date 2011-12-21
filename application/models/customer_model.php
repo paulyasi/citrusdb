@@ -384,7 +384,9 @@ class Customer_Model extends CI_Model
 		// if they are carrier dependent, send a note to
 		// the billing_noti
 		$desc = lang('canceled') . ": $cancel_reason_text";
-		$this->support_model->create_ticket($this->user, NULL, 
+		
+		// leave ticket and return the ticket number to customer service user
+		$cancelticket = $this->support_model->create_ticket($this->user, '', 
 				$account_number, 'automatic', $desc);
 
 		// get the billing_id for the customer's payment_history
@@ -396,6 +398,8 @@ class Customer_Model extends CI_Model
 			"VALUES (CURRENT_DATE, ?,'canceled')";
 		$paymentresult = $this->db->query($query, array($default_billing_id))
 			or die ("cancel_customer payment insert queryfailed");
+
+		return $cancelticket;
 	}
 
 
