@@ -26,7 +26,7 @@ class Tickets extends App_Controller {
 		$this->load->view('messagetabs_view', $data);
 	}
 
-	
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  list tickets for this user
@@ -42,10 +42,14 @@ class Tickets extends App_Controller {
 			if (!$user) 
 			{
 				$user = $this->user;
-			}
+			}			
 
-			// show the header common to all dashboard/tool views
-			$this->load->view('dashboard_header_view');
+			// show the special html header for ticket pages
+			$data['ticketuser'] = $user;
+			$this->load->view('header_for_tickets_view.php', $data);
+			
+			// show the sidebar and heading for tickets
+			$this->load->view('ticket_header_view');
 
 			$data['user'] = $user;
 			$data['tickets'] = $this->support_model->list_tickets($user);
@@ -71,10 +75,13 @@ class Tickets extends App_Controller {
 		$permission = $this->module_model->permission($this->user, 'support');
 		if ($permission['view'])
 		{
-
-			// show the header common to all dashboard/tool views
-			$this->load->view('dashboard_header_view');
-
+			// show the special html header for ticket pages
+			$data['ticketgroup'] = $group;
+			$this->load->view('header_for_tickets_view.php', $data);
+			
+			// show the sidebar and heading for tickets
+			$this->load->view('ticket_header_view');
+			
 			$data['notify'] = $group;
 			$data['tickets'] = $this->support_model->list_tickets($group);
 			$this->load->view('tickets/group_view', $data);
