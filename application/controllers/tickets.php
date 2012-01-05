@@ -64,6 +64,7 @@ class Tickets extends App_Controller {
 		}	
 	}
 
+	
 	/*
 	 * ------------------------------------------------------------------------
 	 *  list tickets for this group
