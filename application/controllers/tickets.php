@@ -46,6 +46,7 @@ class Tickets extends App_Controller {
 
 			// show the special html header for ticket pages
 			$data['ticketuser'] = $user;
+			$data['ticketgroup'] = "";
 			$this->load->view('header_for_tickets_view.php', $data);
 			
 			// show the sidebar and heading for tickets
@@ -53,6 +54,7 @@ class Tickets extends App_Controller {
 
 			$data['user'] = $user;
 			$data['tickets'] = $this->support_model->list_tickets($user);
+			$data['lastview'] = $lastview;
 			$this->load->view('tickets/user_view', $data);
 
 			// show html footer
@@ -78,6 +80,7 @@ class Tickets extends App_Controller {
 		{
 			// show the special html header for ticket pages
 			$data['ticketgroup'] = $group;
+			$data['ticketuser'] = "";			
 			$this->load->view('header_for_tickets_view.php', $data);
 			
 			// show the sidebar and heading for tickets
@@ -85,6 +88,7 @@ class Tickets extends App_Controller {
 			
 			$data['notify'] = $group;
 			$data['tickets'] = $this->support_model->list_tickets($group);
+			$data['lastview'] = $lastview;
 			$this->load->view('tickets/group_view', $data);
 
 			// show html footer
