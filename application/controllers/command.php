@@ -30,6 +30,7 @@ class Command extends CI_Controller
 	 * is run you'll have to move the secret keys back onto the server to run it
 	 *
 	 * get the passphrase from the command line
+	 * cd into your citrusdb folder
 	 * run as the www-data user or whatever user has the gpg ring
 	 *
 	 * su - www-data
@@ -41,13 +42,12 @@ class Command extends CI_Controller
         // load models
 		$this->load->model('billing_model');
 		$this->load->model('support_model');
-		$this->load->model('service_model');
 		$this->load->model('settings_model');
 		
 		// load the encryption helper for use when calling gpg things
 		$this->load->helper('encryption');
 
-		$creditcard_list = $this->billing_model->list_creditcards();
+		$creditcard_list = $this->billing_model->list_encrypted_creditcards();
 
 		// walk forwards one at a time with next_row
 		while ($myresult = $creditcard_list->next_row('array'))
@@ -111,7 +111,76 @@ class Command extends CI_Controller
 		} // end while myresult
 
 	} // end function decrypt cards
+
+
+
 	
+	/*
+	 * --------------------------------------------------------------------------
+	 * encrypt the credit cards in the citrus database using the gpg settings
+	 * from the configuration
+	 * --------------------------------------------------------------------------
+	 */
+	public function encryptcards()
+	{		
+        // load models
+		$this->load->model('billing_model');
+		$this->load->model('support_model');
+		$this->load->model('settings_model');
+		
+		// load the encryption helper for use when calling gpg things
+		$this->load->helper('encryption');
+		
+		$result = $this->billing_model->list_creditcards();
+
+		//while ($myresult = $result->next_row('array'))
+		foreach ($result AS $myresult)
+		{
+			$id = $myresult['id'];
+			$creditcard_number = $myresult['creditcard_number'];
+
+			// check if there is a non-masked credit card number in the input
+			// if the second cararcter is a * then it's already masked
+  
+			// check if the credit card entered already masked
+			// eg: a replacement was not entered
+			if ($creditcard_number[1] <> '*')
+			{
+				// destroy the output array before we use it again
+				unset($encrypted);
+
+				$encrypted = encrypt_command($this->config->item('gpg_command'),
+											 $creditcard_number);
+
+				// if there is a gpg error, stop here
+				if (substr($encrypted,0,5) == "error")
+				{
+					die ("Credit Card Encryption Error: $encrypted");
+				}
+
+				$encrypted_creditcard_number = $encrypted;
+    
+				// wipe out the middle of the creditcard_number before it gets inserted
+				$firstdigit = substr($creditcard_number, 0,1);
+				$lastfour = substr($creditcard_number, -4);
+				$creditcard_number = "$firstdigit" . "***********" . "$lastfour";    
+
+				//echo "$gpgcommandline<br><pre>$encrypted_creditcard_number</pre>\n";
+
+				$this->billing_model->input_encrypted_card($creditcard_number,
+														   $encrypted_creditcard_number,
+														   $id);
+    
+				print "$id creditcard updated $encrypted_creditcard_number\n";
+
+			} else {
+				print "$id skipped\n";
+			}// end if creditcard_number
+
+		} // end while myresult
+
+
+	}
 	
 }
 

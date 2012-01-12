@@ -3822,20 +3822,46 @@ class Billing_Model extends CI_Model
 	
 	// when re-keying credit cards use this to get the list of credit cards to decrypt
 	// use result->next_row('array') to walk through results and process them
-	function list_creditcards()
+	function list_encrypted_creditcards()
 	{
 		$query = "SELECT id, creditcard_number, encrypted_creditcard_number ".
 			"FROM billing WHERE encrypted_creditcard_number IS NOT NULL";
-		$result =  $this->db->query($query) or die ("list_creditcards Query Failed");
-		return $result;
+		$result =  $this->db->query($query) or die ("list_encrypted_creditcards Query Failed");
+		
+		return $result->result_array();
 	}
+	
 
 	// when re-keying credit cards use this function to insert the card as plaintext
 	function input_decrypted_card($decrypted_creditcard_number, $id)
 	{
 		$query = "UPDATE billing SET creditcard_number = ? WHERE id = ?";
-		$cardupdate = $this->db->query($query, array($decrypted_creditcard_number, $id)) or die ("input_decrypted_card query failed");
-	}	
+		$cardupdate = $this->db->query($query, array($decrypted_creditcard_number, $id))
+			or die ("input_decrypted_card query failed");
+	}
+
+
+	// get list of card numbers to encrypt
+	function list_creditcards()
+	{		
+		$query = "SELECT id, creditcard_number FROM billing ".
+			"WHERE creditcard_number IS NOT NULL AND creditcard_number <> '0' ".
+			"AND creditcard_number <> ''";
+		$result = $this->db->query($query) or die ("list_creditcards Query Failed");
+		
+		return $result->result_array();
+	}
+
+
+	// update billing with a new encrypted card from encryptcard command
+	function input_encrypted_card($creditcard_number, $encrypted_creditcard_number, $id)
+	{
+		$query = "UPDATE billing SET creditcard_number = ?, ".
+			"encrypted_creditcard_number = ? WHERE id = ?";
+		
+		$cardupdate = $this->db->query($query, array($creditcard_number, $encrypted_creditcard_number, $id))
+			or die ("card update query failed");
+	}
 	
 	
 }
