@@ -28,8 +28,7 @@ class Billing extends App_Controller
 			$this->load->view('module_header_view');
 			
 			// get the billing id
-			$billing_id = $this->billing_model->default_billing_id($this->account_number);
-			
+			$billing_id = $this->billing_model->default_billing_id($this->account_number);			
 			
 			// show the billing information (name, address, etc)
 			$data = $this->billing_model->record($billing_id);

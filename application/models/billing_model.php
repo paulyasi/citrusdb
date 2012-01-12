@@ -3818,6 +3818,17 @@ class Billing_Model extends CI_Model
 		$result = $this->db->query($query, array($tax_rate_id, $account_number))
 			or die ("remove_tax_exempt queryfailed");
 	}
+
+	
+	// when re-keying credit cards use this to get the list of credit cards to decrypt
+	// use result->next_row('array') to walk through results and process them
+	function list_creditcards()
+	{
+		$query = "SELECT id, creditcard_number, encrypted_creditcard_number ".
+			"FROM billing WHERE encrypted_creditcard_number IS NOT NULL";
+		return $this->db->query($query) or die ("list_creditcards Query Failed");
+	}
+	
 	
 }
 
