@@ -30,7 +30,10 @@ class Command extends CI_Controller
 	 * is run you'll have to move the secret keys back onto the server to run it
 	 *
 	 * get the passphrase from the command line
+	 * run as the www-data user or whatever user has the gpg ring
 	 *
+	 * su - www-data
+	 * php index.php command decryptcards <passphrase>
 	 * -----------------------------------------------------------------------
 	 */
 	public function decryptcards($passphrase)
@@ -38,7 +41,11 @@ class Command extends CI_Controller
         // load models
 		$this->load->model('billing_model');
 		$this->load->model('support_model');
-		$this->load->model('service_model');		
+		$this->load->model('service_model');
+		$this->load->model('settings_model');
+		
+		// load the encryption helper for use when calling gpg things
+		$this->load->helper('encryption');
 
 		$creditcard_list = $this->billing_model->list_creditcards();
 
@@ -59,18 +66,11 @@ class Command extends CI_Controller
 				// write the encrypted_creditcard_number to a temporary file
 				// and decrypt that file to stdout to get the CC
 				// select the path_to_ccfile from settings
-				$query = "SELECT path_to_ccfile FROM settings WHERE id = '1'";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$ccfileresult = $DB->Execute($query) 
-					or die ("$l_queryfailed");
-				$myccfileresult = $ccfileresult->fields;
-				$path_to_ccfile = $myccfileresult['path_to_ccfile'];
+				$path_to_ccfile = $this->settings_model->get_path_to_ccfile();
  
 				// open the file
 				$filename = "$path_to_ccfile/ciphertext.tmp";
 				$handle = fopen($filename, 'w') or die("cannot open $filename");
-
-				//echo "$encrypted_creditcard_number\n";
 
 				// write the ciphertext we want to decrypt into the file
 				fwrite($handle, $encrypted_creditcard_number);
@@ -78,25 +78,17 @@ class Command extends CI_Controller
 				// close the file
 				fclose($handle);
 	
-				//$gpgcommandline = "echo $passphrase | $gpg_decrypt $filename";
-    
-				//$oldhome = getEnv("HOME");
-
 				// destroy the output array before we use it again
 				unset($decrypted);
       
-				//    putenv("HOME=$path_to_home");
-				//$gpgresult = exec($gpgcommandline, $decrypted, $errorcode);
-				// putenv("HOME=$oldhome");
-
 				// try the new decrypt_command function
-				$gpgcommandline = "$gpg_decrypt $filename";
+				$gpgcommandline = $this->config->item('gpg_decrypt')." $filename";
 				$decrypted = decrypt_command($gpgcommandline, $passphrase);
     
 				// if there is a gpg error, stop here
 				if (substr($decrypted,0,5) == "error")
 				{
-					die ("Credit Card Encryption Error: $decrypted");
+					die ("Credit Card Encryption Error: $decrypted".lang('billingid').": $id\n");
 				}
 
 				echo "$decrypted";
@@ -104,11 +96,8 @@ class Command extends CI_Controller
 				//$decrypted_creditcard_number = str_replace( '\n', '', $decrypted );
 				$decrypted_creditcard_number = $decrypted;
 
-				$query = "UPDATE billing ".
-					"SET creditcard_number = '$decrypted_creditcard_number' ".
-					"WHERE id = $id";
-    
-				$cardupdate = $DB->Execute($query) or die ("card update query failed");
+
+				$this->billing_model->input_decrypted_card($decrypted_creditcard_number, $id);
     
 				print "$id creditcard updated $decrypted_creditcard_number\n";
 

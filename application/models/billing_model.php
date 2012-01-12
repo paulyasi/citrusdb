@@ -3826,8 +3826,16 @@ class Billing_Model extends CI_Model
 	{
 		$query = "SELECT id, creditcard_number, encrypted_creditcard_number ".
 			"FROM billing WHERE encrypted_creditcard_number IS NOT NULL";
-		return $this->db->query($query) or die ("list_creditcards Query Failed");
+		$result =  $this->db->query($query) or die ("list_creditcards Query Failed");
+		return $result;
 	}
+
+	// when re-keying credit cards use this function to insert the card as plaintext
+	function input_decrypted_card($decrypted_creditcard_number, $id)
+	{
+		$query = "UPDATE billing SET creditcard_number = ? WHERE id = ?";
+		$cardupdate = $this->db->query($query, array($decrypted_creditcard_number, $id)) or die ("input_decrypted_card query failed");
+	}	
 	
 	
 }
