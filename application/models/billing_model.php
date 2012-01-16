@@ -3821,7 +3821,7 @@ class Billing_Model extends CI_Model
 
 	
 	// when re-keying credit cards use this to get the list of credit cards to decrypt
-	// use result->next_row('array') to walk through results and process them
+	// use result to walk through results one by one and process them
 	function list_encrypted_creditcards()
 	{
 		$query = "SELECT id, creditcard_number, encrypted_creditcard_number ".
@@ -3842,6 +3842,7 @@ class Billing_Model extends CI_Model
 
 
 	// get list of card numbers to encrypt
+	// use result to walk through results one by one and process them
 	function list_creditcards()
 	{		
 		$query = "SELECT id, creditcard_number FROM billing ".
@@ -3849,7 +3850,7 @@ class Billing_Model extends CI_Model
 			"AND creditcard_number <> ''";
 		$result = $this->db->query($query) or die ("list_creditcards Query Failed");
 		
-		return $result->result_array();
+		return $result->result_array();;
 	}
 
 

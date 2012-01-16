@@ -774,17 +774,28 @@ class Billing extends App_Controller
 	public function savecollectionsnotice()
 	{
 
-		echo "<pre>";
-		$mynotice = new notice('collections',$billing_id, 'both', $turnoff_date, $turnoff_date, $cancel_date);
-		echo "</pre>";
+		// get input from form
+		$billing_id = $this->input->post('billing_id');
+		$cancel_date = $this->input->post('cancel_date');
+
+		// load the Notice library
+		$config = array (
+				'notice_type' => 'collections', 
+				'billing_id' => $billing_id, 
+				'method' => 'both', 
+				'payment_due_date' => $turnoff_date, 
+				'turnoff_date' => $turnoff_date, 
+				'cancel_date' => $cancel_date
+				);
+		$this->load->library('Notice', $config);    
 
 		// print link to the pdf to download
-		$linkname = $mynotice->pdfname;
-		$contactemail = $mynotice->contactemail;
-		$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+		$linkname = $this->notice->pdfname;
+		$contactemail = $this->notice->contactemail;
+		$linkurl = "index.php/tools/downloadfile/$linkname";
 
-		echo "<p>$l_sent_collections_notice_answer $contactemail</p>";
-		echo "<p>$l_download_pdf: <a href=\"$linkurl\">$linkname</a></p>";
+		echo "<p>".lang('sent_collctions_notice_answer')." $contactemail</p>";
+		echo "<p>".lang('download_pdf').": <a href=\"$linkurl\">$linkname</a></p>";		
 
 	}
 
