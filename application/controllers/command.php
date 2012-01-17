@@ -192,6 +192,7 @@ class Command extends CI_Controller
 	 * creates text file of account changes
 	 * process this text file with your own account processing system
 	 * you can move this script elsewhere and copy the include files there too
+	 * php index.php command statusupdate
 	 * -------------------------------------------------------------------------
 	 */	 
 	function statusupdate()
@@ -205,6 +206,7 @@ class Command extends CI_Controller
 		$this->load->model('settings_model');
 		
 		// load the Notice library
+		/*
 		$config = array (
 				'notice_type' => 'cancel', 
 				'billing_id' => $billing_id, 
@@ -213,15 +215,13 @@ class Command extends CI_Controller
 				'turnoff_date' => $cancel_date, 
 				'cancel_date' => $cancel_date
 				);
-		$this->load->library('Notice', $config);    
+		$this->load->library('Notice', $config);
+		*/
 		
 		// todays' date
 		$activatedate = date("Y-m-d");
 		
-/*--------------------------------------------------------------------------*/
-// Get the path to the file location and open a new file to write data to
-/*--------------------------------------------------------------------------*/
-// select the info from general to get the path_to_ccfile
+		// get the path_to_ccfile and default_billing_group
 		$query = "SELECT * FROM settings WHERE id = '1'";
 		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
 		$ccfileresult = $DB->Execute($query) or die ("$l_queryfailed");
@@ -1191,16 +1191,22 @@ class Command extends CI_Controller
 			  }
 
 
+	/*
+	 * -------------------------------------------------------------------------	 
+	 * weekend update function
+	 *
+	 * "Goodnight, and have a pleasant tomorrow"
+	 * 
+	 * The same as the satusupdate script but does not automatically mark accounts for turnoff or delete services
+	 * updates the account status on weekends for when billing is not done
+	 * - run on weekends (in cron)
+	 * - creates text file of account changes
+	 * - process this text file with your own account processing system
+	 * - you can move this script elsewhere and copy the include files there too
+	 *--------------------------------------------------------------------------
+	 */
 	function weekendupdate()
 	{
-// weekend activator function
-// The same as the satusupdate script but does not automatically mark accounts for turnoff or delete services
-// updates the account status on weekends for when billing is not done
-// - run on weekends (in cron)
-// - creates text file of account changes
-// - process this text file with your own account processing system
-// - you can move this script elsewhere and copy the include files there too
-
 // Includes and Requires
 		$this->load->model('billing_model');
 

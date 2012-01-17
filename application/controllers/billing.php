@@ -771,9 +771,9 @@ class Billing extends App_Controller
 
 	}
 
+	
 	public function savecollectionsnotice()
 	{
-
 		// get input from form
 		$billing_id = $this->input->post('billing_id');
 		$cancel_date = $this->input->post('cancel_date');
@@ -886,8 +886,22 @@ class Billing extends App_Controller
 		$billingid = $this->input->post('billingid');
 		$duedate = $this->input->post('duedate');
 
-		// update the invoice due date for this invoice
-		$this->billing_model->update_invoice_duedate($duedate, $invoicenum);
+		// check that the date is in the future
+		$currentdate = date("Ymd");
+		$checkdate = str_replace( "-", "", $duedate );
+
+		if ($checkdate < $currentdate)
+		{
+			// date is not in the future, error
+			echo "<p><b>Error: Date is not in the future</b></p>";
+			echo "<FORM><INPUT TYPE=\"BUTTON\" VALUE=\"Go Back\" ONCLICK=\"history.go(-1)\"></FORM>";
+			exit;
+		}	 
+		else
+		{
+			// update the invoice due date for this invoice
+			$this->billing_model->update_invoice_duedate($duedate, $invoicenum);
+		}
 
 		// redirect back to the services record for their account
 		redirect("/billing/invmaint/$billingid");
