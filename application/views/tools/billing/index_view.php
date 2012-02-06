@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 ?>
 
-<div class=toolblock style="height: 100px;">
+<div class=toolblock style="height: 200px;">
 <b><?php echo lang('billing');?></b>
 <br>
 
@@ -39,6 +39,11 @@
 <a href=# onclick = "popupPage('<?php echo $this->ssl_url_prefix?>/index.php/tools/billing/refundcc'); return false;">
 <img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_creditcards.png"><br>
 <?php echo lang('refund')?></a></div>
+
+<div class=icon>
+<a href=# onclick = "popupPage('<?php echo $this->ssl_url_prefix?>/index.php/tools/billing/pendingrefund'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_creditcards.png"><br>
+<?php echo lang('pending')." ".lang('refund')?></a></div>
 
 </div>
 

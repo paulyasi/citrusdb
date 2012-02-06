@@ -1146,6 +1146,22 @@ class Billing extends App_Controller
 
 	}
 
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Show the pending refunds that would be exported when processed
+	 * ------------------------------------------------------------------------
+	 */
+	function pendingrefund()
+	{
+		// load the header without the sidebar to get the stylesheet in there
+		$this->load->view('header_no_sidebar_view');
+
+		$data['pendingrefund'] = $this->billing_model->pendingrefunds();
+		$this->load->view('tools/billing/pendingrefund_view', $data);
+
+	}
+
 }
 
 

@@ -71,34 +71,34 @@ class Billing_Model extends CI_Model
 				automatic_receipt = ?,
 				organization_id = ?";
 		$result = $this->db->query($query, array($name,
-												 $company,
-												 $street,
-												 $city,
-												 $state,
-												 $country,
-												 $zip,
-												 $phone,
-												 $fax,
-												 $contact_email,
-												 $my_account_number,
-												 $billing_type,
-												 $creditcard_number,
-												 $creditcard_expire,
-												 $next_billing_date,
-												 $from_date,
-												 $to_date,
-												 $payment_due_date,
-												 $pastdue_exempt,
-												 $po_number,
-												 $encrypted_creditcard_number,
-												 $automatic_receipt,
-												 $organization_id))
-								   or die ("create_record billing insert failed");
+					$company,
+					$street,
+					$city,
+					$state,
+					$country,
+					$zip,
+					$phone,
+					$fax,
+					$contact_email,
+					$my_account_number,
+					$billing_type,
+					$creditcard_number,
+					$creditcard_expire,
+					$next_billing_date,
+					$from_date,
+					$to_date,
+					$payment_due_date,
+					$pastdue_exempt,
+					$po_number,
+					$encrypted_creditcard_number,
+					$automatic_receipt,
+					$organization_id))
+						or die ("create_record billing insert failed");
 		$myinsertid = $this->db->insert_id();
 
 		return $myinsertid;
 	}
-	
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get the default billing id for this account
@@ -111,11 +111,11 @@ class Billing_Model extends CI_Model
 		$result = $this->db->query($query, array($account_number))
 			or die ("default_billing_id queryfailed");
 		$myresult = $result->row();	
-		
+
 		return $myresult->default_billing_id;
 	}
-	
-	
+
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get alternate billing types for this billing id
@@ -131,9 +131,9 @@ class Billing_Model extends CI_Model
 			"WHERE b.id != ? AND b.account_number = ?";
 		$result = $this->db->query($query, array($billing_id, $account_number)) 
 			or die ("alternates queryfailed");
-		
+
 		return $result->result_array();
-	
+
 	}
 
 
@@ -795,7 +795,7 @@ class Billing_Model extends CI_Model
 
 	}
 
-	
+
 	function billing_and_organization($billingid)
 	{
 		$query = "SELECT * FROM billing b ".
@@ -805,7 +805,7 @@ class Billing_Model extends CI_Model
 		return $result->row_array();
 	}
 
-	
+
 	public function get_organization_id($account_number)
 	{
 		$query = "SELECT organization_id FROM billing ".
@@ -886,7 +886,7 @@ class Billing_Model extends CI_Model
 			or die ("clearrerunflag Update Failed");
 	}
 
-	
+
 	/*
 	 * -------------------------------------------------------------------------
 	 *  Show the invoices that belong to that billing id
@@ -929,7 +929,7 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
-	
+
 	/*
 	 * -------------------------------------------------------------------------
 	 *  Show the billing details that belong to that billing id:
@@ -962,7 +962,7 @@ class Billing_Model extends CI_Model
 
 	}
 
-	
+
 	function billing_detail_item($detailid)
 	{
 		$query = "SELECT d.id d_id, d.billing_id d_billing_id, 
@@ -1096,7 +1096,7 @@ class Billing_Model extends CI_Model
 		return $typeresult->row_array();
 	}
 
-	
+
 	/*
 	 * -------------------------------------------------------------------------
 	 * determine the next available batch number
@@ -1155,7 +1155,7 @@ class Billing_Model extends CI_Model
 
 			$taxresult = $this->db->query($query, array($billingdate, $organization_id, $billingmethod))
 				or die ("add_taxdetails 1 Query Failed");
-		
+
 		} else {
 			$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
 				"ts.tax_rate_id ts_rateid, ms.id ms_id, ".
@@ -1260,10 +1260,10 @@ class Billing_Model extends CI_Model
 						"user_services_id, taxed_services_id, billed_amount, batch) ".
 						"VALUES (?, CURRENT_DATE, ?, ?, ?, ?)";
 					$invoiceresult = $this->db->query($query, array($billing_id,
-																	$user_services_id,
-																	$taxed_services_id,
-																	$tax_amount,
-																	$batchid))
+								$user_services_id,
+								$taxed_services_id,
+								$tax_amount,
+								$batchid))
 						or die ("add_taxdetails INSERT Query Failed");
 					$i++;
 				} //endif if_field/billing_freq
@@ -1299,10 +1299,10 @@ class Billing_Model extends CI_Model
 				WHERE b.next_billing_date = ? 
 				AND b.organization_id = ? 
 				AND t.method = ? AND u.removed <> 'y'";
-			
+
 			$result = $this->db->query($query, array($billingdate, $organization_id, $billingmethod))
 				or die ("add_servicedetails 1 Query Failed");
-			
+
 		} else {
 			$query = "SELECT u.id u_id, u.account_number u_ac, 
 				u.master_service_id u_msid, u.billing_id u_bid, 
@@ -1316,10 +1316,10 @@ class Billing_Model extends CI_Model
 					LEFT JOIN billing b ON u.billing_id = b.id
 					LEFT JOIN billing_types t ON b.billing_type = t.id
 					WHERE b.id = ? AND t.method = ? AND u.removed <> 'y'";
-			
+
 			$result = $this->db->query($query, array($bybillingid, $billingmethod))
 				or die ("add_servicedetails 2 Query Failed");
-			
+
 		}
 
 
@@ -1364,7 +1364,7 @@ class Billing_Model extends CI_Model
 		// return the number of services found
 	}
 
-	
+
 	/*
 	 * ----------------------------------------------------------------
 	 *  Update Reruns to the bill
@@ -1380,7 +1380,7 @@ class Billing_Model extends CI_Model
 			or die ("update_rerundetails Query Failed"); 
 
 		$i = 0;
-		
+
 		foreach ($result->result_array() AS $myresult) 
 		{
 			$billing_id = $myresult['id'];
@@ -1644,15 +1644,15 @@ class Billing_Model extends CI_Model
 				"notes = ? ".
 				"WHERE id = ?";
 			$historyresult = $this->db->query($query, array($billing_fromdate,
-															$billing_todate,
-															$billing_payment_due_date,
-															$new_charges,
-															$pastdue,
-															$creditsapplied,
-															$tax_due,
-															$total_due,
-															$billing_notes,
-															$invoice_number))
+						$billing_todate,
+						$billing_payment_due_date,
+						$new_charges,
+						$pastdue,
+						$creditsapplied,
+						$tax_due,
+						$total_due,
+						$billing_notes,
+						$invoice_number))
 				or die("create_billinghistory update billing_history failed");
 
 			if ($billing_rerun_date <> $billingdate) 
@@ -1699,14 +1699,14 @@ class Billing_Model extends CI_Model
 						"INTERVAL ? MONTH) ".
 						"WHERE id = ?";		
 					$updateresult = $this->db->query($query, array($mybillingdate,
-																   $mybillingfreq,
-																   $myfromdate,
-																   $mybillingfreq,
-																   $myfromdate,
-																   $doublefreq,
-																   $myfromdate,
-																   $mybillingfreq,
-																   $mybilling_id))
+								$mybillingfreq,
+								$myfromdate,
+								$mybillingfreq,
+								$myfromdate,
+								$doublefreq,
+								$myfromdate,
+								$mybillingfreq,
+								$mybilling_id))
 						or die ("create_billinghistory update billing dates Failed");
 
 				} // endif prepaycc
@@ -2047,7 +2047,7 @@ class Billing_Model extends CI_Model
 		$lineYoffset = 105;
 		$fillcolor = 200;
 		$lastserviceid = 0;
-		
+
 		// Print the invoice line items
 		foreach($result->result_array() AS $myresult) 
 		{
@@ -2606,7 +2606,7 @@ class Billing_Model extends CI_Model
 
 	}
 
-	
+
 	/*
 	 * --------------------------------------------------------------------------
 	 *  Create and send email invoice with pdf attached using swiftmailer
@@ -2743,15 +2743,15 @@ class Billing_Model extends CI_Model
 			"creditcard_number,creditcard_expire, response_code, ".
 			"billing_amount, status, payment_type, avs_response) ".
 			"VALUES(CURRENT_DATE, ?, ?, ?, ?, ?, ?, ?,'creditcard', ?)";
-		
+
 		$result = $this->db->query($query, array($transaction_code,
-												 $billing_id,
-												 $cardnumber,
-												 $cardexp,
-												 $response_code,
-												 $amount,
-												 $type,
-												 $avs_response)) 
+					$billing_id,
+					$cardnumber,
+					$cardexp,
+					$response_code,
+					$amount,
+					$type,
+					$avs_response)) 
 			or die ("insert_card_payment_history failed");
 
 		return $this->db->insert_id();
@@ -2772,10 +2772,10 @@ class Billing_Model extends CI_Model
 			"payment_due_date = DATE_ADD(?, INTERVAL ? MONTH) ".
 			"WHERE id = ?";
 		$updateresult = $this->db->query($query, array($mybillingdate, $mybillingfreq,
-													   $myfromdate, $mybillingfreq,
-													   $myfromdate, $doublefreq,
-													   $myfromdate, $mybillingfreq,
-													   $billing_id))
+					$myfromdate, $mybillingfreq,
+					$myfromdate, $doublefreq,
+					$myfromdate, $mybillingfreq,
+					$billing_id))
 			or die ("update_billing_dates failed");
 	}
 
@@ -2818,8 +2818,8 @@ class Billing_Model extends CI_Model
 					"payment_history_id = ? ".	    
 					"WHERE id = ?";
 				$greaterthanresult = $this->db->query($query, array($fillamount,
-																	$payment_history_id,
-																	$id)) 
+							$payment_history_id,
+							$id)) 
 					or die ("pay_billing_details greater than queryfailed");
 			} 
 			else 
@@ -2834,8 +2834,8 @@ class Billing_Model extends CI_Model
 					"payment_history_id = ? ".	    
 					"WHERE id = ?";
 				$lessthanresult = $this->db->query($query, array($fillamount,
-																 $payment_history_id,
-																 $id)) 
+							$payment_history_id,
+							$id)) 
 					or die ("pay_billing_details less than queryfailed");
 			} //end if amount
 
@@ -2860,7 +2860,7 @@ class Billing_Model extends CI_Model
 
 		// set the payment to the amount entered
 		$payment = $amount;
-		
+
 
 		// enter payments by invoice number				
 		if ($invoice_number > 0)
@@ -2914,10 +2914,10 @@ class Billing_Model extends CI_Model
 				"billing_amount, status, payment_type, invoice_number, check_number) ".
 				"VALUES (CURRENT_DATE, ?, ?, 'authorized', ?, ?, ?)";
 			$paymentresult = $this->db->query($query, array($billing_id,
-															$payment,
-															$payment_type,
-															$invoice_number,
-															$check_number))
+						$payment,
+						$payment_type,
+						$invoice_number,
+						$check_number))
 				or die ("insert history query failed");
 
 			// get the payment history id that will be inserted into the billing_details
@@ -2946,8 +2946,8 @@ class Billing_Model extends CI_Model
 						"payment_history_id = ? ".	    
 						"WHERE id = ?";
 					$greaterthanresult = $this->db->query($query, array($fillamount,
-																		$payment_history_id,
-																		$id))
+								$payment_history_id,
+								$id))
 						or die ("greater than detail update query failed");
 				} 
 				else 
@@ -2963,8 +2963,8 @@ class Billing_Model extends CI_Model
 						"payment_history_id = ? ".	    	
 						"WHERE id = ?";
 					$lessthenresult = $this->db->query($query, array($fillamount,
-																	 $payment_history_id,
-																	 $id))
+								$payment_history_id,
+								$id))
 						or die ("less than detail update query failed");
 				} // end if amount >= owed
 
@@ -3351,8 +3351,8 @@ class Billing_Model extends CI_Model
 				SET refunded = 'y' 
 				WHERE refunded <> 'y' AND refund_amount > 0 
 				AND billing_id = ?";		
-			$detailresult = $this->db->query($query, array($mybilling_id))
-					or die ("update refund details query failed");	
+				$detailresult = $this->db->query($query, array($mybilling_id))
+				or die ("update refund details query failed");	
 
 		} // end while
 
@@ -3376,7 +3376,7 @@ class Billing_Model extends CI_Model
 			or die ("reset_detail_refund_amount failed");
 	} 
 
-	
+
 	function update_detail_refund_amount($detailid, $amount)
 	{
 		$query = "UPDATE billing_details SET ".
@@ -3387,7 +3387,7 @@ class Billing_Model extends CI_Model
 			or die ("update_detail_refund_amount failed");
 	}
 
-	
+
 	function manual_detail_refund_amount($detailid)
 	{
 		// if billing method is not credit card they must be done manually
@@ -3430,9 +3430,9 @@ class Billing_Model extends CI_Model
 			"creditcard_expire = ? ".
 			"WHERE id = ? LIMIT 1";
 		$billingupdate = $this->db->query($query, array($encrypted,
-														$creditcard_number, 
-														$creditcard_expire,
-														$billing_id))
+					$creditcard_number, 
+					$creditcard_expire,
+					$billing_id))
 			or die ("input_ascii_armor failed");
 	}
 
@@ -3670,7 +3670,7 @@ class Billing_Model extends CI_Model
 		}
 	}
 
-	
+
 	function delete_payment($paymentid)
 	{	
 		// delete the payment history item
@@ -3680,7 +3680,7 @@ class Billing_Model extends CI_Model
 			or die ("delete_payment query failed");
 	}	
 
-	
+
 	function get_payment_type($paymentid)
 	{
 		// grab the payment type, cardnumber, and check number
@@ -3691,7 +3691,7 @@ class Billing_Model extends CI_Model
 		return $result->row_array();
 	}
 
-	
+
 	function payment_details($paymentid)
 	{
 		$query = "SELECT bd.original_invoice_number, bd.paid_amount,".
@@ -3707,7 +3707,7 @@ class Billing_Model extends CI_Model
 			"WHERE bd.payment_history_id = ? ORDER BY bd.taxed_services_id";
 		$result = $this->db->query($query, array($paymentid))
 			or die ("payment_details  Query Failed");
-		
+
 		return $result->result_array();
 	}
 
@@ -3715,7 +3715,7 @@ class Billing_Model extends CI_Model
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get the invoice numbers for printed or einvoice batches 
-     *  NOTE: not recent_invoice_number used for credit card batches
+	 *  NOTE: not recent_invoice_number used for credit card batches
 	 * ------------------------------------------------------------------------
 	 */
 	function get_invoice_batch($batchid)
@@ -3730,7 +3730,7 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
-	
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get the next billing date for the default billing id for this account
@@ -3747,7 +3747,7 @@ class Billing_Model extends CI_Model
 		return $myresult['next_billing_date'];
 	}
 
-	
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get the next billing date for the specific billing id 
@@ -3771,7 +3771,7 @@ class Billing_Model extends CI_Model
 			or die ("set_rerun_date queryfailed");
 	}
 
-	
+
 	function set_rerun_item($id)
 	{
 		$query = "UPDATE billing_details SET rerun = 'y' ".
@@ -3803,13 +3803,13 @@ class Billing_Model extends CI_Model
 			"(account_number, tax_rate_id, customer_tax_id, expdate) ". 
 			"VALUES (?, ?, ?, ?)";
 		$result = $this->db->query($query, array($account_number,
-												 $tax_rate_id,
-												 $customer_tax_id,
-												 $expdate))
+					$tax_rate_id,
+					$customer_tax_id,
+					$expdate))
 			or die ("save_tax_exempt queryfailed");
 	}
 
-	
+
 	// make the customer tax not-exempt
 	function remove_tax_exempt($account_number, $tax_rate_id)
 	{
@@ -3819,7 +3819,7 @@ class Billing_Model extends CI_Model
 			or die ("remove_tax_exempt queryfailed");
 	}
 
-	
+
 	// when re-keying credit cards use this to get the list of credit cards to decrypt
 	// use result to walk through results one by one and process them
 	function list_encrypted_creditcards()
@@ -3827,10 +3827,10 @@ class Billing_Model extends CI_Model
 		$query = "SELECT id, creditcard_number, encrypted_creditcard_number ".
 			"FROM billing WHERE encrypted_creditcard_number IS NOT NULL";
 		$result =  $this->db->query($query) or die ("list_encrypted_creditcards Query Failed");
-		
+
 		return $result->result_array();
 	}
-	
+
 
 	// when re-keying credit cards use this function to insert the card as plaintext
 	function input_decrypted_card($decrypted_creditcard_number, $id)
@@ -3849,7 +3849,7 @@ class Billing_Model extends CI_Model
 			"WHERE creditcard_number IS NOT NULL AND creditcard_number <> '0' ".
 			"AND creditcard_number <> ''";
 		$result = $this->db->query($query) or die ("list_creditcards Query Failed");
-		
+
 		return $result->result_array();;
 	}
 
@@ -3859,12 +3859,38 @@ class Billing_Model extends CI_Model
 	{
 		$query = "UPDATE billing SET creditcard_number = ?, ".
 			"encrypted_creditcard_number = ? WHERE id = ?";
-		
+
 		$cardupdate = $this->db->query($query, array($creditcard_number, $encrypted_creditcard_number, $id))
 			or die ("card update query failed");
 	}
-	
-	
+
+
+	// get the list of all pending creditcard refunds
+	function pendingrefunds()
+	{
+		// query from billing_details ALL the refunds that are pending
+		$query = "SELECT ROUND(SUM(bd.refund_amount),2) AS RefundTotal, 
+			b.id b_id, b.name b_name, b.company b_company, 
+			b.street b_street, b.city b_city, 
+			b.state b_state, b.zip b_zip, 
+			b.account_number b_acctnum, 
+			b.from_date b_from_date, 
+			b.to_date b_to_date, 
+			b.payment_due_date b_payment_due_date,  
+			bd.invoice_number bd_invoice_number, 
+			bd.batch bd_batch, g.org_name   
+				FROM billing_details bd
+				LEFT JOIN billing b ON bd.billing_id = b.id 
+				LEFT JOIN billing_types bt ON bt.id = b.billing_type 
+				LEFT JOIN general g ON g.id = b.organization_id 
+				WHERE bd.refunded <> 'y' AND bd.refund_amount > 0 
+				AND bt.method = 'creditcard' 
+				GROUP BY b.id";
+		$result = $this->db->query($query) or die ("pendingrefunds query failed");
+		return $result->result_array();
+	}
+
+
 }
 
 
