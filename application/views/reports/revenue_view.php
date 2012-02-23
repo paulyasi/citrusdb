@@ -1,6 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
 <h3><?php echo lang('revenuereport')?></h3>
 
+<?php
+// intialize totals
+$total = 0;
+$taxtotal = 0;
+?>
+
 <FORM ACTION="<?php echo $this->url_prefix?>/index.php/reports/revenue" METHOD="POST">
 <?php echo lang('foritemsbilledduringthisperiod')?><p>
 <table>
@@ -41,6 +47,9 @@ foreach ($servicerevenue AS $myresult)
 	echo "<td>$service_description</td><td>$org_name</td>
 		<td>$service_category</td>
 		<td>$category_billed</td><td>$category_total </td><td>($count)</td><tr>";
+
+	// add this to the total
+	$total = $total + $category_total;
 }
 ?>
 
@@ -79,6 +88,9 @@ foreach ($refundrevenue AS $myresult)
 	$service_description = $myresult['service_description'];
 	echo "<td>$service_description</td><td>$org_name</td><td>$service_category</td>".
 		"<td>$category_total</td><td>($count)</td><tr>";
+	
+	// subtract this from the total
+	$total = $total - $category_total;
 }
 ?>
 
@@ -95,10 +107,17 @@ foreach ($discountrevenue AS $myresult)
 	$company = $myresult['company'];    
 	$amount = $myresult['billing_amount'];    
 	echo "<td>$date ($invoice_number)</td><td>$name $company</td><td>$amount</td><td></td><tr>";
+	
+	// subtract this from the total
+	$total = $total - $category_total;
 }
 ?>
 
 </table>  
+
+<?php
+echo "<h3>".lang('total')." ".$total."</h3>";
+?>
 
 <hr>
 
@@ -114,6 +133,9 @@ foreach ($taxrevenue AS $myresult)
 	$count = $myresult['ServiceCount'];
 	$tax_description = $myresult['tax_description'];
 	echo "<td>$tax_description</td><td>$category_billed</td><td>$category_total</td><td>($count)</td><tr>";
+
+	// add this to the taxtotal
+	$taxtotal = $taxtotal + $category_total;
 }
 ?>
 </table>  
@@ -131,9 +153,15 @@ foreach ($taxrefunds AS $myresult)
 	$count = $myresult['ServiceCount'];
 	echo "<td>$tax_description</td><td></td><td>".lang('tax')."</td>".
 		"<td>$category_total</td><td>($count)</td><tr>";
+
+	// subtract this from the taxtotal
+	$taxtotal = $taxtotal - $category_total;
 }
 ?>
 </table>
 
+<?php
+echo "<h3>".lang('tax')." ".lang('total')." ".$taxtotal."</h3>";
+?>
 </body>
 </html>
