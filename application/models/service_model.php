@@ -958,6 +958,34 @@ class Service_model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	/*
+	 * ---------------------------------------------------------------------------
+	 *  get a list of new services added $today, for statusupdate/activation
+	 * ---------------------------------------------------------------------------
+	 */
+	function new_services_today($today)
+	{
+		$query = "SELECT u.id u_id, u.account_number u_ac, ".
+			"u.master_service_id u_master_service_id, u.billing_id u_bid, ".
+			"u.start_datetime u_start, u.removed u_rem, u.usage_multiple ".
+			"u_usage, m.service_description m_service_description, ".
+			"m.id m_id, m.pricerate m_pricerate, m.frequency m_freq, ".
+			"m.activation_string m_activation_string, m.category m_category, ".
+			"m.options_table m_options_table, c.name c_name, c.company c_company, ".
+			"c.street c_street, c.city c_city, c.state c_state, c.country c_country, ".
+			"c.zip c_zip, c.phone c_phone, c.contact_email c_contact_email ".
+			"FROM user_services u ".
+			"LEFT JOIN master_services m ON m.id = u.master_service_id ".
+			"LEFT JOIN customer c ON c.account_number = u.account_number ".
+			"WHERE to_days('$today') = to_days(u.start_datetime)";
+		$result = $this->db->query($query) or die ("$l_queryfailed");
+
+		return $result->result_array();
+
+	}
+
+
 }
 
 /* end service_model.php */

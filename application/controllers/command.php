@@ -233,29 +233,15 @@ class Command extends CI_Controller
 		/*-------------------------------------------------------------------*/
 		// ADD
 		/*-------------------------------------------------------------------*/
+
 		// get the list of new services added today
-
-		$query = "SELECT u.id u_id, u.account_number u_ac, ".
-			"u.master_service_id u_master_service_id, u.billing_id u_bid, ".
-			"u.start_datetime u_start, u.removed u_rem, u.usage_multiple ".
-			"u_usage, m.service_description m_service_description, ".
-			"m.id m_id, m.pricerate m_pricerate, m.frequency m_freq, ".
-			"m.activation_string m_activation_string, m.category m_category, ".
-			"m.options_table m_options_table, c.name c_name, c.company c_company, ".
-			"c.street c_street, c.city c_city, c.state c_state, c.country c_country, ".
-			"c.zip c_zip, c.phone c_phone, c.contact_email c_contact_email ".
-			"FROM user_services u ".
-			"LEFT JOIN master_services m ON m.id = u.master_service_id ".
-			"LEFT JOIN customer c ON c.account_number = u.account_number ".
-			"WHERE to_days('$today') = to_days(u.start_datetime)";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
-
+		$result = $this->service_model->new_services_today($today);
 
 		$adds = 0;
 
 		// loop through results and print out each
-		while ($myresult = $result->FetchRow()) {
+		foreach($result AS $myresult) 
+		{
 			$user_services_id = $myresult['u_id'];
 			$service_description = $myresult['m_service_description'];
 			$account_number = $myresult['u_ac'];
@@ -277,7 +263,8 @@ class Command extends CI_Controller
 
 			$newline = "\"ADD\",\"$category\",\"$customer_name\",\"$service_description\"";
 
-			if ($options_table <> '') {
+			if ($options_table <> '') 
+			{
 				$query = "SELECT * FROM $options_table ".
 					"WHERE user_services = '$user_services_id'";
 				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
