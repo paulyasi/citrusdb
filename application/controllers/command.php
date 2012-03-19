@@ -730,14 +730,14 @@ class Command extends CI_Controller
 			"WHERE bd.billed_amount > bd.paid_amount ".
 			"AND bi.pastdue_exempt <> 'y' ".
 			"AND bi.rerun_date IS NULL ".
-			"AND '$today' >= DATE_ADD(bh.payment_due_date, ".
+			"AND ? >= DATE_ADD(bh.payment_due_date, ".
 			"INTERVAL g.regular_turnoff DAY) ".
-			"AND '$today' < DATE_ADD(bh.payment_due_date, ".
+			"AND ? < DATE_ADD(bh.payment_due_date, ".
 			"INTERVAL g.regular_canceled DAY) GROUP BY bi.id";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("regular disable $l_queryfailed");
+		$result = $this->db->query($query, array($today, $today)) or die ("regular disable queryfailed");
 
-		while ($myresult = $result->FetchRow()) {
+		foreach ($result->result_array() AS $myresult) 
+		{
 			// set these services to be turned off
 			$billing_id = $myresult['id'];	
 			$account_number = $myresult['account_number'];
@@ -745,28 +745,28 @@ class Command extends CI_Controller
 			$turnoff_date = $myresult['turnoff_date'];
 			$cancel_date = $myresult['cancel_date'];
 
-			$dependent = carrier_dependent($account_number);
+			$dependent = $this->service_model->carrier_dependent($account_number);
 
-			if ($dependent == false) {
-
+			if ($dependent == false) 
+			{
 				// check recent history to see if we already set them to turned off
 				$query = "SELECT status FROM payment_history ".
-					"WHERE billing_id = $billing_id ORDER BY id DESC LIMIT 1";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$statusresult = $DB->Execute($query) or die ("$l_queryfailed");
-				$mystatusresult = $statusresult->fields;
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
 				$mystatus = $mystatusresult['status'];
 
 				if ($mystatus <> "turnedoff"
 						AND $mystatus <> "collections"
 						AND $mystatus <> "canceled"
 						AND $mystatus <> "cancelwfee"
-						AND $mystatus <> "waiting") {
+						AND $mystatus <> "waiting") 
+				{
 					// set the account payment_history to turnedoff
 					$query = "INSERT INTO payment_history ".
 						"(creation_date, billing_id, status) ".
-						"VALUES (CURRENT_DATE,'$billing_id','turnedoff')";
-					$paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
+						"VALUES (CURRENT_DATE,?,'turnedoff')";
+					$paymentresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
 
 				}
 
