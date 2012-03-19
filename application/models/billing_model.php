@@ -3891,6 +3891,24 @@ class Billing_Model extends CI_Model
 	}
 
 
+	/*
+	 * ---------------------------------------------------------------------------
+	 *  get accounts with a payment history of today for enable/status updates
+	 * ---------------------------------------------------------------------------
+	 */
+	function payment_history_today($today)
+	{
+		$query = "SELECT p.billing_id, b.id, b.account_number ".
+			"FROM payment_history p ".
+			"LEFT JOIN billing b ON p.billing_id = b.id ".
+			"WHERE p.creation_date = '$today' ".
+			"AND p.status = 'authorized'";
+		$result = $this->db->query($query) or die ("queryfailed");
+
+		return $result->result_array();
+	}
+
+
 }
 
 

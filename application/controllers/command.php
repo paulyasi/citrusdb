@@ -265,25 +265,24 @@ class Command extends CI_Controller
 
 			if ($options_table <> '') 
 			{
-				$query = "SELECT * FROM $options_table ".
-					"WHERE user_services = '$user_services_id'";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$optresult = $DB->Execute($query) 
-					or die ("$l_queryfailed");
-				$myoptresult = $optresult->fields;
+				$myoptresult = $this->service_model->options_values($user_services_id, $optionstable);
 
-				$fields = $DB->MetaColumns($options_table);        
+				$fields = $this->schema_model->columns($this->db->database, $optionstable);
+
 				$i = 0;        
 				$pstring = "";	
-				foreach($fields as $v) {                
+				foreach($fields->result() as $v) 
+				{                
 					//echo "Name: $v->name ";
-					$fieldname = $v->name;
+					$fieldname = $v->COLUMN_NAME;
 
 					//check matching fieldname in the options table
-					foreach($mystring as $s) {
-						if($fieldname == $s) {
+					foreach($mystring as $s) 
+					{
+						if($fieldname == $s) 
+						{
 							//$pstring = $pstring.$s;
-							$myline = $myoptresult["$s"];
+							$myline = $myoptresult[$s];
 							$newline .= ",\"$myline\"";
 						}	
 					}
@@ -314,17 +313,12 @@ class Command extends CI_Controller
 		/*-------------------------------------------------------------------*/
 
 		// select all the accounts with a payment_history of today
-		$query = "SELECT p.billing_id, b.id, b.account_number ".
-			"FROM payment_history p ".
-			"LEFT JOIN billing b ON p.billing_id = b.id ".
-			"WHERE p.creation_date = '$today' ".
-			"AND p.status = 'authorized'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$result->$this->billing_model->payment_history_today($today);
 
 		$enables = 0;
 
-		while ($myresult = $result->FetchRow()) {
+		foreach ($result AS $myresult) 
+		{
 			// go through those accounts and find out which one has 
 			//a previous payment_history that was declined, 
 			//turnedoff, collections or canceled	
@@ -333,15 +327,17 @@ class Command extends CI_Controller
 			$account_number = $myresult['account_number'];
 
 			$query = "SELECT * FROM payment_history ".
-				"WHERE billing_id = '$billingid' ORDER BY id DESC LIMIT 1,1";
-			$historyresult = $DB->Execute($query) or die ("$l_queryfailed");
-			$myhistoryresult = $historyresult->fields;
+				"WHERE billing_id = ? ORDER BY id DESC LIMIT 1,1";
+			$historyresult = $this->db->query($query, array($billingid)) or die ("select payment_history queryfailed");
+			$myhistoryresult = $historyresult->row_array();
 			$secondstatus = $myhistoryresult['status'];
+
 			if ($secondstatus == "turnedoff" 
 					OR $secondstatus == "waiting" 
 					OR $secondstatus == "collections" 
 					OR $secondstatus == "cancelwfee" 
-					OR $secondstatus == "canceled") {
+					OR $secondstatus == "canceled") 
+			{
 				// enable services for the account
 
 				$query = "SELECT u.id u_id, u.account_number u_ac, ".
@@ -362,12 +358,12 @@ class Command extends CI_Controller
 					"FROM user_services u ".
 					"LEFT JOIN master_services m ON m.id = u.master_service_id ".
 					"LEFT JOIN customer c ON c.account_number = u.account_number ".
-					"WHERE c.account_number = $account_number";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$serviceresult = $DB->Execute($query) or die ("$l_queryfailed");
+					"WHERE c.account_number = ?";
+				$serviceresult = $this->db->query($query, array($account_number)) or die ("queryfailed");
 
 				// loop through results and print out each
-				while ($myserviceresult = $serviceresult->FetchRow()) {
+				foreach ($serviceresult->result_array() AS $myserviceresult) 
+				{
 					$user_services_id = $myserviceresult['u_id'];
 					$service_description = $myserviceresult['m_service_description'];
 					$account_number = $myserviceresult['u_ac'];
@@ -391,45 +387,48 @@ class Command extends CI_Controller
 
 					$newline = "\"ENABLE\",\"$category\",\"$customer_name\",\"$service_description\"";
 
-					if ($options_table <> '') {
-						$query = "SELECT * FROM $options_table ".
-							"WHERE user_services = '$user_services_id'";
-						$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-						$optresult = $DB->Execute($query) or die ("$l_queryfailed");
-						$myoptresult = $optresult->fields;
+					if ($options_table <> '') 
+					{
+						$myoptresult = $this->service_model->options_values($user_services_id, $optionstable);
 
-						$fields = $DB->MetaColumns($options_table);        
+						$fields = $this->schema_model->columns($this->db->database, $optionstable);
+
 						$i = 0;        
 						$pstring = "";	
-						foreach($fields as $v) {                
-							//echo "Name: $v->name ";                
-							$fieldname = $v->name;                
+						foreach($fields->result() as $v) 
+						{                
+							//echo "Name: $v->name ";
+							$fieldname = $v->COLUMN_NAME;
 
-							// check matching fieldname in 
-							// the options table
-							foreach($mystring as $s) {
-								if($fieldname == $s) {
+							//check matching fieldname in the options table
+							foreach($mystring as $s) 
+							{
+								if($fieldname == $s) 
+								{
 									//$pstring = $pstring.$s;
-									$myline = $myoptresult["$s"];
+									$myline = $myoptresult[$s];
 									$newline .= ",\"$myline\"";
 								}	
 							}
 
 						} //endforeach
 					} //endif
+
 					$newline .= "\n"; // end the line
 
 					// write to the file if the service has not already been removed
-					if ($removed <> 'y') {
+					if ($removed <> 'y') 
+					{
 						fwrite($handle, $newline); // write to the file
 						$enables++;
 
 						// CREATE TICKET TO the activate_notify user if there is one
-						if ($activate_notify) {
+						if ($activate_notify) 
+						{
 							$notify = "$activate_notify";
 							$description = "ENABLE $category $customer_name $service_description";
 							$status = "not done";
-							create_ticket($DB, $user, $notify, $account_number, $status,
+							$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
 									$description, NULL, NULL, NULL, $user_services_id);
 						}
 
@@ -460,13 +459,13 @@ class Command extends CI_Controller
 			"WHERE bd.billed_amount > bd.paid_amount ".
 			"AND bi.pastdue_exempt <> 'y' ".
 			"AND bi.rerun_date IS NULL ".
-			"AND '$today' >= DATE_ADD(bh.payment_due_date, INTERVAL g.regular_pastdue DAY) ".
-			"AND '$today' < DATE_ADD(bh.payment_due_date, INTERVAL g.regular_turnoff DAY) ".
+			"AND ? >= DATE_ADD(bh.payment_due_date, INTERVAL g.regular_pastdue DAY) ".
+			"AND ? < DATE_ADD(bh.payment_due_date, INTERVAL g.regular_turnoff DAY) ".
 			"GROUP BY bi.id";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("regular past due $l_queryfailed");
+		$result = $this->db->query($query, array($today, $today)) or die ("regular past due queryfailed");
 
-		while ($myresult = $result->FetchRow()) {
+		foreach ($result->result_array() AS $myresult) 
+		{
 			// set these services to be turned off
 			$billing_id = $myresult['id'];	
 			$account_number = $myresult['account_number'];
@@ -474,16 +473,15 @@ class Command extends CI_Controller
 			$turnoff_date = $myresult['turnoff_date'];
 			$cancel_date = $myresult['cancel_date'];
 
-			$dependent = carrier_dependent($account_number);
+			$dependent = $this->service_model->carrier_dependent($account_number);
 
-			if ($dependent == false) {
-
+			if ($dependent == false) 
+			{
 				// check recent history to see if we already set them to pastdue
 				$query = "SELECT status FROM payment_history ".
-					"WHERE billing_id = $billing_id ORDER BY id DESC LIMIT 1";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$statusresult = $DB->Execute($query) or die ("$l_queryfailed");
-				$mystatusresult = $statusresult->fields;
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
 				$mystatus = $mystatusresult['status'];
 
 				if ($mystatus <> "pastdue"
@@ -492,12 +490,14 @@ class Command extends CI_Controller
 						AND $mystatus <> "collections"
 						AND $mystatus <> "canceled"
 						AND $mystatus <> "cancelwfee"
-						AND $mystatus <> "waiting") {
+						AND $mystatus <> "waiting") 
+				{
 					// set the account payment_history to pastdue
 					$query = "INSERT INTO payment_history ".
 						"(creation_date, billing_id, status) ".
-						"VALUES (CURRENT_DATE,'$billing_id','pastdue')";
-					$paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
+						"VALUES (CURRENT_DATE,?,'pastdue')";
+					$paymentresult = $this->db->query($query, array($billing_id)) 
+						or die ("queryfailed");
 
 					echo "regular pastdue: $account_number\n";
 
@@ -505,14 +505,23 @@ class Command extends CI_Controller
 					// get the payment_due_date, turnoff_date, and cancel_date
 
 					// SEND PASTDUE NOTICE BY EMAIL
-					$mynotice = new notice('pastdue',$billing_id, 'email', $payment_due_date, $turnoff_date, $cancel_date);
+					$config = array (
+							'notice_type' => 'pastdue',
+							'billing_id' => $billing_id,
+							'method' => 'email',
+							'payment_due_date' => $payment_due_date,
+							'turnoff_date' => $turnoff_date,
+							'cancel_date' => $cancel_date
+							);
+					$this->load->library('Notice', $config);
 
-					$contactemail = $mynotice->contactemail;      
+					$contactemail = $this->notice->contactemail;      
 					$notify = "";
 					$description = "Past Due Notice Sent $contactemail";
 					$status = "automatic";
+
 					// CREATE TICKET TO NOBODY
-					create_ticket($DB, $user, $notify, $account_number, $status,
+					$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
 							$description, $linkname, $linkurl);
 
 				}
