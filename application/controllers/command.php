@@ -1150,14 +1150,14 @@ class Command extends CI_Controller
 			"FROM user_services u ".
 			"LEFT JOIN master_services m ON m.id = u.master_service_id ".
 			"LEFT JOIN customer c ON c.account_number = u.account_number ".
-			"WHERE to_days('$today') = to_days(u.removal_date)";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+			"WHERE to_days(?) = to_days(u.removal_date)";
+		$result = $this->db->query($query, array($today)) or die ("queryfailed");
 
 		$deletes = 0;
 
 		// loop through results and print out each
-		while ($myresult = $result->FetchRow()) {
+		foreach ($result->result_array() AS $myresult) 
+		{
 			$user_services_id = $myresult['u_id'];
 			$service_description = $myresult['m_service_description'];
 			$account_number = $myresult['u_ac'];
@@ -1178,25 +1178,26 @@ class Command extends CI_Controller
 
 			$newline = "\"DELETE\",\"$category\",\"$customer_name\",\"$service_description\"";
 
-			if ($options_table <> '') {
-				$query = "SELECT * FROM $options_table ".
-					"WHERE user_services = '$user_services_id'";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$optresult = $DB->Execute($query) or die ("$l_queryfailed");
-				$myoptresult = $optresult->fields;
+			if ($options_table <> '') 
+			{
+				$myoptresult = $this->service_model->options_values($user_services_id, $optionstable);
 
-				$fields = $DB->MetaColumns($options_table);        
+				$fields = $this->schema_model->columns($this->db->database, $optionstable);
+
 				$i = 0;        
 				$pstring = "";	
-				foreach($fields as $v) {                
-					//echo "Name: $v->name ";                
-					$fieldname = $v->name;                
+				foreach($fields->result() as $v) 
+				{                
+					//echo "Name: $v->name ";
+					$fieldname = $v->COLUMN_NAME;
 
 					//check matching fieldname in the options table
-					foreach($mystring as $s) {
-						if($fieldname == $s) {
+					foreach($mystring as $s) 
+					{
+						if($fieldname == $s) 
+						{
 							//$pstring = $pstring.$s;
-							$myline = $myoptresult["$s"];
+							$myline = $myoptresult[$s];
 							$newline .= ",\"$myline\"";
 						}	
 					}
@@ -1212,12 +1213,7 @@ class Command extends CI_Controller
 
 		fclose($handle); // close the file
 
-		echo "$l_wrotefile $filename\n";	
-
-
-		?>
-			</body>
-			</html>
+		echo lang('wrotefile')." ".$filename."\n";	
 
 	}
 
