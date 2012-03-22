@@ -1046,43 +1046,42 @@ class Command extends CI_Controller
 			"WHERE bd.billed_amount > bd.paid_amount ".
 			"AND bi.pastdue_exempt <> 'y' ".
 			"AND bi.rerun_date IS NULL ".  
-			"AND '$today' >= DATE_ADD(bh.payment_due_date, ".
+			"AND ? >= DATE_ADD(bh.payment_due_date, ".
 			"INTERVAL g.dependent_canceled DAY)";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query, array($today)) or die ("queryfailed");
 
-		while ($myresult = $result->FetchRow()) {
-
+		foreach ($result->result_array() AS $myresult) 
+		{
 			// get the result values
 			$billing_id = $myresult['id'];
 			$account_number = $myresult['account_number'];
 
-			$dependent = carrier_dependent($account_number);
+			$dependent = $this->service_model->carrier_dependent($account_number);
 
-			if ($dependent == true) {
-
+			if ($dependent == true) 
+			{
 				// check recent history to see if we already set them to be canceled or waiting
 				$query = "SELECT status FROM payment_history ".
-					"WHERE billing_id = $billing_id ORDER BY id DESC LIMIT 1";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$statusresult = $DB->Execute($query) or die ("$l_queryfailed");
-				$mystatusresult = $statusresult->fields;
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
 				$mystatus = $mystatusresult['status'];
 
 				if ($mystatus <> "collections"
 						AND $mystatus <> "canceled"
 						AND $mystatus <> "cancelwfee"
-						AND $mystatus <> "waiting") {
-
+						AND $mystatus <> "waiting") 
+				{
 					// initialize the removed services boolean
 					$removed_services = false;
 
 					$query = "SELECT * FROM user_services us ".
 						"WHERE account_number = $account_number AND removed <> 'y'";
-					$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-					$removedresult = $DB->Execute($query) or die ("$l_queryfailed");
+					$removedresult = $this->db->query($query, array($account_number)) 
+						or die ("queryfailed");
 
-					while ($myserviceresult = $removedresult->FetchRow()) {
+					foreach ($removedresult->result_array() AS $myserviceresult) 
+					{
 						$userserviceid = $myserviceresult['id'];
 
 						delete_service($userserviceid,'removed', $today);
@@ -1091,31 +1090,41 @@ class Command extends CI_Controller
 						$removed_services = true;
 					}
 
-					if ($removed_services) {
+					if ($removed_services) 
+					{
 						// set cancel date and removal date of customer record
 						$query = "UPDATE customer ".
 							"SET cancel_date = CURRENT_DATE, ".
 							"removal_date = CURRENT_DATE ".
-							"WHERE account_number = $account_number";
-						$cancelresult = $DB->Execute($query) or die ("$l_queryfailed");
+							"WHERE account_number = ?";
+						$cancelresult = $this->db->query($query, array($account_number)) or die ("queryfailed");
 
 						// set the payment_history status to cancelwfee 
 						$query = "INSERT INTO payment_history ".
 							"(creation_date, billing_id, status) ".
-							"VALUES (CURRENT_DATE,'$billing_id','cancelwfee')";
-						$paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
-
+							"VALUES (CURRENT_DATE,?,'cancelwfee')";
+						$paymentresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
 
 						// send a collections notice by both print and email
-						$mynotice = new notice('collections',$billing_id, 'both', $payment_due_date, $turnoff_date, $cancel_date);
-						$linkname = $mynotice->pdfname;      
-						$contactemail = $mynotice->contactemail;
+						$config = array (
+							'notice_type' => 'collections',
+							'billing_id' => $billing_id,
+							'method' => 'both',
+							'payment_due_date' => $payment_due_date,
+							'turnoff_date' => $turnoff_date,
+							'cancel_date' => $cancel_date
+							);
+						$this->load->library('Notice', $config);
+						
+						$linkname = $this->notice->pdfname;
+						$contactemail = $this->notice->contactemail;
 						$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
 						$notify = "$default_billing_group";
 						$description = "Cancel w/Fee Collections Notice Sent $contactemail $url";
 						$status = "not done";
+						
 						// CREATE TICKET TO default_billing_group about cancelwfee
-						create_ticket($DB, $user, $notify, $account_number, $status,
+						$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
 								$description, $linkname, $linkurl);
 
 					}
