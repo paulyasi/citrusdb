@@ -815,23 +815,23 @@ class Command extends CI_Controller
 				$query = "SELECT status FROM payment_history ".
 					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
 				$statusresult = $this->db->query($query, array($billing_id) or die ("queryfailed");
-				$mystatusresult = $statusresult->row_array;;
-				$mystatus = $mystatusresult['status'];
+						$mystatusresult = $statusresult->row_array();
+						$mystatus = $mystatusresult['status'];
 
-				if ($mystatus <> "turnedoff"
-						AND $mystatus <> "collections"
-						AND $mystatus <> "canceled"
-						AND $mystatus <> "cancelwfee"
-						AND $mystatus <> "waiting") 
-				{
-					// set the account payment_history to turnedoff
-					$query = "INSERT INTO payment_history ".
+						if ($mystatus <> "turnedoff"
+							AND $mystatus <> "collections"
+							AND $mystatus <> "canceled"
+							AND $mystatus <> "cancelwfee"
+							AND $mystatus <> "waiting") 
+						{
+						// set the account payment_history to turnedoff
+						$query = "INSERT INTO payment_history ".
 						"(creation_date, billing_id, status) ".
 						"VALUES (CURRENT_DATE,?,'turnedoff')";
-					$paymentresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+						$paymentresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
 
-					// SEND CANCEL NOTICE BY BOTH PRINT and EMAIL
-					$config = array (
+						// SEND CANCEL NOTICE BY BOTH PRINT and EMAIL
+						$config = array (
 							'notice_type' => 'cancel',
 							'billing_id' => $billing_id,
 							'method' => 'both',
@@ -839,21 +839,21 @@ class Command extends CI_Controller
 							'turnoff_date' => $turnoff_date,
 							'cancel_date' => $cancel_date
 							);
-					$this->load->library('Notice', $config);
+						$this->load->library('Notice', $config);
 
-					$linkname = $this->notice->pdfname;
-					$contactemail = $this->notice->contactemail;
-					$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
-					$notify = "$default_billing_group";
-					$description = "Turnoff and Sent Cancellation Notice to $contactemail";
-					$status = "not done";
+						$linkname = $this->notice->pdfname;
+						$contactemail = $this->notice->contactemail;
+						$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+						$notify = "$default_billing_group";
+						$description = "Turnoff and Sent Cancellation Notice to $contactemail";
+						$status = "not done";
 
-					// CREATE TICKET TO default_billing_group about turn off
-					$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
-							$description, $linkname, $linkurl);
+						// CREATE TICKET TO default_billing_group about turn off
+						$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+								$description, $linkname, $linkurl);
 
 
-				}
+						}
 
 			}
 
@@ -880,13 +880,13 @@ class Command extends CI_Controller
 			"LEFT JOIN payment_history p ON p.billing_id = u.billing_id ".
 			"WHERE (to_days(now()) = to_days(p.creation_date)) ".
 			"AND (p.status = 'turnedoff') AND u.removed <> 'y'";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query) or die ("queryfailed");
 
 		$disables = 0;
 
 		// loop through results and print out each
-		while ($myresult = $result->FetchRow()) {
+		foreach ($result->result_array() AS $myresult) 
+		{
 			$user_services_id = $myresult['u_id'];
 			$master_service_id = $myresult['u_master_service_id'];
 			$service_description = $myresult['m_service_description'];
@@ -908,25 +908,26 @@ class Command extends CI_Controller
 
 			$newline = "\"DISABLE\",\"$category\",\"$customer_name\",\"$service_description\"";
 
-			if ($options_table <> '') {
-				$query = "SELECT * FROM $options_table ".
-					"WHERE user_services = '$user_services_id'";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$optresult = $DB->Execute($query) or die ("$l_queryfailed");
-				$myoptresult = $optresult->fields;
+			if ($options_table <> '') 
+			{
+				$myoptresult = $this->service_model->options_values($user_services_id, $optionstable);
 
-				$fields = $DB->MetaColumns($options_table);        
+				$fields = $this->schema_model->columns($this->db->database, $optionstable);
+
 				$i = 0;        
 				$pstring = "";	
-				foreach($fields as $v) {                
-					//echo "Name: $v->name ";                
-					$fieldname = $v->name;                
+				foreach($fields->result() as $v) 
+				{                
+					//echo "Name: $v->name ";
+					$fieldname = $v->COLUMN_NAME;
 
 					//check matching fieldname in the options table
-					foreach($mystring as $s) {
-						if($fieldname == $s) {
+					foreach($mystring as $s) 
+					{
+						if($fieldname == $s) 
+						{
 							//$pstring = $pstring.$s;
-							$myline = $myoptresult["$s"];
+							$myline = $myoptresult[$s];
 							$newline .= ",\"$myline\"";
 						}	
 					}
@@ -938,7 +939,7 @@ class Command extends CI_Controller
 
 			// send service_message about turnoff
 			$service_notify_type = "turnoff";
-			service_message($service_notify_type, $account_number,
+			$this->service_model->service_message($service_notify_type, $account_number,
 					$master_service_id, $user_services_id, NULL, NULL);
 
 			$disables++;
@@ -1803,7 +1804,7 @@ class Command extends CI_Controller
 
 			// send service_message about turnoff
 			$service_notify_type = "turnoff";
-			service_message($service_notify_type, $account_number,
+			$this->service_model->service_message($service_notify_type, $account_number,
 					$master_service_id, $user_services_id, NULL, NULL);
 
 			$disables++;
