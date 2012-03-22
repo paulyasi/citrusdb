@@ -964,68 +964,65 @@ class Command extends CI_Controller
 			"WHERE bd.billed_amount > bd.paid_amount ".
 			"AND bi.pastdue_exempt <> 'y' ".
 			"AND bi.rerun_date IS NULL ".  
-			"AND '$today' >= DATE_ADD(bh.payment_due_date, ".
+			"AND ? >= DATE_ADD(bh.payment_due_date, ".
 			"INTERVAL g.regular_canceled DAY)";
-		$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-		$result = $DB->Execute($query) or die ("$l_queryfailed");
+		$result = $this->db->query($query, array($today)) or die ("queryfailed");
 
-		while ($myresult = $result->FetchRow()) {
-
+		foreach ($result->result_array() AS $myresult) 
+		{
 			// get the result values
 			$billing_id = $myresult['id'];
 			$account_number = $myresult['account_number'];
 
-			$dependent = carrier_dependent($account_number);
+			$dependent = $this->service_model->carrier_dependent($account_number);
 
-			if ($dependent == false) {
-
+			if ($dependent == false) 
+			{
 				// check recent history to see if we already set them to be canceled or waiting
 				$query = "SELECT status FROM payment_history ".
-					"WHERE billing_id = $billing_id ORDER BY id DESC LIMIT 1";
-				$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-				$statusresult = $DB->Execute($query) or die ("$l_queryfailed");
-				$mystatusresult = $statusresult->fields;
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
 				$mystatus = $mystatusresult['status'];
 
 				if ($mystatus <> "collections"
 						AND $mystatus <> "canceled"
 						AND $mystatus <> "cancelwfee"
-						AND $mystatus <> "waiting") {
+						AND $mystatus <> "waiting") 
+				{
 
 					// initialize the removed services boolean
 					$removed_services = false;
 
 					$query = "SELECT * FROM user_services us ".
-						"WHERE account_number = $account_number AND removed <> 'y'";
-					$DB->SetFetchMode(ADODB_FETCH_ASSOC);
-					$removedresult = $DB->Execute($query) or die ("$l_queryfailed");
+						"WHERE account_number = ? AND removed <> 'y'";
+					$removedresult = $this->db->query($query, array($account_number)) or die ("queryfailed");
 
-					while ($myserviceresult = $removedresult->FetchRow()) {
+					foreach ($removedresult->result_array() AS $myserviceresult) 
+					{
 						$userserviceid = $myserviceresult['id'];
 
-						// TODO: CREATE TICKET TO SHUTOFF_NOTIFY IF NECESSARY
-						// FOR EACH SERVICE THAT IS ABOUT TO BE DELETED
-
-						delete_service($userserviceid,'removed', $today);
+						$this->service_model->delete_service($userserviceid,'removed', $today);
 
 						// set this to true since services were removed
 						$removed_services = true;
 					}
 
-					if ($removed_services) {
+					if ($removed_services) 
+					{
 						// set cancel date and removal date of customer record
 						$query = "UPDATE customer ".
 							"SET cancel_date = CURRENT_DATE, ".
 							"removal_date = CURRENT_DATE ".
-							"WHERE account_number = $account_number";
-						$cancelresult = $DB->Execute($query) 
-							or die ("$l_queryfailed");
+							"WHERE account_number = ?";
+						$cancelresult = $this->db->query($query, array($account_number)) 
+							or die ("queryfailed");
 
 						// set the payment_history status to canceled      
 						$query = "INSERT INTO payment_history ".
 							"(creation_date, billing_id, status) ".
-							"VALUES (CURRENT_DATE,'$billing_id','canceled')";
-						$paymentresult = $DB->Execute($query) or die ("$l_queryfailed");
+							"VALUES (CURRENT_DATE,?,'canceled')";
+						$paymentresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
 
 					}
 				}    
