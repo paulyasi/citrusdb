@@ -35,13 +35,12 @@ foreach ($orglist as $myresult) {
 <?php
 foreach ($refunds AS $myresult) 
 {
-	$creation_date = $myresult['creation_date'];
-	$billing_id = $myresult['billing_id'];
+	$refund_date = $myresult['refund_date'];
 	$creditcard_number = $myresult['creditcard_number'];
-	$amount = $myresult['billing_amount'];
+	$amount = $myresult['refund_amount'];
 	$account_number = $myresult['account_number'];
 	$name = $myresult['name'];
-	echo "<td>$creation_date</td><td>$account_number</td><td>$name</td><td>$creditcard_number</td><td>$amount</td><tr>";
+	echo "<td>$refund_date</td><td>$account_number</td><td>$name</td><td>$creditcard_number</td><td>$amount</td><tr>";
 }
 ?>
 

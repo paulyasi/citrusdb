@@ -90,7 +90,7 @@ class Reports_Model extends CI_Model
 		return $serviceresult->result_array();
 	}
 
-	
+
 	function taxed_services($id)
 	{
 		$query = "SELECT tr.description, tr.rate, ms.service_description, ".
@@ -154,7 +154,7 @@ class Reports_Model extends CI_Model
 
 	}
 
-	
+
 	function number_of_customers()
 	{
 		// get the number of customers
@@ -166,7 +166,7 @@ class Reports_Model extends CI_Model
 
 	}
 
-	
+
 	function number_of_non_free_customers()
 	{
 		// get the number of customers who are not free
@@ -188,19 +188,19 @@ class Reports_Model extends CI_Model
 		if ($org_id == 'all')
 		{
 			$query = "SELECT ROUND(SUM(bd.paid_amount),2) AS CategoryTotal, 
-			ROUND(SUM(bd.billed_amount),2) AS CategoryBilled,
-			COUNT(DISTINCT us.id) As ServiceCount, 
-			ms.category service_category, 
-			ms.service_description, service_description,  
-			g.org_name g_org_name 
-				FROM billing_details bd 
-				LEFT JOIN user_services us ON us.id = bd.user_services_id 
-				LEFT JOIN master_services ms ON us.master_service_id = ms.id 
-				LEFT JOIN general g ON ms.organization_id = g.id 
-				WHERE bd.creation_date BETWEEN ? AND ? 
-				AND bd.taxed_services_id IS NULL 
-				GROUP BY ms.id ORDER BY ms.category";
-			
+				ROUND(SUM(bd.billed_amount),2) AS CategoryBilled,
+				COUNT(DISTINCT us.id) As ServiceCount, 
+				ms.category service_category, 
+				ms.service_description, service_description,  
+				g.org_name g_org_name 
+					FROM billing_details bd 
+					LEFT JOIN user_services us ON us.id = bd.user_services_id 
+					LEFT JOIN master_services ms ON us.master_service_id = ms.id 
+					LEFT JOIN general g ON ms.organization_id = g.id 
+					WHERE bd.creation_date BETWEEN ? AND ? 
+					AND bd.taxed_services_id IS NULL 
+					GROUP BY ms.id ORDER BY ms.category";
+
 			$result = $this->db->query($query, array($day1, $day2))
 				or die ("servicerevenue query failed");
 		}
@@ -219,7 +219,7 @@ class Reports_Model extends CI_Model
 					WHERE bd.creation_date BETWEEN ? AND ? 
 					AND bd.taxed_services_id IS NULL AND g.id = ? 
 					GROUP BY ms.id ORDER BY ms.category";
-			
+
 			$result = $this->db->query($query, array($day1, $day2, $org_id))
 				or die ("servicerevenue 2 query failed");
 		}
@@ -252,7 +252,7 @@ class Reports_Model extends CI_Model
 					GROUP BY cr.description"; 
 
 					$result = $this->db->query($query, array($day1, $day2))
-						or die ("creditrevenue query failed");
+					or die ("creditrevenue query failed");
 		}
 		else
 		{
@@ -272,11 +272,11 @@ class Reports_Model extends CI_Model
 					GROUP BY cr.description"; 
 
 					$result = $this->db->query($query, array($day1, $day2, $org_id))
-						or die ("creditrevenue 2 query failed");
+					or die ("creditrevenue 2 query failed");
 		}
 
 		return $result->result_array();
-		
+
 	}
 
 
@@ -286,23 +286,23 @@ class Reports_Model extends CI_Model
 		// their refund_date
 		if ($org_id == 'all')
 		{
-		$query = "SELECT ROUND(SUM(bd.refund_amount),2) AS CategoryTotal,
-			COUNT(DISTINCT us.id) As ServiceCount,  
-			ms.category service_category, 
-			ms.service_description service_description, 
-			g.org_name g_org_name    
-				FROM billing_details bd
-				LEFT JOIN user_services us 
-				ON us.id = bd.user_services_id 
-				LEFT JOIN master_services ms 
-				ON us.master_service_id = ms.id
-				LEFT JOIN general g 
-				ON g.id = ms.organization_id  
-				WHERE bd.refund_date BETWEEN ? AND ? 
-				AND bd.taxed_services_id IS NULL 
-				GROUP BY ms.id"; 
+			$query = "SELECT ROUND(SUM(bd.refund_amount),2) AS CategoryTotal,
+				COUNT(DISTINCT us.id) As ServiceCount,  
+				ms.category service_category, 
+				ms.service_description service_description, 
+				g.org_name g_org_name    
+					FROM billing_details bd
+					LEFT JOIN user_services us 
+					ON us.id = bd.user_services_id 
+					LEFT JOIN master_services ms 
+					ON us.master_service_id = ms.id
+					LEFT JOIN general g 
+					ON g.id = ms.organization_id  
+					WHERE bd.refund_date BETWEEN ? AND ? 
+					AND bd.taxed_services_id IS NULL 
+					GROUP BY ms.id"; 
 
-				$result = $this->db->query($query, array($day1, $day2))
+					$result = $this->db->query($query, array($day1, $day2))
 					or die ("refundrevenue query failed");
 		}
 		else
@@ -324,9 +324,9 @@ class Reports_Model extends CI_Model
 					GROUP BY ms.id"; 
 
 					$result = $this->db->query($query, array($day1, $day2, $org_id))
-						or die ("refunerevenue 2 query failed");
+					or die ("refunerevenue 2 query failed");
 		}
-		
+
 		return $result->result_array();
 
 	}
@@ -366,7 +366,7 @@ class Reports_Model extends CI_Model
 	}
 
 
-	
+
 	function taxrevenue($day1, $day2)
 	{
 		// show taxes for a specified date range according to
@@ -418,11 +418,15 @@ class Reports_Model extends CI_Model
 
 	function refunds($organization_id, $day1, $day2)
 	{
-		$query = "SELECT ph.creation_date, ph.billing_id, ph.creditcard_number, ".
-			"ph.billing_amount, bi.name, bi.account_number FROM payment_history ph  ".
-			"LEFT JOIN billing bi ON bi.id = ph.billing_id ".
-			"WHERE ph.status = 'credit' AND bi.organization_id = ? ".
-			"AND ph.creation_date BETWEEN ? AND ?";
+		$query = "SELECT ROUND(SUM(bd.refund_amount), 2) AS refund_amount, bd.refund_date, us.account_number, cu.name, 
+			ms.category service_category, ms.service_description service_description, bd.invoice_number, ph.creditcard_number
+			FROM billing_details bd
+			LEFT JOIN user_services us ON us.id = bd.user_services_id
+			LEFT JOIN master_services ms ON us.master_service_id = ms.id
+			LEFT JOIN customer cu ON us.account_number = cu.account_number
+			LEFT JOIN payment_history ph ON bd.payment_history_id = ph.id 
+			WHERE bd.refund_date
+			BETWEEN '$day1' AND '$day2'"; 
 		$result = $this->db->query($query, array($organization_id, $day1, $day2))
 			or die ("refunds query failed");
 
@@ -468,10 +472,10 @@ class Reports_Model extends CI_Model
 					"WHERE ph.id = ? AND b.pastdue_exempt <> 'y' AND ".
 					"c.cancel_date IS NULL AND ".
 					"ph.status = ? AND bd.billed_amount > bd.paid_amount LIMIT 1";
-				
+
 				$paymentresult = $this->db->query($query, array($recentpaymentid, $viewstatus))
 					or die ("paymentresult queryfailed");
-				
+
 			} 
 			elseif (($viewstatus == 'cancelwfee') OR ($viewstatus == 'canceled') 
 					OR ($viewstatus == 'collections')) 
@@ -486,10 +490,10 @@ class Reports_Model extends CI_Model
 					"LEFT JOIN customer c ON c.account_number = b.account_number ".
 					"WHERE ph.id = ? AND ".
 					"ph.status = ? AND bd.billed_amount > bd.paid_amount LIMIT 1";
-				
+
 				$paymentresult = $this->db->query($query, array($recentpaymentid, $viewstatus))
 					or die ("paymentresult queryfailed");
-				
+
 			} 
 			elseif ($viewstatus == 'pastdueexempt') 
 			{
@@ -502,10 +506,10 @@ class Reports_Model extends CI_Model
 					"LEFT JOIN customer c ON c.account_number = b.account_number ".
 					"WHERE ph.id = ? AND b.pastdue_exempt = 'y' ".
 					"AND c.cancel_date IS NULL AND bd.billed_amount > bd.paid_amount LIMIT 1";
-				
+
 				$paymentresult = $this->db->query($query, array($recentpaymentid))
 					or die ("paymentresult queryfailed");
-				
+
 			}
 
 			foreach ($paymentresult->result_array() AS $mypaymentresult) 
@@ -735,7 +739,7 @@ class Reports_Model extends CI_Model
 
 		return $result->result_array();
 	}
-	
+
 
 	function servicechurn($month, $year)
 	{

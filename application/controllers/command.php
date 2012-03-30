@@ -204,19 +204,6 @@ class Command extends CI_Controller
 		$this->load->model('service_model');
 		$this->load->model('settings_model');
 
-		// load the Notice library
-		/*
-		   $config = array (
-		   'notice_type' => 'cancel', 
-		   'billing_id' => $billing_id, 
-		   'method' => 'both', 
-		   'payment_due_date' => $cancel_date, 
-		   'turnoff_date' => $cancel_date, 
-		   'cancel_date' => $cancel_date
-		   );
-		   $this->load->library('Notice', $config);
-		 */
-
 		// todays' date
 		$activatedate = date("Y-m-d");
 
@@ -1232,6 +1219,9 @@ class Command extends CI_Controller
 	 * - you can move this script elsewhere and copy the include files there too
 	 *--------------------------------------------------------------------------
 	 */
+
+	// TODO: make functions in an update_model from statusupdate above and use here too
+
 	function weekendupdate()
 	{
 		// Includes and Requires
