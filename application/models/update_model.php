@@ -237,4 +237,204 @@ class Update_Model extends CI_Model
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  set the pastdue status for regular accounts (not carrier dependent)
+	 * ------------------------------------------------------------------------
+	 */
+	function regular_past_due($handle, $activatedate)
+	{
+		/*-------------------------------------------------------------------*/
+		// REGULAR PAST DUE
+		//
+		// set the pastdue status for accounts that have a payment_due_date
+		// more than g.regular_pastdue days ago (usually one day)
+		// and do not have carrier_dependent services
+		//
+		/*-------------------------------------------------------------------*/
+		$query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.regular_turnoff DAY) AS turnoff_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.regular_canceled DAY) AS cancel_date ".
+			"FROM billing_details bd ".
+			"LEFT JOIN billing bi ON bd.billing_id = bi.id ".
+			"LEFT JOIN billing_history bh ON bh.id = bd.invoice_number ".
+			"LEFT JOIN general g ON bi.organization_id = g.id ".
+			"WHERE bd.billed_amount > bd.paid_amount ".
+			"AND bi.pastdue_exempt <> 'y' ".
+			"AND bi.rerun_date IS NULL ".
+			"AND ? >= DATE_ADD(bh.payment_due_date, INTERVAL g.regular_pastdue DAY) ".
+			"AND ? < DATE_ADD(bh.payment_due_date, INTERVAL g.regular_turnoff DAY) ".
+			"GROUP BY bi.id";
+		$result = $this->db->query($query, array($today, $today)) or die ("regular past due queryfailed");
+
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// set these services to be turned off
+			$billing_id = $myresult['id'];	
+			$account_number = $myresult['account_number'];
+			$payment_due_date = $myresult['payment_due_date'];
+			$turnoff_date = $myresult['turnoff_date'];
+			$cancel_date = $myresult['cancel_date'];
+
+			$dependent = $this->service_model->carrier_dependent($account_number);
+
+			if ($dependent == false) 
+			{
+				// check recent history to see if we already set them to pastdue
+				$query = "SELECT status FROM payment_history ".
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
+				$mystatus = $mystatusresult['status'];
+
+				if ($mystatus <> "pastdue"
+						AND $mystatus <> "noticesent" 
+						AND $mystatus <> "turnedoff"
+						AND $mystatus <> "collections"
+						AND $mystatus <> "canceled"
+						AND $mystatus <> "cancelwfee"
+						AND $mystatus <> "waiting") 
+				{
+					// set the account payment_history to pastdue
+					$query = "INSERT INTO payment_history ".
+						"(creation_date, billing_id, status) ".
+						"VALUES (CURRENT_DATE,?,'pastdue')";
+					$paymentresult = $this->db->query($query, array($billing_id)) 
+						or die ("queryfailed");
+
+					echo "regular pastdue: $account_number\n";
+
+
+					// get the payment_due_date, turnoff_date, and cancel_date
+
+					// SEND PASTDUE NOTICE BY EMAIL
+					$config = array (
+							'notice_type' => 'pastdue',
+							'billing_id' => $billing_id,
+							'method' => 'email',
+							'payment_due_date' => $payment_due_date,
+							'turnoff_date' => $turnoff_date,
+							'cancel_date' => $cancel_date
+							);
+					$this->load->library('Notice', $config);
+
+					$contactemail = $this->notice->contactemail;      
+					$notify = "";
+					$description = "Past Due Notice Sent $contactemail";
+					$status = "automatic";
+
+					// CREATE TICKET TO NOBODY
+					$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+							$description, $linkname, $linkurl);
+
+				}
+
+			}
+
+		}
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  set the carrier dependent pastdue status
+	 * ------------------------------------------------------------------------
+	 */
+	function carrier_dependent_past_due($handle, $activatedate)
+	{
+		/*-------------------------------------------------------------------*/
+		// CARRIER DEPENDENT PAST DUE
+		//
+		// set the pastdue status for accounts that have a payment_due_date
+		// more than g.dependent_pastdue days ago (usually one day)
+		// and do have carrier_dependent services
+		//
+		// insert a ticket to billing if they have carrier_dependent services
+		//
+		/*-------------------------------------------------------------------*/
+		$query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_turnoff DAY) AS turnoff_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_canceled DAY) AS cancel_date ".
+			"FROM billing_details bd ".
+			"LEFT JOIN billing bi ON bd.billing_id = bi.id ".
+			"LEFT JOIN billing_history bh ON bh.id = bd.invoice_number ".
+			"LEFT JOIN general g ON bi.organization_id = g.id ".
+			"WHERE bd.billed_amount > bd.paid_amount ".
+			"AND bi.pastdue_exempt <> 'y' ".
+			"AND bi.rerun_date IS NULL ".
+			"AND ? >= DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.dependent_pastdue DAY) ".
+			"AND ? < DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.dependent_shutoff_notice DAY) GROUP BY bi.id";
+		$result = $this->db->query($query, array($today, $today)) 
+			or die ("carrier dependent past due queryfailed");
+
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// set these services to be turned off
+			$billing_id = $myresult['id'];	
+			$account_number = $myresult['account_number'];
+			$payment_due_date = $myresult['payment_due_date'];
+			$turnoff_date = $myresult['turnoff_date'];
+			$cancel_date = $myresult['cancel_date'];
+
+			$dependent = $this->service_model->carrier_dependent($account_number);
+
+			if ($dependent == true) 
+			{
+				// check recent history to see if we already set them to pastdue
+				$query = "SELECT status FROM payment_history ".
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
+				$mystatus = $mystatusresult['status'];
+
+				if ($mystatus <> "pastdue"
+						AND $mystatus <> "turnedoff"
+						AND $mystatus <> "noticesent" 
+						AND $mystatus <> "collections"
+						AND $mystatus <> "canceled"
+						AND $mystatus <> "cancelwfee"
+						AND $mystatus <> "waiting") 
+				{
+					// set the account payment_history to pastdue
+					$query = "INSERT INTO payment_history ".
+						"(creation_date, billing_id, status) ".
+						"VALUES (CURRENT_DATE,?,'pastdue')";
+					$paymentresult = $this->db->query($query, array($billing_id)) 
+						or die ("queryfailed");
+
+					echo "carrier dependent pastdue: $account_number\n";
+
+					// SEND PASTDUE NOTICE BY BOTH PRINT and EMAIL
+					$config = array (
+							'notice_type' => 'pastdue',
+							'billing_id' => $billing_id,
+							'method' => 'both',
+							'payment_due_date' => $payment_due_date,
+							'turnoff_date' => $turnoff_date,
+							'cancel_date' => $cancel_date
+							);
+					$this->load->library('Notice', $config);
+
+					$linkname = $this->notice->pdfname;
+					$contactemail = $this->notice->contactemail;
+					$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+					$notify = "";
+					$description = "Past Due Notice Sent $contactemail $url";
+					$status = "not done";
+
+					// CREATE TICKET TO default_billing_group
+					$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+							$description, $linkname, $linkurl);
+
+				}
+
+			}
+
+		}
+	}
+
+
+
 }
