@@ -789,5 +789,207 @@ class Update_Model extends CI_Model
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  mark services over canceled days late for delete
+	 * ------------------------------------------------------------------------
+	 */
+	function regular_delete($handle, $activatedate)
+	{
+		/*-------------------------------------------------------------------*/
+		// REGULAR DELETE
+		/*-------------------------------------------------------------------*/
+		// check if any services on the account are regular_canceled days late 
+		// and also DO NOT HAVE CARRIER DEPENDENT SERVICES
+		// if so, change the payment history status to cancelwfee
+		// and set the Removal date to today
+
+		$query = "SELECT DISTINCT bi.id, bi.account_number ".
+			"FROM billing_details bd ".
+			"LEFT JOIN billing bi ON bd.billing_id = bi.id ".
+			"LEFT JOIN billing_history bh ON bh.id = bd.invoice_number ".
+			"LEFT JOIN general g ON bi.organization_id = g.id ".
+			"WHERE bd.billed_amount > bd.paid_amount ".
+			"AND bi.pastdue_exempt <> 'y' ".
+			"AND bi.rerun_date IS NULL ".  
+			"AND ? >= DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.regular_canceled DAY)";
+		$result = $this->db->query($query, array($today)) or die ("queryfailed");
+
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// get the result values
+			$billing_id = $myresult['id'];
+			$account_number = $myresult['account_number'];
+
+			$dependent = $this->service_model->carrier_dependent($account_number);
+
+			if ($dependent == false) 
+			{
+				// check recent history to see if we already set them to be canceled or waiting
+				$query = "SELECT status FROM payment_history ".
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
+				$mystatus = $mystatusresult['status'];
+
+				if ($mystatus <> "collections"
+						AND $mystatus <> "canceled"
+						AND $mystatus <> "cancelwfee"
+						AND $mystatus <> "waiting") 
+				{
+
+					// initialize the removed services boolean
+					$removed_services = false;
+
+					$query = "SELECT * FROM user_services us ".
+						"WHERE account_number = ? AND removed <> 'y'";
+					$removedresult = $this->db->query($query, array($account_number)) or die ("queryfailed");
+
+					foreach ($removedresult->result_array() AS $myserviceresult) 
+					{
+						$userserviceid = $myserviceresult['id'];
+
+						$this->service_model->delete_service($userserviceid,'removed', $today);
+
+						// set this to true since services were removed
+						$removed_services = true;
+					}
+
+					if ($removed_services) 
+					{
+						// set cancel date and removal date of customer record
+						$query = "UPDATE customer ".
+							"SET cancel_date = CURRENT_DATE, ".
+							"removal_date = CURRENT_DATE ".
+							"WHERE account_number = ?";
+						$cancelresult = $this->db->query($query, array($account_number)) 
+							or die ("queryfailed");
+
+						// set the payment_history status to canceled      
+						$query = "INSERT INTO payment_history ".
+							"(creation_date, billing_id, status) ".
+							"VALUES (CURRENT_DATE,?,'canceled')";
+						$paymentresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+
+					}
+				}    
+			}  
+		}
+	}
+
+
+
+	/*
+	 * --------------------------------------------------------------------
+	 *  mark carrier dependent services over canceled days late for delete
+	 * --------------------------------------------------------------------
+	 */
+	function carrier_dependent_delete($handle, $activatedate)
+	{
+		/*-------------------------------------------------------------------*/
+		// CARRIER DEPENDENT DELETE
+		/*-------------------------------------------------------------------*/
+		// check if any services on the account are dependent_canceled days late 
+		// and also DO HAVE CARRIER DEPENDENT SERVICES
+		// if so, change the payment history status to cancelwfee
+		// and set the Removal date to today
+
+		$query = "SELECT DISTINCT bi.id, bi.account_number ".
+			"FROM billing_details bd ".
+			"LEFT JOIN billing bi ON bd.billing_id = bi.id ".
+			"LEFT JOIN billing_history bh ON bh.id = bd.invoice_number ".
+			"LEFT JOIN general g ON bi.organization_id = g.id ".
+			"WHERE bd.billed_amount > bd.paid_amount ".
+			"AND bi.pastdue_exempt <> 'y' ".
+			"AND bi.rerun_date IS NULL ".  
+			"AND ? >= DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.dependent_canceled DAY)";
+		$result = $this->db->query($query, array($today)) or die ("queryfailed");
+
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// get the result values
+			$billing_id = $myresult['id'];
+			$account_number = $myresult['account_number'];
+
+			$dependent = $this->service_model->carrier_dependent($account_number);
+
+			if ($dependent == true) 
+			{
+				// check recent history to see if we already set them to be canceled or waiting
+				$query = "SELECT status FROM payment_history ".
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
+				$mystatus = $mystatusresult['status'];
+
+				if ($mystatus <> "collections"
+						AND $mystatus <> "canceled"
+						AND $mystatus <> "cancelwfee"
+						AND $mystatus <> "waiting") 
+				{
+					// initialize the removed services boolean
+					$removed_services = false;
+
+					$query = "SELECT * FROM user_services us ".
+						"WHERE account_number = $account_number AND removed <> 'y'";
+					$removedresult = $this->db->query($query, array($account_number)) 
+						or die ("queryfailed");
+
+					foreach ($removedresult->result_array() AS $myserviceresult) 
+					{
+						$userserviceid = $myserviceresult['id'];
+
+						delete_service($userserviceid,'removed', $today);
+
+						// set this to true since services were removed
+						$removed_services = true;
+					}
+
+					if ($removed_services) 
+					{
+						// set cancel date and removal date of customer record
+						$query = "UPDATE customer ".
+							"SET cancel_date = CURRENT_DATE, ".
+							"removal_date = CURRENT_DATE ".
+							"WHERE account_number = ?";
+						$cancelresult = $this->db->query($query, array($account_number)) or die ("queryfailed");
+
+						// set the payment_history status to cancelwfee 
+						$query = "INSERT INTO payment_history ".
+							"(creation_date, billing_id, status) ".
+							"VALUES (CURRENT_DATE,?,'cancelwfee')";
+						$paymentresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+
+						// send a collections notice by both print and email
+						$config = array (
+								'notice_type' => 'collections',
+								'billing_id' => $billing_id,
+								'method' => 'both',
+								'payment_due_date' => $payment_due_date,
+								'turnoff_date' => $turnoff_date,
+								'cancel_date' => $cancel_date
+								);
+						$this->load->library('Notice', $config);
+
+						$linkname = $this->notice->pdfname;
+						$contactemail = $this->notice->contactemail;
+						$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+						$notify = "$default_billing_group";
+						$description = "Cancel w/Fee Collections Notice Sent $contactemail $url";
+						$status = "not done";
+
+						// CREATE TICKET TO default_billing_group about cancelwfee
+						$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+								$description, $linkname, $linkurl);
+
+					}
+				}    
+			}
+
+		}
+	}
+
 
 }
