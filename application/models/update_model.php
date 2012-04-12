@@ -21,7 +21,7 @@ class Update_Model extends CI_Model
 	 *  create entries for the ADD status
 	 * ------------------------------------------------------------------------
 	 */
-	function add($handle, $activatedate)
+	function add($handle, $today)
 	{
 		// get the list of new services added today
 		$result = $this->service_model->new_services_today($today);
@@ -98,7 +98,7 @@ class Update_Model extends CI_Model
 	 *  set the ENABLE status
 	 * ------------------------------------------------------------------------
 	 */
-	function enable($handle, $activatedate)
+	function enable($handle, $today)
 	{
 		/*-------------------------------------------------------------------*/
 		// ENABLE
@@ -110,7 +110,7 @@ class Update_Model extends CI_Model
 		/*-------------------------------------------------------------------*/
 
 		// select all the accounts with a payment_history of today
-		$result->$this->billing_model->payment_history_today($today);
+		$result = $this->billing_model->payment_history_today($today);
 
 		$enables = 0;
 
@@ -225,7 +225,7 @@ class Update_Model extends CI_Model
 							$notify = "$activate_notify";
 							$description = "ENABLE $category $customer_name $service_description";
 							$status = "not done";
-							$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+							$this->support_model->create_ticket("update", $notify, $account_number, $status,
 									$description, NULL, NULL, NULL, $user_services_id);
 						}
 
@@ -242,7 +242,7 @@ class Update_Model extends CI_Model
 	 *  set the pastdue status for regular accounts (not carrier dependent)
 	 * ------------------------------------------------------------------------
 	 */
-	function regular_past_due($handle, $activatedate)
+	function regular_past_due($handle, $today)
 	{
 		/*-------------------------------------------------------------------*/
 		// REGULAR PAST DUE
@@ -324,7 +324,7 @@ class Update_Model extends CI_Model
 					$status = "automatic";
 
 					// CREATE TICKET TO NOBODY
-					$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+					$this->support_model->create_ticket("update", $notify, $account_number, $status,
 							$description, $linkname, $linkurl);
 
 				}
@@ -340,7 +340,7 @@ class Update_Model extends CI_Model
 	 *  set the carrier dependent pastdue status
 	 * ------------------------------------------------------------------------
 	 */
-	function carrier_dependent_past_due($handle, $activatedate)
+	function carrier_dependent_past_due($handle, $today)
 	{
 		/*-------------------------------------------------------------------*/
 		// CARRIER DEPENDENT PAST DUE
@@ -425,7 +425,7 @@ class Update_Model extends CI_Model
 					$status = "not done";
 
 					// CREATE TICKET TO default_billing_group
-					$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+					$this->support_model->create_ticket("update", $notify, $account_number, $status,
 							$description, $linkname, $linkurl);
 
 				}
@@ -441,7 +441,7 @@ class Update_Model extends CI_Model
 	 *  set the shutoff notice for carrier dependent services
 	 * ------------------------------------------------------------------------
 	 */
-	function carrier_dependent_shutoff_notice($handle, $activatedate)
+	function carrier_dependent_shutoff_notice($handle, $today)
 	{
 		/*-------------------------------------------------------------------*/
 		// CARRIER DEPENDENT SHUTOFF NOTICE
@@ -520,7 +520,7 @@ class Update_Model extends CI_Model
 					$status = "not done";
 
 					// CREATE TICKET TO NOBODY
-					$this->support_model->create_ticket($DB, $user, $notify, $account_number, $status,
+					$this->support_model->create_ticket("update", $notify, $account_number, $status,
 							$description, $linkname, $linkurl);
 
 				}
@@ -538,7 +538,7 @@ class Update_Model extends CI_Model
 	 *  mark accounts to disable that are not carrier dependent 
 	 * ------------------------------------------------------------------------
 	 */
-	function regular_disable($handle, $activatedate)
+	function regular_disable($handle, $today)
 	{
 		/*-------------------------------------------------------------------*/
 		// REGULAR DISABLE
@@ -609,7 +609,7 @@ class Update_Model extends CI_Model
 	 *   mark accounts to disable that are carrier dependent
 	 * ------------------------------------------------------------------------
 	 */
-	function carrier_dependent_disable($handle, $activatedate)
+	function carrier_dependent_disable($handle, $today)
 	{
 		/*-------------------------------------------------------------------*/
 		// CARRIER DEPENDENT DISABLE
@@ -682,7 +682,7 @@ class Update_Model extends CI_Model
 					$status = "not done";
 
 					// CREATE TICKET TO default_billing_group about turn off
-					$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+					$this->support_model->create_ticket("update", $notify, $account_number, $status,
 							$description, $linkname, $linkurl);
 
 
@@ -701,7 +701,7 @@ class Update_Model extends CI_Model
 	 *  DISABLE ACCOUNTS MARKED FROM ABOVE
 	 * -------------------------------------------------------------------------
 	 */
-	function disable_accounts($handle, $activatedate)
+	function disable_accounts($handle, $today)
 	{
 		// disable any services with a turnedoff payment_history from today that
 		// have not already been marked as removed
@@ -794,7 +794,7 @@ class Update_Model extends CI_Model
 	 *  mark services over canceled days late for delete
 	 * ------------------------------------------------------------------------
 	 */
-	function regular_delete($handle, $activatedate)
+	function regular_delete($handle, $today)
 	{
 		/*-------------------------------------------------------------------*/
 		// REGULAR DELETE
@@ -885,7 +885,7 @@ class Update_Model extends CI_Model
 	 *  mark carrier dependent services over canceled days late for delete
 	 * --------------------------------------------------------------------
 	 */
-	function carrier_dependent_delete($handle, $activatedate)
+	function carrier_dependent_delete($handle, $today)
 	{
 		/*-------------------------------------------------------------------*/
 		// CARRIER DEPENDENT DELETE
@@ -941,7 +941,7 @@ class Update_Model extends CI_Model
 					{
 						$userserviceid = $myserviceresult['id'];
 
-						delete_service($userserviceid,'removed', $today);
+						$this->service_model->delete_service($userserviceid,'removed', $today);
 
 						// set this to true since services were removed
 						$removed_services = true;
@@ -981,7 +981,7 @@ class Update_Model extends CI_Model
 						$status = "not done";
 
 						// CREATE TICKET TO default_billing_group about cancelwfee
-						$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+						$this->support_model->create_ticket("update", $notify, $account_number, $status,
 								$description, $linkname, $linkurl);
 
 					}
@@ -997,7 +997,7 @@ class Update_Model extends CI_Model
 	 *  DELETE ACCOUNTS MARKED FROM ABOVE
 	 * ------------------------------------------------------------------------
 	 */
-	function delete_accounts($handle, $activatedate)
+	function delete_accounts($handle, $today)
 	{
 		// delete any services if their removal_date date is today
 		$query = "SELECT u.id u_id, u.account_number u_ac, ".
@@ -1042,9 +1042,9 @@ class Update_Model extends CI_Model
 
 			if ($options_table <> '') 
 			{
-				$myoptresult = $this->service_model->options_values($user_services_id, $optionstable);
+				$myoptresult = $this->service_model->options_values($user_services_id, $options_table);
 
-				$fields = $this->schema_model->columns($this->db->database, $optionstable);
+				$fields = $this->schema_model->columns($this->db->database, $options_table);
 
 				$i = 0;        
 				$pstring = "";	

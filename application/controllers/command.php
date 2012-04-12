@@ -197,12 +197,15 @@ class Command extends CI_Controller
 	 */	 
 	function statusupdate()
 	{
+		$this->user = "update";
+
 		// load models
 		$this->load->model('billing_model');
 		$this->load->model('support_model');
 		$this->load->model('settings_model');
 		$this->load->model('service_model');
 		$this->load->model('settings_model');
+		$this->load->model('schema_model');
 		$this->load->model('update_model');
 
 		// todays' date
@@ -231,7 +234,7 @@ class Command extends CI_Controller
 
 		$regulardisables = $this->update_model->regular_disable($handle, $activatedate);
 
-		$carrierdependentdisables = $this->update_model->carrier_dependent_disables($handle, $activatedate);
+		$carrierdependentdisables = $this->update_model->carrier_dependent_disable($handle, $activatedate);
 
 		$disables = $this->update_model->disable_accounts($handle, $activatedate);
 		echo "$disables DISABLEs\n";
@@ -240,7 +243,7 @@ class Command extends CI_Controller
 
 		$carrierdependentdeletes = $this->update_model->carrier_dependent_delete($handle, $activatedate);
 
-		$deletes = $this->update_model->delete_accounts($hanlde, $activatedate);
+		$deletes = $this->update_model->delete_accounts($handle, $activatedate);
 		echo "$deletes DELETEs\n";
 
 		fclose($handle); // close the file
@@ -270,6 +273,8 @@ class Command extends CI_Controller
 
 	function weekendupdate()
 	{
+		$this->user = "update";
+
 		// load models
 		$this->load->model('billing_model');
 		$this->load->model('support_model');
