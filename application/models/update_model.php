@@ -436,5 +436,262 @@ class Update_Model extends CI_Model
 	}
 
 
+	/*
+	 * ------------------------------------------------------------------------
+	 *  set the shutoff notice for carrier dependent services
+	 * ------------------------------------------------------------------------
+	 */
+	function carrier_dependent_shutoff_notice($handle, $activatedate)
+	{
+		/*-------------------------------------------------------------------*/
+		// CARRIER DEPENDENT SHUTOFF NOTICE
+		//
+		// send a shutoff notice to carrier dependent services that are
+		// about to be turned off in a few days
+		/*-------------------------------------------------------------------*/
+		$query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_turnoff DAY) AS turnoff_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_canceled DAY) AS cancel_date ".
+			"FROM billing_details bd ".
+			"LEFT JOIN billing bi ON bd.billing_id = bi.id ".
+			"LEFT JOIN billing_history bh ON bh.id = bd.invoice_number ".
+			"LEFT JOIN general g ON bi.organization_id = g.id ".
+			"WHERE bd.billed_amount > bd.paid_amount ".
+			"AND bi.pastdue_exempt <> 'y' ".
+			"AND bi.rerun_date IS NULL ".
+			"AND ? >= DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.dependent_shutoff_notice DAY) ".
+			"AND ? < DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.dependent_turnoff DAY) GROUP BY bi.id";
+		$result = $this->db->query($query, array($today, $today)) 
+			or die ("carrier dependent shutoff queryfailed");
+
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// set these services to be turned off
+			$billing_id = $myresult['id'];	
+			$account_number = $myresult['account_number'];
+			$payment_due_date = $myresult['payment_due_date'];
+			$turnoff_date = $myresult['turnoff_date'];
+			$cancel_date = $myresult['cancel_date'];
+
+			$dependent = $this->service_model->carrier_dependent($account_number);
+
+			if ($dependent == true) 
+			{
+				// check recent history to see if we already set them to turned off
+				$query = "SELECT status FROM payment_history ".
+					"WHERE billing_id = $billing_id ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) 
+					or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
+				$mystatus = $mystatusresult['status'];
+
+				if ($mystatus <> "turnedoff"
+						AND $mystatus <> "noticesent" 
+						AND $mystatus <> "collections"
+						AND $mystatus <> "canceled"
+						AND $mystatus <> "cancelwfee"
+						AND $mystatus <> "waiting") 
+				{
+					// set the account payment_history to noticesent
+					$query = "INSERT INTO payment_history ".
+						"(creation_date, billing_id, status) ".
+						"VALUES (CURRENT_DATE,?,'noticesent')";
+					$paymentresult = $this->db->query($query, array($billing_id)) 
+						or die ("queryfailed");
+
+					// SEND SHUTOFF NOTICE BY BOTH PRINT and EMAIL
+					$config = array (
+							'notice_type' => 'shutoff',
+							'billing_id' => $billing_id,
+							'method' => 'both',
+							'payment_due_date' => $payment_due_date,
+							'turnoff_date' => $turnoff_date,
+							'cancel_date' => $cancel_date
+							);
+					$this->load->library('Notice', $config);
+
+					$linkname = $this->notice->pdfname;
+					$contactemail = $this->notice->contactemail;
+					$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+					$notify = "$default_billing_group";
+					$description = "Shutoff Notice Sent $contactemail $url";
+					$status = "not done";
+
+					// CREATE TICKET TO NOBODY
+					$this->support_model->create_ticket($DB, $user, $notify, $account_number, $status,
+							$description, $linkname, $linkurl);
+
+				}
+
+			}
+
+		}
+
+	}
+
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  mark accounts to disable that are not carrier dependent 
+	 * ------------------------------------------------------------------------
+	 */
+	function regular_disable($handle, $activatedate)
+	{
+		/*-------------------------------------------------------------------*/
+		// REGULAR DISABLE
+		//
+		// check if the account should be turned off if it's over
+		// regular_turnoff days AND HAS NO CARRIER DEPENDENT SERVICES
+		// disable the account
+		/*-------------------------------------------------------------------*/
+
+		$query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.regular_turnoff DAY) AS turnoff_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.regular_canceled DAY) AS cancel_date ".
+			"FROM billing_details bd ".
+			"LEFT JOIN billing bi ON bd.billing_id = bi.id ".
+			"LEFT JOIN billing_history bh ON bh.id = bd.invoice_number ".
+			"LEFT JOIN general g ON bi.organization_id = g.id ".
+			"WHERE bd.billed_amount > bd.paid_amount ".
+			"AND bi.pastdue_exempt <> 'y' ".
+			"AND bi.rerun_date IS NULL ".
+			"AND ? >= DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.regular_turnoff DAY) ".
+			"AND ? < DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.regular_canceled DAY) GROUP BY bi.id";
+		$result = $this->db->query($query, array($today, $today)) or die ("regular disable queryfailed");
+
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// set these services to be turned off
+			$billing_id = $myresult['id'];	
+			$account_number = $myresult['account_number'];
+			$payment_due_date = $myresult['payment_due_date'];
+			$turnoff_date = $myresult['turnoff_date'];
+			$cancel_date = $myresult['cancel_date'];
+
+			$dependent = $this->service_model->carrier_dependent($account_number);
+
+			if ($dependent == false) 
+			{
+				// check recent history to see if we already set them to turned off
+				$query = "SELECT status FROM payment_history ".
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
+				$mystatus = $mystatusresult['status'];
+
+				if ($mystatus <> "turnedoff"
+						AND $mystatus <> "collections"
+						AND $mystatus <> "canceled"
+						AND $mystatus <> "cancelwfee"
+						AND $mystatus <> "waiting") 
+				{
+					// set the account payment_history to turnedoff
+					$query = "INSERT INTO payment_history ".
+						"(creation_date, billing_id, status) ".
+						"VALUES (CURRENT_DATE,?,'turnedoff')";
+					$paymentresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+
+				}
+
+			}
+
+		}
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *   mark accounts to disable that are carrier dependent
+	 * ------------------------------------------------------------------------
+	 */
+	function carrier_dependent_disable($handle, $activatedate)
+	{
+		/*-------------------------------------------------------------------*/
+		// CARRIER DEPENDENT DISABLE
+		//
+		// check if the account should be turned off if it's over
+		// dependent_turnoff days AND DOES HAVE CARRIER DEPENDENT SERVICES
+		// disable the account
+		/*-------------------------------------------------------------------*/
+		$query = "SELECT bi.id, bi.account_number, bh.payment_due_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_turnoff DAY) AS turnoff_date, ".
+			"DATE_ADD(bh.payment_due_date, INTERVAL g.dependent_canceled DAY) AS cancel_date ".
+			"FROM billing_details bd ".
+			"LEFT JOIN billing bi ON bd.billing_id = bi.id ".
+			"LEFT JOIN billing_history bh ON bh.id = bd.invoice_number ".
+			"LEFT JOIN general g ON bi.organization_id = g.id ".
+			"WHERE bd.billed_amount > bd.paid_amount ".
+			"AND bi.pastdue_exempt <> 'y' ".
+			"AND bi.rerun_date IS NULL ".
+			"AND ? >= DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.dependent_turnoff DAY) ".
+			"AND ? < DATE_ADD(bh.payment_due_date, ".
+			"INTERVAL g.dependent_canceled DAY) GROUP BY bi.id";
+		$result = $this->db->query($query, array($today, $today)) or die ("carrier dependent disable queryfailed");
+
+		foreach ($result->result_array() AS $myresult) 
+		{
+			// set these services to be turned off
+			$billing_id = $myresult['id'];	
+			$account_number = $myresult['account_number'];
+			$payment_due_date = $myresult['payment_due_date'];
+			$turnoff_date = $myresult['turnoff_date'];
+			$cancel_date = $myresult['cancel_date'];
+
+			$dependent = $this->service_model->carrier_dependent($account_number);
+
+			if ($dependent == true) 
+			{
+				// check recent history to see if we already set them to turned off
+				$query = "SELECT status FROM payment_history ".
+					"WHERE billing_id = ? ORDER BY id DESC LIMIT 1";
+				$statusresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+				$mystatusresult = $statusresult->row_array();
+				$mystatus = $mystatusresult['status'];
+
+				if ($mystatus <> "turnedoff" AND $mystatus <> "collections" AND $mystatus <> "canceled"
+						AND $mystatus <> "cancelwfee" AND $mystatus <> "waiting") 
+				{
+					// set the account payment_history to turnedoff
+					$query = "INSERT INTO payment_history ".
+						"(creation_date, billing_id, status) ".
+						"VALUES (CURRENT_DATE,?,'turnedoff')";
+					$paymentresult = $this->db->query($query, array($billing_id)) or die ("queryfailed");
+
+					// SEND CANCEL NOTICE BY BOTH PRINT and EMAIL
+					$config = array (
+							'notice_type' => 'cancel',
+							'billing_id' => $billing_id,
+							'method' => 'both',
+							'payment_due_date' => $payment_due_date,
+							'turnoff_date' => $turnoff_date,
+							'cancel_date' => $cancel_date
+							);
+					$this->load->library('Notice', $config);
+
+					$linkname = $this->notice->pdfname;
+					$contactemail = $this->notice->contactemail;
+					$linkurl = "index.php?load=tools/downloadfile&type=dl&filename=$linkname";
+					$notify = "$default_billing_group";
+					$description = "Turnoff and Sent Cancellation Notice to $contactemail";
+					$status = "not done";
+
+					// CREATE TICKET TO default_billing_group about turn off
+					$this->support_model->create_ticket($this->user, $notify, $account_number, $status,
+							$description, $linkname, $linkurl);
+
+
+				}
+
+			}
+
+		}
+
+	}
 
 }
