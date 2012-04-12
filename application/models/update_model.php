@@ -694,4 +694,100 @@ class Update_Model extends CI_Model
 
 	}
 
+
+
+	/*
+	 * -------------------------------------------------------------------------
+	 *  DISABLE ACCOUNTS MARKED FROM ABOVE
+	 * -------------------------------------------------------------------------
+	 */
+	function disable_accounts($handle, $activatedate)
+	{
+		// disable any services with a turnedoff payment_history from today that
+		// have not already been marked as removed
+		$query = "SELECT u.id u_id, u.account_number u_ac, ".
+			"u.master_service_id u_master_service_id, u.billing_id u_bid, ".
+			"u.start_datetime u_start, u.removed u_rem, u.usage_multiple ".
+			"u_usage, m.service_description m_service_description, ".
+			"m.id m_id, m.pricerate m_pricerate, m.frequency m_freq, ".
+			"m.activation_string m_activation_string, m.category m_category, ".
+			"m.options_table m_options_table, c.name c_name, c.company c_company, ".
+			"c.street c_street, c.city c_city, c.state c_state, c.country c_country, ".
+			"c.zip c_zip, c.phone c_phone, c.contact_email c_contact_email ".
+			"FROM user_services u ".
+			"LEFT JOIN master_services m ON m.id = u.master_service_id ".
+			"LEFT JOIN customer c ON c.account_number = u.account_number ".
+			"LEFT JOIN payment_history p ON p.billing_id = u.billing_id ".
+			"WHERE (to_days(now()) = to_days(p.creation_date)) ".
+			"AND (p.status = 'turnedoff') AND u.removed <> 'y'";
+		$result = $this->db->query($query) or die ("queryfailed");
+
+		$disables = 0;
+
+		// loop through results and print out each
+		foreach ($result->result_array() AS $myresult) 
+		{
+			$user_services_id = $myresult['u_id'];
+			$master_service_id = $myresult['u_master_service_id'];
+			$service_description = $myresult['m_service_description'];
+			$account_number = $myresult['u_ac'];
+			$options_table = $myresult['m_options_table'];
+			$activation_string = $myresult['m_activation_string'];
+			$customer_name = $myresult['c_name'];
+			$customer_company = $myresult['c_company'];
+			$customer_street = $myresult['c_street'];
+			$customer_city = $myresult['c_city'];
+			$customer_state = $myresult['c_state'];
+			$customer_country = $myresult['c_country'];
+			$customer_zip = $myresult['c_zip'];
+			$category = $myresult['m_category'];
+
+			// query this with the option_table for that service to get the 
+			// activation_string variables
+			$mystring = split(",", $activation_string);
+
+			$newline = "\"DISABLE\",\"$category\",\"$customer_name\",\"$service_description\"";
+
+			if ($options_table <> '') 
+			{
+				$myoptresult = $this->service_model->options_values($user_services_id, $optionstable);
+
+				$fields = $this->schema_model->columns($this->db->database, $optionstable);
+
+				$i = 0;        
+				$pstring = "";	
+				foreach($fields->result() as $v) 
+				{                
+					//echo "Name: $v->name ";
+					$fieldname = $v->COLUMN_NAME;
+
+					//check matching fieldname in the options table
+					foreach($mystring as $s) 
+					{
+						if($fieldname == $s) 
+						{
+							//$pstring = $pstring.$s;
+							$myline = $myoptresult[$s];
+							$newline .= ",\"$myline\"";
+						}	
+					}
+
+				} //endforeach
+			} //endif
+			$newline .= "\n"; // end the line
+			fwrite($handle, $newline); // write to the file
+
+			// send service_message about turnoff
+			$service_notify_type = "turnoff";
+			$this->service_model->service_message($service_notify_type, $account_number,
+					$master_service_id, $user_services_id, NULL, NULL);
+
+			$disables++;
+		} //endwhile
+
+		return $disables;
+	}
+
+
+
 }
