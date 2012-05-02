@@ -3909,6 +3909,23 @@ class Billing_Model extends CI_Model
 	}
 
 
+	function todays_receipts()
+	{
+		// Select records that paid today and requested a receipt from the database
+		$query = "SELECT b.id b_id, b.contact_email, b.name, b.company, ".
+			"b.account_number, ph.id ph_id, ph.billing_amount, ph.creation_date, ".
+			"ph.payment_type, ph.creditcard_number, ph.check_number ".
+			"FROM billing b ".
+			"LEFT JOIN customer c on c.account_number = b.account_number ".
+			"LEFT JOIN payment_history ph ON ph.billing_id = b.id ".
+			"WHERE b.automatic_receipt = 'y' AND ph.creation_date = CURRENT_DATE ".
+			"AND ph.billing_amount > 0";
+
+		$result = $this->db->query($query) or die ("queryfailed");
+
+		return $result->result_array();
+	}
+
 }
 
 
