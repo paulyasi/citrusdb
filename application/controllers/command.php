@@ -337,6 +337,8 @@ class Command extends CI_Controller
 	 */
 	function autoreceipt()
 	{
+		$this->load->model('billing_model');
+
 		// set the email address that this message comes from
 		$from_email = "yourname@example.com";
 
