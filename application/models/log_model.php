@@ -29,6 +29,19 @@ class Log_Model extends CI_Model
 
 		return $result;
 	}
+
+
+	function activity_on_date($date)
+	{
+		// Select activity log records for citrusdb users from a specific day
+		$query = "SELECT date(datetime) AS date, time(datetime) AS time, user, ".
+			"ip_address, account_number, activity_type, record_type, record_id, result ".
+			"FROM activity_log WHERE date(datetime) = '$date'";
+
+		$result = $this->db->query($query) or die ("queryfailed");
+
+		return $result->result_array();
+	}
 	
     
 	function activity($user,$account_number,$activity_type,
