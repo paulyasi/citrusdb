@@ -338,6 +338,7 @@ class Command extends CI_Controller
 	function autoreceipt()
 	{
 		$this->load->model('billing_model');
+		$this->load->helper('date');
 
 		// set the email address that this message comes from
 		$from_email = "yourname@example.com";
@@ -361,8 +362,7 @@ class Command extends CI_Controller
 			$check_number = $myreceiptresult['check_number'];
 
 			// print paid_amounts from billing_details
-			$result = $this->billing_model->billing_and_organization($billingid);
-			$myresult = $result->fields;
+			$myresult = $this->billing_model->billing_and_organization($billingid);
 			$billing_name = $myresult['name'];
 			$billing_company = $myresult['company'];
 			$billing_street = $myresult['street'];
@@ -374,14 +374,14 @@ class Command extends CI_Controller
 			$org_name = $myresult['org_name'];
 
 			$message .= "$org_name\n".
-				"$l_paymentreceipt\n".
-				"$l_accountnumber: $billing_account_number\n\n".
+				lang('paymentreceipt')."\n".
+				lang('accountnumber').": $billing_account_number\n\n".
 				"$billing_name\n".
 				"$billing_company\n".
 				"$billing_street\n".
 				"$billing_city $billing_state $billing_zip\n\n";
 
-			$human_date = humandate($payment_date, $lang);
+			$human_date = humandate($payment_date);
 
 			if ($payment_type == "creditcard") 
 			{    
@@ -391,12 +391,12 @@ class Command extends CI_Controller
 				$lastfour = substr($creditcard_number, -4);
 				$creditcard_number = "$firstdigit" . "***********" . "$lastfour";
 
-				$message .= "$l_paid with $payment_type ($creditcard_number), ".
+				$message .= lang('paid')." with $payment_type ($creditcard_number), ".
 					"$amount on $human_date for:\n";
 			} 
 			else 
 			{
-				$message .= "$l_paid with $payment_type (number: $check_number), ".
+				$message .= lang('paid')." with $payment_type (number: $check_number), ".
 					"$amount on $human_date for:\n";    
 			}
 
@@ -409,8 +409,8 @@ class Command extends CI_Controller
 				$invoice = $myresult['original_invoice_number'];
 				$description = $myresult['service_description'];
 				$tax_description = $myresult['description'];
-				$from_date = humandate($myresult['from_date'],$lang);
-				$to_date = humandate($myresult['to_date'],$lang);
+				$from_date = humandate($myresult['from_date']);
+				$to_date = humandate($myresult['to_date']);
 				$paid_amount = sprintf("%.2f",$myresult['paid_amount']);
 				$billed_amount = sprintf("%.2f",$myresult['billed_amount']);  
 
@@ -423,7 +423,7 @@ class Command extends CI_Controller
 				} 
 				else 
 				{
-					$message .= "$invoice\t$description ($from_date $l_to $to_date)\t$paid_amount\n";
+					$message .= "$invoice\t$description ($from_date ".lang('to')." $to_date)\t$paid_amount\n";
 				}
 			}
 			echo "\n";
