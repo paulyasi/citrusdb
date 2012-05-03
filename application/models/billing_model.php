@@ -3926,6 +3926,27 @@ class Billing_Model extends CI_Model
 		return $result->result_array();
 	}
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  select customers who should get a reminder about their upcoming card run
+	 * ------------------------------------------------------------------------
+	 */
+	function ccrunreminder()
+	{
+		$query = "SELECT b.id, b.contact_email, b.name, b.next_billing_date, bt.name bt_name, b.account_number ".
+			"FROM billing b ".
+			"LEFT JOIN customer c on c.account_number = b.account_number ".
+			"LEFT JOIN billing_types bt ON bt.id = b.billing_type ".
+			"WHERE ((b.billing_type = 40) OR (b.billing_type = 4) OR (b.billing_type = 6)) ".
+			"AND b.next_billing_date = DATE_ADD(CURRENT_DATE, INTERVAL 21 DAY) ".
+			"AND c.cancel_date IS NULL";
+
+		$result = $this->db->query($query) or die ("queryfailed");
+
+		return $result->result_array();
+	}
+
 }
 
 
