@@ -610,6 +610,9 @@ class Command extends CI_Controller
 	 */
 	function ccexpire()
 	{
+		$this->load->model('billing_model');
+		$this->load->model('support_model');
+
 		// calculate the expire date for this month
 		$nextexpdate = date("my", mktime(0, 0, 0, date("m"), date("y")));
 
@@ -654,6 +657,70 @@ class Command extends CI_Controller
 			$description = "Sent card expiration reminder to $to";
 			$this->support_model->create_ticket($user, $notify, $account_number, $status, $description);
 
+		}
+
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 * This script will send einvoices to customers who have the einvoice
+	 * as their chosen billing type on the current date.  It is set to
+	 * only send to those in the first organization specified.  If you have multiple
+	 * brand organizations in your configuration you will need to duplicate this
+	 * script and set the organization_id variable for those also.
+	 * 	
+	 * This script should be put into the cron to be run nightly
+	 * ------------------------------------------------------------------------
+	 */
+	function autoeinvoice()
+	{
+		$this->load->model('billing_model');
+		$this->load->model('support_model');
+
+		// set the billing date to today
+		$billingdate = date("Y-m-d");
+
+		$organization_id = 1;
+
+		/*-------------------------------------------------------------------*/
+		// Create the billing data
+		/*-------------------------------------------------------------------*/
+
+		// determine the next available batch number
+		$batchid = $this->billing_model->get_nextbatchnumber($DB);
+		echo "BATCH: $batchid<p>\n";
+
+		// query for taxed services that are billed on the specified date
+		// and for a specific organization
+		$numtaxes = $this->billing_model->add_taxdetails($billingdate, NULL, 
+				'einvoice', $batchid, $organization_id);
+		$numservices = $this->billing_model->add_servicedetails($billingdate, 
+				NULL,'einvoice', $batchid, $organization_id);
+
+		echo "taxes: $numtaxes, services: $numservices<p>";
+
+		// create billinghistory
+		$user = "autoeinvoice";
+		create_billinghistory($DB, $batchid, 'einvoice', $user);	
+
+		/*-------------------------------------------------------------------*/	
+		// Email the invoice
+		/*-------------------------------------------------------------------*/
+
+		// query the batch for the invoices to do
+		$result = $this->billing_model->get_invoice_batch($batchid);
+
+		foreach ($result AS $myresult) 
+		{
+			// get the invoice data to process now
+			$invoice_number = $myresult['invoice_number'];
+			$contact_email = $myresult['contact_email'];
+			$invoice_account_number = $myresult['account_number'];
+			$invoice_billing_id = $myresult['id'];
+
+			$this->billing_model->emailinvoice($invoice_number,$contact_email,
+					$invoice_billing_id);
 		}
 
 	}
