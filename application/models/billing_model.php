@@ -3901,9 +3901,9 @@ class Billing_Model extends CI_Model
 		$query = "SELECT p.billing_id, b.id, b.account_number ".
 			"FROM payment_history p ".
 			"LEFT JOIN billing b ON p.billing_id = b.id ".
-			"WHERE p.creation_date = '$today' ".
+			"WHERE p.creation_date = ? ".
 			"AND p.status = 'authorized'";
-		$result = $this->db->query($query) or die ("queryfailed");
+		$result = $this->db->query($query, array($today)) or die ("queryfailed");
 
 		return $result->result_array();
 	}
@@ -3940,6 +3940,28 @@ class Billing_Model extends CI_Model
 			"LEFT JOIN billing_types bt ON bt.id = b.billing_type ".
 			"WHERE ((b.billing_type = 40) OR (b.billing_type = 4) OR (b.billing_type = 6)) ".
 			"AND b.next_billing_date = DATE_ADD(CURRENT_DATE, INTERVAL 21 DAY) ".
+			"AND c.cancel_date IS NULL";
+
+		$result = $this->db->query($query) or die ("queryfailed");
+
+		return $result->result_array();
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 *  Select the customer info with matching card expiration dates
+	 * ------------------------------------------------------------------------
+	 */
+	function find_expired_cards($nextexpdate)
+	{
+		$query = "SELECT b.id, b.contact_email, b.name, b.next_billing_date, ".
+			"bt.name bt_name, b.account_number, b.creditcard_number, b.creditcard_expire ".
+			"FROM billing b ".
+			"LEFT JOIN customer c on c.account_number = b.account_number ".
+			"LEFT JOIN billing_types bt ON bt.id = b.billing_type ".
+			"WHERE bt.method = 'creditcard' ".
+			"AND b.creditcard_expire = '$nextexpdate' ".
 			"AND c.cancel_date IS NULL";
 
 		$result = $this->db->query($query) or die ("queryfailed");

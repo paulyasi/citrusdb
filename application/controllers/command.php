@@ -601,6 +601,63 @@ class Command extends CI_Controller
 
 	}
 
+
+	/*
+	 * --------------------------------------------------------------------------
+	 *  send a reminder to customers the month their credit card expires
+	 *  eg: on 2011-02-01 remind all users with 0211 expiration dates
+	 * ---------------------------------------------------------------------------
+	 */
+	function ccexpire()
+	{
+		// calculate the expire date for this month
+		$nextexpdate = date("my", mktime(0, 0, 0, date("m"), date("y")));
+
+		$result = $this->billing_model->find_expired_cards($nextexpdate)
+
+		foreach ($result AS $myresult)
+		{
+			$billing_id = $myresult['id'];
+			$to = $myresult['contact_email'];
+			$name = $myresult['name'];
+			$next_billing_date = $myresult['next_billing_date'];
+			$next_billing_date = humandate($next_billing_date, $lang);
+			$billingtype = $myresult['bt_name'];
+			$account_number = $myresult['account_number'];
+			$creditcard_number = $myresult['creditcard_number'];
+			$creditcard_expire = $myresult['creditcard_expire'];
+
+			$subject = "Your credit card is about to expire";
+
+			// fix any ascii characters in their name
+			$name = html_to_ascii($name);
+
+			$message = "Account Number: $account_number\n\n".
+				"$name,\n\n".
+				"Thank you for choosing [company]. We would like to remind you that your ".
+				"creditcard on file is about to expire at the end of this month.\n".
+				"\n".
+				"$creditcard_number, $creditcard_expire\n".
+				"\n".
+				"Please contact us with your new credit card expiration date so we may ".
+				"continue providing service without any billing interruptions.\n\n".
+				"If you have any questions, please call our offices at (XXX) XXX-XXXX";
+
+			echo "sending a expiration reminder to $to $account_number\n";	
+			$headers = "From: billing@example.com \n";
+			mail ($to, $subject, $message, $headers);
+
+			// put a ticket to say that this message was sent
+			$user = "system";
+			$notify = "nobody";
+			$status = "automatic";
+			$description = "Sent card expiration reminder to $to";
+			$this->support_model->create_ticket($user, $notify, $account_number, $status, $description);
+
+		}
+
+	}
+
 }
 
 /* end file command.php */
