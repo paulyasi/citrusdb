@@ -1861,27 +1861,8 @@ class Billing_Model extends CI_Model
 	function outputinvoice($invoiceid, $printtype, $pdfobject, $email = NULL) 
 	{
 		// get the invoice data to print on the bill
-		$invoice_number = $invoiceid;
+		$myinvresult = $this->get_invoice_data($invoiceid);
 
-		$query = "SELECT h.id h_id, h.billing_date h_billing_date, ".
-			"h.created_by h_created_by, h.billing_id h_billing_id, ".
-			"h.from_date h_from_date, h.to_date h_to_date, ".
-			"h.payment_due_date h_payment_due_date, ".
-			"h.new_charges h_new_charges, h.past_due h_past_due, ".
-			"h.late_fee h_late_fee, h.tax_due h_tax_due, ".
-			"h.total_due h_total_due, h.notes h_notes, ".
-			"h.credit_applied h_credit_applied, ".
-			"b.id b_id, b.name b_name, b.company b_company, ".
-			"b.street b_street, b.city b_city, b.state b_state, ".
-			"b.country b_country, b.zip b_zip, b.po_number b_po_number, ".
-			"b.contact_email b_contact_email, b.account_number b_acctnum, ".
-			"b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp ". 
-			"FROM billing_history h ".
-			"LEFT JOIN billing b ON h.billing_id = b.id ". 
-			"WHERE h.id = ?";
-		$invoiceresult = $this->db->query($query, array($invoice_number)) 
-			or die ("query failed");	
-		$myinvresult = $invoiceresult->row_array();
 		$user = $myinvresult['h_created_by'];
 		$mydate = $myinvresult['h_billing_date'];
 		$mybilling_id = $myinvresult['b_id'];
@@ -2248,27 +2229,8 @@ class Billing_Model extends CI_Model
 	// output invoices in text or pdf format
 	function outputextendedinvoice($invoiceid, $printtype, $pdfobject) 
 	{
-		// get the invoice data to print on the bill
-		$invoice_number = $invoiceid;
+		$myinvresult = $this->get_invoice_data($invoiceid);
 
-		$query = "SELECT h.id h_id, h.billing_date h_billing_date, 
-			h.created_by h_created_by, h.billing_id h_billing_id, 
-			h.from_date h_from_date, h.to_date h_to_date, 
-			h.payment_due_date h_payment_due_date, 
-			h.new_charges h_new_charges, h.past_due h_past_due, 
-			h.late_fee h_late_fee, h.tax_due h_tax_due, 
-			h.total_due h_total_due, h.notes h_notes, 
-			b.id b_id, b.name b_name, b.company b_company, 
-			b.street b_street, b.city b_city, b.state b_state, 
-			b.country b_country, b.zip b_zip, 
-			b.contact_email b_contact_email, b.account_number b_acctnum, 
-			b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp  
-				FROM billing_history h 
-				LEFT JOIN billing b ON h.billing_id = b.id  
-				WHERE h.id = ?";
-		$invoiceresult = $this->db->query($query, array($invoice_number))
-			or die ("output extended select failed");	
-		$myinvresult = $invoiceresult->row_array();
 		$user = $myinvresult['h_created_by'];
 		$mydate = $myinvresult['h_billing_date'];
 		$mybilling_id = $myinvresult['b_id'];
@@ -3057,6 +3019,55 @@ class Billing_Model extends CI_Model
 	}
 
 
+
+	/*
+	 * ------------------------------------------------------------------------
+	 * get recent invoice numbers for billing
+	 * ------------------------------------------------------------------------
+	 */
+	function get_recent_invoice_numbers($batchid)
+	{
+		// query the batch for the invoices to do
+		$query = "SELECT DISTINCT d.recent_invoice_number FROM billing_details d 
+			WHERE batch = ?";
+		
+		$result = $this->db->query($query, array($batchid))
+			or die ("select recent_invoice_numbers failed");
+		
+		return $result->result_array();
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
+	 * get individual invoice data used when printing or creating an invoice
+	 * ------------------------------------------------------------------------
+	 */
+	function get_invoice_data($invoice_number)
+	{
+		$query = "SELECT h.id h_id, h.billing_date h_billing_date, 
+			h.created_by h_created_by, h.billing_id h_billing_id, 
+			h.from_date h_from_date, h.to_date h_to_date, 
+			h.payment_due_date h_payment_due_date, 
+			h.new_charges h_new_charges, h.past_due h_past_due, 
+			h.late_fee h_late_fee, h.tax_due h_tax_due, 
+			h.total_due h_total_due, h.notes h_notes, 
+			b.id b_id, b.name b_name, b.company b_company, 
+			b.street b_street, b.city b_city, b.state b_state, 
+			b.country b_country, b.zip b_zip, 
+			b.contact_email b_contact_email, b.account_number b_acctnum, 
+			b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp,
+			b.encrypted_creditcard_number b_enc_ccnum 
+				FROM billing_history h 
+				LEFT JOIN billing b ON h.billing_id = b.id  
+				WHERE h.id = ?";
+		$invoiceresult = $this->db->query($query, array($invoice_number))
+			or die ("query recent invoice data failed");
+
+		return $invoiceresult->row_array();
+	}
+
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  export credit card batch, print the credit card billing to a file
@@ -3078,36 +3089,13 @@ class Billing_Model extends CI_Model
 		$filename = "$path_to_ccfile" . "/" . "$exportprefix" . "export" . "$batchid.csv";
 		$handle = fopen($filename, 'w') or die ("cannot open $filename"); // open the file
 
-		// query the batch for the invoices to do
-		$query = "SELECT DISTINCT d.recent_invoice_number FROM billing_details d 
-			WHERE batch = ?";
-		$result = $this->db->query($query, array($batchid))
-			or die ("select recent_invoice_numbers failed");
+		$result = $this->get_recent_invoice_numbers($batchid);
 
-		foreach ($result->result_array() AS $myresult) 
+		foreach ($result AS $myresult) 
 		{
 			// get the recent invoice data to process now
-			$invoice_number = $myresult['recent_invoice_number'];
+			$myinvresult = $this->get_invoice_data($myresult['recent_invoice_number']);
 
-			$query = "SELECT h.id h_id, h.billing_date h_billing_date, 
-				h.created_by h_created_by, h.billing_id h_billing_id, 
-				h.from_date h_from_date, h.to_date h_to_date, 
-				h.payment_due_date h_payment_due_date, 
-				h.new_charges h_new_charges, h.past_due h_past_due, 
-				h.late_fee h_late_fee, h.tax_due h_tax_due, 
-				h.total_due h_total_due, h.notes h_notes, 
-				b.id b_id, b.name b_name, b.company b_company, 
-				b.street b_street, b.city b_city, b.state b_state, 
-				b.country b_country, b.zip b_zip, 
-				b.contact_email b_contact_email, b.account_number b_acctnum, 
-				b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp,
-				b.encrypted_creditcard_number b_enc_ccnum 
-					FROM billing_history h 
-					LEFT JOIN billing b ON h.billing_id = b.id  
-					WHERE h.id = ?";
-			$invoiceresult = $this->db->query($query, array($invoice_number))
-				or die ("query recent invoice data failed");	
-			$myinvresult = $invoiceresult->row_array();
 			$user = $myinvresult['h_created_by'];
 			$mydate = $myinvresult['h_billing_date'];
 			$mybilling_id = $myinvresult['b_id'];

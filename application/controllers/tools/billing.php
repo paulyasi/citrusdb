@@ -825,7 +825,6 @@ class Billing extends App_Controller
 			foreach ($declined as $key=>$mybillingid) 
 			{
 				$this->billing_model->send_declined_email($mybillingid);
-
 			}
 
 			echo "<p>".lang('done')."</p>";
