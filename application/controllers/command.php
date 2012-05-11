@@ -268,9 +268,6 @@ class Command extends CI_Controller
 	 * - you can move this script elsewhere and copy the include files there too
 	 *--------------------------------------------------------------------------
 	 */
-
-	// TODO: make functions in an update_model from statusupdate above and use here too
-
 	function weekendupdate()
 	{
 		$this->user = "update";
@@ -616,7 +613,7 @@ class Command extends CI_Controller
 		// calculate the expire date for this month
 		$nextexpdate = date("my", mktime(0, 0, 0, date("m"), date("y")));
 
-		$result = $this->billing_model->find_expired_cards($nextexpdate)
+		$result = $this->billing_model->find_expired_cards($nextexpdate);
 
 		foreach ($result AS $myresult)
 		{
@@ -758,67 +755,6 @@ class Command extends CI_Controller
 		// get the passphrase from the command line
 		$passphrase = $argv[1];
 	
-		// TODO: refactor card_approved, card_declined and charge_card 
-		// then include the new function content directly inside here
-		function card_approved($transaction_code, $billing_id, $cardnumber,
-				$cardexp, $response_code, $amount, $billingmethod, $avs_response) 
-		{
-			$payment_history_id = $this->billing_method->insert_card_payment_history(
-					'authorized',
-					$transaction_code,
-					$billing_id,
-					$cardnumber,
-					$cardexp,
-					$response_code,
-					$amount,
-					$avs_response
-					);
-
-			// update the next_billing_date, to_date, 
-			// from_date, and payment_due_date for prepay/prepaycc 
-			if ($billingmethod == 'prepaycc' OR $billingmethod == 'prepay') 
-			{
-				$this->billing_method->update_billing_dates($mybillingdate,
-						$mybillingfreq, $myfromdate, $billing_id);
-			} // end if billing method
-
-			$this->billing_model->pay_billing_details($payment_history_id,
-					$billing_id, $amount);
-		}
-
-		function card_declined($transaction_code, $billing_id, $cardnumber,
-				$cardexp, $response_code, $amount, $billingmethod, $avs_response) 
-		{
-			$typeresult = $this->billing_model->get_billing_method_attributes($billing_id);
-			
-			$billingmethod = $mytyperesult['t_method'];
-			$mybillingdate = $mytyperesult['b_next_billing_date'];
-			$myfromdate = $mytyperesult['b_from_date'];
-			$mytodate = $mytyperesult['b_to_date'];
-			$mybillingfreq = $mytyperesult['t_frequency'];
-			$contact_email = $mytyperesult['b_contact_email'];
-
-			$this->billing_model->insert_card_payment_history('declined',
-					$transaction_code, $billing_id, $cardnumber, 
-					$cardexp, $response_code, $amount, $avs_response);
-			
-			// put a message in the customer notes that 
-			// a declined email was sent to their contact_email
-
-			// get their account_number first
-			$myaccountnumber = $this->billing_model->get_account_number($billing_id);
-
-			// put a note in the customer history
-			// add to customer_history
-			$status = "automatic";
-			$desc = lang('declinedmessagesentto')." $contact_email";
-			$this->support_model->create_ticket($this->user, 'nobody', 
-					$myaccountnumber, $status, $desc);
-
-			//send email			  
-			$this->billing_model->send_declined_email($mybillingid);
-		}
-
 		$billingdate = date("Y-m-d");
 
 		/*--------------------------------------------------------------------*/
@@ -912,7 +848,8 @@ class Command extends CI_Controller
 				$abstotal = abs($precisetotal);
 
 				// don't bill them if the amount is less than or equal to zero
-				if ($precisetotal > 0) {
+				if ($precisetotal > 0) 
+				{
 					echo "account num: $billing_acctnum\n";
 					echo "ccnum: $billing_ccnum\n";
 					echo "ccexp: $billing_ccexp\n";
@@ -950,26 +887,26 @@ class Command extends CI_Controller
 					$billing_ccnum = $decrypted_creditcard_number;
 
 					//Send charge to authorize.net	
-					$charge_result = charge_card("CC", $billing_ccnum, $billing_ccexp, $precisetotal, "Bill for Account #: " . $billing_acctnum, $invoice_number, $billing_name, NULL, $billing_street, $billing_state, $billing_zip, "1");	
+					$charge_result = authorizenet_charge_card("CC", $billing_ccnum, $billing_ccexp, $precisetotal, "Bill for Account #: " . $billing_acctnum, $invoice_number, $billing_name, NULL, $billing_street, $billing_state, $billing_zip, "1");	
 
 					$response_array = explode("|",$charge_result);			
 
 					switch ($response_array[0]) {
 						case 1:
 							echo "Transaction Approved<p>\n";
-							card_approved($DB, $response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "");
+							authorizenet_card_approved($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
 							break;
 						case 2:
 							echo "Transaction Declined<p>\n";
-							card_declined($DB, $response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "");
+							authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
 							break;
 						case 3:
 							echo "Transaction Error<p>\n";
-							card_declined($DB, $response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "");
+							authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
 							break;
 						case 4:
 							echo "Hold For Review<p>\n";
-							card_declined($DB, $response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "");
+							authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
 							break;
 					}
 				}
@@ -977,125 +914,186 @@ class Command extends CI_Controller
 
 		} // end if totalall
 
-
-		/**
-		 * function: charge_card
-		 * 
-		 * Parameters:
-		 *	Type - Either CC for Credit Card or ECHECK for electronic check
-		 * 	CardNumber - Credit Card Number - no dashes or spaces
-		 * 	ExpDate - Expiration Date in mmyy format
-		 * 	Amount - Amount to charge in xxxxx.xx format (up to 7 digits)
-		 * 	Description - (Optional) Description of the transaction.  If no description set to NULL
-		 * 	Invoice - (Optional) If you want to include an invoice number stick it here.  If no invoice # then set to NULL
-		 * 	FirstName - (Optional) First name of card holder, leave NULL if no First Name is required
-		 * 	LastName - (Optional) Last name of card hold, leave NULL if no last name is required
-		 * 	Address - (Optional) Address of card holder, leave NULL if no address is required
-		 * 	State - (Optional) City of card holder, leave NULL if no city required
-		 * 	Zip - (Optional) Zip of card hodler, leave NULL if no zip required
-		 * 	Test - If not set to NULL, will send transactions to the test server at authorize.net
-		 * @return 
-		 * @param object $test
-		 */
-		function charge_card($Type, $CardNumber, $ExpDate, $Amount, $Description, $Invoice, $FirstName, $LastName, $Address, $State, $Zip, $Test) {
-
-			global $auth_api_login, $auth_transaction_key;
-
-			// if the test variable is set to anything other than NULL the transactions will be sent to the test server at authorize.net
-			if ($Test == NULL) {
-				$post_url = "https://secure.authorize.net/gateway/transact.dll";
-			} else {
-				$post_url = "https://test.authorize.net/gateway/transact.dll";	
-			}
-
-			$post_values = array(
-
-					// the API Login ID and Transaction Key must be replaced with valid values
-					"x_login"			=> $auth_api_login,
-					"x_tran_key"		=> $auth_transaction_key,
-
-					"x_version"			=> "3.1",
-					"x_delim_data"		=> "TRUE",
-					"x_delim_char"		=> "|",
-					"x_relay_response"	=> "FALSE",
-
-					"x_type"			=> "AUTH_CAPTURE",
-					"x_method"			=> $Type,
-					"x_card_num"		=> $CardNumber,
-					"x_exp_date"		=> $ExpDate,
-
-					"x_amount"			=> $Amount
-					);
-
-			if ($Description != NULL) {
-				$post_values["x_description"] = $Description;
-			}
-
-			if ($Invoice != NULL) {
-				$post_values["x_invoice_num"] = $Invoice;
-			}
-
-			if ($FirstName != NULL) {
-				$post_values["x_first_name"] = $FirstName;
-			}
-
-			if ($LastName != NULL) {
-				$post_values["x_last_name"] = $LastName;
-			}
-
-			if ($Address != NULL) {
-				$post_values["x_address"] = $Address;
-			}
-
-			if ($State != NULL) {
-				$post_values["x_state"] = $State;
-			}
-
-			if ($Zip != NULL) {
-				$post_values["x_zip"] = $Zip;
-			}
-
-
-			// This section takes the input fields and converts them to the proper format
-			// for an http post.  For example: "x_login=username&x_tran_key=a1B2c3D4"
-			$post_string = "";
-			foreach( $post_values as $key => $value )
-			{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
-			$post_string = rtrim( $post_string, "& " );
-
-			// This sample code uses the CURL library for php to establish a connection,
-			// submit the post, and record the response.
-			// If you receive an error, you may want to ensure that you have the curl
-			// library enabled in your php configuration
-			$request = curl_init($post_url); // initiate curl object
-			curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
-			curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
-			curl_setopt($request, CURLOPT_POSTFIELDS, $post_string); // use HTTP POST to send form data
-			curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
-			$post_response = curl_exec($request); // execute curl post and store results in $post_response
-			// additional options may be required depending upon your server configuration
-			// you can find documentation on curl options at http://www.php.net/curl_setopt
-			curl_close ($request); // close curl object
-
-			// This line takes the response and breaks it into an array using the specified delimiting character
-			$response_array = explode($post_values["x_delim_char"],$post_response);
-
-			// The results are parsed and the first 4 items added to a response array to be processed later.
-
-			$return_value="";
-			$item_count=0;
-
-			foreach ($response_array as $value) {
-				$return_value = $return_value . $value . "|";
-				if (++$item_count > 7)
-					return $return_value;
-			}
-
-		}
 		// individual elements of the array could be accessed to read certain response
 		// fields.  For example, response_array[0] would return the Response Code,
 		// response_array[2] would return the Response Reason Code.
 		// for a list of response fields, please review the AIM Implementation Guide
+	}
+
+
+	// transaction approved
+	function authorizenet_card_approved($transaction_code, $billing_id, $cardnumber,
+			$cardexp, $response_code, $amount, $billingmethod, $avs_response) 
+	{
+		$payment_history_id = $this->billing_method->insert_card_payment_history(
+				'authorized',
+				$transaction_code,
+				$billing_id,
+				$cardnumber,
+				$cardexp,
+				$response_code,
+				$amount,
+				$avs_response
+				);
+
+		// update the next_billing_date, to_date, 
+		// from_date, and payment_due_date for prepay/prepaycc 
+		if ($billingmethod == 'prepaycc' OR $billingmethod == 'prepay') 
+		{
+			$this->billing_method->update_billing_dates($mybillingdate,
+					$mybillingfreq, $myfromdate, $billing_id);
+		} // end if billing method
+
+		$this->billing_model->pay_billing_details($payment_history_id,
+				$billing_id, $amount);
+	}
+
+
+	function authorizenet_card_declined($transaction_code, $billing_id, $cardnumber,
+			$cardexp, $response_code, $amount, $billingmethod, $avs_response) 
+	{
+		$typeresult = $this->billing_model->get_billing_method_attributes($billing_id);
+
+		$billingmethod = $mytyperesult['t_method'];
+		$mybillingdate = $mytyperesult['b_next_billing_date'];
+		$myfromdate = $mytyperesult['b_from_date'];
+		$mytodate = $mytyperesult['b_to_date'];
+		$mybillingfreq = $mytyperesult['t_frequency'];
+		$contact_email = $mytyperesult['b_contact_email'];
+
+		$this->billing_model->insert_card_payment_history('declined',
+				$transaction_code, $billing_id, $cardnumber, 
+				$cardexp, $response_code, $amount, $avs_response);
+
+		// put a message in the customer notes that 
+		// a declined email was sent to their contact_email
+
+		// get their account_number first
+		$myaccountnumber = $this->billing_model->get_account_number($billing_id);
+
+		// put a note in the customer history
+		// add to customer_history
+		$status = "automatic";
+		$desc = lang('declinedmessagesentto')." $contact_email";
+		$this->support_model->create_ticket($this->user, 'nobody', 
+				$myaccountnumber, $status, $desc);
+
+		//send email			  
+		$this->billing_model->send_declined_email($mybillingid);
+	}
+
+
+	/**
+	 * function: charge_card
+	 * 
+	 * Parameters:
+	 *	Type - Either CC for Credit Card or ECHECK for electronic check
+	 * 	CardNumber - Credit Card Number - no dashes or spaces
+	 * 	ExpDate - Expiration Date in mmyy format
+	 * 	Amount - Amount to charge in xxxxx.xx format (up to 7 digits)
+	 * 	Description - (Optional) Description of the transaction.  If no description set to NULL
+	 * 	Invoice - (Optional) If you want to include an invoice number stick it here.  If no invoice # then set to NULL
+	 * 	FirstName - (Optional) First name of card holder, leave NULL if no First Name is required
+	 * 	LastName - (Optional) Last name of card hold, leave NULL if no last name is required
+	 * 	Address - (Optional) Address of card holder, leave NULL if no address is required
+	 * 	State - (Optional) City of card holder, leave NULL if no city required
+	 * 	Zip - (Optional) Zip of card hodler, leave NULL if no zip required
+	 * 	Test - If not set to NULL, will send transactions to the test server at authorize.net
+	 * @return 
+	 * @param object $test
+	 */
+	function authorizenet_charge_card($Type, $CardNumber, $ExpDate, $Amount, $Description, $Invoice, $FirstName, $LastName, $Address, $State, $Zip, $Test, $auth_api_login, $auth_transaction_key) {
+
+		// if the test variable is set to anything other than NULL the transactions will be sent to the test server at authorize.net
+		if ($Test == NULL) {
+			$post_url = "https://secure.authorize.net/gateway/transact.dll";
+		} else {
+			$post_url = "https://test.authorize.net/gateway/transact.dll";	
+		}
+
+		$post_values = array(
+
+				// the API Login ID and Transaction Key must be replaced with valid values
+				"x_login"			=> $auth_api_login,
+				"x_tran_key"		=> $auth_transaction_key,
+
+				"x_version"			=> "3.1",
+				"x_delim_data"		=> "TRUE",
+				"x_delim_char"		=> "|",
+				"x_relay_response"	=> "FALSE",
+
+				"x_type"			=> "AUTH_CAPTURE",
+				"x_method"			=> $Type,
+				"x_card_num"		=> $CardNumber,
+				"x_exp_date"		=> $ExpDate,
+
+				"x_amount"			=> $Amount
+				);
+
+		if ($Description != NULL) {
+			$post_values["x_description"] = $Description;
+		}
+
+		if ($Invoice != NULL) {
+			$post_values["x_invoice_num"] = $Invoice;
+		}
+
+		if ($FirstName != NULL) {
+			$post_values["x_first_name"] = $FirstName;
+		}
+
+		if ($LastName != NULL) {
+			$post_values["x_last_name"] = $LastName;
+		}
+
+		if ($Address != NULL) {
+			$post_values["x_address"] = $Address;
+		}
+
+		if ($State != NULL) {
+			$post_values["x_state"] = $State;
+		}
+
+		if ($Zip != NULL) {
+			$post_values["x_zip"] = $Zip;
+		}
+
+
+		// This section takes the input fields and converts them to the proper format
+		// for an http post.  For example: "x_login=username&x_tran_key=a1B2c3D4"
+		$post_string = "";
+		foreach( $post_values as $key => $value )
+		{ $post_string .= "$key=" . urlencode( $value ) . "&"; }
+		$post_string = rtrim( $post_string, "& " );
+
+		// This sample code uses the CURL library for php to establish a connection,
+		// submit the post, and record the response.
+		// If you receive an error, you may want to ensure that you have the curl
+		// library enabled in your php configuration
+		$request = curl_init($post_url); // initiate curl object
+		curl_setopt($request, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+		curl_setopt($request, CURLOPT_RETURNTRANSFER, 1); // Returns response data instead of TRUE(1)
+		curl_setopt($request, CURLOPT_POSTFIELDS, $post_string); // use HTTP POST to send form data
+		curl_setopt($request, CURLOPT_SSL_VERIFYPEER, FALSE); // uncomment this line if you get no gateway response.
+		$post_response = curl_exec($request); // execute curl post and store results in $post_response
+		// additional options may be required depending upon your server configuration
+		// you can find documentation on curl options at http://www.php.net/curl_setopt
+		curl_close ($request); // close curl object
+
+		// This line takes the response and breaks it into an array using the specified delimiting character
+		$response_array = explode($post_values["x_delim_char"],$post_response);
+
+		// The results are parsed and the first 4 items added to a response array to be processed later.
+
+		$return_value="";
+		$item_count=0;
+
+		foreach ($response_array as $value) {
+			$return_value = $return_value . $value . "|";
+			if (++$item_count > 7)
+				return $return_value;
+		}
+
 	}
 
 }
