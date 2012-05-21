@@ -547,6 +547,15 @@ class Service_model extends CI_Model
 		$result = $this->db->query($query, array($removaldate, $serviceid))
 			or die ("update_removal_date queryfailed");
 	}
+	
+
+	function update_removal_date_to_null($serviceid)
+	{
+		$query = "UPDATE user_services SET removal_date = NULL ".
+				"WHERE id = ?";
+		$result = $this->db->query($query, array($serviceid))
+		or die ("update_removal_date queryfailed");
+	}
 
 
 	/*	

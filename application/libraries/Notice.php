@@ -147,7 +147,7 @@ class Notice
 
 		$message_body = lang('account') ." " . $billing_account_number. "\n".
 			lang('invoice'). ": " . $invoice_number . "\n".
-			lang('amount_due') . ": " $total_owed . "\n";
+			lang('amount_due') . ": " . $total_owed . "\n";
 
 		// look for notice type and create proper message
 		switch($this->notice_type) {

@@ -14,8 +14,8 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://ubuntu/~pyasi/software/citrusdb/citrusdb_3.x';
-$config['ssl_base_url'] = 'https://ubuntu/~pyasi/software/citrusdb/citrusdb_3.x';
+$config['base_url']	= 'http://ubuntu/~pyasi/software/citrusdb_3.x';
+$config['ssl_base_url'] = 'https://ubuntu/~pyasi/software/citrusdb_3.x';
 
 
 /*

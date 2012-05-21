@@ -725,8 +725,20 @@ class Services extends App_Controller {
 
 		$removaldate = $this->input->post('removaldate');
 		$serviceid = $this->input->post('serviceid');
-
-		$this->service_model->update_removal_date($serviceid, $removaldate);
+		
+		$currentdate = date("Ymd");
+		$checkdate = str_replace( "-", "", $removaldate );
+		if ($checkdate < $currentdate)
+		{
+			// date is not in the future, error
+			echo "<p><b>Error: Date is not in the future</b></p>";
+			echo "<FORM><INPUT TYPE=\"BUTTON\" VALUE=\"Go Back\" ONCLICK=\"history.go(-1)\"></FORM>";
+			exit;
+		}
+		else
+		{		
+			$this->service_model->update_removal_date($serviceid, $removaldate);
+		}
 
 		redirect('/services');
 	}
