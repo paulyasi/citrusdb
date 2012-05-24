@@ -17,6 +17,10 @@ class Command extends CI_Controller
 		{
 			exit;
 		}
+		
+		// setup some variables from the App_Controller
+		$this->url_prefix = $this->config->item('base_url');
+		$this->ssl_url_prefix = $this->config->item('ssl_base_url');
 	}
 
 
@@ -486,7 +490,7 @@ class Command extends CI_Controller
 
 			// put a ticket to say that this message was sent
 			$user = "system";
-			$notify = "nobody";
+			$notify = "";
 			$status = "automatic";
 			$description = "Sent reminder for $newtotal to $to";
 			$this->support_model->create_ticket($user, $notify, $account_number, $status, $description);
@@ -611,6 +615,8 @@ class Command extends CI_Controller
 	{
 		$this->load->model('billing_model');
 		$this->load->model('support_model');
+		$this->load->helper('date');
+		$this->load->helper('htmlascii');
 
 		// calculate the expire date for this month
 		$nextexpdate = date("my", mktime(0, 0, 0, date("m"), date("y")));
@@ -623,7 +629,7 @@ class Command extends CI_Controller
 			$to = $myresult['contact_email'];
 			$name = $myresult['name'];
 			$next_billing_date = $myresult['next_billing_date'];
-			$next_billing_date = humandate($next_billing_date, $lang);
+			$next_billing_date = humandate($next_billing_date);
 			$billingtype = $myresult['bt_name'];
 			$account_number = $myresult['account_number'];
 			$creditcard_number = $myresult['creditcard_number'];
@@ -651,10 +657,11 @@ class Command extends CI_Controller
 
 			// put a ticket to say that this message was sent
 			$user = "system";
-			$notify = "nobody";
+			$notify = "";
 			$status = "automatic";
 			$description = "Sent card expiration reminder to $to";
-			$this->support_model->create_ticket($user, $notify, $account_number, $status, $description);
+			$this->support_model->create_ticket($user, $notify, $account_number,
+					 $status, $description);
 
 		}
 

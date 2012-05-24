@@ -201,7 +201,8 @@ class Support_Model extends CI_Model
 		$url = "$this->url_prefix/index.php/support/editticket/$ticketnumber";
 		$message = "$notify: $description $url";
 
-		// if the notify is a group or a user, if a group, then get all the users and notify each individual
+		// if the notify is a group or a user, if a group, then get all the 
+		// users and notify each individual
 		$query = "SELECT * FROM groups WHERE groupname = ?";
 		$result = $this->db->query($query, array($notify))
 			or die ("create_ticket group Query Failed");
@@ -212,8 +213,8 @@ class Support_Model extends CI_Model
 			foreach ($result->result_array() as $myresult) 
 			{
 				$groupmember = $myresult['groupmember'];
-				$this->enotify($groupmember, $message, $ticketnumber, $user, $notify, 
-						$description);
+				$this->enotify($groupmember, $message, $ticketnumber, $user, 
+						$notify, $description);
 			} // end while    
 		} 
 		else 
@@ -239,16 +240,28 @@ class Support_Model extends CI_Model
 	function enotify($user, $message, $ticketnumber, $fromuser, $tousergroup, 
 			$description)
 	{
-		$query = "SELECT email,screenname,email_notify,screenname_notify ".
-			"FROM user WHERE username = ?";
-		$result = $this->db->query($query, array($user))
+		if ($user == 'system')
+		{
+			// an automatic script is running to set some default user info
+			$email = 'system@localhost';
+			$screenname = '';
+			$email_notify = 'n';
+			$screenname_notify = 'n';
+		}
+		else
+		{
+			// get the real user info
+			$query = "SELECT email,screenname,email_notify,screenname_notify ".
+					"FROM user WHERE username = ?";
+			$result = $this->db->query($query, array($user))
 			or die ("select screename queryfailed");
-		$myresult = $result->row_array();
-		
-		$email = $myresult['email'];
-		$screenname = $myresult['screenname'];
-		$email_notify = $myresult['email_notify'];
-		$screenname_notify = $myresult['screenname_notify'];
+			$myresult = $result->row_array();
+			
+			$email = $myresult['email'];
+			$screenname = $myresult['screenname'];
+			$email_notify = $myresult['email_notify'];
+			$screenname_notify = $myresult['screenname_notify'];
+		}		
 
 		// if they have specified a screenname then send them a jabber notification
 		if (($this->config->item('xmpp_server')) && ($screenname) && ($screenname_notify == 'y'))
