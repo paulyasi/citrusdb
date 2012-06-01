@@ -2072,7 +2072,7 @@ class Billing_Model extends CI_Model
 			$pricerate = $myresult['pricerate'];
 			if (($pricerate > 0) AND ($taxid == NULL)) 
 			{
-				$monthmultiple = $billed_amount/$pricerate;
+				$monthmultiple = sprintf("%.2f", $billed_amount/$pricerate);
 			} 
 			else 
 			{
@@ -2105,9 +2105,9 @@ class Billing_Model extends CI_Model
 				$lineY = $lineYoffset + ($myline*5);
 				$pdf->SetXY(10,$lineY);
 
-				if ($monthmultiple > 1) 
+				if ($monthmultiple <> 1) 
 				{
-					$pdf->Cell(151,5,"$serviceid $service_description $tax_description ($pricerate x $monthmultiple) $optiondetails", 0, 0, "L", TRUE);
+					$pdf->Cell(151,5,"$serviceid $service_description $tax_description ($monthmultiple @ $pricerate) $optiondetails", 0, 0, "L", TRUE);
 				} 
 				else 
 				{
@@ -2122,9 +2122,9 @@ class Billing_Model extends CI_Model
 			else 
 			{
 				// printing text invoice
-				if ($monthmultiple > 1) 
+				if ($monthmultiple <> 1) 
 				{
-					$output .= "$serviceid \t $service_description $tax_description ($pricerate x $monthmultiple) \t $optiondetails \t $billed_amount\n";
+					$output .= "$serviceid \t $service_description $tax_description ($monthmultiple @ $pricerate) \t $optiondetails \t $billed_amount\n";
 				} 
 				else 
 				{

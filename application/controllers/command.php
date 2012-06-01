@@ -603,8 +603,6 @@ class Command extends CI_Controller
 	}
 
 	
-	// TODO: test from ccexpire on down
-
 	/*
 	 * --------------------------------------------------------------------------
 	 *  send a reminder to customers the month their credit card expires
@@ -668,6 +666,8 @@ class Command extends CI_Controller
 	}
 
 
+	// TODO: test from here on down
+	
 	/*
 	 * ------------------------------------------------------------------------
 	 * This script will send einvoices to customers who have the einvoice
