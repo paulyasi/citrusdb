@@ -3051,13 +3051,13 @@ class Billing_Model extends CI_Model
 			h.payment_due_date h_payment_due_date, 
 			h.new_charges h_new_charges, h.past_due h_past_due, 
 			h.late_fee h_late_fee, h.tax_due h_tax_due, 
-			h.total_due h_total_due, h.notes h_notes, 
+			h.total_due h_total_due, h.notes h_notes, h.credit_applied h_credit_applied, 
 			b.id b_id, b.name b_name, b.company b_company, 
 			b.street b_street, b.city b_city, b.state b_state, 
 			b.country b_country, b.zip b_zip, 
 			b.contact_email b_contact_email, b.account_number b_acctnum, 
 			b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp,
-			b.encrypted_creditcard_number b_enc_ccnum 
+			b.encrypted_creditcard_number b_enc_ccnum, b.po_number b_po_number  
 				FROM billing_history h 
 				LEFT JOIN billing b ON h.billing_id = b.id  
 				WHERE h.id = ?";

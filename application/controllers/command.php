@@ -666,7 +666,6 @@ class Command extends CI_Controller
 	}
 
 
-	// TODO: test from here on down
 	
 	/*
 	 * ------------------------------------------------------------------------
@@ -683,6 +682,7 @@ class Command extends CI_Controller
 	{
 		$this->load->model('billing_model');
 		$this->load->model('support_model');
+		$this->load->model('service_model');
 
 		// set the billing date to today
 		$billingdate = date("Y-m-d");
@@ -694,7 +694,7 @@ class Command extends CI_Controller
 		/*-------------------------------------------------------------------*/
 
 		// determine the next available batch number
-		$batchid = $this->billing_model->get_nextbatchnumber($DB);
+		$batchid = $this->billing_model->get_nextbatchnumber();
 		echo "BATCH: $batchid<p>\n";
 
 		// query for taxed services that are billed on the specified date
@@ -708,7 +708,7 @@ class Command extends CI_Controller
 
 		// create billinghistory
 		$user = "autoeinvoice";
-		create_billinghistory($DB, $batchid, 'einvoice', $user);	
+		$this->billing_model->create_billinghistory($batchid, 'einvoice', $user);	
 
 		/*-------------------------------------------------------------------*/	
 		// Email the invoice
@@ -731,6 +731,8 @@ class Command extends CI_Controller
 
 	}
 
+
+	// TODO: test from here on down
 
 	/*
 	 * ------------------------------------------------------------------------
