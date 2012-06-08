@@ -793,8 +793,8 @@ class Command extends CI_Controller
 				'prepaycc', $batchid, $organization_id);
 		$numppservices = $this->billing_model->add_servicedetails($billingdate, NULL,  
 				'prepaycc', $batchid, $organization_id);
-		echo "Pre-Pay: $l_creditcard: $numpptaxes $l_added, 
-			$numppservices $l_added<p>\n";
+		echo "Pre-Pay: ".lang('creditcard').": $numpptaxes ".lang('added').", 
+			$numppservices ".lang('added')."<p>\n";
 
 		// Update Reruns to the bill
 		$numreruns = $this->billing_model->update_rerundetails($billingdate, 
@@ -898,26 +898,26 @@ class Command extends CI_Controller
 					$billing_ccnum = $decrypted_creditcard_number;
 
 					//Send charge to authorize.net	
-					$charge_result = authorizenet_charge_card("CC", $billing_ccnum, $billing_ccexp, $precisetotal, "Bill for Account #: " . $billing_acctnum, $invoice_number, $billing_name, NULL, $billing_street, $billing_state, $billing_zip, "1");	
+					$charge_result = $this->authorizenet_charge_card("CC", $billing_ccnum, $billing_ccexp, $precisetotal, "Bill for Account #: " . $billing_acctnum, $invoice_number, $billing_name, NULL, $billing_street, $billing_state, $billing_zip, "1");	
 
 					$response_array = explode("|",$charge_result);			
 
 					switch ($response_array[0]) {
 						case 1:
 							echo "Transaction Approved<p>\n";
-							authorizenet_card_approved($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
+							$this->authorizenet_card_approved($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
 							break;
 						case 2:
 							echo "Transaction Declined<p>\n";
-							authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
+							$this->authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
 							break;
 						case 3:
 							echo "Transaction Error<p>\n";
-							authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
+							$this->authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
 							break;
 						case 4:
 							echo "Hold For Review<p>\n";
-							authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
+							$this->authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
 							break;
 					}
 				}
