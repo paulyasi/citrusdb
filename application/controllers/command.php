@@ -748,11 +748,11 @@ class Command extends CI_Controller
  	 * This script also needs the two auth_ variables filled in to define the
  	 * Authorize.Net setup information
 	 * 
-	 * takes $organization_id as input on command line
+	 * takes passphrase and organization id as input on command line
 	 * 
 	 * ------------------------------------------------------------------------
 	 */
-	function authorizenet($organization_id)
+	function authorizenet($passphrase, $organization_id = 1)
 	{
 		$this->load->model('billing_model');
 		$this->load->model('settings_model');
@@ -764,7 +764,7 @@ class Command extends CI_Controller
 		$auth_transaction_key='';
 
 		// get the passphrase from the command line
-		$passphrase = $argv[1];
+		// $passphrase = $argv[1];
 	
 		$billingdate = date("Y-m-d");
 
@@ -898,26 +898,40 @@ class Command extends CI_Controller
 					$billing_ccnum = $decrypted_creditcard_number;
 
 					//Send charge to authorize.net	
-					$charge_result = $this->authorizenet_charge_card("CC", $billing_ccnum, $billing_ccexp, $precisetotal, "Bill for Account #: " . $billing_acctnum, $invoice_number, $billing_name, NULL, $billing_street, $billing_state, $billing_zip, "1");	
+					$charge_result = $this->authorizenet_charge_card(
+								"CC", 
+								$billing_ccnum, 
+								$billing_ccexp, 
+								$precisetotal, 
+								"Bill for Account #: " . $billing_acctnum, 
+								$invoice_number, 
+								$billing_name, 
+								NULL, 
+								$billing_street, 
+								$billing_state, 
+								$billing_zip, 
+								"1",
+								$auth_api_login,
+								$auth_transaction_key);	
 
 					$response_array = explode("|",$charge_result);			
 
 					switch ($response_array[0]) {
 						case 1:
 							echo "Transaction Approved<p>\n";
-							$this->authorizenet_card_approved($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
+							$this->authorizenet_card_approved($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "");
 							break;
 						case 2:
 							echo "Transaction Declined<p>\n";
-							$this->authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
+							$this->authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "");
 							break;
 						case 3:
 							echo "Transaction Error<p>\n";
-							$this->authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
+							$this->authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "");
 							break;
 						case 4:
 							echo "Hold For Review<p>\n";
-							$this->authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "", $auth_api_login, $auth_transaction_key);
+							$this->authorizenet_card_declined($response_array[4], $mybilling_id, $billing_ccnum, $billing_ccexp, $charge_result, $precisetotal, "creditcard", "");
 							break;
 					}
 				}
@@ -1013,8 +1027,10 @@ class Command extends CI_Controller
 	 * @return 
 	 * @param object $test
 	 */
-	function authorizenet_charge_card($Type, $CardNumber, $ExpDate, $Amount, $Description, $Invoice, $FirstName, $LastName, $Address, $State, $Zip, $Test, $auth_api_login, $auth_transaction_key) {
-
+	function authorizenet_charge_card($Type, $CardNumber, $ExpDate, $Amount, 
+			$Description, $Invoice, $FirstName, $LastName, $Address, $State, 
+			$Zip, $Test, $auth_api_login, $auth_transaction_key) 
+	{
 		// if the test variable is set to anything other than NULL the transactions will be sent to the test server at authorize.net
 		if ($Test == NULL) {
 			$post_url = "https://secure.authorize.net/gateway/transact.dll";
