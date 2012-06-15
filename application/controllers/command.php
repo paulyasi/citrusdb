@@ -758,12 +758,14 @@ class Command extends CI_Controller
 		$this->load->model('settings_model');
 
 		// the login name for your authorize.net api
-		$auth_api_login='9Em4Q3uTMr';
+		$auth_api_login='';
 
 		// the transaction key for your authorize.net gateway
-		$auth_transaction_key='6j2PYA28KWfq57gs';
+		$auth_transaction_key='';
 
 		$billingdate = date("Y-m-d");
+
+		$user = "system";
 
 		/*--------------------------------------------------------------------*/
 		// Create the billing data
@@ -816,7 +818,7 @@ class Command extends CI_Controller
 			/*--------------------------------------------------------------------*/
 
 			// select the info from general to get the ccexport variable order
-			$myccvarresult = $this->ccexportvars($organization_id);
+			$myccvarresult = $this->billing_model->ccexportvars($organization_id);
 			$ccexportvarorder = $myccvarresult['ccexportvarorder'];
 			$exportprefix = $myccvarresult['exportprefix'];	
 
@@ -882,6 +884,10 @@ class Command extends CI_Controller
 					unset($decrypted);
 
 					$gpgcommandline = $this->config->item('gpg_decrypt')." $cipherfilename";
+			
+					// load the encryption helper for use when calling gpg things
+					$this->load->helper('encryption');
+
 					$decrypted = decrypt_command($gpgcommandline, $passphrase);
 
 					// if there is a gpg error, stop here
@@ -947,7 +953,10 @@ class Command extends CI_Controller
 	function authorizenet_card_approved($transaction_code, $billing_id, $cardnumber,
 			$cardexp, $response_code, $amount, $billingmethod, $avs_response) 
 	{
-		$payment_history_id = $this->billing_method->insert_card_payment_history(
+		$this->load->model('billing_model');
+		$this->load->model('settings_model');
+
+		$payment_history_id = $this->billing_model->insert_card_payment_history(
 				'authorized',
 				$transaction_code,
 				$billing_id,
@@ -962,7 +971,7 @@ class Command extends CI_Controller
 		// from_date, and payment_due_date for prepay/prepaycc 
 		if ($billingmethod == 'prepaycc' OR $billingmethod == 'prepay') 
 		{
-			$this->billing_method->update_billing_dates($mybillingdate,
+			$this->billing_model->update_billing_dates($mybillingdate,
 					$mybillingfreq, $myfromdate, $billing_id);
 		} // end if billing method
 
@@ -974,6 +983,9 @@ class Command extends CI_Controller
 	function authorizenet_card_declined($transaction_code, $billing_id, $cardnumber,
 			$cardexp, $response_code, $amount, $billingmethod, $avs_response) 
 	{
+		$this->load->model('billing_model');
+		$this->load->model('settings_model');
+
 		$typeresult = $this->billing_model->get_billing_method_attributes($billing_id);
 
 		$billingmethod = $mytyperesult['t_method'];
