@@ -2691,7 +2691,7 @@ class Billing_Model extends CI_Model
 		$query = "SELECT account_number FROM billing WHERE id = ?";
 		$bidresult = $this->db->query($query, array($billing_id)) 
 			or die ("get_account_number queryfailed");
-		$mybidresult = $bidresult->fields;
+		$mybidresult = $bidresult->row_array();
 
 		return $mybidresult['account_number'];
 	}

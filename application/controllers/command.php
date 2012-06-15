@@ -761,7 +761,7 @@ class Command extends CI_Controller
 		$auth_api_login='';
 
 		// the transaction key for your authorize.net gateway
-		$auth_transaction_key='';
+		$auth_transaction_key='6j2PYA28KWfq57gs';
 
 		$billingdate = date("Y-m-d");
 
@@ -985,8 +985,9 @@ class Command extends CI_Controller
 	{
 		$this->load->model('billing_model');
 		$this->load->model('settings_model');
+		$this->load->model('support_model');
 
-		$typeresult = $this->billing_model->get_billing_method_attributes($billing_id);
+		$mytyperesult = $this->billing_model->get_billing_method_attributes($billing_id);
 
 		$billingmethod = $mytyperesult['t_method'];
 		$mybillingdate = $mytyperesult['b_next_billing_date'];
@@ -1005,15 +1006,19 @@ class Command extends CI_Controller
 		// get their account_number first
 		$myaccountnumber = $this->billing_model->get_account_number($billing_id);
 
+		echo "BILLINGID: $billing_id, ACCOUNTNUMBER: $myaccountnumber";
+
 		// put a note in the customer history
 		// add to customer_history
+		$user = "system";
 		$status = "automatic";
+		$notify = "";
 		$desc = lang('declinedmessagesentto')." $contact_email";
-		$this->support_model->create_ticket($this->user, 'nobody', 
+		$this->support_model->create_ticket($user, $notify, 
 				$myaccountnumber, $status, $desc);
 
 		//send email			  
-		$this->billing_model->send_declined_email($mybillingid);
+		$this->billing_model->send_declined_email($billing_id);
 	}
 
 
