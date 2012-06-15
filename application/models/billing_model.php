@@ -3093,8 +3093,10 @@ class Billing_Model extends CI_Model
 
 		foreach ($result AS $myresult) 
 		{
+			$invoice_number = $myresult['recent_invoice_number'];
+			
 			// get the recent invoice data to process now
-			$myinvresult = $this->get_invoice_data($myresult['recent_invoice_number']);
+			$myinvresult = $this->get_invoice_data($invoice_number);
 
 			$user = $myinvresult['h_created_by'];
 			$mydate = $myinvresult['h_billing_date'];

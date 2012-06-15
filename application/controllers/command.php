@@ -758,14 +758,11 @@ class Command extends CI_Controller
 		$this->load->model('settings_model');
 
 		// the login name for your authorize.net api
-		$auth_api_login='';
+		$auth_api_login='9Em4Q3uTMr';
 
 		// the transaction key for your authorize.net gateway
-		$auth_transaction_key='';
+		$auth_transaction_key='6j2PYA28KWfq57gs';
 
-		// get the passphrase from the command line
-		// $passphrase = $argv[1];
-	
 		$billingdate = date("Y-m-d");
 
 		/*--------------------------------------------------------------------*/
