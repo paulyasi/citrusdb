@@ -761,7 +761,7 @@ class Command extends CI_Controller
 		$auth_api_login='';
 
 		// the transaction key for your authorize.net gateway
-		$auth_transaction_key='6j2PYA28KWfq57gs';
+		$auth_transaction_key='';
 
 		$billingdate = date("Y-m-d");
 
@@ -1005,8 +1005,6 @@ class Command extends CI_Controller
 
 		// get their account_number first
 		$myaccountnumber = $this->billing_model->get_account_number($billing_id);
-
-		echo "BILLINGID: $billing_id, ACCOUNTNUMBER: $myaccountnumber";
 
 		// put a note in the customer history
 		// add to customer_history

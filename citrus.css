@@ -132,8 +132,10 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 		margin-top: 1px;
 		margin-left: 10px;
 		margin-right: 0px;
+		/*
 		border-top-left-radius: 6px;
 		border-bottom-left-radius: 6px;
+		*/
 		text-decoration: none;
 		z-index: 2;
 	}
