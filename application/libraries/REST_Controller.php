@@ -592,8 +592,8 @@ class REST_Controller extends CI_Controller {
 
 		// added for citrus authentication modification
 		$CI =& get_instance();
-		$CI->load->model('user_model');
-  		if($CI->user_model->user_login($username,$password))
+		$CI->load->model('customer_model');
+  		if($CI->customer_model->account_manager_login($username,$password))
 		{
 			return TRUE;
 		}

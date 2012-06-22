@@ -353,6 +353,175 @@ class Customer_Model extends CI_Model
 
 	/*
 	 * ------------------------------------------------------------------------
+	 *  authenticate the user when they login with their account manager id and
+	 *  password
+	 * ------------------------------------------------------------------------
+	 */
+	function account_manager_login($user_name,$password)
+	{
+		// load the PasswordHash library
+		$config = array (
+				'iteration_count_log2' => '8', 
+				'portable_hashes' => 'FALSE'
+				);
+		$this->load->library('PasswordHash', $config);    
+		
+		global $feedback;
+
+		if (!$user_name || !$password) 
+		{
+			$feedback .=  ' ERROR - Missing user name or password ';
+			return false;
+		} 
+		else 
+		{
+			//$sql="SELECT account_manager_password FROM customer where account_number='$user_name' LIMIT 1";      
+			//$result = $DB->Execute($sql);
+			//$myresult = $result->fields;
+			//$checkhash = $myresult['account_manager_password'];
+			//$sql="UPDATE customer SET account_manager_password='$newhash' ".
+			//	"WHERE account_number='$user_name' LIMIT 1";
+			//$passresult=$DB->Execute($sql) or die ("Query Failed");
+
+			$user_name=strtolower($user_name);
+
+			// standard authentication method
+
+			$result = $this->db->get_where('customer', array('account_number' => $user_name), 1, 0);
+
+			//$sql="SELECT password FROM user WHERE username = '$user_name' LIMIT 1";
+			//$result = $this->db->query($sql);
+			$myresult = $result->row();
+			$checkhash = $myresult->account_manager_password;
+
+			// check the password with the phpass checkpassword function
+			$passwordmatch = $this->passwordhash->CheckPassword($password, $checkhash);
+
+			// bcrypt hashes have '$2a$' header
+			// des ext hashes have '_' header
+			// portable md5 hashes have '$P$' header
+			// the old md5 passwords that should be upgraded have no header
+			$bcrypt_h = substr($checkhash, 0, 4);
+			$desext_h = substr($checkhash, 0, 1);
+			$portmd5_h = substr($checkhash, 0, 3);
+
+			if (($bcrypt_h != '$2a$') AND ($desext_h != '_') AND ($portmd5_h != '$P$')) 
+			{
+				// the password must be an old md5 hash and must be upgraded to the new type
+				// authenticate the old md5 password
+				$passwordhashed = md5($password);
+				if ($passwordhashed == $checkhash) 
+				{
+					// upgrade it to the newer phpass password format
+					$passwordmatch = 1;
+
+					$newhash = $this->passwordhash->HashPassword($password);
+					if (strlen($newhash) < 20) 
+					{
+						$feedback .= "Failed to hash new password";
+						return false;
+					}
+
+					$sql="UPDATE customer SET account_manager_password = ? ".
+						"WHERE account_number = ? LIMIT 1";
+					$passresult=$this->db->query($sql, array($newhash, $user_name)) or die ("Query Failed");
+
+				} 
+				else 
+				{
+					$passwordmatch = 0;
+				}
+
+			}
+
+			// check the normal passwords are valid
+
+			if (!$result ||  $result->num_rows() < 1 || !$passwordmatch) 
+			{
+				$feedback .=  " ERROR - User not found or password ".
+					"incorrect $user_name $password ";
+
+				// keep track of login failures to stop them trying forever
+				$this->loginfailure($user_name);
+
+				return false;
+			}
+
+			$this->user_set_tokens($user_name);
+
+			$this->loginsuccess($user_name);
+
+			if (!isset($GLOBALS['REMOTE_ADDR'])) 
+			{
+				$GLOBALS['REMOTE_ADDR'] = "";
+			}
+
+			$sql="UPDATE user SET remote_addr='$GLOBALS[REMOTE_ADDR]' ".
+				"WHERE username = ?";
+			$result = $this->db->query($sql, array($user_name));
+
+			if (!$result) 
+			{
+				$feedback .= ' ERROR - '.db_error();
+				return false;
+			} 
+			else 
+			{
+				$feedback .=  ' SUCCESS - You Are Now Logged In ';
+				return true;
+			}
+		}
+	}
+
+	/*--------------------------------------------------------------------*/
+	// Logout the customer from the account_manager
+	/*--------------------------------------------------------------------*/
+	function user_logout() {
+		setcookie('user_name','',(time()+2592000),'/','',0);
+		setcookie('id_hash','',(time()+2592000),'/','',0);
+	}
+
+	/*--------------------------------------------------------------------*/
+	// keep track of failed login attempts from IP addresses
+	/*--------------------------------------------------------------------*/
+	function loginfailure($user_name) {
+
+		$ipaddress = $_SERVER["REMOTE_ADDR"];
+
+		$query="INSERT INTO login_failures(ip,logintime) ".
+			"VALUES (?,CURRENT_TIMESTAMP)";
+		$result=$this->db->query($query, array($ipaddress)) or die ("Log Insert Failed");
+
+		$this->log_model->activity($user_name,0,'login','dashboard',0,'failure');
+
+	}
+
+	/*--------------------------------------------------------------------*/
+	// keep track of login success
+	/*--------------------------------------------------------------------*/  
+	function loginsuccess($user_name) {
+		$this->log_model->activity($user_name,0,'login','dashboard',0,'success');
+	}
+
+	/*--------------------------------------------------------------------*/
+	// Set the cookie tokens for customer account manager
+	/*--------------------------------------------------------------------*/
+	function user_set_tokens($user_name_in) {
+		global $hidden_hash_var,$user_name,$id_hash;
+		if (!$user_name_in) {
+			$feedback .=  ' ERROR - User Name Missing When Setting Tokens ';
+			return false;
+		}
+		$user_name=strtolower($user_name_in);
+		$id_hash= md5($user_name.$hidden_hash_var);
+
+		setcookie('user_name',$user_name,(time()+36000),'/','',0);
+		setcookie('id_hash',$id_hash,(time()+36000),'/','',0);
+	}
+
+
+	/*
+	 * ------------------------------------------------------------------------
 	 *  make customer canceled on record and in histories
 	 * ------------------------------------------------------------------------
 	 */
@@ -364,14 +533,14 @@ class Customer_Model extends CI_Model
 			"WHERE account_number = ?";
 		$result = $this->db->query($query, array($cancel_reason, $account_number))
 			or die ("cancel_customer update customer query failed");
-			
+
 		// set next_billing_date to NULL since it normally won't be billed again
 		$query = "UPDATE billing ".
 			"SET next_billing_date = NULL ". 
 			"WHERE account_number = ?";
 		$result = $this->db->query($query, array($account_number))
 			or die ("cancel_customer update billing query failed");   
-		
+
 		// get the text of the cancel reason to use in the note
 		$query = "SELECT * FROM cancel_reason " . 
 			"WHERE id = ?";
@@ -384,7 +553,7 @@ class Customer_Model extends CI_Model
 		// if they are carrier dependent, send a note to
 		// the billing_noti
 		$desc = lang('canceled') . ": $cancel_reason_text";
-		
+
 		// leave ticket and return the ticket number to customer service user
 		$cancelticket = $this->support_model->create_ticket($this->user, '', 
 				$account_number, 'automatic', $desc);

@@ -107,7 +107,7 @@ $config['rest_database_group'] = 'default';
 |	'keys'
 |
 */
-$config['rest_keys_table'] = 'api_keys';
+$config['rest_keys_table'] = 'keys';
 
 /*
 |--------------------------------------------------------------------------
