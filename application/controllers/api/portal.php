@@ -21,6 +21,7 @@ require APPPATH.'/libraries/REST_Controller.php';
 
 class Portal extends REST_Controller
 {
+
 	/*
 	 * -------------------------------------------------------------------------
 	 *  get customer profile
@@ -35,7 +36,6 @@ class Portal extends REST_Controller
 		// use the authuser var we set after authentication
 		$data = $this->customer_model->record($this->authuser);
 		$this->response($data);
-		
 	}
 
 
@@ -49,17 +49,13 @@ class Portal extends REST_Controller
 		// load the customer model we are about to use
 		$this->load->model('billing_model');
 
-		if(!$this->get('id'))
-		{
-			$this->response(NULL, 400);
-		}
-		
 		// grab list of billing record data information
 		// will grab more than one billing id if they have multiple
-		$data['record'] = $this->billing_model->record_list($this->account_number);
+		$data = $this->billing_model->record_list($this->authuser);
 		$this->response($data);
-		
 	}
+
+
 	function user_get()
     {
         if(!$this->get('id'))
