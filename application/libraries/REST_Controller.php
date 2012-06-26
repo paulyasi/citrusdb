@@ -595,6 +595,7 @@ class REST_Controller extends CI_Controller {
 		$CI->load->model('customer_model');
   		if($CI->customer_model->account_manager_login($username,$password))
 		{
+			$this->authuser = $username;
 			return TRUE;
 		}
 		else
