@@ -7,7 +7,9 @@
  * communicate with the main citrusdb system
  *
  * view customer profile 
- * view billing info (without encrypted card data)
+ * view billing info (without encrypted card data) - TODO maybe only for default
+ * billing id and upate the other billing id's with the same info if a customer
+ * updates it online since otherwise it's really confusing
  * view services list and attributes
  * view invoice history
  * view past invoices as text or pdf format
@@ -42,16 +44,24 @@ class Portal extends REST_Controller
 	/*
 	 * -------------------------------------------------------------------------
 	 *  get list of billing profile
+	 *  TODO: change this to just get the default billing profile
+	 *  only get the billing profile if all active alternate billing types are
+	 *  the same as the default billing type (eg all creditcard or all invoice)
+	 *  ten update them all with the same information if the update the default
+	 *  when one updated the default profile update alternate profiles
+	 *  with the same information automatically or else it's really confusing
+	 *  to customers online
 	 * ------------------------------------------------------------------------
 	 */
-	function listbilling_get()
+	function billing_get()
 	{
 		// load the customer model we are about to use
 		$this->load->model('billing_model');
 
-		// grab list of billing record data information
-		// will grab more than one billing id if they have multiple
-		$data = $this->billing_model->record_list($this->authuser);
+		$billing_id = $this->billing_model->default_billing_id($this->authuser);
+
+		// return billing record data
+		$data = $this->billing_model->record($billing_id);
 		$this->response($data);
 	}
 
