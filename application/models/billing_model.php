@@ -2076,7 +2076,7 @@ class Billing_Model extends CI_Model
 			} 
 			else 
 			{
-				$monthmultiple = 0;
+				$monthmultiple = 1;
 			}
 
 			if ($printtype == "pdf") 
