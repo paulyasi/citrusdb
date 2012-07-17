@@ -14,8 +14,8 @@ window.open("newurl");
 <h4><?php echo lang('addingservice');?>: <?php echo $servicename?> (<?php echo $service_org_name?>)</h4>
 <form action="<?php echo $this->url_prefix?>/index.php/services/add_service" name="AddService" method=post> 
 <table width=720 cellpadding=5 cellspacing=1 border=0>
-<input type=hidden name=options_table_name value=<?=$options_table_name?>>
-<input type=hidden name=serviceid value=<?=$serviceid?>>
+<input type=hidden name=options_table_name value=<?php echo $options_table_name?>>
+<input type=hidden name=serviceid value=<?php echo $serviceid?>>
 
 <?php
 // check that there is an options_table_name, if so, show the options choices

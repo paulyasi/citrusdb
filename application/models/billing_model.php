@@ -245,7 +245,7 @@ class Billing_Model extends CI_Model
 	{
 		// show the billing record info
 		// print a list of alternate billing id's if any
-		$query = "SELECT b.id b_id, g.org_name g_org_name, t.name t_name ".
+		$query = "SELECT b.id b_id, g.org_name g_org_name, t.name t_name, t.method t_method ".
 			"FROM billing b ".
 			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
 			"LEFT JOIN general g ON b.organization_id = g.id ".
@@ -281,6 +281,7 @@ class Billing_Model extends CI_Model
 					'b_id' => $myrecord->b_id,
 					'g_org_name' => $myrecord->g_org_name,
 					't_name' => $myrecord->t_name,
+					't_method' => $myrecord->t_method,
 					'not_removed_id' => $not_removed_id,
 					'mystatus' => $mystatus,
 					'newtaxes' => $newtaxes,

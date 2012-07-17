@@ -3,7 +3,7 @@
 /**
  * Portal API Controller
  *
- * This is the portal API that allows the customer self-service portal to
+ * This is the portal API that allows the customer self-service portal
  * communicate with the main citrusdb system
  *
  * view customer profile 
@@ -57,15 +57,47 @@ class Portal extends REST_Controller
 	{
 		// load the customer model we are about to use
 		$this->load->model('billing_model');
-
-		$billing_id = $this->billing_model->default_billing_id($this->authuser);
+		
+		// get the list of all billing types to check they have the same method so customers can update them
+		// online instead of need a customer service representative to do that manually
+		$record = $this->billing_model->record_list($this->authuser);
+		
+		// set a boolean to change if we don't want to allow edits if they have different billing methods
+		$allow_edit = TRUE;
+		$num_of_billing_records = 0;
+		
+		foreach ($record as $billing_record) 
+		{
+			$num_of_billing_records++;
+			
+			$billing_id = $billing_record['b_id'];
+			$billing_method = $billing_record['t_method'];
+			$not_removed_id = $billing_record['not_removed_id'];
+			
+			if (($not_removed_id > 0 AND $num_of_billing_records > 1))
+			{
+				if ($billing_method <> $previous_method)
+				{
+					// set allow_edit to false since they have multiple active billing methods
+					$allow_edit = FALSE;
+				}
+			}
+			$previous_method = $billing_method;
+		}
+		
+		
+		$default_billing_id = $this->billing_model->default_billing_id($this->authuser);
 
 		// return billing record data
 		$data = $this->billing_model->record($billing_id);
+		$data['allow_edit'] = $allow_edit;
+		$data['num_of_billing_records'] = $num_of_billing_records;
 		$this->response($data);
 	}
 
 
+	/* EXAMPLES BELOW ------------------------------------------
+	
 	function user_get()
     {
         if(!$this->get('id'))
@@ -128,4 +160,5 @@ class Portal extends REST_Controller
             $this->response(array('error' => 'Couldn\'t find any users!'), 404);
         }
     }
+	*/
 }
