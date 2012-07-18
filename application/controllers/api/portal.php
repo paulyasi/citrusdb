@@ -43,56 +43,117 @@ class Portal extends REST_Controller
 
 	/*
 	 * -------------------------------------------------------------------------
-	 *  get list of billing profile
-	 *  TODO: change this to just get the default billing profile
-	 *  only get the billing profile if all active alternate billing types are
-	 *  the same as the default billing type (eg all creditcard or all invoice)
-	 *  ten update them all with the same information if the update the default
-	 *  when one updated the default profile update alternate profiles
-	 *  with the same information automatically or else it's really confusing
-	 *  to customers online
-	 * ------------------------------------------------------------------------
+	 *  get default billing profile
+	 * -------------------------------------------------------------------------
 	 */
 	function billing_get()
 	{
 		// load the customer model we are about to use
 		$this->load->model('billing_model');
 		
-		// get the list of all billing types to check they have the same method so customers can update them
-		// online instead of need a customer service representative to do that manually
-		$record = $this->billing_model->record_list($this->authuser);
-		
-		// set a boolean to change if we don't want to allow edits if they have different billing methods
-		$allow_edit = TRUE;
-		$num_of_billing_records = 0;
-		
-		foreach ($record as $billing_record) 
-		{
-			$num_of_billing_records++;
-			
-			$billing_id = $billing_record['b_id'];
-			$billing_method = $billing_record['t_method'];
-			$not_removed_id = $billing_record['not_removed_id'];
-			
-			if (($not_removed_id > 0 AND $num_of_billing_records > 1))
-			{
-				if ($billing_method <> $previous_method)
-				{
-					// set allow_edit to false since they have multiple active billing methods
-					$allow_edit = FALSE;
-				}
-			}
-			$previous_method = $billing_method;
-		}
-		
-		
 		$default_billing_id = $this->billing_model->default_billing_id($this->authuser);
 
 		// return billing record data
 		$data = $this->billing_model->record($billing_id);
-		$data['allow_edit'] = $allow_edit;
-		$data['num_of_billing_records'] = $num_of_billing_records;
 		$this->response($data);
+	}
+	
+	
+	/* 
+	 * ------------------------------------------------------------------------
+	 *  update all billing profiles with the same information, do not allow
+	 *  updates of the billing type or due dates etc, just billing address, 
+	 *  email address and card information
+	 *
+	 *  TODO: add an edit all billing records function to billing model that can 
+	 *  be used by csr and customer portal to update billing address and card 
+	 *  number on all billing records regardless of type, but cannot change 
+	 *  billing type, due dates, etc.
+	 *
+	 *  USE billing_model->save_record with array of only fields I want it to change
+	 *  do the save_record on each billing id they have, not just default
+	 *  so that all their bill information is up-to-date with new address and card
+	 * ------------------------------------------------------------------------
+	 */
+	function billing_post()
+	{
+		//$data = array('returned: '. $this->post('id'));  
+        //$this->response($data);
+		
+		// TODO: sorta will work like the save controller copied below:
+		
+		// check if there is a non-masked credit card number in the input
+		// if the second cararcter is a * then it's already masked
+
+		$newcc = FALSE; // set to false so we don't replace it unnecessarily
+
+		// get some inputs that we need to process this input
+		$billing_id = $this->input->post('billing_id');
+		$billing_type = $this->input->post('billing_type');
+		$creditcard_number = $this->input->post('creditcard_number');
+		
+		// check if the credit card entered already masked and not blank
+		// eg: a replacement was not entered
+		if ($creditcard_number[1] <> '*' AND $creditcard_number <> '')
+		{			
+			// destroy the output array before we use it again
+			unset($encrypted);
+
+			// load the encryption helper for use when calling gpg things
+			$this->load->helper('encryption');
+
+			// run the gpg command
+			$encrypted = encrypt_command($this->config->item('gpg_command'), $creditcard_number);
+			
+			// if there is a gpg error, stop here
+			if (substr($encrypted,0,5) == "error")
+			{				
+				die ("Credit Card Encryption Error: $encrypted");
+			}
+
+			// change the ouput array into ascii ciphertext block
+			$encrypted_creditcard_number = $encrypted;
+
+			// wipe out the middle of the creditcard_number before it gets inserted
+			$length = strlen($creditcard_number);
+			$firstdigit = substr($creditcard_number, 0,1);
+			$lastfour = substr($creditcard_number, -4);
+			$creditcard_number = "$firstdigit" . "***********" . "$lastfour";
+			
+			$newcc = TRUE;
+		}
+		
+		// fill in the billing data array with new address
+		$billing_data = array(
+			'name' => $this->input->post('name'),
+			'company' => $this->input->post('company'),
+			'street' => $this->input->post('street'),
+			'city' => $this->input->post('city'),
+			'state'=> $this->input->post('state'),
+			'zip' => $this->input->post('zip'),
+			'country' => $this->input->post('country'),
+			'phone' => $this->input->post('phone'),
+			'fax' => $this->input->post('fax'),
+			'contact_email' => $this->input->post('contact_email')
+			);
+		
+		// if they are providing a new credit card, put that in the array too
+		if ($newcc == TRUE)
+		{
+			// insert with a new credit card and encrypted ciphertext
+			$billing_data['encrypted_creditcard_number'] = $encrypted_creditcard_number;
+			$billing_data['creditcard_number'] = $creditcard_number;
+			$billing_data['creditcard_expire'] = $this->input->post('creditcard_expire');
+		}
+		
+		// TODO: do this for each billing ID they have
+		// save the data to the customer record
+		$data = $this->billing_model->save_record($billing_id, $billing_data);			
+
+		// add a log entry that this billing record was edited
+		$this->log_model->activity($this->user,$this->account_number,'edit','billing',$billing_id,'success');
+
+		$this->response(array('success' => 'Input Saved'), 200);
 	}
 
 
