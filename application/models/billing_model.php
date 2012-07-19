@@ -239,6 +239,70 @@ class Billing_Model extends CI_Model
 		return $data;
 
 	}
+	
+	
+	/*
+	 * ------------------------------------------------------------------------
+	 *  return information from the billing record suitable for portal viewers
+	 *  just the street address, email address, and truncated card info
+	 * ------------------------------------------------------------------------
+	 */
+	public function portal_record($billing_id)
+	{
+		$query = "SELECT b.id b_id, b.name b_name, b.company b_company, b.street ".
+			"b_street, b.city b_city, b.state b_state, b.zip b_zip, b.phone ".
+			"b_phone, b.fax b_fax, b.country b_country, b.contact_email b_email, ".
+			"b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp, ".
+			"b.billing_status b_status, b.billing_type b_type, ".
+			"b.next_billing_date b_next_billing_date, b.pastdue_exempt b_pastdue_exempt, ".
+			"b.prev_billing_date b_prev_billing_date, b.from_date b_from_date, ".
+			"b.to_date b_to_date, b.payment_due_date b_payment_due_date, ".
+			"b.rerun_date b_rerun_date, b.po_number b_po_number, b.notes b_notes, ".
+			"b.automatic_receipt b_automatic_receipt, ".
+			"b.organization_id b_organization_id,  t.id t_id, t.name t_name ".
+			"FROM billing b ".
+			"LEFT JOIN billing_types t ON b.billing_type = t.id ".
+			"WHERE b.id = ?";
+
+		$result = $this->db->query($query, array($billing_id)) or die ("record queryfailed");
+		$myresult = $result->row_array();
+
+		$data['billing_id'] = $myresult['b_id'];
+		$data['name'] = $myresult['b_name'];
+		$data['company'] = $myresult['b_company'];
+		$data['street'] = $myresult['b_street'];
+		$data['city'] = $myresult['b_city'];
+		$data['state'] = $myresult['b_state'];
+		$data['zip'] = $myresult['b_zip'];
+		$data['country'] = $myresult['b_country'];
+		$data['phone'] = $myresult['b_phone'];
+		$data['fax'] = $myresult['b_fax'];
+		$data['contact_email'] = $myresult['b_email'];
+		$data['creditcard_number'] = $myresult['b_ccnum'];
+		$data['creditcard_expire'] = $myresult['b_ccexp'];
+		$data['billing_status'] = $myresult['b_status'];
+		$data['organization_id'] = $myresult['b_organization_id'];
+
+		// if the card number is not blank, wipe out the middle of the card number
+		if ($data['creditcard_number'] <> '') {
+			$length = strlen($data['creditcard_number']);
+			$firstdigit = substr($data['creditcard_number'], 0,1);
+			$lastfour = substr($data['creditcard_number'], -4);
+			$data['creditcard_number'] = "$firstdigit" . "***********" . "$lastfour";
+		}
+
+		// get the billing status for this record
+		$data['mystatus'] = $this->billingstatus($billing_id);		
+
+		// get the organization info
+		$query = "SELECT org_name FROM general WHERE id = ".$data['organization_id']." LIMIT 1";
+		$orgresult = $this->db->query($query) or die ("queryfailed");
+		$myorgresult = $orgresult->row();
+		$data['organization_name'] = $myorgresult->org_name;
+
+		return $data;
+
+	}	
 
 
 	public function record_list($account_number)

@@ -54,7 +54,7 @@ class Portal extends REST_Controller
 		$default_billing_id = $this->billing_model->default_billing_id($this->authuser);
 
 		// return billing record data
-		$data = $this->billing_model->record($billing_id);
+		$data = $this->billing_model->portal_record($default_billing_id);
 		$this->response($data);
 	}
 	
