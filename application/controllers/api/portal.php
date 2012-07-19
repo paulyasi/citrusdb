@@ -76,21 +76,14 @@ class Portal extends REST_Controller
 	 * ------------------------------------------------------------------------
 	 */
 	function billing_post()
-	{
-		//$data = array('returned: '. $this->post('id'));  
-        //$this->response($data);
-		
+	{		
 		// TODO: sorta will work like the save controller copied below:
+		// TODO: get a list of all billing id's for $this->authuser
 		
 		// check if there is a non-masked credit card number in the input
 		// if the second cararcter is a * then it's already masked
-
-		$newcc = FALSE; // set to false so we don't replace it unnecessarily
-
-		// get some inputs that we need to process this input
-		$billing_id = $this->input->post('billing_id');
-		$billing_type = $this->input->post('billing_type');
-		$creditcard_number = $this->input->post('creditcard_number');
+		$newcc = FALSE; // set to false so we don't replace it unnecessarily		
+		$creditcard_number = $this->post('creditcard_number');
 		
 		// check if the credit card entered already masked and not blank
 		// eg: a replacement was not entered
@@ -146,12 +139,15 @@ class Portal extends REST_Controller
 			$billing_data['creditcard_expire'] = $this->input->post('creditcard_expire');
 		}
 		
-		// TODO: do this for each billing ID they have
+		// TODO: do this for each billing ID they have, for now do it for the default at least
+		$this->load->model('billing_model');
+		$billing_id = $this->billing_model->default_billing_id($this->authuser);
+
 		// save the data to the customer record
 		$data = $this->billing_model->save_record($billing_id, $billing_data);			
 
 		// add a log entry that this billing record was edited
-		$this->log_model->activity($this->user,$this->account_number,'edit','billing',$billing_id,'success');
+		$this->log_model->activity("portal",$this->authuser,'edit','billing',$billing_id,'success');
 
 		$this->response(array('success' => 'Input Saved'), 200);
 	}
