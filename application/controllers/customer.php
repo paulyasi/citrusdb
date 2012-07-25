@@ -146,8 +146,6 @@ class Customer extends App_Controller
 		$this->log_model->activity($this->user,$this->account_number,'edit',
 				'customer',0,'success');
 
-		print "<h3>". lang('changessaved') ."<h3>";
-
 		// if the name, company, street, city, state, zip, phone, fax, or contact_email 		// changed, ask if they want to update 
 		// the default billing record address also.
 		if ( ($customer_data['street'] != $old_street) 

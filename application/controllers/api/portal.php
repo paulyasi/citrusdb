@@ -7,15 +7,13 @@
  * communicate with the main citrusdb system
  *
  * view customer profile 
- * view billing info (without encrypted card data) - TODO maybe only for default
- * billing id and upate the other billing id's with the same info if a customer
- * updates it online since otherwise it's really confusing
+ * view billing info (without encrypted card data)
+ * update billing info, update all billing records with same address, email, and card info if done via portal
  * view services list and attributes
  * view invoice history
  * view past invoices as text or pdf format
  * view payment history
- * request new services
- * update billing info 
+ * request new services or open tickets?
  */
 
 // This can be removed if you use __autoload() in config.php OR use Modular Extensions
@@ -77,7 +75,6 @@ class Portal extends REST_Controller
 	 */
 	function billing_post()
 	{		
-		// TODO: sorta will work like the save controller copied below:
 		// TODO: get a list of all billing id's for $this->authuser
 		
 		// check if there is a non-masked credit card number in the input
@@ -140,6 +137,7 @@ class Portal extends REST_Controller
 		}
 		
 		// TODO: do this for each billing ID they have, for now do it for the default at least
+		// get a list of billing id's to change by using billing_model->record_list($this->authuser)
 		$this->load->model('billing_model');
 		$billing_id = $this->billing_model->default_billing_id($this->authuser);
 

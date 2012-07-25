@@ -198,8 +198,6 @@ class Billing extends App_Controller
 		// add a log entry that this billing record was edited
 		$this->log_model->activity($this->user,$this->account_number,'edit','billing',$billing_id,'success');
 
-		print "<h3>". lang('changessaved') ."<h3>";
-
 		redirect('/billing');
 	}
 
