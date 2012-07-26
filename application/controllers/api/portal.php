@@ -136,16 +136,20 @@ class Portal extends REST_Controller
 			$billing_data['creditcard_expire'] = $this->input->post('creditcard_expire');
 		}
 		
-		// TODO: do this for each billing ID they have, for now do it for the default at least
-		// get a list of billing id's to change by using billing_model->record_list($this->authuser)
+		// update address and card on each billing ID they have
 		$this->load->model('billing_model');
-		$billing_id = $this->billing_model->default_billing_id($this->authuser);
+		$record_list = $this->billing_model->record_list($this->authuser);
+		
+		foreach ($record_list AS $record)
+		{
+			$record_billing_id = $record['b_id'];
+			
+			// save the data to the customer record
+			$data = $this->billing_model->save_record($record_billing_id, $billing_data);			
 
-		// save the data to the customer record
-		$data = $this->billing_model->save_record($billing_id, $billing_data);			
-
-		// add a log entry that this billing record was edited
-		$this->log_model->activity("portal",$this->authuser,'edit','billing',$billing_id,'success');
+			// add a log entry that this billing record was edited
+			$this->log_model->activity("portal",$this->authuser,'edit','billing',$record_billing_id,'success');
+		}
 
 		$this->response(array('success' => 'Input Saved'), 200);
 	}
