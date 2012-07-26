@@ -124,7 +124,8 @@ class Portal extends REST_Controller
 			'country' => $this->input->post('country'),
 			'phone' => $this->input->post('phone'),
 			'fax' => $this->input->post('fax'),
-			'contact_email' => $this->input->post('contact_email')
+			'contact_email' => $this->input->post('contact_email'),
+			'creditcard_expire' => $this->input->post('creditcard_expire')
 			);
 		
 		// if they are providing a new credit card, put that in the array too
@@ -133,7 +134,6 @@ class Portal extends REST_Controller
 			// insert with a new credit card and encrypted ciphertext
 			$billing_data['encrypted_creditcard_number'] = $encrypted_creditcard_number;
 			$billing_data['creditcard_number'] = $creditcard_number;
-			$billing_data['creditcard_expire'] = $this->input->post('creditcard_expire');
 		}
 		
 		// update address and card on each billing ID they have
