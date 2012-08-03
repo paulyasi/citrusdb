@@ -146,5 +146,8 @@ pip-log.txt
 # My Junk
 gitpush.sh
 
+# Emacs backup files
+*~
+
 # Codeigniter Logs
 application/logs/
