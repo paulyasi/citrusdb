@@ -6,10 +6,13 @@
  * This is the portal API that allows the customer self-service portal
  * communicate with the main citrusdb system
  *
+ * DONE:
  * view customer profile 
  * view billing info (without encrypted card data)
  * update billing info, update all billing records with same address, email, and card info if done via portal
  * view services list and attributes
+ * 
+ * TODO:
  * view invoice history
  * view past invoices as text or pdf format
  * view payment history
@@ -21,8 +24,21 @@ require APPPATH.'/libraries/REST_Controller.php';
 
 class Portal extends REST_Controller
 {
+    /*
+     * -------------------------------------------------------------------------
+     *  get the service listing for this user
+     * -------------------------------------------------------------------------
+     */
+    function services_get()
+    {
+        $this->load->model('service_model');
 
-	/*
+        $data = $this->service_model->list_services($this->authuser);
+        $this->response($data);
+    }
+
+
+    /*
 	 * -------------------------------------------------------------------------
 	 *  get customer profile
 	 * ------------------------------------------------------------------------
@@ -74,9 +90,7 @@ class Portal extends REST_Controller
 	 * ------------------------------------------------------------------------
 	 */
 	function billing_post()
-	{		
-		// TODO: get a list of all billing id's for $this->authuser
-		
+	{				
 		// check if there is a non-masked credit card number in the input
 		// if the second cararcter is a * then it's already masked
 		$newcc = FALSE; // set to false so we don't replace it unnecessarily		
