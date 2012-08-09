@@ -24,18 +24,6 @@ require APPPATH.'/libraries/REST_Controller.php';
 
 class Portal extends REST_Controller
 {
-    /*
-     * -------------------------------------------------------------------------
-     *  get the service listing for this user
-     * -------------------------------------------------------------------------
-     */
-    function services_get()
-    {
-        $this->load->model('service_model');
-
-        $data = $this->service_model->list_services($this->authuser);
-        $this->response($data);
-    }
 
 
     /*
@@ -71,7 +59,40 @@ class Portal extends REST_Controller
 		$data = $this->billing_model->portal_record($default_billing_id);
 		$this->response($data);
 	}
-	
+
+    
+    /*
+     * -------------------------------------------------------------------------
+     *  get the service listing for this user
+     * -------------------------------------------------------------------------
+     */    
+    function services_get()
+    {
+        $this->load->model('service_model');
+
+        $data = $this->service_model->list_services($this->authuser);
+        $this->response($data);
+    }
+
+
+    /*
+     * -------------------------------------------------------------------------
+     *  get the invoice history listing for this user
+     * -------------------------------------------------------------------------
+     */
+    function invoices_get()
+    {
+        
+    }
+
+    
+    /*
+     * TODO:
+     * view past invoices as text or pdf format
+     * view payment history
+     * request new services or open tickets?
+     */
+    
 	
 	/* 
 	 * ------------------------------------------------------------------------

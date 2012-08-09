@@ -10,9 +10,9 @@
  * view customer profile 
  * view billing info (without encrypted card data)
  * update billing info, update all billing records with same address, email, and card info if done via portal
+ * view services list and attributes
  * 
  * TODO:
- * view services list and attributes
  * view invoice history
  * view past invoices as text or pdf format
  * view payment history
@@ -25,12 +25,16 @@ require APPPATH.'/libraries/REST_Controller.php';
 class Portal extends REST_Controller
 {
     /*
-     * ----------------------
-     *
+     * -------------------------------------------------------------------------
+     *  get the service listing for this user
+     * -------------------------------------------------------------------------
      */
-    function service_get()
+    function services_get()
     {
-        $this->load->model('service_model');        
+        $this->load->model('service_model');
+
+        $data = $this->service_model->list_services($this->authuser);
+        $this->response($data);
     }
 
 
