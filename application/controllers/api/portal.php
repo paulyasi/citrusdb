@@ -77,19 +77,33 @@ class Portal extends REST_Controller
 
     /*
      * -------------------------------------------------------------------------
-     *  get the invoice history listing for this user
+     *  get the billing history listing for this user
      * -------------------------------------------------------------------------
      */
-    function invoices_get()
+    function billinghistory_get()
     {
-        
+        $this->load->model('billing_model');
+        $data = $this->billing_model->billinghistory($this->authuser);
+        $this->response($data);        
+    }
+
+    
+    /*
+     * -------------------------------------------------------------------------
+     *  get the payment history listing for this user
+     * -------------------------------------------------------------------------
+     */    
+    function paymenthistory_get()
+    {
+        $this->load->model('billing_model');
+        $data = $this->billing_model->paymenthistory($this->authuser);
+        $this->response($data);                
     }
 
     
     /*
      * TODO:
-     * view past invoices as text or pdf format
-     * view payment history
+     * view individual past invoices as text or pdf format
      * request new services or open tickets?
      */
     
