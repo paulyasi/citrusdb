@@ -6,17 +6,6 @@
  * This is the portal API that allows the customer self-service portal
  * communicate with the main citrusdb system
  *
- * DONE:
- * view customer profile 
- * view billing info (without encrypted card data)
- * update billing info, update all billing records with same address, email, and card info if done via portal
- * view services list and attributes
- * 
- * TODO:
- * view invoice history
- * view past invoices as text or pdf format
- * view payment history
- * request new services or open tickets?
  */
 
 // This can be removed if you use __autoload() in config.php OR use Modular Extensions
@@ -102,26 +91,46 @@ class Portal extends REST_Controller
 
     
     /*
-     * TODO:
-     * view individual past invoices as text or pdf format
-     * request new services or open tickets?
-     */
+     * -------------------------------------------------------------------------
+     * view individual invoices in pdf format
+     * -------------------------------------------------------------------------
+     */    
+	function printinvoice()
+	{
+		$this->load->model('service_model');
+		$this->load->model('billing_model');
+
+		$invoiceid = $this->post('invoiceid');
+
+        // TODO: make sure this invoiceid belongs to $this->authuser
+        // make a billing model method called portal_outputinvoice
+        // only return the invoice if the invoiceid is associated with the accountnumber that is supplied
+
+		//require('./include/fpdf.php');
+		$this->load->library('fpdf');    
+
+		$pdf = new FPDF();
+
+		// print the invoice
+		$pdf = $this->billing_model->outputinvoice($invoiceid, "pdf", $pdf);
+
+		$pdf->Output();
+
+		echo "printing pdf";
+	}
+
     
-	
+    /*
+     * TODO:
+     * request new services or open tickets?
+     */    
+
+    
 	/* 
 	 * ------------------------------------------------------------------------
 	 *  update all billing profiles with the same information, do not allow
 	 *  updates of the billing type or due dates etc, just billing address, 
 	 *  email address and card information
-	 *
-	 *  TODO: add an edit all billing records function to billing model that can 
-	 *  be used by csr and customer portal to update billing address and card 
-	 *  number on all billing records regardless of type, but cannot change 
-	 *  billing type, due dates, etc.
-	 *
-	 *  USE billing_model->save_record with array of only fields I want it to change
-	 *  do the save_record on each billing id they have, not just default
-	 *  so that all their bill information is up-to-date with new address and card
 	 * ------------------------------------------------------------------------
 	 */
 	function billing_post()
