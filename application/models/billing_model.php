@@ -3974,7 +3974,7 @@ class Billing_Model extends CI_Model
 			"LEFT JOIN customer c on c.account_number = b.account_number ".
 			"LEFT JOIN payment_history ph ON ph.billing_id = b.id ".
 			"WHERE b.automatic_receipt = 'y' AND ph.creation_date = CURRENT_DATE ".
-			"AND ph.billing_amount > 0";
+			"AND ph.billing_amount > 0 AND ph.status = 'authorized'";
 
 		$result = $this->db->query($query) or die ("queryfailed");
 
