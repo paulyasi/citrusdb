@@ -156,7 +156,7 @@ class Support extends App_Controller {
 		$status = $this->input->post('status');
 		$savechanges = $this->input->post('savechanges');
 		$reminderdate = $this->input->post('reminderdate');
-		$serviceid = $this->input->post('serviceid');
+		$user_services_id = $this->input->post('serviceid');
 		$oldstatus = $this->input->post('oldstatus');
 		$description = $this->input->post('description');
 		$addnote = $this->input->post('addnote');

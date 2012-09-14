@@ -370,7 +370,7 @@ class Support_Model extends CI_Model
 		// check if user_services_id is not empty and not zero before input it
 		if (($user_services_id <> '') AND ($user_services_id <> 0)) 
 		{
-			$data['user_services_id'] = $serviceid;
+			$data['user_services_id'] = $user_services_id;
 		}
 
 		// check if reminder date exists, if so, make that the creation date
