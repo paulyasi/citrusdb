@@ -3,20 +3,20 @@
 <td>
 <table cellpadding=5 cellspacing=0 border=0>
 <td bgcolor="#eeeedd" width=100 align=center><b class="smalltabs">
-<a href="<?=$this->url_prefix?>/index.php/customer/history/<?=$account_number?>" 
-target="historyframe"><? echo lang('notes');?></a></b></a></td>
+<a href="<?php echo $this->url_prefix; ?>/index.php/customer/history/<?php echo $account_number; ?>" 
+target="historyframe"><?php echo lang('notes');?></a></b></a></td>
 <td>&nbsp;</td>
 <td bgcolor="#ddeeee" width=100 align=center><b class="smalltabs">
-<a href="<?=$this->url_prefix?>/index.php/billing/billinghistory/" 
-target="historyframe"><? echo lang('billing')?></a></b></td>
+<a href="<?php echo $this->url_prefix; ?>/index.php/billing/billinghistory/" 
+target="historyframe"><?php echo lang('billing')?></a></b></td>
 <td>&nbsp;</td>
 <td bgcolor="#eedddd" width=100 align=center><b class="smalltabs">
-<a href="<?=$this->url_prefix?>/index.php/billing/paymenthistory/" 
-target="historyframe"><? echo lang('payments');?></a></b></td>
+<a href="<?php echo $this->url_prefix; ?>/index.php/billing/paymenthistory/" 
+target="historyframe"><?php echo lang('payments');?></a></b></td>
 <td>&nbsp;</td>
 <td bgcolor="#dddddd" width=100 align=center><b class="smalltabs">
-<a href="<?=$this->url_prefix?>/index.php/billing/detailhistory/" 
-target="historyframe"><? echo lang('billing') . " " . lang('details');?></a></b></td>
+<a href="<?php echo $this->url_prefix; ?>/index.php/billing/detailhistory/" 
+target="historyframe"><?php echo lang('billing') . " " . lang('details');?></a></b></td>
 </table>
 </td><tr>
 <td width="720" height="160" bgcolor="#eeeedd" valign=top>
