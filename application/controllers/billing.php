@@ -658,15 +658,18 @@ class Billing extends App_Controller
 		// returns cancel_date and turnoff_date
 		$myresult = $this->billing_model->notice_dates($billing_id);
 
-        if ($myresult['cancel_date']) {            
-            $data['cancel_date'] = $myresult['cancel_date'];
-            $data['human_cancel_date'] = humandate($data['cancel_date']);
-        } else {
-            $data['cancel_date'] = "";
-            $data['human_cancel_date'] = "";
-        }            
-        
-        $this->load->view('billing/cancelnotice_view', $data);
+		if ($myresult['cancel_date'])
+		{
+		    $data['cancel_date'] = $myresult['cancel_date'];
+		    $data['human_cancel_date'] = humandate($data['cancel_date']);
+		}
+		else
+		{
+		    $data['cancel_date'] = "";
+		    $data['human_cancel_date'] = "";
+		}            
+		
+		$this->load->view('billing/cancelnotice_view', $data);
 
 		// the history listing tabs
 		$this->load->view('historyframe_tabs_view');			
