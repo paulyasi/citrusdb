@@ -198,7 +198,7 @@ class Support_Model extends CI_Model
 
 		$ticketnumber = $this->db->insert_id();
 
-		$url = "$this->url_prefix/index.php/support/editticket/$ticketnumber";
+		$url = $this->config->item('base_url')."/index.php/support/editticket/$ticketnumber";
 		$message = "$notify: $description $url";
 
 		// if the notify is a group or a user, if a group, then get all the 
