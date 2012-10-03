@@ -102,17 +102,18 @@ class Portal extends REST_Controller
 
 		$invoiceid = $this->post('invoiceid');
 
-        // TODO: make sure this invoiceid belongs to $this->authuser
-        // make a billing model method called portal_outputinvoice
-        // only return the invoice if the invoiceid is associated with the accountnumber that is supplied
-
 		//require('./include/fpdf.php');
 		$this->load->library('fpdf');    
 
 		$pdf = new FPDF();
 
 		// print the invoice
-		$pdf = $this->billing_model->outputinvoice($invoiceid, "pdf", $pdf);
+        // TODO: make sure this invoiceid belongs to $this->authuser
+        // make a billing model method called portal_outputinvoice
+        // only return the invoice if the invoiceid is associated with the 
+        // accountnumber that is supplied
+		$pdf = $this->billing_model->portal_outputinvoice($this->authuser, 
+                $invoiceid, "pdf", $pdf);
 
 		$pdf->Output();
 
@@ -134,7 +135,7 @@ class Portal extends REST_Controller
 	 * ------------------------------------------------------------------------
 	 */
 	function billing_post()
-	{				
+    {
 		// check if there is a non-masked credit card number in the input
 		// if the second cararcter is a * then it's already masked
 		$newcc = FALSE; // set to false so we don't replace it unnecessarily		
