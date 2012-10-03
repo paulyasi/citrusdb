@@ -89,37 +89,49 @@ class Portal extends REST_Controller
         $this->response($data);                
     }
 
-    
+
     /*
      * -------------------------------------------------------------------------
-     * view individual invoices in pdf format
+     * get individual invoices data for the portal to make into txt or pdf 
+     * to show to user
      * -------------------------------------------------------------------------
      */    
-	function printinvoice()
+	function invoicedata_post()
 	{
 		$this->load->model('service_model');
 		$this->load->model('billing_model');
 
-		$invoiceid = $this->post('invoiceid');
+		$invoiceid = $this->post('id');
 
-		//require('./include/fpdf.php');
-		$this->load->library('fpdf');    
-
-		$pdf = new FPDF();
-
-		// print the invoice
-        // TODO: make sure this invoiceid belongs to $this->authuser
-        // make a billing model method called portal_outputinvoice
-        // only return the invoice if the invoiceid is associated with the 
-        // accountnumber that is supplied
-		$pdf = $this->billing_model->portal_outputinvoice($this->authuser, 
-                $invoiceid, "pdf", $pdf);
-
-		$pdf->Output();
-
-		echo "printing pdf";
+		// get the invoice data to print on the bill
+		$data = $this->billing_model->portal_get_invoice_data(
+                $invoiceid, 
+                $this->authuser);
+		
+        $this->response($data);                
 	}
 
+
+    /*
+     * -------------------------------------------------------------------------
+     * get individual invoices item detail for the portal to make into txt or 
+     * pdf to show to user
+     * -------------------------------------------------------------------------
+     */    
+	function invoicedetail_post()
+	{
+		$this->load->model('service_model');
+		$this->load->model('billing_model');
+
+		$invoiceid = $this->post('id');
+
+        // get the invoice details to print on the bill
+		$data = $this->billing_model->portal_get_invoice_detail(
+                $invoiceid, 
+                $this->authuser);
+        
+        $this->response($data);                
+	}
     
     /*
      * TODO:
