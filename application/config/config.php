@@ -24,9 +24,9 @@ $config['ssl_base_url'] = 'http://localhost/citrusdb';
 |-------------------------------------------------------------------------
 */
 
-$config['gpg_command'] = "C:\PROGRA~2\GNU\GnuPG\gpg --armor --batch -e -r citrusdb";
-$config['gpg_decrypt'] = "C:\PROGRA~2\GNU\GnuPG\gpg -v --passphrase-fd 0 --yes --no-tty --skip-verify --decrypt";
-$config['gpg_sign'] = "C:\PROGRA~2\GNU\GnuPG\gpg --passphrase-fd 0 --yes --no-tty --clearsign -u citrusdb";
+$config['gpg_command'] = "/usr/bin/gpg --armor --batch -e -r citrusdb";
+$config['gpg_decrypt'] = "/usr/bin/gpg -v --passphrase-fd 0 --yes --no-tty --skip-verify --decrypt";
+$config['gpg_sign'] = "/usr/bin/gpg --passphrase-fd 0 --yes --no-tty --clearsign -u citrusdb";
 
 // ldap server settings (optional for authentication)
 $config['ldap_enable'] = FALSE;
