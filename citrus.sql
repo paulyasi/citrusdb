@@ -432,7 +432,7 @@ CREATE TABLE IF NOT EXISTS `general` (
   `email_billing` varchar(128) DEFAULT NULL,
   `phone_custsvc` varchar(32) DEFAULT NULL,
   `email_custsvc` varchar(128) DEFAULT NULL,
-  `ccexportvarorder` varchar(255) NOT NULL DEFAULT '$mybilling_id,$invoice_number,$billing_ccnum,$billing_ccexp,$abstotal,$billing_zip,$billing_street',
+  `ccexportvarorder` text NOT NULL DEFAULT '$mybilling_id,$invoice_number,$billing_ccnum,$billing_ccexp,$abstotal,$billing_zip,$billing_street',
   `regular_pastdue` int(11) NOT NULL DEFAULT '0',
   `regular_turnoff` int(11) NOT NULL DEFAULT '0',
   `regular_canceled` int(11) NOT NULL DEFAULT '0',
