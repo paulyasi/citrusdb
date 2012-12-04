@@ -23,6 +23,7 @@ body {
 	background-color: #fff;
 	margin-top: 0px;
 }
+
 td {font-family: Arial; font-size: 12px;}
 b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 .faded {color: #999; }
@@ -64,8 +65,9 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 	position: absolute;
 	left: 200px;
 	top: 0px;
-	height: 50px;
+	height: 30px;
 	border: 0px solid black;	
+	border-bottom: 1px solid #DDD;
 	padding: 0px;
 	z-index: 0;
 }
