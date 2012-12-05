@@ -93,7 +93,17 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 .buttonbaritem {
 	float: left;
+	padding-top: 3px;
 	width: 16%;
+	text-align: center;
+	margin: auto;
+}
+
+.buttonbaritem a {
+	color: white;
+	text-decoration: none;
+	font-weight: bold;
+	font-family: sans-serif;
 }
 
 .icon a {
