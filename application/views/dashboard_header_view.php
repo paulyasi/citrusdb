@@ -1,7 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 // show header first
-$this->load->view('header_with_sidebar_view');
+$this->load->view('header_view');
+$this->load->view('buttonbar_view');
 
 // show recently viewed customers using a query to the log
 $this->load->model('log_model');
@@ -21,8 +22,8 @@ method: 'get',
 frequency: 300,
 });
 </script></form>
-
+</div>
+<div id="content">
 <?php
 
-$this->load->view('buttonbar_view');
 

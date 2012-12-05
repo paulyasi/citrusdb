@@ -11,18 +11,20 @@ A:hover
         text-decoration: none; color: red;
         font-style: normal;
 }
+
 html, body {
-	height: 100%;
+	// height: 100%;
 }
 
 body {
 	font-family: Arial; 
 	font-size: 12px;
-	background-image: url('images/sidebar.gif');
 	background-repeat: repeat-y;
 	background-color: #fff;
 	margin-top: 0px;
 }
+
+
 
 td {font-family: Arial; font-size: 12px;}
 b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
@@ -47,24 +49,12 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 	color: red;
 }
 
-#sidebar {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	width: 200px;
-	padding: 0px;
-	padding-left: 0px;
-	padding-top: 0px;
-	padding-bottom: 10px;
-	border-right: 0px solid #aaa;
-	z-index: 0;
-	margin-top: 0px;
+#wrapper {
+	height: 100%;
 }
 
 #header {
-	position: absolute;
-	left: 200px;
-	top: 0px;
+	position: relative;
 	height: 30px;
 	border: 0px solid black;	
 	border-bottom: 1px solid #DDD;
@@ -72,12 +62,26 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 	z-index: 0;
 }
 
+#sidebar {
+	position: relative;
+	float: left;
+	width: 200px;
+	height: 100%;
+	padding: 0px;
+	padding-left: 0px;
+	padding-top: 0px;
+	padding-bottom: 10px;
+	background-color: #eee;
+	border-right: 1px solid #aaa;
+	z-index: 0;
+	margin-top: 0px;
+}
+
 #content {
-	position: absolute;
-	left: 200px;
-	top: 52px;
-	height: 100px;
-	padding: 10px;
+	position: relative;
+	float: left;
+	padding: 5px;
+	margin-left: 10px;
 	z-index: 0;
 }
 
@@ -87,10 +91,15 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
         padding: 10px;
 }
 
+.buttonbaritem {
+	float: left;
+	width: 16%;
+}
+
 .icon a {
 	float: left;
 	padding: 5px;
-        text-align: center;
+    text-align: center;
 	width: 80px;
 	height: 80px;
 	font-size: 8pt;
