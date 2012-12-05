@@ -25,6 +25,7 @@ method: 'get',
 frequency: 300,
 });
 </script></form>
-
+</div>
+<div id="content">
 <?php
 

@@ -1,6 +1,6 @@
 <div id="header" style="background-color: #000; width: 100%;">
 	<div class="buttonbaritem" style="padding-top: 3px; color: white; font-family: DejaVu Sans, Droid Sans, sans-serif; font-size: large;">
-		<img height=20 src="images/citrus_wedge.png">citrusdb
+		<img height=20 src="<?php echo $this->url_prefix;?>/images/citrus_wedge.png">citrusdb
 	</div>
 	<div class="buttonbaritem">
 		<a href="<?php echo $this->url_prefix;?>/index.php/customer/newcustomer">

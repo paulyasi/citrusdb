@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+$this->load->view('buttonbar_view');
+
 // show recently viewed customers using a query to the log
 $this->load->model('log_model');
 $data['recent'] = $this->log_model->recently_viewed(
@@ -18,8 +20,8 @@ method: 'get',
 frequency: 300,
 });
 </script></form>
-
+</div>
+<div id="content">
 <?php
 
-$this->load->view('buttonbar_view');
 

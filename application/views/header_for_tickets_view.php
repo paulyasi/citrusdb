@@ -73,6 +73,4 @@ function cardval(s)
 </script>
 </head>
 <body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0>
-<div id="sidebar">
-<p align=center>
-<img src="<?php echo $this->url_prefix;?>/images/my-logo.png"></p>
+<div id="wrap">
