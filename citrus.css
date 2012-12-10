@@ -55,11 +55,13 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 #header {
 	position: relative;
-	height: 30px;
-	border: 0px solid black;	
-	border-bottom: 1px solid #DDD;
+	height: 72px;
+	border: 0px solid #000;	
+	border-bottom: 0px solid #ddd;
 	padding: 0px;
 	z-index: 0;
+	background-color: #fff;
+
 }
 
 #sidebar {
@@ -70,11 +72,11 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 	padding: 0px;
 	padding-left: 0px;
 	padding-top: 0px;
-	padding-bottom: 10px;
-	background-color: #eee;
-	border-right: 1px solid #aaa;
+	padding-bottom: s0px;
+	border-right: 1px solid #eee;
 	z-index: 0;
 	margin-top: 0px;
+	background-color: #eee;
 }
 
 #content {
@@ -93,14 +95,14 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 .buttonbaritem {
 	float: left;
-	padding-top: 3px;
+	padding-top: 0px;
 	width: 16%;
-	text-align: center;
+	text-align: left;
 	margin: auto;
 }
 
 .buttonbaritem a {
-	color: white;
+	color: black;
 	text-decoration: none;
 	font-weight: bold;
 	font-family: sans-serif;
@@ -141,14 +143,16 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 #tabnav a {
 		display: block;
-		background: #ddd;
+		background: #fff;
 		font-size: 12px;
 		font-weight: bold;
 		padding: 8px 20px 8px 10px;
+		/*
 		border-left: 0px solid #ccc;
 		border-right: 1px solid #aaa;
 		border-top: 1px solid #ccc;
 		border-bottom: 2px solid #ccc;
+		*/
 		color: #555;
 		margin-top: 1px;
 		margin-left: 0px;
@@ -163,11 +167,13 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 #tabnav a.active
 	{
-		background: #fff;
+		background: #ddd;
+		/*
 		border-left: 0px solid #aaa;
 		border-right: 1px solid #fff;
 		border-top: 1px solid #aaa;
 		border-bottom: 2px solid #aaa;
+		*/
 		color: #000;
 		margin-left: 0px;
 		z-index: 2;
@@ -175,7 +181,7 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 #tabnav a:hover
 	{
-		background-color: #eff;
+		background-color: #eee;
 		color: red;
 	}
 	
