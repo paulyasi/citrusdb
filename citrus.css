@@ -73,7 +73,7 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 	padding-left: 0px;
 	padding-top: 0px;
 	padding-bottom: s0px;
-	border-right: 1px solid #eee;
+	border-right: 0px solid #eee;
 	z-index: 0;
 	margin-top: 0px;
 	background-color: #eee;
@@ -143,7 +143,7 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 #tabnav a {
 		display: block;
-		background: #fff;
+		background: #eee;
 		font-size: 12px;
 		font-weight: bold;
 		padding: 8px 20px 8px 10px;
@@ -167,7 +167,7 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 #tabnav a.active
 	{
-		background: #ddd;
+		background: #fff;
 		/*
 		border-left: 0px solid #aaa;
 		border-right: 1px solid #fff;
@@ -181,8 +181,8 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 #tabnav a:hover
 	{
-		background-color: #eee;
-		color: red;
+		background-color: #dde;
+		color: black;
 	}
 	
 #tabnav a:hover.active
