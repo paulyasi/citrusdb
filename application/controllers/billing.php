@@ -814,7 +814,7 @@ class Billing extends App_Controller
 	public function invmaint($billing_id, $showall = NULL)
 	{
 		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
+		//$this->load->view('header_no_sidebar_view');
 
 		// load the reset addr view prompt
 		$data['invoicelist'] = 

@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * Portal API Controller
+ * Customer Portal API Controller
  *
  * This is the portal API that allows the customer self-service portal
  * communicate with the main citrusdb system
