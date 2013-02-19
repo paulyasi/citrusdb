@@ -21,7 +21,22 @@ class Command extends CI_Controller
 		// setup some variables from the App_Controller
 		$this->url_prefix = $this->config->item('base_url');
 		$this->ssl_url_prefix = $this->config->item('ssl_base_url');
-	}
+    }
+
+
+    /*
+     * -----------------------------------------------------------------------
+     * php index.php command setup
+     * run this to setup a new database automatically
+     * it will use the setup model to make a new database as specified in your
+     * config information
+     * -----------------------------------------------------------------------
+     */
+    public function setup()
+    {
+        $this->load->model('setup_model');
+        $this->setup_model->setup_database();
+    }
 
 
 	/*
