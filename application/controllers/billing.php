@@ -1080,9 +1080,6 @@ class Billing extends App_Controller
 	 */
 	function billinghistory($all = NULL)
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		if($all)
 		{
 			$data['history'] = $this->billing_model->allbillinghistory($this->account_number);
@@ -1104,9 +1101,6 @@ class Billing extends App_Controller
 	 */
 	function paymenthistory($all = NULL)
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		if($all)
 		{
 			$data['history'] = $this->billing_model->allpaymenthistory($this->account_number);
@@ -1130,9 +1124,6 @@ class Billing extends App_Controller
 	 */
 	function detailhistory($all = NULL)
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		if($all)
 		{
 			$data['history'] = $this->billing_model->alldetailhistory($this->account_number);

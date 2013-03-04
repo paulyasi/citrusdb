@@ -51,6 +51,7 @@ class Setup_model extends CI_Model
         $this->sqldump();
 
         // success! show some helpful information
+        echo "Setup Database: $this->database_name\n";
 
     }
 
