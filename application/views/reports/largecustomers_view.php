@@ -27,7 +27,6 @@ $yearago  = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d"), date("Y")-1));
 <?php
 foreach ($largecustomers AS $myresult) 
 {
-    $billing_id = $myresult['billing_id'];
     $name = $myresult['name'];
     $company = $myresult['company'];
     $street = $myresult['street'];
