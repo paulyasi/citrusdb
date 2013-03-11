@@ -108,6 +108,7 @@ class Reports extends App_Controller
 		// and another array to count how many of customers have that type of charge
 		$price_array = array();
 		$count_array = array();
+		$category_array = array();
 
 		$i = 0; // count the billing services
 		foreach($services_by_org AS $myresult)
@@ -168,7 +169,14 @@ class Reports extends App_Controller
 				if ($frequency > 1) 
 				{
 					$total_billed = $total_billed/$frequency;
-				}
+                }
+
+                // add the monthly total to the category array
+                if (isset($category_array[$category])) {
+                    $category_array[$category] = $category_array[$category] + $total_billed;
+                } else {
+                    $category_array[$category] = $total_billed;
+                }
 
 				if ($style == 'view')
 				{
@@ -301,7 +309,10 @@ class Reports extends App_Controller
 				$description = $mytaxresult['description'];
 				$service_description = $mytaxresult['service_description'];
 				$rate = $mytaxresult['rate'];
-				$category = $mytaxresult['category'];
+                $category = $mytaxresult['category'];
+
+                // add total taxed to category array
+                $category_array[$category] = $category_array[$category] + $total_taxed;
 
 				if ($style == 'view')
 				{
@@ -364,7 +375,8 @@ class Reports extends App_Controller
 		{
 			$count = $myresult['TotalNumber'];
 			$category = $myresult['m_category'];
-			$dataview['service_categories'] .= "$category: $count<br>\n";	
+	        $category_total = sprintf("%.2f", $category_array[$category]);
+			$dataview['service_categories'] .= "$category: $count \$$category_total<br>\n";	
 		}
 		echo "</blockquote>";
 

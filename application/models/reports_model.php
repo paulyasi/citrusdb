@@ -145,8 +145,8 @@ class Reports_Model extends CI_Model
             "LEFT JOIN billing b ON b.id = u.billing_id ".
             "LEFT JOIN billing_types bt ON b.billing_type = bt.id ".
             "LEFT JOIN general g ON m.organization_id = g.id ".
-            "WHERE u.removed <> 'y' AND b.organization_id = ? ".
-            "AND m.frequency > '0' GROUP BY m.category ORDER BY TotalNumber";
+            "WHERE u.removed <> 'y' AND bt.method <> 'free' AND b.organization_id = ? ".
+            "AND m.frequency > '0' GROUP BY m.category ORDER BY TotalNumber DESC";
         $result = $this->db->query($query, array($organization_id))
             or die ("services_in_categories query failed");
 
