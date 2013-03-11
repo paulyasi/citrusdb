@@ -63,5 +63,11 @@
 <?php echo lang('servicechurn')?></a>
 </div>
 
+<div class=icon>
+<a href=# onclick="popupPage('<?php echo $this->url_prefix?>/index.php/reports/largecustomers'); return false;">
+<img border=0 src="<?php echo $this->url_prefix?>/images/icons/citrus_report.png"><br>
+<?php echo lang('largecustomers')?></a>
+</div>
+
 </div>
 

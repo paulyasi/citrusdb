@@ -279,6 +279,7 @@ $lang['invoicenum'] = "Invoice Num";
 $lang['invoicenumber'] = "Invoice Number";
 $lang['invoiceornotice'] = "Invoice or Notice";
 $lang['itshouldbesetto'] = "it should be set to";
+$lang['largecustomers'] = "Large Customers";
 $lang['last'] = "Last";
 $lang['latefee'] = "Late Fee";
 $lang['leftover'] = "Left over";

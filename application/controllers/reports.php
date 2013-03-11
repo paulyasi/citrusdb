@@ -1001,9 +1001,15 @@ class Reports extends App_Controller
 		$this->load->view('reports/servicechurn_view', $data);
     }
 
-    function large_customers()
+    function largecustomers()
     {
+		// Variables
+		$data['day1'] = $this->input->post('day1');
+		$data['day2'] = $this->input->post('day2');
 
+		$data['largecustomers'] = $this->reports_model->largecustomers($data['day1'], $data['day2']);
+
+		$this->load->view('reports/largecustomers_view', $data);
     }
 
 }
