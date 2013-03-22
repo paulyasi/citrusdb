@@ -16,11 +16,8 @@ body {
     font-family: Arial; 
     font-size: 12px;
     background-repeat: repeat-y;
-    background-color: #fff;
     margin-top: 0px;
 }
-
-
 
 td {font-family: Arial; font-size: 12px;}
 b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
@@ -55,9 +52,9 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
     position: relative;
     border: 0px solid #000;	
     border-bottom: 0px solid #ddd;
-    padding: 0px;
+    padding-top: 3px;
+    padding-left: 3px;
     z-index: 0;
-    background-color: #eee;
 }
 
 #sidebar {
@@ -67,19 +64,18 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
     padding: 0px;
     padding-left: 0px;
     padding-top: 0px;
-    padding-bottom: s0px;
-    border-right: 0px solid #eee;
+    padding-bottom: 0px;
     z-index: 0;
     margin-top: 0px;
-    background-color: #eee;
 }
 
 #content {
     position: relative;
     float: left;
-    padding: 5px;
-    margin-left: 10px;
+    padding: 10px;
+    margin-left: 0px;
     z-index: 0;
+    background: #fff;
 }
 
 #toolcontent {
@@ -90,20 +86,20 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 .buttonbaritem {
     float: left;
-    padding-top: 0px;
-    padding-left: 5px;
-    width: 16%;
+    width: 16.6%;
     height: 50px;
-    text-align: left;
+    text-align: center;
     margin: auto;
 }
 
+/*
 .buttonbaritem a {
     color: black;
     text-decoration: none;
     font-weight: bold;
     font-family: sans-serif;
 }
+*/
 
 .icon a {
     float: left;
