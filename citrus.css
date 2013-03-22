@@ -15,7 +15,6 @@ A:hover
 body {
     font-family: Arial; 
     font-size: 12px;
-    background-repeat: repeat-y;
     margin-top: 0px;
 }
 
@@ -53,7 +52,6 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
     border: 0px solid #000;	
     border-bottom: 0px solid #ddd;
     padding-top: 3px;
-    padding-left: 3px;
     z-index: 0;
     background-color: #eee;
 }
@@ -92,7 +90,7 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
     width: 16.6%;
     height: 50px;
     text-align: center;
-    margin: auto;
+    margin: 0;
     background-color: #eee;
 }
 
