@@ -73,7 +73,8 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
     position: relative;
     float: left;
     width: 80%;
-    padding: 10px;
+    padding-left: 10px;
+    padding-top: 10px;
     margin-left: 0px;
     z-index: 0;
     background: #fff;
