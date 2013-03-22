@@ -386,9 +386,6 @@ class Reports extends App_Controller
 
 		if ($style == 'view')
 		{
-			// load the header without the sidebar to get the stylesheet in there
-			//$this->load->view('header_no_sidebar_view');
-
 			$dataview['orglist'] = $this->general_model->list_organizations();
 			$this->load->view('reports/summary_view', $dataview);
 		}
@@ -441,9 +438,6 @@ class Reports extends App_Controller
 		$data['taxrevenue'] = $this->reports_model->taxrevenue($day1, $day2);
 		$data['taxrefunds'] = $this->reports_model->taxrefunds($day1, $day2);
 
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('reports/revenue_view', $data);
 	}
 
@@ -479,9 +473,6 @@ class Reports extends App_Controller
 		$data['orglist'] = $this->general_model->list_organizations();
 		$data['organization_name'] = $this->general_model->get_org_name($organization_id);
 		$data['refunds'] = $this->reports_model->refunds($organization_id, $day1, $day2);
-
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('reports/refunds_view', $data);
 	}
@@ -546,9 +537,6 @@ class Reports extends App_Controller
 		$data['recentpayments'] = $this->reports_model->recentpayments($organization_id, $viewstatus);
 		$data['orglist'] = $this->general_model->list_organizations();
 
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('reports/pastdue_view', $data);
 	}
 
@@ -609,9 +597,6 @@ class Reports extends App_Controller
 		$data['noncardpayments'] = $this->reports_model->noncardpayments($day1, $day2, $organization_id);
 		$data['orglist'] = $this->general_model->list_organizations();
 
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('reports/paymentstatus_view', $data);
 	}
 
@@ -636,9 +621,6 @@ class Reports extends App_Controller
 		$this->load->model('settings_model');
 		$this->load->model('general_model');
 		$data['listservices'] = $this->reports_model->listservices();
-
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('reports/services_view', $data);
 	}
@@ -873,9 +855,6 @@ class Reports extends App_Controller
 
 		$data['description'] = $this->service_model->get_service_name($service_id);
 
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('reports/showservices_view', $data);
 	}
 
@@ -893,9 +872,6 @@ class Reports extends App_Controller
 
 		$this->load->model('service_model');
 		$data['servicecategories'] = $this->service_model->distinct_service_categories();
-
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('reports/sources_view', $data);
 	}
@@ -919,9 +895,6 @@ class Reports extends App_Controller
 
 		$data['servicesources'] = $this->reports_model->servicesources($day1, $day2, $category);
 
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('reports/showsources_view', $data);
 	}
 
@@ -936,9 +909,6 @@ class Reports extends App_Controller
 			echo lang('youmusthaveadmin')."<br>";
 			exit; 
 		}
-
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('reports/exempt_view');
 	}
@@ -956,9 +926,6 @@ class Reports extends App_Controller
 		}
 
 		$data['exempttype'] = $this->input->post('exempttype');
-
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
 
 		// load the view for the specific exempt type
 		switch ($data['exempttype']) 
@@ -985,9 +952,6 @@ class Reports extends App_Controller
 		// load the settings model 
 		$this->load->model('settings_model');
 
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
-
 		// get the path where to store the cc data
 		$data['path_to_ccfile'] = $this->settings_model->get_path_to_ccfile();
 
@@ -1006,9 +970,6 @@ class Reports extends App_Controller
 		$data['category'] = $this->input->post('category');
 
 		$data['servicechurn'] = $this->reports_model->servicechurn($data['month'], $data['year']);
-
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('reports/servicechurn_view', $data);
     }

@@ -68,9 +68,6 @@ class Billing extends App_Controller
 
 	function payment($invoice_number = NULL, $amount = NULL)
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		// Read the list of payment modes to give the operator for paying the bill
 		$payment_modes = $this->billing_model->get_payment_modes();
 		$payment_options = "";
@@ -140,9 +137,6 @@ class Billing extends App_Controller
 		$data['invoice_number'] = $invoice_number;
 		$data['amount'] = 0;
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/billing/payment_view', $data);
 	}
 
@@ -154,9 +148,6 @@ class Billing extends App_Controller
 	 */
 	function importnew()
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/billing/importnew_view', array('error' => ''));
 	}
 
@@ -438,9 +429,6 @@ class Billing extends App_Controller
 		// load the general model so we can get a list of organizations
 		$this->load->model('general_model');
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data['orglist'] = $this->general_model->list_organizations();
 		$this->load->view('tools/billing/exportcc_view', $data);
 	}
@@ -605,9 +593,6 @@ class Billing extends App_Controller
 		// load the general model so we can get a list of organizations
 		$this->load->model('general_model');
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data['orglist'] = $this->general_model->list_organizations();
 		$this->load->view('tools/billing/fixexportcc_view', $data);
 	}
@@ -678,9 +663,6 @@ class Billing extends App_Controller
 	 */
 	function importcc()
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/billing/importcc_view', array('error' => ''));
 	}
 
@@ -846,9 +828,6 @@ class Billing extends App_Controller
 		// load the general model so we can get a list of organizations
 		$this->load->model('general_model');
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data['orglist'] = $this->general_model->list_organizations();
 		$this->load->view('tools/billing/invoice_view', $data);
 	}
@@ -980,9 +959,6 @@ class Billing extends App_Controller
 		// load the general model so we can get a list of organizations
 		$this->load->model('general_model');
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data['orglist'] = $this->general_model->list_organizations();
 		$this->load->view('tools/billing/einvoice_view', $data);
 	}
@@ -1104,9 +1080,6 @@ class Billing extends App_Controller
 		// load the general model so we can get a list of organizations
 		$this->load->model('general_model');
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data['orglist'] = $this->general_model->list_organizations();
 		$this->load->view('tools/billing/refundcc_view', $data);
 	}
@@ -1153,9 +1126,6 @@ class Billing extends App_Controller
 	 */
 	function pendingrefund()
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data['pendingrefund'] = $this->billing_model->pendingrefunds();
 		$this->load->view('tools/billing/pendingrefund_view', $data);
 

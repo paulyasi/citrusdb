@@ -813,9 +813,6 @@ class Billing extends App_Controller
 	 */
 	public function invmaint($billing_id, $showall = NULL)
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		//$this->load->view('header_no_sidebar_view');
-
 		// load the reset addr view prompt
 		$data['invoicelist'] = 
 			$this->billing_model->list_invoices($billing_id, $showall);	
@@ -849,9 +846,6 @@ class Billing extends App_Controller
 	 */
 	function removeinvoice($invoicenum) 
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		// get the invoicenum input
 		$data['invoicenum'] = $invoicenum;
 
@@ -866,9 +860,6 @@ class Billing extends App_Controller
 	 */
 	function editinvoiceduedate($billingid, $invoicenum, $duedate) 
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		// get the invoicenum input, and billing id
 		$data['billingid'] = $billingid;
 		$data['invoicenum'] = $invoicenum;
@@ -921,9 +912,6 @@ class Billing extends App_Controller
 	 */
 	function refund($billing_id)
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data['details'] = 
 			$this->billing_model->billing_details($billing_id);	
 		$data['billingid'] = $billing_id;
@@ -1012,9 +1000,6 @@ class Billing extends App_Controller
 
 	public function asciiarmor($billing_id)
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data = $this->billing_model->get_ascii_armor($billing_id);
 		$data['billing_id'] = $billing_id;
 
@@ -1139,9 +1124,6 @@ class Billing extends App_Controller
 
 	public function nsf($paymentid, $invoice_number, $amount, $billingid)
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data['paymentid'] = $paymentid;
 		$data['invoice_number'] = $invoice_number;
 		$data['amount'] = $amount;
@@ -1215,9 +1197,6 @@ class Billing extends App_Controller
 		// load the date helper for human format dates	
 		$this->load->helper('date');
 		$data['human_date'] = humandate($payment_date);
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('billing/receipt_view', $data);
 	}

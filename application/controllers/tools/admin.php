@@ -32,9 +32,6 @@ class Admin extends App_Controller
 		$data['org_list'] = $this->admin_model->org_list();
 		$data['org'] = $this->admin_model->get_organization($id);
 		
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/organization_view', $data);
 	}
 
@@ -101,9 +98,6 @@ class Admin extends App_Controller
 
 		$data['set'] = $this->admin_model->get_settings();
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/settings_view', $data);
 	}
 
@@ -155,9 +149,6 @@ class Admin extends App_Controller
 
 		$data['users'] = $this->admin_model->get_users();
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/users_view', $data);
 	}
 
@@ -172,9 +163,6 @@ class Admin extends App_Controller
 			echo lang('youmusthaveadmin')."<br>";
 			exit; 
 		}
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/newuser_view');
 	}
@@ -215,9 +203,6 @@ class Admin extends App_Controller
 		echo '<FONT COLOR="RED"><H2>'.$feedback['message'].'</H2></FONT>';
 		echo "<p>$new_user_name<p>$password1<p>$password2<p>$real_name";
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/newuser_view');
 	}
 
@@ -235,9 +220,6 @@ class Admin extends App_Controller
 
 		$data['userid'] = $userid;
 		$data['u'] = $this->user_model->get_user_info($userid);
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/edituser_view', $data);
 	}
@@ -276,9 +258,6 @@ class Admin extends App_Controller
 		}
 
 		$data['uid'] = $uid;
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/deleteuser_view', $data);
 	}
@@ -320,9 +299,6 @@ class Admin extends App_Controller
 		
 		$data['groups'] = $this->admin_model->get_groups();
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/groups_view', $data);
 	}
 
@@ -339,9 +315,6 @@ class Admin extends App_Controller
 		}
 		
 		$data['users'] = $this->user_model->list_users();
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/addgroup_view', $data);
 	}
@@ -382,9 +355,6 @@ class Admin extends App_Controller
 
 		$data['gid'] = $gid;
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/deletegroup_view', $data);
 	}
 
@@ -422,9 +392,6 @@ class Admin extends App_Controller
 
 		$data['modules'] = $this->module_model->modulelist();
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/modules_view', $data);
 	}
 
@@ -438,9 +405,6 @@ class Admin extends App_Controller
 			echo lang('youmusthaveadmin')."<br>";
 			exit; 
 		}
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/addmodule_view');
 	}
@@ -482,9 +446,6 @@ class Admin extends App_Controller
 		$data['module'] = $modulename;
 		$data['permissions'] = $this->module_model->get_module_permissions($modulename);
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/modulepermissions_view', $data);
 	}
 
@@ -504,9 +465,6 @@ class Admin extends App_Controller
 		$data['permissions'] = $this->module_model->get_module_permissions($modulename);
 		$data['groupslist'] = $this->user_model->list_groups();
 		$data['userslist'] = $this->user_model->list_users();
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/addmodulepermissions_view', $data);
 	}
@@ -548,9 +506,6 @@ class Admin extends App_Controller
 		$data['pid'] = $pid;
 		$data['module'] = $module;
 		
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/removemodulepermissions_view', $data);
 	}
 
@@ -592,9 +547,6 @@ class Admin extends App_Controller
 
 		$data['billingtypes'] = $this->admin_model->get_billing_types();
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/billingtypes_view', $data);
 	}
 
@@ -633,9 +585,6 @@ class Admin extends App_Controller
 
 		$data['typeid'] = $typeid;
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/removebillingtype_view', $data);
 	}
 
@@ -673,9 +622,6 @@ class Admin extends App_Controller
 
 		$data['masterservices'] = $this->admin_model->get_master_services();
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/services_view', $data);
 	}
 
@@ -694,9 +640,6 @@ class Admin extends App_Controller
 		}
 		
 		$data['org_list'] = $this->general_model->list_organizations();
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/addnewservice_view', $data);
 	}
@@ -754,9 +697,6 @@ class Admin extends App_Controller
 		$data['s'] = $this->admin_model->get_service_info($service_id);
 		$data['org_name'] = $this->general_model->get_org_name($data['s']['organization_id']);
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/editservice_view', $data);
 	}
 
@@ -811,9 +751,6 @@ class Admin extends App_Controller
 		$data['master_services'] = $this->admin_model->get_master_services();
 		$data['linkedservices'] = $this->admin_model->linked_services();
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/linkservices_view', $data);
 	}
 
@@ -867,9 +804,6 @@ class Admin extends App_Controller
 		$data['options_tables'] = $this->admin_model->options_tables();
 		$data['tableresult'] = $this->db->list_tables();
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/optionstables_view', $data);
 	}
 
@@ -903,9 +837,6 @@ class Admin extends App_Controller
 		}
 		
 		$data['tax_rates'] = $this->admin_model->get_tax_rates();
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/taxes_view', $data);
 	}
@@ -945,9 +876,6 @@ class Admin extends App_Controller
 
 		$data['id'] = $id;
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/deletetaxrate_view', $data);
 
 	}
@@ -982,9 +910,6 @@ class Admin extends App_Controller
 		$data['taxed_services'] = $this->admin_model->taxed_services();
 		$data['master_services'] = $this->admin_model->get_master_services();
 		$data['tax_rates'] = $this->admin_model->get_tax_rates();
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/taxedservices_view', $data);
 	}
@@ -1021,9 +946,6 @@ class Admin extends App_Controller
 
 		$data['id'] = $id;
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/deletetaxedservice_view', $data);
 	}
 
@@ -1059,9 +981,6 @@ class Admin extends App_Controller
 
 		$data['service_categories'] = $this->admin_model->get_service_categories();
 		$data['master_field_assets'] = $this->admin_model->get_field_assets();
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/fieldassets_view', $data);
 	}
@@ -1115,9 +1034,6 @@ class Admin extends App_Controller
 			exit; 
 		}
 
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/admin/mergeaccounts_view');
 	}
 
@@ -1137,9 +1053,6 @@ class Admin extends App_Controller
 		$data['to_account'] = $to_account;
 		$data['from_account'] = $from_account;
 		$data['m'] = $this->admin_model->get_merge_accounts($from_account, $to_account);
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$this->load->view('tools/admin/confirmmergeaccounts_view', $data);
 	}
@@ -1175,9 +1088,6 @@ class Admin extends App_Controller
 			echo lang('youmusthaveadmin')."<br>";
 			exit; 
 		}
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		$data['id'] = $id;
 		$this->load->view('tools/admin/changepass_view', $data);

@@ -14,9 +14,6 @@ class User extends App_Controller
 
 	function changepass()
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/user/changepass_view');
 	}
 
@@ -38,17 +35,11 @@ class User extends App_Controller
 
 	function version()
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$this->load->view('tools/user/version_view');
 	}
 
 	function notifications()
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$privileges = $this->user_model->user_privileges($this->user);
 
 		$this->load->view('tools/user/notifications_view', $privileges);
@@ -64,9 +55,6 @@ class User extends App_Controller
 
 		$this->user_model->update_usernotifications($email, $screenname, $email_notify, $screenname_notify);
 		print "<h3>".lang('changessaved')."</h3>";
-
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
 
 		// show the info you just changed for the user
 		$privileges = $this->user_model->user_privileges($this->user);
