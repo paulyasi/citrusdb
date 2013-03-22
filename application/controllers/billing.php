@@ -1166,9 +1166,6 @@ class Billing extends App_Controller
 
 	public function deletepayment($paymentid)
 	{
-		// load the header without the sidebar to get the stylesheet in there
-		$this->load->view('header_no_sidebar_view');
-
 		$data['paymentid'] = $paymentid;
 
 		$this->load->view('billing/deletepayment_view', $data);
