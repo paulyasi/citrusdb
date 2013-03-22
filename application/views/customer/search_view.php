@@ -18,11 +18,10 @@
 <fieldset>
 <legend><b><?php echo lang('customer'); ?></b></legend>
 
-<table width=500>   
+<table>   
 <td valign=top>
-<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/results/1/20" 
-METHOD="POST" name="namesearch">
-<?php echo lang('name') . "/"; echo lang('company'); ?></td><td>
+<form ACTION="<?php echo $this->url_prefix;?>/index.php/search/results/1/20" METHOD="POST" name="namesearch">
+<?php echo lang('name') . "/"; echo lang('company'); ?> &nbsp;
 <input type=text name=s1>
 <input type=hidden name=id value=2> <!-- the id of this search in the searches table -->
 <input type=submit name=submit value="<?php echo lang('search');?>" 
@@ -32,7 +31,7 @@ class=smallbutton onclick="nameformat();">
 </td><tr><td valign=top>
 <form ACTION="<?php echo $this->url_prefix;?>/index.php/search/results/1/20" 
 METHOD="POST" name="phonesearch">
-<?php echo lang('phonenumber');?> </td><td>
+<?php echo lang('phonenumber');?> &nbsp;
 <input type=text name=s1>
 <input type=hidden name=s2>   
 <input type=hidden name=id value=3> <!-- the id of this search in the searches table -->
@@ -44,9 +43,9 @@ class=smallbutton onclick="phoneformat();">
 </td><tr><td valign=top>
 <form ACTION="<?php echo $this->url_prefix;?>/index.php/search/results/1/20" 
 METHOD="POST">
-<?php echo lang('signupdaterange'); ?> </td>
-<td><input type=text name=s1 size=9> <?php echo lang('to'); ?> 
-<input type=text name=s2 size=9><input type=hidden name=id value=4>
+<?php echo lang('signupdaterange'); ?> &nbsp;
+<input type=text name=s1 size=5> <?php echo lang('to'); ?> 
+<input type=text name=s2 size=5><input type=hidden name=id value=4>
 <input type=submit name=submit value="<?php echo lang('search');?>" class=smallbutton>
 </form>
 
@@ -54,8 +53,8 @@ METHOD="POST">
 </td><tr><td valign=top>
 <form ACTION="<?php echo $this->url_prefix;?>/index.php/search/results/1/20" 
 METHOD="POST">
-<?php echo lang('street'); ?> </td>
-<td><input type=text name=s1 size=20><input type=hidden name=id value=12>
+<?php echo lang('street'); ?> 
+<input type=text name=s1 size=20><input type=hidden name=id value=12>
 <input type=submit name=submit value="<?php echo lang('search');?>" class=smallbutton>
 </form>
 
