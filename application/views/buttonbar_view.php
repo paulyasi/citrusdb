@@ -1,6 +1,6 @@
-<div id="header" style="width: 100%;">
-	<div class="buttonbaritem" style="color: white; font-family: DejaVu Sans, Droid Sans, sans-serif; font-size: x-large; background-color: #eee; width: 200px; height: 100%;">
-		<img src="<?php echo $this->url_prefix;?>/images/my-logo.png">
+<div id="header">
+	<div class="buttonbaritem">
+		<img class="full-image" src="<?php echo $this->url_prefix;?>/images/my-logo.png">
 	</div>
 	<div class="buttonbaritem">
 		<a href="<?php echo $this->url_prefix;?>/index.php/customer/newcustomer">
