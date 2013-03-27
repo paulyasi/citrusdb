@@ -1,6 +1,23 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 ?>
 <html>
+<head>
+<script language="JavaScript">
+	function h(oR) {
+		oR.style.backgroundColor='ffdd77';
+	}	
+	function deh(oR) {
+		oR.style.backgroundColor='ddddee';
+	}
+	function dehnew(oR) {
+		oR.style.backgroundColor='ddeeff';
+	}
+
+	function popupPage(page) {
+		window.open(page, "Tools", "height=400,width=600,location=0,scrollbars=1,menubar=1,toolbar=0,resizeable=1,left=100,top=100");
+	}
+</script>
+</head>
 <body bgcolor="#ffffff">
 <h3><?php echo lang('invoicemaintenance')?></h3>
 
@@ -75,4 +92,6 @@ if (!$showall)
 	<?php echo lang('showall');?></a>"; 
 }
 print "</td></table>";
-
+?>
+</body>
+</html>
