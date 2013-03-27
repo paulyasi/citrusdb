@@ -53,7 +53,7 @@ if ($optionstable <> '')
 				echo "<td bgcolor=\"ccccdd\"width=180><b>$fieldname</b></td>".
 					"<td bgcolor=\"#ddddee\">\n";
 				// print all the items listed in the enum
-				$this->schema_model->enum_select($fieldtype, $fieldname, NULL);
+				$this->schema_model->enum_select($fieldtype, $fieldname, $myvalues[$fieldname]);
 
 				echo "</td><tr>\n";
 			} 
