@@ -12,13 +12,12 @@
 	function dehnew(oR) {
 		oR.style.backgroundColor='ddeeff';
 	}
-
 	function popupPage(page) {
 		window.open(page, "Tools", "height=400,width=600,location=0,scrollbars=1,menubar=1,toolbar=0,resizeable=1,left=100,top=100");
 	}
 </script>
 </head>
-<body bgcolor="#ffffff">
+<body bgcolor="#ffffff">		
 <h3><?php echo lang('invoicemaintenance')?></h3>
 
 [ <a href="<?php echo $this->url_prefix?>/index.php/billing"><?php echo lang('back')?></a> ]
@@ -49,8 +48,9 @@ foreach ($invoicelist as $myresult)
 	$new_charges = sprintf("%.2f",$myresult['h_new_charges']);		
 	$total_due = sprintf("%.2f",$myresult['h_total_due']);
 	$billing_type = $myresult['h_billing_type'];
-	$normal_sum = sprintf("%.2f",$myresult['normal_paid_amount']);
-
+	$paid = sprintf("%.2f",$myresult['normal_paid_amount']);
+	$billed = sprintf("%.2f",$myresult['normal_billed_amount']);
+	$owed = sprintf("%.2f", $billed - $paid);
 
 	print "<tr bgcolor=\"#eeeeee\">
 		<td>$invoice_number</td>
@@ -71,10 +71,11 @@ foreach ($invoicelist as $myresult)
 
 		<td>[<a
 		href=\"$this->url_prefix/index.php/tools/billing/emailpreviousinvoice/$billingid/$invoice_number\">".lang('email')."</a>]</td>";
-	if ($normal_sum == 0) {
-		echo "<td>[<a href=\"$this->url_prefix/index.php/billing/removeinvoice/$invoice_number\">".lang('remove')."</a>]</td>";
+	if ($paid == 0) {
+		echo "<td>[<a href=\"$this->url_prefix/index.php/billing/removeinvoice/$invoice_number\">".lang('remove')."</a>]<br \>";
+		echo "$paid $owed ".lang('due')."</td>";
 	} else {
-		echo "<td>$normal_sum ".lang('paid')."</td>";
+		echo "<td>$paid $owed ".lang('due')."</td>";
 	}
 	// print payment link with prefilled in information if there are new charges to pay to this invoice
 	echo "<td>";

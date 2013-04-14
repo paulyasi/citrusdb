@@ -208,6 +208,7 @@ $lang['done'] = "done";
 $lang['donotreactivate'] = "Do Not Reactivate";
 $lang['download'] = "Download";
 $lang['download_pdf'] = "Download pdf";
+$lang['due'] = "Due";
 $lang['duedate'] = "Due Date";
 $lang['edit'] = "Edit";
 $lang['editbillingtypes'] = "Edit Billing Types";
