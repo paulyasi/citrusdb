@@ -45,7 +45,7 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
     height: 100%;
 }
 
-.full-image { max-width: 100%; height: auto; }
+.full-image { max-width: 100%; height: 24px; }
 
 #header {
     position: relative;
@@ -89,21 +89,29 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 .buttonbaritem {
     float: left;
-    width: 16.6%;
-    height: 32px;
+    width: 20%;
+    height: 24px;
     text-align: center;
-    margin: 0;
-    background-color: #888;
+    margin: 0px;
+    padding-top: 4px;
+    padding-bottom: 0px;
+    background-color: #333;
 }
 
-/*
 .buttonbaritem a {
-    color: black;
+    color: #eee;
     text-decoration: none;
     font-weight: bold;
     font-family: sans-serif;
 }
-*/
+
+.buttonbartitle {
+    color: #eee;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: sans-serif;
+    font-size: 16pt;
+}
 
 .icon a {
     float: left;
@@ -144,13 +152,13 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
     font-size: 12px;
     font-weight: bold;
     padding: 8px 20px 8px 10px;
-    border-left: 0px solid #ccc;
+    border-left: 1px solid #ccc;
     border-right: 1px solid #aaa;
     border-top: 1px solid #ccc;
     border-bottom: 2px solid #ccc;
     color: #555;
     margin-top: 1px;
-    margin-left: -0px;
+    margin-left: 10px;
     margin-right: -1px;
     text-decoration: none;
     z-index: 2;
@@ -159,12 +167,12 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 #tabnav a.active
 {
     background: #fff;
-    border-left: 0px solid #aaa;
+    border-left: 1px solid #aaa;
     border-right: 1px solid #fff;
     border-top: 1px solid #aaa;
     border-bottom: 2px solid #aaa;
     color: #000;
-    margin-left: 0px;
+    margin-left: 5px;
     z-index: 2;
 }
 

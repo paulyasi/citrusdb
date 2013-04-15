@@ -1,11 +1,15 @@
 <div id="header">
+     <!--
   <div class="buttonbaritem">
+     <b class="buttonbartitle"><?php echo lang('title')?></b>
+
     <img class="full-image"
 	 src="<?php echo $this->url_prefix;?>/images/my-logo.png">
   </div>
+          -->
   <div class="buttonbaritem">
     <a href="<?php echo $this->url_prefix;?>/index.php/customer/newcustomer"
-      style="background: transparent url(<?php echo $this->url_prefix;?>/images/new-icon.png) scroll no-repeat left center; padding: 2px 0px 2px 25px;">
+      style="background: transparent url(<?php echo $this->url_prefix;?>/images/new-icon.png) scroll no-repeat left center; padding: 0px 0px 0px 25px;">
       <?php echo lang('new')?>
     </a>
   </div>

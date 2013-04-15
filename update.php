@@ -1,8 +1,8 @@
 <html>
 <head><title>Update Citrus Database</title>
 <body>
-<?php
-// get the configuration info
+ <?php
+ // get the configuration info
 include ('./include/config.inc.php');
 include ('./include/database.inc.php');
 
@@ -34,7 +34,7 @@ if ($base->input['submit'] == "Update")
         $query = "ALTER TABLE `general` 
             ADD `version` VARCHAR( 12 ) DEFAULT '0.9.3' 
             NOT NULL AFTER `id`";	
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $databaseversion = "0.9.3";
@@ -78,7 +78,7 @@ if ($base->input['submit'] == "Update")
 
         $query = "UPDATE `general` SET `version` = '1.0 RC1' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";	
 
         $databaseversion = "1.0 RC1";	
@@ -87,7 +87,7 @@ if ($base->input['submit'] == "Update")
     {
         $query = "UPDATE `general` SET `version` = '1.0 RC2' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";	
 
         $databaseversion = "1.0 RC2";
@@ -100,7 +100,7 @@ if ($base->input['submit'] == "Update")
 
         $query = "UPDATE `general` SET `version` = '1.0' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";	
 
         $databaseversion = "1.0";
@@ -125,7 +125,7 @@ if ($base->input['submit'] == "Update")
 
         $query = "UPDATE `general` SET `version` = '1.0.1' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";	
 
         $databaseversion = "1.0.1";
@@ -146,7 +146,7 @@ if ($base->input['submit'] == "Update")
 
         $query = "UPDATE `general` SET `version` = '1.0.2' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";	
 
         $databaseversion = "1.0.2";
@@ -155,7 +155,7 @@ if ($base->input['submit'] == "Update")
     {
         $query = "UPDATE `general` SET `version` = '1.0.3' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";	
 
         $databaseversion = "1.0.3";
@@ -164,7 +164,7 @@ if ($base->input['submit'] == "Update")
     {
         $query = "UPDATE `general` SET `version` = '1.0.4' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $query = "ALTER TABLE `general` 
@@ -172,7 +172,7 @@ if ($base->input['submit'] == "Update")
                 ADD `pastdue_invoicenote` VARCHAR( 255 ) NULL ,
                 ADD `turnedoff_invoicenote` VARCHAR( 255 ) NULL ,
                 ADD `collections_invoicenote` VARCHAR( 255 ) NULL"; 
-                    $result = $DB->Execute($query) or die ("FAILED: $query");
+	$result = $DB->Execute($query) or die ("FAILED: $query");
         echo "$query<br>\n";
 
         $databaseversion = "1.0.4";
@@ -181,7 +181,7 @@ if ($base->input['submit'] == "Update")
     {
         $query = "UPDATE `general` SET `version` = '1.1' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         // update for 1.1 with adodb sessions support
@@ -219,7 +219,7 @@ if ($base->input['submit'] == "Update")
     {
         $query = "UPDATE `general` SET `version` = '1.1.1' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $databaseversion = "1.1.1";
@@ -228,7 +228,7 @@ if ($base->input['submit'] == "Update")
     {
         $query = "UPDATE `general` SET `version` = '1.1.2' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $databaseversion = "1.1.2";
@@ -244,7 +244,7 @@ if ($base->input['submit'] == "Update")
         // update the version number
         $query = "UPDATE `general` SET `version` = '1.1.3' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $databaseversion = "1.1.3";
@@ -253,7 +253,7 @@ if ($base->input['submit'] == "Update")
     {
         $query = "UPDATE `general` SET `version` = '1.1.4' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $databaseversion = "1.1.4";
@@ -276,7 +276,7 @@ if ($base->input['submit'] == "Update")
         // update the version number
         $query = "UPDATE `general` SET `version` = '1.1.5' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $databaseversion = "1.1.5";
@@ -294,7 +294,7 @@ if ($base->input['submit'] == "Update")
         // update the version number
         $query = "UPDATE `general` SET `version` = '1.1.6' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $databaseversion = "1.1.6";
@@ -326,7 +326,7 @@ if ($base->input['submit'] == "Update")
     {
         $query = "UPDATE `general` SET `version` = '1.2.1' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $databaseversion = "1.2.1";
@@ -343,7 +343,7 @@ if ($base->input['submit'] == "Update")
 
         $query = "UPDATE `general` SET `version` = '1.2.2' 
             WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+	$result = $DB->Execute($query) or die ("query failed");
         echo "$query<br>\n";
 
         $databaseversion = "1.2.2";
