@@ -1825,45 +1825,44 @@ class Billing_Model extends CI_Model
             $findresult = $this->db->query($query, array($invoicenumber))
                 or die ("apply_credits select billing details failed");
 
-            $i = 0;
-            while (($myfindresult = $findresult->row_array($i)) and ($amount > 0)) 
-            {   
-                $id = $myfindresult['id'];
-                $paid_amount = $myfindresult['paid_amount'];
-                $billed_amount = $myfindresult['billed_amount'];
-
-                $owed = $billed_amount - $paid_amount;          
-
-                // TODO the queries below should update the payment_applied date
-                // for that item being paid for by the credit amount
-
-                if ($amount >= $owed) 
+            foreach ($findresult->result_array() as $myfindresult) 
+            {
+                if ($amount > 0)
                 {
-                    $amount = $amount - $owed;
-                    $fillamount = $owed + $paid_amount;
-                    $query = "UPDATE billing_details ".
-                        "SET paid_amount = ?, ".
-                        "payment_applied = CURRENT_DATE ".
-                        "WHERE id = ?";
-                    $greaterthanresult = $this->db->query($query, array($fillamount, $id))
-                        or die ("apply_credits update billing_details failed");
-                } 
-                else 
-                { 
-                    // amount is  less than owed
-                    $available = $amount;
-                    $amount = 0;
-                    $fillamount = $available + $paid_amount;
-                    $query = "UPDATE billing_details ".
-                        "SET paid_amount = ?, ".
-                        "payment_applied = CURRENT_DATE ".
-                        "WHERE id = ?";
-                    $lessthenresult = $this->db->query($query, array($fillamount, $id))
-                        or die ("apply_credits update billing_details failed");
-                }
+                    $id = $myfindresult['id'];
+                    $paid_amount = $myfindresult['paid_amount'];
+                    $billed_amount = $myfindresult['billed_amount'];
 
-                // increment the row counter
-                $i++;   
+                    $owed = $billed_amount - $paid_amount;          
+
+                    // TODO the queries below should update the payment_applied date
+                    // for that item being paid for by the credit amount
+
+                    if ($amount >= $owed) 
+                    {
+                        $amount = $amount - $owed;
+                        $fillamount = $owed + $paid_amount;
+                        $query = "UPDATE billing_details ".
+                            "SET paid_amount = ?, ".
+                            "payment_applied = CURRENT_DATE ".
+                            "WHERE id = ?";
+                        $greaterthanresult = $this->db->query($query, array($fillamount, $id))
+                            or die ("apply_credits update billing_details failed");
+                    } 
+                    else 
+                    { 
+                        // amount is  less than owed
+                        $available = $amount;
+                        $amount = 0;
+                        $fillamount = $available + $paid_amount;
+                        $query = "UPDATE billing_details ".
+                            "SET paid_amount = ?, ".
+                            "payment_applied = CURRENT_DATE ".
+                            "WHERE id = ?";
+                        $lessthenresult = $this->db->query($query, array($fillamount, $id))
+                            or die ("apply_credits update billing_details failed");
+                    }
+                }
             }
 
             // reduce the amount of the credit left by the amount applied
