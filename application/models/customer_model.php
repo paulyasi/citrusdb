@@ -126,14 +126,12 @@ class Customer_Model extends CI_Model
         $country = $customer_data['country'];
         $zip = $customer_data['zip'];
         $phone = $customer_data['phone'];
-        $alt_phone = $customer_data['alt_phone'];
         $fax = $customer_data['fax'];
         $contact_email = $customer_data['contact_email'];
         $secret_question = $customer_data['secret_question'];
         $secret_answer = $customer_data['secret_answer'];
         $source = $customer_data['source'];
         $organization_id = $customer_data['organization_id'];
-        $account_manager_password = $customer_data['account_manager_password'];
 
         // insert a new customer record
         $query = "INSERT into customer (signup_date, name, company, street, city, ".
@@ -184,7 +182,7 @@ class Customer_Model extends CI_Model
         $billingid = $this->db->insert_id();
         $query = "UPDATE customer SET default_billing_id = ? ".
             "WHERE account_number = ?";
-        $result = $this->db->query($query, account($billingid, $account_number))
+        $result = $this->db->query($query, array($billingid, $account_number))
             or die ("update customer default_billing_id failed");
 
         // return the account number and default billing id of the new customer
