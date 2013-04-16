@@ -89,19 +89,19 @@ b {text-decoration: bold; font-family: Arial; font-size: 12px; color: #000000;}
 
 .buttonbaritem {
     float: left;
-    width: 20%;
-    height: 24px;
+    width: 16.666666%;
+    height: 28px;
     text-align: center;
     margin: 0px;
-    padding-top: 4px;
+    padding-top: 8px;
     padding-bottom: 0px;
-    background-color: #333;
+    background-color: black;
 }
 
 .buttonbaritem a {
     color: #eee;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: normal;
     font-family: sans-serif;
 }
 

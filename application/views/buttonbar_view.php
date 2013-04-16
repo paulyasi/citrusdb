@@ -1,12 +1,9 @@
 <div id="header">
-     <!--
   <div class="buttonbaritem">
-     <b class="buttonbartitle"><?php echo lang('title')?></b>
-
-    <img class="full-image"
-	 src="<?php echo $this->url_prefix;?>/images/my-logo.png">
-  </div>
-          -->
+    <a href="<?php echo $this->url_prefix;?>/index.php"
+      style="background: transparent url(<?php echo $this->url_prefix;?>/images/citrus-icon.png) scroll no-repeat left center; padding: 18px 0px 5px 12px; line-height: 25px; font-size: 17pt;">citrusdb
+    </a>
+   </div>
   <div class="buttonbaritem">
     <a href="<?php echo $this->url_prefix;?>/index.php/customer/newcustomer"
       style="background: transparent url(<?php echo $this->url_prefix;?>/images/new-icon.png) scroll no-repeat left center; padding: 0px 0px 0px 25px;">
