@@ -798,7 +798,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 --
 
 INSERT INTO `settings` (`id`, `version`, `default_group`, `path_to_ccfile`, `billingdate_rollover_time`, `billingweekend_sunday`, `billingweekend_monday`, `billingweekend_tuesday`, `billingweekend_wednesday`, `billingweekend_thursday`, `billingweekend_friday`, `billingweekend_saturday`, `dependent_cancel_url`, `default_billing_group`, `default_shipping_group`) VALUES
-(1, '3.0_Developm', 'users', '/home/pyasi/citrus_project/io', '16:00:00', 'y', 'n', 'n', 'n', 'n', 'n', 'y', 'http://localhost/cancel', 'billing', 'shipping');
+(1, '3.0_Developm', 'users', '/home/pyasi/Code/io', '16:00:00', 'y', 'n', 'n', 'n', 'n', 'n', 'y', 'http://localhost/cancel', 'billing', 'shipping');
 
 -- --------------------------------------------------------
 
