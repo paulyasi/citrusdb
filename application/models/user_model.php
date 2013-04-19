@@ -52,10 +52,8 @@ class User_Model extends CI_Model {
 	/*--------------------------------------------------------------------*/
 	// check for too many login falures
 	/*--------------------------------------------------------------------*/
-	function checkfailures() 
+	function checkfailures($ipaddress) 
 	{
-		$ipaddress = $_SERVER["REMOTE_ADDR"];
-
 		$query = "SELECT * FROM login_failures WHERE ip = ? ".
 			"AND DATE(logintime) = CURRENT_DATE";
 		$result = $this->db->query($query, array($ipaddress));
@@ -71,38 +69,6 @@ class User_Model extends CI_Model {
 			return FALSE;
 		}
 	}
-
-
-	/*--------------------------------------------------------------------*/
-	// Check if they are logged in
-	// UNUSED NOW
-	/* --------------------------------------------------------------------
-	   function user_isloggedin() {
-
-	   global $hidden_hash_var,$LOGGED_IN;
-
-	//if we already ran the hash checks, return the pre-set var
-	if (isset($LOGGED_IN)) {
-	return $LOGGED_IN;
-	}	
-	if (!isset($_COOKIE['user_name'])) { 
-	$_COOKIE['user_name'] = ""; 
-	}
-	if ($_COOKIE['user_name'] && $_COOKIE['id_hash']) {
-	$hash=md5($_COOKIE['user_name'].$hidden_hash_var);
-	if ($hash == $_COOKIE['id_hash']) {
-	$LOGGED_IN=true;
-	return true;
-	} else {
-	$LOGGED_IN=false;
-	return false;
-	}
-	} else {
-	$LOGGED_IN=false;
-	return false;
-	}
-	}
-	 */
 
 	/*--------------------------------------------------------------------*/
 	// Authenticate the user
@@ -261,16 +227,8 @@ class User_Model extends CI_Model {
 		}
 
 	}
-
-	/*--------------------------------------------------------------------*/
-	// Logout the user
-	/*--------------------------------------------------------------------*/
-	function user_logout() {
-		setcookie('user_name','',(time()+2592000),'/','',0);
-		setcookie('id_hash','',(time()+2592000),'/','',0);
-	}
-
-	/*--------------------------------------------------------------------*/
+    
+    /*--------------------------------------------------------------------*/
 	// keep track of failed login attempts from IP addresses
 	/*--------------------------------------------------------------------*/
 	function loginfailure($user_name) {

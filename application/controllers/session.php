@@ -12,7 +12,7 @@ class Session extends CI_Controller
 	function login()
 	{
 		// kick you out if you have 5 failed logins from the same ip
-		if ($this->user_model->checkfailures()) 
+		if ($this->user_model->checkfailures($_SERVER['REMOTE_ADDR'])) 
 		{
   			echo "Login Failure.  Please See Administrator";
   			die;
