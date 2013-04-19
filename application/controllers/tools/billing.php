@@ -414,7 +414,7 @@ class Billing extends App_Controller
 			unlink($myfile);
 
 			// log the importing of accounts
-			$this->log_model->activity($this->user,$this->account_number,'import','customer',0,'success');  
+			$this->log_model->activity($this->user,$this->account_number,'import','customer',0,'success',$_SERVER['REMOTE_ADDR']);  
 		}
 	}
 
@@ -576,7 +576,7 @@ class Billing extends App_Controller
 					$path_to_ccfile, $passphrase);
 
 			// log this export activity
-			$this->log_model->activity($this->user,0,'export','creditcard',$batchid,'success');
+			$this->log_model->activity($this->user,0,'export','creditcard',$batchid,'success',$_SERVER['REMOTE_ADDR']);
 
 			echo lang('wrotefile')." $exportfilename<br><a href=\"$this->ssl_url_prefix/index.php/tools/dashboard/downloadfile/$exportfilename\"><u class=\"bluelink\">".lang('downloadfile')." $exportfilename</u></a><p>";	
 		} // end if totalall
@@ -650,7 +650,7 @@ class Billing extends App_Controller
 				$path_to_ccfile, $passphrase);
 
 		// log this export activity
-		$this->log_model->activity($this->user,0,'export','creditcard',$batchid,'success');
+		$this->log_model->activity($this->user,0,'export','creditcard',$batchid,'success',$_SERVER['REMOTE_ADDR']);
 
 		echo lang('wrotefile')." $exportfilename<br><a href=\"$this->ssl_url_prefix/index.php/tools/dashboard/downloadfile/$exportfilename\"><u class=\"bluelink\">".lang('downloadfile')." $exportfilename</u></a><p>";	
 	}
@@ -812,7 +812,7 @@ class Billing extends App_Controller
 			echo "<p>".lang('done')."</p>";
 
 			// log this import activity
-			$this->log_model->activity($this->user,0,'import','creditcard',0,'success');
+			$this->log_model->activity($this->user,0,'import','creditcard',0,'success',$_SERVER['REMOTE_ADDR']);
 
 		}
 	}
@@ -1110,7 +1110,7 @@ class Billing extends App_Controller
 				$path_to_ccfile, $passphrase);
 
 		// log this export activity
-		$this->log_model->activity($this->user,0,'export','creditcard',0,'success');
+		$this->log_model->activity($this->user,0,'export','creditcard',0,'success',$_SERVER['REMOTE_ADDR']);
 
 		$today = date("Y-m-d");
 

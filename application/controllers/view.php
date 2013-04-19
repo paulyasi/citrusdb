@@ -17,7 +17,7 @@ class View extends App_Controller
 		//$this->account_number = $account_number;
 		
 		// log this account view
-		$this->log_model->activity($this->user, $this->account_number, 'view', 'customer', 0, 'success');
+		$this->log_model->activity($this->user, $this->account_number, 'view', 'customer', 0, 'success', $_SERVER['REMOTE_ADDR']);
 
 		redirect('customer');
 	}

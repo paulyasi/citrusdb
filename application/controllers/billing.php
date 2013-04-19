@@ -198,7 +198,7 @@ class Billing extends App_Controller
 		$this->billing_model->automatic_to_date($from_date, $billing_type, $billing_id);
 
 		// add a log entry that this billing record was edited
-		$this->log_model->activity($this->user,$this->account_number,'edit','billing',$billing_id,'success');
+		$this->log_model->activity($this->user,$this->account_number,'edit','billing',$billing_id,'success', $_SERVER['REMOTE_ADDR']);
 
 		redirect('/billing');
 	}
@@ -259,8 +259,10 @@ class Billing extends App_Controller
 			$id = $this->billing_model->create_record($organization_id, $this->account_number);
 
 			// log this record creation
-			$this->log_model->activity($this->user,$this->account_number,'create',
-					'billing',$id,'success');
+			$this->log_model->activity($this->user,$this->account_number,
+                                       'create',
+                                       'billing',$id,'success',
+                                       $_SERVER['REMOTE_ADDR']);
 
 			redirect('/billing/edit/'.$id);
 
@@ -929,7 +931,7 @@ class Billing extends App_Controller
 	function refunditem($detailitem, $method, $billingid) 
 	{	
 		if ($method <> 'creditcard') {
-			echo "<h2 style=\"color: red;\">$l_method_warning</h2>";
+			echo "<h2 style=\"color: red;\">".lang('method_warning')."</h2>";
 		}
 
 		$data['detailid'] = $detailitem;
@@ -1049,7 +1051,7 @@ class Billing extends App_Controller
 				$creditcard_expire, $billing_id);
 
 		// add a log entry that this billing record was edited
-		$this->log_model->activity($this->user,$this->account_number,'edit','creditcard',$billing_id,'success');  
+		$this->log_model->activity($this->user,$this->account_number,'edit','creditcard',$billing_id,'success',  $_SERVER['REMOTE_ADDR']);  
 
 		redirect('/billing');
 

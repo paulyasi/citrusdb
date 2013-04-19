@@ -170,7 +170,7 @@ class Services extends App_Controller {
 
 		// log that this was changed
 		$this->log_model->activity($this->user,$this->account_number,
-				'edit','service',$userserviceid,'success');  
+                                   'edit','service',$userserviceid,'success', $_SERVER['REMOTE_ADDR']);  
 
 		redirect('/services');
 	}
@@ -189,7 +189,7 @@ class Services extends App_Controller {
 		$this->service_model->change_usage($userserviceid, $usage_multiple);
 		// add a log entry that this service was edited
 		$this->log_model->activity($this->user,$this->account_number,
-				'edit','service',$userserviceid,'success');    
+                                   'edit','service',$userserviceid,'success', $_SERVER['REMOTE_ADDR']);    
 
 		redirect('/services');
 	}
@@ -207,7 +207,7 @@ class Services extends App_Controller {
 		$this->service_model->change_billing($userserviceid, $billing_id);
 		// add a log entry that this service was edited
 		$this->log_model->activity($this->user,$this->account_number,
-				'edit','service',$userserviceid,'success');    
+                                   'edit','service',$userserviceid,'success', $_SERVER['REMOTE_ADDR']);    
 
 		redirect('/services');
 	}
@@ -274,9 +274,9 @@ class Services extends App_Controller {
 
 		// log an entry for a create and delete of the service as part of the change
 		$this->log_model->activity($this->user,$this->account_number,
-				'create','service',$new_user_service_id,'success');
+                                   'create','service',$new_user_service_id,'success', $_SERVER['REMOTE_ADDR']);
 		$this->log_model->activity($this->user,$this->account_number,
-				'delete','service',$userserviceid,'success');  
+                                   'delete','service',$userserviceid,'success', $_SERVER['REMOTE_ADDR']);  
 
 		redirect('/services');
 	}
@@ -411,7 +411,7 @@ class Services extends App_Controller {
 
 		// add a log entry that this service was added
 		$this->log_model->activity($this->user,$this->account_number,'create',
-				'service',$user_service_id,'success');
+                                   'service',$user_service_id,'success', $_SERVER['REMOTE_ADDR']);
 
 		print "$l_addedservice<p>";
 
@@ -505,7 +505,7 @@ class Services extends App_Controller {
 
 		// add a log entry that this service was deleted
 		$this->log_model->activity($this->user,$this->account_number,'delete','service',
-				$userserviceid,'success');	
+                                   $userserviceid,'success', $_SERVER['REMOTE_ADDR']);	
 
 		redirect('/services');
 	}	
@@ -528,7 +528,7 @@ class Services extends App_Controller {
 
 		// add to log that the service was removed
 		$this->log_model->activity($this->user,$this->account_number,'delete',
-				'service', $userserviceid,'success');	  
+                                   'service', $userserviceid,'success', $_SERVER['REMOTE_ADDR']);	  
 
 		redirect('/services');
 	}	

@@ -27,7 +27,7 @@ class Session extends CI_Controller
 		$username = $this->input->post('user_name');
 		$password = $this->input->post('password');
 		
-		if ($this->user_model->user_login($username,$password)) 
+		if ($this->user_model->user_login($username,$password, $_SERVER['REMOTE_ADDR'])) 
 		{	
 			$newsession = array(
                    'user_name'  => $username,

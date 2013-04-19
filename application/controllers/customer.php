@@ -144,7 +144,7 @@ class Customer extends App_Controller
 
 		// add a log entry that this customer record was viewed
 		$this->log_model->activity($this->user,$this->account_number,'edit',
-				'customer',0,'success');
+                                   'customer',0,'success',$_SERVER['REMOTE_ADDR']);
 
 		// if the name, company, street, city, state, zip, phone, fax, or contact_email 		// changed, ask if they want to update 
 		// the default billing record address also.
@@ -247,7 +247,7 @@ class Customer extends App_Controller
 
 			// log this record creation
 			$this->log_model->activity($this->user,$this->account_number,'create',
-					'customer',0,'success');
+                                       'customer',0,'success', $_SERVER['REMOTE_ADDR']);
 
 			redirect('customer');
 		}
@@ -390,7 +390,7 @@ class Customer extends App_Controller
 				$this->service_model->delete_service($userserviceid,'canceled',
 						$removal_date);
 				$this->log_model->activity($this->user,$this->account_number,
-						'delete','service',$userserviceid,'success');
+                                           'delete','service',$userserviceid,'success', $_SERVER['REMOTE_ADDR']);
 			}
 
 			// set cancel date and leave cancel histories for this customer
@@ -399,7 +399,7 @@ class Customer extends App_Controller
 
 			// log this customer being canceled/deleted
 			$this->log_model->activity($this->user,$this->account_number,
-					'cancel','customer',0,'success');
+                                       'cancel','customer',0,'success', $_SERVER['REMOTE_ADDR']);
 
 			// redirect them to the customer page	
 			redirect('/customer');
@@ -461,7 +461,7 @@ class Customer extends App_Controller
 		$this->customer_model->undelete_customer($this->account_number);
 
 		// log this uncancel
-		$this->log_model->activity($this->user,$this->account_number,'uncancel','customer',0,'success');
+		$this->log_model->activity($this->user,$this->account_number,'uncancel','customer',0,'success', $_SERVER['REMOTE_ADDR']);
 
 		// redirect them to the customer page	
 		redirect('/customer');

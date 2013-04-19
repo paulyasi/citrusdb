@@ -73,7 +73,7 @@ class User_Model extends CI_Model {
 	/*--------------------------------------------------------------------*/
 	// Authenticate the user
 	/*--------------------------------------------------------------------*/
-	function user_login($user_name,$password) {
+	function user_login($user_name, $password, $ipaddress) {
 
 		global $feedback;
 
@@ -103,14 +103,14 @@ class User_Model extends CI_Model {
 						if ($records["count"] != "1") { 
 							// user not found 
 							$feedback .= " ERROR - User not found ";
-							$this->loginfailure($user_name);
+							$this->loginfailure($user_name, $ipaddress);
 							return false; 
 						} 
 						else {
 							if (ldap_bind($con, $records[0]["dn"], $password) === false) { 
 								// LDAP password match failed 
 								$feedback .= "ERROR - Invalid user password ";
-								$this->loginfailure($user_name);
+								$this->loginfailure($user_name, $ipaddress);
 								return false; 
 							} 
 							else {
@@ -123,7 +123,7 @@ class User_Model extends CI_Model {
 									$feedback .=  " ERROR - User not found ";
 
 									// keep track of login failures to stop them trying forever
-									$this->loginfailure($user_name);
+									$this->loginfailure($user_name, $ipaddress);
 
 									return false;
 								}
@@ -194,7 +194,7 @@ class User_Model extends CI_Model {
 						"incorrect $user_name $password ";
 
 					// keep track of login failures to stop them trying forever
-					$this->loginfailure($user_name);
+					$this->loginfailure($user_name, $ipaddress);
 
 					return false;
 				}
@@ -204,7 +204,7 @@ class User_Model extends CI_Model {
 
 				$this->user_set_tokens($user_name);
 
-				$this->loginsuccess($user_name);
+				$this->loginsuccess($user_name, $ipaddress);
 
 				if (!isset($GLOBALS['REMOTE_ADDR'])) {
 					$GLOBALS['REMOTE_ADDR'] = "";
@@ -231,9 +231,7 @@ class User_Model extends CI_Model {
     /*--------------------------------------------------------------------*/
 	// keep track of failed login attempts from IP addresses
 	/*--------------------------------------------------------------------*/
-	function loginfailure($user_name) {
-
-		$ipaddress = $_SERVER["REMOTE_ADDR"];
+	function loginfailure($user_name, $ipaddress) {
 
 		$query="INSERT INTO login_failures(ip,logintime) ".
 			"VALUES (?,CURRENT_TIMESTAMP)";
@@ -246,8 +244,9 @@ class User_Model extends CI_Model {
 	/*--------------------------------------------------------------------*/
 	// keep track of login success
 	/*--------------------------------------------------------------------*/  
-	function loginsuccess($user_name) {
-		$this->log_model->activity($user_name,0,'login','dashboard',0,'success');
+	function loginsuccess($user_name, $ipaddress) {
+        $this->log_model->activity($user_name,0,'login','dashboard',0,
+            'success',$ipaddress);
 	}
 
 	/*--------------------------------------------------------------------*/

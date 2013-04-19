@@ -45,14 +45,13 @@ class Log_Model extends CI_Model
 	
     
 	function activity($user,$account_number,$activity_type,
-		$record_type,$record_id,$result)
+		$record_type,$record_id,$result,$ipaddress)
 	{
 		$sys_dbtype = $this->db->dbdriver;
   
 		// make an entry into the activity_log table regarding the activity passed
 		// to this function
 		$datetime = date("Y-m-d H:i:s");
-		$ip_address = $_SERVER["REMOTE_ADDR"];
 
 		// take advantage of mysql insert delayed to speed up this function if we can
 		if ($sys_dbtype == "mysql") 
@@ -68,7 +67,7 @@ class Log_Model extends CI_Model
 
 		$result = $this->db->query($query, array($datetime,
 												 $user,
-												 $ip_address,
+												 $ipaddress,
 												 $account_number,
 												 $activity_type,
 												 $record_type,

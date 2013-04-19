@@ -26,6 +26,12 @@ class Test_User extends CI_TestCase
         $this->assertFalse($loginfailure);
     }
 
+    function test_admin_login()
+    {
+        $login = $this->CI->user_model->user_login('admin', 'test', '127.0.0.1'); 
+        $this->assertTrue($login);
+    }
+
     /*
     // test that we only have the 1 test org we expect
     function test_list_organizations()
