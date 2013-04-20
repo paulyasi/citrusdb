@@ -224,7 +224,7 @@ class User_Model extends CI_Model {
 			"VALUES (?,CURRENT_TIMESTAMP)";
 		$result=$this->db->query($query, array($ipaddress)) or die ("Log Insert Failed");
 
-		$this->log_model->activity($user_name,0,'login','dashboard',0,'failure');
+		$this->log_model->activity($user_name,0,'login','dashboard',0,'failure',$ipaddress);
 
 	}
 

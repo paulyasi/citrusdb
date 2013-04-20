@@ -26,10 +26,16 @@ class Test_User extends CI_TestCase
         $this->assertFalse($loginfailure);
     }
 
-    function test_admin_login()
+    function test_admin_login_success()
     {
         $login = $this->CI->user_model->user_login('admin', 'test', '127.0.0.1'); 
         $this->assertTrue($login);
+    }
+
+    function test_admin_login_failure()
+    {
+        $login = $this->CI->user_model->user_login('admin', 'blahblahblah', '127.0.0.1'); 
+        $this->assertFalse($login);
     }
 
 }
