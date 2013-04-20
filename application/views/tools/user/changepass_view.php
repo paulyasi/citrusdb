@@ -3,7 +3,7 @@
 <script language="JavaScript" src="include/verify.js"></script>
 <H3><?php echo lang('changepassword')?></H3>
 <P>
-<FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/user/savechangepass" METHOD="POST">
+<FORM autocomplete="off" ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/user/savechangepass" METHOD="POST">
 <P>
 <B><?php echo lang('oldpassword')?>:</B><BR>
 <INPUT TYPE="password" NAME="old_password" VALUE="" SIZE="10" MAXLENGTH="32">
