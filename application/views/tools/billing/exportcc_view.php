@@ -3,8 +3,8 @@
 <html>
 <head>
 <title>CitrusDB</title>
-<LINK href="citrus.css" type=text/css rel=STYLESHEET>
-     <LINK href="fullscreen.css" type=text/css rel=STYLESHEET>
+<LINK href="<?php echo $this->ssl_url_prefix?>/citrus.css" type=text/css rel=STYLESHEET>
+     <LINK href="<?php echo $this->ssl_url_prefix?>/fullscreen.css" type=text/css rel=STYLESHEET>
      <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
      <script language="JavaScript">
      function h(oR) {
@@ -36,13 +36,11 @@ function toggleOn()
 }
                 
 </script>
-<script language="JavaScript" src="include/md5.js"></script>
-    <SCRIPT LANGUAGE="JavaScript" SRC="include/prototype.js"></SCRIPT>
     </head>
     <body marginheight=0 marginwidth=0 topmargin=0 leftmargin=0 onload="toggleOff();"><div id="toolcontent">
 
     <h3><?php echo lang('exportcreditcards')?></h3>
-    <SCRIPT LANGUAGE="JavaScript" SRC="include/CalendarPopup.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" SRC="<?php echo $this->ssl_url_prefix?>/js/CalendarPopup.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript">
     var cal = new CalendarPopup();
 </SCRIPT>
