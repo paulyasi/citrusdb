@@ -660,6 +660,7 @@ class Reports extends App_Controller
 		$billing_status_array['Authorized'] = 0;
 		$billing_status_array['New'] = 0;
 		$billing_status_array['Past Due'] = 0;
+        $billing_status_array['Pending'] = 0;
 		$billing_status_array['Declined'] = 0;
 		$billing_status_array['Turned Off'] = 0;
 		$billing_status_array['Collections'] = 0;

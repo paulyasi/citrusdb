@@ -202,9 +202,6 @@ class Customer extends App_Controller
 		// show the new customer form, if specified billed by, selected by default
 		$this->load->view('new_customer_view', $data);
 
-		// the history listing tabs
-		$this->load->view('historyframe_tabs_view');			
-
 		// show html footer
 		$this->load->view('html_footer_view');
 	}
