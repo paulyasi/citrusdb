@@ -73,81 +73,83 @@ class User_Model extends CI_Model {
 	/*--------------------------------------------------------------------*/
 	// Authenticate the user
 	/*--------------------------------------------------------------------*/
-	function user_login($user_name, $password, $ipaddress) {
-
-		global $feedback;
-
+	function user_login($user_name, $password, $ipaddress)
+    {
 		$ldap_enable = $this->config->item('ldap_enable');
 		$ldap_host = $this->config->item('ldap_host');
 		$ldap_dn = $this->config->item('ldap_dn');
 		$ldap_protocol_version = $this->config->item('ldap_protocol_version');
 		$ldap_uid_field = $this->config->item('ldap_uid_field');
 
-		if (!$user_name || !$password) {
-			$feedback .=  ' ERROR - Missing user name or password ';
+		if (!$user_name || !$password)
+        {
+			//Missing user name or password
 			return false;
-
-		} else {
-
+		}
+        else
+        {
+            // this is a giant mess TODO move to it's own method
 			$user_name=strtolower($user_name);
 			/* start of ldap mod */
-			if( $ldap_enable ) {
+			if( $ldap_enable )
+            {
 				$con = ldap_connect($ldap_host); 
-				if( $con ) { 
+				if( $con )
+                { 
 					ldap_set_option($con, LDAP_OPT_PROTOCOL_VERSION, $ldap_protocol_version); 
 					$findWhat = array ($ldap_uid_field); 
 					$findFilter = "(".$ldap_uid_field."=".$user_name.")"; 
 					$sr = ldap_search($con, $ldap_dn, $findFilter, $findWhat); 
-					if( $sr ) { 
+					if( $sr )
+                    { 
 						$records = ldap_get_entries($con, $sr); 
-						if ($records["count"] != "1") { 
+						if ($records["count"] != "1")
+                        { 
 							// user not found 
-							$feedback .= " ERROR - User not found ";
-							$this->loginfailure($user_name, $ipaddress);
+                            $this->loginfailure($user_name, $ipaddress);
 							return false; 
 						} 
-						else {
+						else
+                        {
 							if (ldap_bind($con, $records[0]["dn"], $password) === false) { 
 								// LDAP password match failed 
-								$feedback .= "ERROR - Invalid user password ";
-								$this->loginfailure($user_name, $ipaddress);
+                                $this->loginfailure($user_name, $ipaddress);
 								return false; 
 							} 
-							else {
+							else
+                            {
 								// LDAP login successful, now get user info
 								$sql="SELECT * FROM user WHERE username = ? ";
 								$result = $this->db->query($sql, array($user_name));
 
-								if (!$result ||  $result->num_rows() < 1){
-
-									$feedback .=  " ERROR - User not found ";
-
-									// keep track of login failures to stop them trying forever
+								if (!$result ||  $result->num_rows() < 1)
+                                {
+                                    // track login failures to stop them trying forever
 									$this->loginfailure($user_name, $ipaddress);
-
 									return false;
 								}
 							} 
 						} 
 					} 
-					else { 
+					else
+                    { 
 						// LDAP search failed 
-						$feedback .= "LDAP User Search Failed!"; 
-						return false; 
+                        return false; 
 					} 
 				} 
-				else { 
-					$feedback .= "LDAP Connect Failed!"; 
+				else
+                { 
+					// LDAP Connect Failed!
 					return false; 
 				}
 			}
-			else {
+			else
+            {
 				// standard authentication method
 
-				$result = $this->db->get_where('user', array('username' => $user_name), 1, 0);
-
-				//$sql="SELECT password FROM user WHERE username = '$user_name' LIMIT 1";
-				//$result = $this->db->query($sql);
+                // get the row that holds the user
+				$result = $this->db->get_where('user',
+                                               array('username' => $user_name), 1, 0);
 				$myresult = $result->row();
 				$checkhash = $myresult->password;
 
@@ -162,37 +164,41 @@ class User_Model extends CI_Model {
 				$desext_h = substr($checkhash, 0, 1);
 				$portmd5_h = substr($checkhash, 0, 3);
 
-				if (($bcrypt_h != '$2a$') AND ($desext_h != '_') AND ($portmd5_h != '$P$')) {
-					// the password must be an old md5 hash and must be upgraded to the new type
+				if (($bcrypt_h != '$2a$') AND ($desext_h != '_') AND ($portmd5_h != '$P$'))
+                {
+					// the password is an old md5 hash and must be upgraded to the new type
 					// authenticate the old md5 password
 					$passwordhashed = md5($password);
-					if ($passwordhashed == $checkhash) {
+					if ($passwordhashed == $checkhash)
+                    {
 						// upgrade it to the newer phpass password format
 						$passwordmatch = 1;
-
 						$newhash = $this->passwordhash->HashPassword($password);
-						if (strlen($newhash) < 20) {
-							$feedback .= "Failed to hash new password";
+						if (strlen($newhash) < 20)
+                        {
+							//Failed to hash new password
 							return false;
 						}
 
 						$sql="UPDATE user SET password = ? ".
 							"WHERE username = ? LIMIT 1";
-						$passresult=$this->db->query($sql, array($newhash, $user_name)) or die ("Query Failed");
+						$passresult=$this->db->query($sql,
+                                                     array($newhash, $user_name))
+                            or die ("Query Failed");
 
-					} else {
+					}
+                    else
+                    {
+                        // old md5 password does not match either
 						$passwordmatch = 0;
 					}
 
 				}
 
 				// check the normal passwords are valid
-
 				if (!$result ||  $result->num_rows() < 1 || !$passwordmatch) {
 
-					$feedback .=  " ERROR - User not found or password ".
-						"incorrect $user_name $password ";
-
+					// User not found or password incorrect $user_name $password
 					// keep track of login failures to stop them trying forever
 					$this->loginfailure($user_name, $ipaddress);
 
@@ -201,31 +207,12 @@ class User_Model extends CI_Model {
 			}
 			/* end of ldap mod */
 			{
-
+                // Success, You Are Now Logged In
 				$this->user_set_tokens($user_name);
-
 				$this->loginsuccess($user_name, $ipaddress);
-
-				if (!isset($GLOBALS['REMOTE_ADDR'])) {
-					$GLOBALS['REMOTE_ADDR'] = "";
-				}
-
-				$sql="UPDATE user SET remote_addr='$GLOBALS[REMOTE_ADDR]' ".
-					"WHERE username = ?";
-				$result = $this->db->query($sql, array($user_name));
-
-				if (!$result) {
-					$feedback .= ' ERROR - '.db_error();
-					return false;
-				} else {
-					$feedback .=  ' SUCCESS - You Are Now Logged In ';
-					return true;
-				}
-
+                return true;
 			}
-
 		}
-
 	}
     
     /*--------------------------------------------------------------------*/
