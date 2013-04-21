@@ -553,11 +553,15 @@ Scroll down to the Encryption Key section to change this to your own secret phra
 
 </li>
 <li>
-add a cron job to run the statusupdate script (available in the
-citrusdb folder) every night or after billing is done for the
+add a cron job to run the statusupdate command.  This command is run by calling:
+<pre class="example">
+    php index.php command statusupdate
+</pre>
+on the command line from inside the citrusdb folder.
+It should be run every night or after billing is done for the
 day. This script will update the customer's account status and
 create a file that can be used to activate and deactivate
-customer services automatically. 
+customer services automatically.  There is also a similar command called weekendupdate that can be run on weekends or holidays when you may not want to immediately turnoff or delete customer services.
 
 </li>
 <li>
