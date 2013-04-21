@@ -490,7 +490,7 @@ class Customer_Model extends CI_Model
             "VALUES (?,CURRENT_TIMESTAMP)";
         $result=$this->db->query($query, array($ipaddress)) or die ("Log Insert Failed");
 
-        $this->log_model->activity($user_name,0,'login','dashboard',0,'failure');
+        $this->log_model->activity($user_name,0,'login','dashboard',0,'failure',$_SERVER['REMOTE_ADDR']);
 
     }
 
@@ -498,7 +498,7 @@ class Customer_Model extends CI_Model
     // keep track of login success
     /*--------------------------------------------------------------------*/  
     function loginsuccess($user_name) {
-        $this->log_model->activity($user_name,0,'login','dashboard',0,'success');
+        $this->log_model->activity($user_name,0,'login','dashboard',0,'success', $_SERVER['REMOTE_ADDR']);
     }
 
     /*--------------------------------------------------------------------*/

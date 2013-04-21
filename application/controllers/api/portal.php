@@ -242,7 +242,7 @@ class Portal extends REST_Controller
             $data = $this->billing_model->save_record($record_billing_id, $billing_data);			
 
             // add a log entry that this billing record was edited
-            $this->log_model->activity("portal",$this->authuser,'edit','billing',$record_billing_id,'success');
+            $this->log_model->activity("portal",$this->authuser,'edit','billing',$record_billing_id,'success', $_SERVER['REMOTE_ADDR']);
         }
 
         $this->response(array('success' => 'Input Saved'), 200);
