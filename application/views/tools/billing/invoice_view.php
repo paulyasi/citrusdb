@@ -38,7 +38,7 @@
       }
       
     </script>
-    <SCRIPT LANGUAGE="JavaScript" SRC="<?php echo $this->url_prefix?>/include/CalendarPopup.js"></SCRIPT>
+    <SCRIPT LANGUAGE="JavaScript" SRC="<?php echo $this->url_prefix?>/js/CalendarPopup.js"></SCRIPT>
     <SCRIPT LANGUAGE="JavaScript">
       var cal = new CalendarPopup();
     </SCRIPT>
@@ -133,5 +133,5 @@
   <div id="WaitingMessage" style="border: 0px double black; background-color: #fff; 
                                   position: absolute; text-align: center; top: 50px; width: 550px; height: 300px;">
     <BR><BR><BR><h3><?php echo lang('processing')?>...</h3>
-    <p><img src="images/spinner.gif"></p>
+    <p><img src="<?php echo $this->url_prefix?>/images/spinner.gif"></p>
   </div>	

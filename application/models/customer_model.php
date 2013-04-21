@@ -135,7 +135,7 @@ class Customer_Model extends CI_Model
 
         // insert a new customer record
         $query = "INSERT into customer (signup_date, name, company, street, city, ".
-            "state, country, zip, phone, alt_phone, fax, contact_email, ".
+            "state, country, zip, phone, fax, contact_email, ".
             "secret_question, secret_answer, source) ".
             "VALUES (CURRENT_DATE, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $result = $this->db->query($query, array($name,
@@ -146,7 +146,6 @@ class Customer_Model extends CI_Model
                                                  $country,
                                                  $zip,
                                                  $phone,
-                                                 $alt_phone,
                                                  $fax,
                                                  $contact_email,
                                                  $secret_question,
