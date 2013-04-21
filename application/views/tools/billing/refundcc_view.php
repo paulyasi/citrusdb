@@ -6,7 +6,7 @@
 <SCRIPT LANGUAGE=\"JavaScript\">
 var cal = new CalendarPopup();
 </SCRIPT>
-<FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/saverefundcc" 
+<FORM ACTION="<?php echo $this->ssl_url_prefix?>/index.php/tools/billing/saverefundcc" 
 METHOD="POST" name="form1" AUTOCOMPLETE="off">
 <table>
 

@@ -3,10 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 lang="en" xml:lang="en">
 <head>
-<title>CitrusDB 2.3 Manual</title>
+<title>CitrusDB 3.0 Manual</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2011-01-06 09:20:03 EST"/>
 <meta name="author" content="Paul Yasi"/>
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
@@ -64,7 +62,7 @@ lang="en" xml:lang="en">
 /*]]>*/-->
 </script>
 </head><body>
-<h1 class="title">CitrusDB 2.2 Manual</h1>
+<h1 class="title">CitrusDB 3.0 Manual</h1>
 
 
 <div id="table-of-contents">
@@ -75,7 +73,7 @@ lang="en" xml:lang="en">
 <li><a href="#sec-2">2 Chapter 1: Installation </a>
 <ul>
 <li><a href="#sec-2.1">2.1 Installing the Main Internal Application </a></li>
-<li><a href="#sec-2.2">2.2 Installing the Public System for Customer Self-Service </a></li>
+<li><a href="#sec-2.2">2.2 Customer Self-Service Portal</a></li>
 <li><a href="#sec-2.3">2.3 Upgrading CitrusDB </a></li>
 </ul>
 </li>
@@ -242,11 +240,14 @@ their services, billing history, and make service and support
 requests online.
 </p>
 <p>
-CitrusDB has similar requirements to other open source PHP
-projects.  Specifically it requires PHP 5.2.0 or greater, MySQL 4.x
-or greater database, and a modern web browser such as Firefox,
-Chrome, Safari, or Internet Explorer with support for cookies, and
-Javascript turned on.
+Requirements:
+<ul>
+<li> PHP 5.2 or greater
+<li> MySQL 4.1 or greater
+<li> An SSL Certificate for the domain where it will be installed (Can be self signed)
+<li> A GPG Key Pair if you are storing credit card data
+<li> A Web Browser with Cookies and Javascript
+</ul>
 </p>
 </div>
 
@@ -256,9 +257,9 @@ Javascript turned on.
 <h2 id="sec-2">2 Chapter 1: Installation </h2>
 <div id="text-2">
 
-<p>Before you install CitrusDB you should check whether the Apache web
-server, PHP module, and MySQL database are installed on your
-server.  To check whether Apache, MySQL, and PHP are installed in
+<p>Before you install CitrusDB you should check whether a web
+server with the  PHP module, and MySQL database are installed on your
+server.  To check whether MySQL, and PHP are installed in
 your server correctly you can upload a simple PHP file to your
 server that contains the following code:
 </p>
@@ -286,14 +287,15 @@ your server is not configured correctly.  You will need to fix this
 before you continue.
 </p>
 <p>
-There are many methods to install Apache, MySQL and PHP on your
+There are many methods to install a web server, MySQL and PHP on your
 server.  On Linux you will  usually be able to find a package
 available for your distro that you can install via a package
 manager like synaptic, apt-get, or yum.  Mac OS X already has
 Apache installed by default, all you'll need to do is enable PHP
 and install MySQL or you can use a pre-built package like XAMPP.
-If you are using Windows you can find there pre-built packages like
-XAMPP that include all the pieces you need for Apache, MySQL, and PHP.
+If you are using Windows you can try the pre-built packages like
+XAMPP that include all the pieces you need for Apache, MySQL, and
+PHP.  Microsoft also maintains PHP packages available for windows servers.
 </p>
 <p>
 After you have installed your server software you can begin
@@ -348,117 +350,42 @@ you just created.
 
 </li>
 <li>
-Edit the configuration file: /citrusdb/include/config.inc.php
-
+Edit the database configuration file: /citrusdb/application/config/database.php
 </li>
 <li>
-Change the database host, to your server name, often this will
+Change the database hostname, to your server name, often this will
 be the localhost it is all on one server.  Enter your database
 username and password that you just created before.
 
-
-
-
 <pre class="example">
-      $sys_dbhost='localhost';
-      $sys_dbuser='username';
-      $sys_dbpasswd='password';
+      $db['default']['hostname']='localhost';
+      $db['default']['username']='username';
+      $db['default']['password']='password';
 </pre>
 
-
-
-
-</li>
 <li>
-Change the path to citrus variable to the filesystem path of your 
-installation:
+Next edit the configuration file: /citrusdb/application/config/config.inc.php
+</li>
 
+<li>
+Set the regular url and ssl url prefixes for your site.  You should use the same
+name for both the regular url and ssl url with the only difference being http or
+https for the protocol.  This will ensure the session cookie assigned during ssl
+login is available to the regular http url as well.
 <p>
-On a unix installation it may be something like these depending on
-where you installed your citrus files:
-</p>
-
-
-
-<pre class="example">
-      $path_to_citrus='/home/username/citrusdb';
-
-      or
-
-      $path_to_citrus='/var/www/citrusdb';
-</pre>
-
-
-
-
-<p>
-On a windows installation it may be something like:
-</p>
-
-
+You may use a self-signed certificate for this function as long as all the users
+of the database have that SSL certificate installed into their browsers.
+The CitrusDB project is an affiliate of 
+<a href="https://www.certs4less.com/affiliate/idevaffiliate.php?id=1035&url=3">Certs4Less</a> 
+where you can get an SSL certificate signed by a number of certificate authorities at different levels of authentication.
 
 <pre class="example">
-      $path_to_citrus='C:\apache\htdocs\citrusdb';
+      $config['base_url'] = "http://server.example.com/citrusdb/";
+      $config['ssl_base_url'] = "https://server.example.com/citrusdb/";
 </pre>
-
-
-
 
 </li>
-<li>
-Change the hidden hash var to your own secret hashphrase.  You
-will never need to remember this hashphrase so you can make it
-as complicated as you want.
 
-
-
-
-<pre class="example">
-      $hidden_hash_var='youmustchangethis';
-</pre>
-
-
-
-
-</li>
-<li>
-Edit the $lang variable to point to your local language
-file. This localization file holds the values for all the text in
-CitrusDB as well as the currency symbol used.  Please note that
-CitrusDB can only work with one currency.
-
-
-
-
-<pre class="example">
-      $lang = './include/local/us-english.inc.php';
-</pre>
-
-
-
-
-</li>
-<li>
-Set the regular url and ssl url prefixes for your database url.
-The ssl url is required for entering billing data or when
-exporting credit card data.  You may use a self-signed
-certificate for this function as long as all the users of the
-database have that SSL certificate installed into their browsers.
-If you have other compensating controls or do not want to use
-ssl, you can enter the same http url in both variables.
-
-
-
-
-<pre class="example">
-      $url_prefix = "http://server.example.com/citrusdb/";
-      $ssl_url_prefix = "https://server.example.com/citrusdb/";
-</pre>
-
-
-
-
-</li>
 <li>
 Set the gpg command that will be used for encryption
 of stored credit card data.  In order to use gpg you must
@@ -501,7 +428,7 @@ future if you edit keys.
 
 
 <pre class="example">
-      $gpg_command = "/usr/bin/gpg --homedir /home/www-data/.gnupg
+      $config['gpg_command'] = "/usr/bin/gpg --homedir /home/www-data/.gnupg
       --armor --batch -e -r 'CitrusDB'";
 </pre>
 
@@ -520,7 +447,7 @@ function.
 
 
 <pre class="example">
-      $gpg_decrypt = "/usr/bin/gpg --homedir /home/www-data/.gnupg
+      $config['gpg_decrypt'] = "/usr/bin/gpg --homedir /home/www-data/.gnupg
       --passphrase-fd 0 --yes --no-tty --skip-verify --decrypt";
 </pre>
 
@@ -536,7 +463,7 @@ the passphrase entered before creating a batch file.
 
 
 <pre class="example">
-      $gpg_sign = "/usr/bin/gpg --homedir /home/www-data/.gnupg
+      $config['gpg_sign'] = "/usr/bin/gpg --homedir /home/www-data/.gnupg
       --passphrase-fd 0 --yes --no-tty --clearsign -u 'CitrusDB'";
 </pre>
 
@@ -562,14 +489,12 @@ password using your LDAP system.
 
 
 <pre class="example">
-     $ldap_enable = FALSE;
-     $ldap_host = 'ldaps://localhost';
-     $ldap_dn = 'ou=webapps,dc=localhost';
-     $ldap_protocol_version = 3;
-     $ldap_uid_field = 'uid'; 
+     $config['ldap_enable'] = FALSE;
+     $config['ldap_host'] = 'ldaps://localhost';
+     $config['ldap_dn'] = 'ou=webapps,dc=localhost';
+     $config['ldap_protocol_version'] = 3;
+     $config['ldap_uid_field'] = 'uid'; 
 </pre>
-
-
 
 
 </li>
@@ -578,14 +503,11 @@ If you have an xmpp or jabber server for ticket notifications you can setup
 those xmpp account variables to allow citrus to send ticket notifications
 via xmpp instant messages.
 
-
-
-
 <pre class="example">
-$xmpp_server = "";
-$xmpp_user = "";
-$xmpp_password = "";
-$xmpp_domain = "";
+$config['xmpp_server'] = "";
+$config['xmpp_user'] = "";
+$config['xmpp_password'] = "";
+$config['xmpp_domain'] = "";
 </pre>
 
 
@@ -601,11 +523,33 @@ tracking number field when shipping field assets to customers.
 
 
 <pre class="example">
-$tracking_url = "http://trkcnfrm1.smi.usps.com/PTSInternetWeb/InterLabelInquiry.do?origTrackNum=";
+$config['tracking_url'] = "http://trkcnfrm1.smi.usps.com/PTSInternetWeb/InterLabelInquiry.do?origTrackNum=";
 </pre>
 
 
+<li>
+Scroll down to the Default Language section and variable to point to your local language
+file. This language file is located in the /citrusdb/appliation/language folder and holds the values for all the text in
+CitrusDB as well as the currency symbol used.  Please note that
+CitrusDB can only work with one currency.
 
+
+<pre class="example">
+      $config['language'] = 'english';
+</pre>
+
+
+</li>
+
+<li>
+Scroll down to the Encryption Key section to change this to your own secret phrase.
+
+<pre class="example">
+      $config['encryption_key']='youmustchangethis';
+</pre>
+
+
+</li>
 
 </li>
 <li>
@@ -633,31 +577,17 @@ application.
 </div>
 
 <div id="outline-container-2.2" class="outline-3">
-<h3 id="sec-2.2">2.2 Installing the Public System for Customer Self-Service </h3>
+<h3 id="sec-2.2">2.2 Customer Self-Service Portal</h3>
 <div id="text-2.2">
 
-<p>CitrusDB also includes an online customer component for customers
-to view information about their own account,  request changes, and
-make updates.  The online customer account manager is stored in
-the /online folder of the CitrusDB download.  It is a simple
-interface for customers to login using their customer number and
-password of their choice.
+<p>CitrusDB 3.0 now includes a new online customer portal api to create a portal that will allow your customers to view information about their own account, request changes, and
+make updates.  It is recommended to put your portal web app on a seperate public web server and only have allow connections between it and your internal citrusdb server over https connections on port 443.  
+<p>
+There is an example of a portal in the /citrusdb/portal folder.  This is without any login that will automatically load the first example test account when their password is set to test.  You may use these examples to make a portal that uses this API to meet your unique customer portal needs.
 </p>
 <p>
-The online folder is meant to be installed on a separate web
-server.  If you have a firewall,
-you'll want to configure it to allow access to the database server
-from this web server, so that the online component can query the
-customer information.  It is also recommended to make a new login
-name and password for use by the online customer component that
-has more restrictions than your normal database user from the main
-system.  This new database login name should restrict the access
-to your citrus database to SELECT only, allowing INSERT for only
-the customer_history table and SELECT, INSERT, UPDATE, and DELETE
-for the session2 table. 
-</p>
-<p>
-The online customer system is configured similarly to the main
+The portal also uses codeigniter configurations 
+customer system is configured similarly to the main
 system by editing the config.inc.php file inside the 
 citrusdb/online/include folder.  There are some additional
 variables to configure for the online customer system.
@@ -3614,15 +3544,13 @@ symbols.  Longer passwords are stronger than short ones, even just
 a few letters can make it significantly harder to brute force.
 </p>
 <p>
-Passwords in CitrusDB are stored in an MD5 hash to make them
-harder to recover from the database or view as they travel over
-the network.  If a user forgets their password the administrator
+Passwords in CitrusDB are stored in a salted bcrypt or md5 hash to make them
+harder to recover from the database.  If a user forgets their password the administrator
 will need to set a new one using the User editing tool.  If the
 administrator forgets their password, they will need direct access
 to the database via SQL queries or a utility like phpMyAdmin to
 put a new password on their user record.  You will need to hash
-your password using the md5 message digest algorithm (RFC 1321)
-before you paste it into the database record. 
+your password using the phpass framework before you paste it into the database record. 
 </p></div>
 
 </div>
@@ -4222,7 +4150,8 @@ This command will create a certificate signing request from the
 private key.
 </p>
 <p>
-If you are going to send the key to a certificate authority (CA) for
+If you are going to send the key to a certificate authority (CA) like 
+<a href="https://www.certs4less.com/affiliate/idevaffiliate.php?id=1035&url=3">Certs4Less</a> for
 signing then you can send the csr file to the CA instead of
 self-signing it.  If you want to run your web server with a self-signed certificate then
 you will need to run the signkey command below.  If you are using a
