@@ -2,12 +2,13 @@
     CitrusDB - The open source customer database and billing software
     http://www.citrusdb.org
 
-	Version 3.x under development being refactored to MVC and not for production use.  
-	For production use please get version 2.x from citrusdb.org
+	Version 3.0 BETA 1  
+	
+    For production use please get version 2.x from citrusdb.org
 
     Read the documentation.html file for installation instructions.
 
-    Copyright (C) 2002-2011  Paul Yasi (paul at citrusdb.org)
+    Copyright (C) 2002-2013  Paul Yasi (paul at citrusdb.org)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
