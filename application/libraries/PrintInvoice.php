@@ -282,7 +282,7 @@ class PdfInvoice extends PrintInvoice
         if ($this->email == TRUE)
         {
             // set the invoice footer to use the one for email invoices
-            $invoice_footer = $einvoice_footer;
+            $this->invoice_footer = $this->einvoice_footer;
         }
 
         // fix html characters
@@ -311,23 +311,25 @@ class TextInvoice extends PrintInvoice
 {
     public function print_invoice()
     {
-        $output = "$billing_mydate\n".lang('accountnumber').": $billing_acctnum\n\n";
-        $output .= lang('invoicenumber').": $invoiceid\n";
-        $output .= "$billing_fromdate - $billing_todate \n";
-        $output .= lang('paymentduedate').": $billing_payment_due_date\n";
+        $CI =& get_instance();
+
+        $output = "$this->billing_mydate\n".lang('accountnumber').": $this->billing_acctnum\n\n";
+        $output .= lang('invoicenumber').": $this->invoiceid\n";
+        $output .= "$this->billing_fromdate - $this->billing_todate \n";
+        $output .= lang('paymentduedate').": $this->billing_payment_due_date\n";
         $output .= "\n\n";
 
-        $output .= lang('to').": $billing_email\n";
-        $output .= "$billing_name $billing_company\n";
-        $output .= "$billing_street ";
-        $output .= "$billing_city $billing_state ";
+        $output .= lang('to').": $this->billing_email\n";
+        $output .= "$this->billing_name $this->billing_company\n";
+        $output .= "$this->billing_street ";
+        $output .= "$this->billing_city $this->billing_state ";
 
-        $output .= "$billing_zip\n";
+        $output .= "$this->billing_zip\n";
 
-        if ($billing_po_number) 
+        if ($this->billing_po_number) 
         {
             // only print the po number if they have one
-            $output .= lang('po_number').": $billing_po_number\n";
+            $output .= lang('po_number').": $this->billing_po_number\n";
         } 
         else 
         {
@@ -337,7 +339,7 @@ class TextInvoice extends PrintInvoice
         $output .= "----------------------------------------";
         $output .= "----------------------------------------\n";
 
-        foreach($invoicedetails AS $myresult) 
+        foreach($this->invoicedetails AS $myresult) 
         {
             // check if it's a tax with a tax id or service with
             // no tax idfirst to set detail items
@@ -352,7 +354,7 @@ class TextInvoice extends PrintInvoice
                 if ($options_table <> '') 
                 {
                     // get the data from the options table and put into variables
-                    $myoptions = $this->service_model->options_attributes($id, $options_table);
+                    $myoptions = $CI->service_model->options_attributes($id, $options_table);
                     //echo "$myoptions->username";
                     if (count($myoptions) >= 3) {
                         $optiondetails = $myoptions[2];
@@ -386,149 +388,40 @@ class TextInvoice extends PrintInvoice
                 $monthmultiple = 1;
             }
 
-            if ($printtype == "pdf") 
+            if ($monthmultiple <> 1) 
             {
-                // printing pdf invoice
-
-                // alternate fill color
-                if ($serviceid <> $lastserviceid) 
-                {
-                    $lastserviceid = $serviceid;
-                    if ($fillcolor == 200) 
-                    {
-                        $fillcolor = 255;
-                        $pdf->SetFillColor($fillcolor);
-                    } 
-                    else 
-                    {
-                        $fillcolor = 200;
-                        $pdf->SetFillColor($fillcolor);
-                    }
-                }
-
-                $service_description = html_to_ascii($service_description);
-                $tax_description = html_to_ascii($tax_description);
-                $optiondetails = html_to_ascii($optiondetails);
-                $lineY = $lineYoffset + ($myline*5);
-                $pdf->SetXY(10,$lineY);
-
-                if ($monthmultiple <> 1) 
-                {
-                    $pdf->Cell(151,5,"$serviceid $service_description $tax_description ($monthmultiple @ $pricerate) $optiondetails", 0, 0, "L", TRUE);
-                } 
-                else 
-                {
-                    $pdf->Cell(151,5,"$serviceid $service_description $tax_description $optiondetails", 0, 0, "L", TRUE);
-                }
-
-                //$pdf->SetXY(110,$lineY);
-                //$pdf->Cell(110,5,"$optiondetails");
-                $pdf->SetXY(160,$lineY);
-                $pdf->Cell(40,5,"$billed_amount", 0, 0, "L", TRUE);
+                $output .= "$serviceid \t $service_description $tax_description ($monthmultiple @ $pricerate) \t $optiondetails \t $billed_amount\n";
             } 
             else 
             {
-                // printing text invoice
-                if ($monthmultiple <> 1) 
-                {
-                    $output .= "$serviceid \t $service_description $tax_description ($monthmultiple @ $pricerate) \t $optiondetails \t $billed_amount\n";
-                } 
-                else 
-                {
-                    $output .= "$serviceid \t $service_description $tax_description \t $optiondetails \t $billed_amount\n";
-                }
+                $output .= "$serviceid \t $service_description $tax_description \t $optiondetails \t $billed_amount\n";
             }
 
-            $myline++;            
+            $this->myline++;            
 
-
-            if ($printtype == "pdf") 
-            {
-                // add a new page if there are many line items
-                // TODO: check for page number here
-                // if page number greater than 1, then myline would be larger
-                // set an invoicestartpage at the start of each invoice for multi invoice batches
-                $pagenumber = $pdf->PageNo();
-
-                if ($pagenumber - $invoicestartpage > 0) 
-                {
-                    $linetotal = 44;
-                } 
-                else 
-                {
-                    $linetotal = 27;
-                }
-
-                if ($myline > $linetotal) 
-                {
-                    $pdf->AddPage();
-                    $pdf->SetXY(10,20);
-                    $myline = 1;
-                    $lineYoffset = 20;
-                }
-            }
         }
 
-        if ($printtype == "pdf") 
-        {  
-            $lineY = $lineYoffset + ($myline*5);
-            $pdf->Line(5,$lineY,200,$lineY);
-        } 
-        else 
-        {       
-            $output .= "----------------------------------------";
-            $output .= "----------------------------------------\n";
-        }
+        $output .= "----------------------------------------";
+        $output .= "----------------------------------------\n";
 
 
         // print the notes and totals at the bottom of the invoice
         if ($this->email == TRUE)
         {
             // set the invoice footer to use the one for email invoices
-            $invoice_footer = $einvoice_footer;
+            $this->invoice_footer = $this->einvoice_footer;
         }
 
-        if ($printtype == "pdf") 
-        {
-            // fix html characters
-            $billing_notes = html_to_ascii($billing_notes);
-            $invoice_footer = html_to_ascii($invoice_footer);
+        $output .= "$this->billing_notes\n";
+        $output .= lang('credit').": $this->billing_credit_applied\n";
+        $output .= lang('newcharges').": $this->billing_new_charges\n";
+        $output .= lang('pastdue').": $this->billing_past_due\n";
+        $output .= lang('tax').": $this->billing_tax_due\n";
+        $output .= lang('total').": $this->billing_total_due\n";
 
-            $lineY = $lineY + 10;
-            $pdf->SetXY(10,$lineY);
-            $pdf->MultiCell(100,5,"$billing_notes");
-            $pdf->SetXY(135,$lineY);
-            $pdf->MultiCell(100,5,lang('credit').": $billing_credit_applied\n".lang('newcharges').": $billing_new_charges\n".lang('pastdue').": $billing_past_due\n".lang('tax').": $billing_tax_due\n");
-            $pdf->SetXY(135,$lineY+20);
-            $pdf->SetFont('Arial','BU',10);
-            $pdf->Cell(100,5,lang('total').": $billing_total_due");
-            $lineY = $lineY + 10;
-            $pdf->SetFont('Arial','',9);
-            $pdf->SetXY(10,$lineY);
-            $pdf->MultiCell(110,4,"$invoice_footer");
-        } 
-        else 
-        {               
-            $output .= "$billing_notes\n";
-            $output .= lang('credit').": $billing_credit_applied\n";
-            $output .= lang('newcharges').": $billing_new_charges\n";
-            $output .= lang('pastdue').": $billing_past_due\n";
-            $output .= lang('tax').": $billing_tax_due\n";
-            $output .= lang('total').": $billing_total_due\n";
+        $output .= "\n$this->invoice_footer\n";
 
-            $output .= "\n$invoice_footer\n";
-
-
-        }
-
-        if ($printtype == "pdf")
-        {       
-            return $pdf;
-        }
-        else
-        {
-            return $output;
-        }
+        return $output;
     }
 }
 
