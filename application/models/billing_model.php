@@ -9,94 +9,94 @@ class Billing_Model extends CI_Model
      */
     function create_record($organization_id, $my_account_number)
     {
-	// query the customer record for the default billing id
-	$query = "SELECT default_billing_id FROM customer 
-			WHERE account_number = ?";
-	$result = $this->db->query($query, array($my_account_number)) or die ("create_record queryfailed");
-	$myresult = $result->row_array();
-	$default_billing_id = $myresult['default_billing_id'];
+        // query the customer record for the default billing id
+        $query = "SELECT default_billing_id FROM customer 
+            WHERE account_number = ?";
+        $result = $this->db->query($query, array($my_account_number)) or die ("create_record queryfailed");
+        $myresult = $result->row_array();
+        $default_billing_id = $myresult['default_billing_id'];
 
-	// query the default billing record for default name and address info to
-	// insert into the new alternate billing record
-	$query = "SELECT * FROM billing WHERE id = ?";
-	$result = $this->db->query($query, array($default_billing_id)) or die ("create_record queryfailed");
-	$myresult = $result->row_array();
-	$name = $myresult['name'];
-	$company = $myresult['company'];
-	$street = $myresult['street'];
-	$city = $myresult['city'];
-	$state = $myresult['state'];
-	$country = $myresult['country'];
-	$zip = $myresult['zip'];
-	$phone = $myresult['phone'];
-	$fax = $myresult['fax'];
-	$contact_email = $myresult['contact_email'];
-	$billing_type = $myresult['billing_type'];
-	$creditcard_number = $myresult['creditcard_number'];
-	$creditcard_expire = $myresult['creditcard_expire'];
-	$billing_status = $myresult['billing_status'];
-	$next_billing_date = $myresult['next_billing_date'];
-	$from_date = $myresult['from_date'];
-	$to_date = $myresult['to_date'];
-	$payment_due_date = $myresult['payment_due_date'];
-	$rerun_date = $myresult['rerun_date'];
-	$pastdue_exempt = $myresult['pastdue_exempt'];
-	$po_number = $myresult['po_number'];
-	$encrypted_creditcard_number = $myresult['encrypted_creditcard_number'];
-	$automatic_receipt = $myresult['automatic_receipt'];	
+        // query the default billing record for default name and address info to
+        // insert into the new alternate billing record
+        $query = "SELECT * FROM billing WHERE id = ?";
+        $result = $this->db->query($query, array($default_billing_id)) or die ("create_record queryfailed");
+        $myresult = $result->row_array();
+        $name = $myresult['name'];
+        $company = $myresult['company'];
+        $street = $myresult['street'];
+        $city = $myresult['city'];
+        $state = $myresult['state'];
+        $country = $myresult['country'];
+        $zip = $myresult['zip'];
+        $phone = $myresult['phone'];
+        $fax = $myresult['fax'];
+        $contact_email = $myresult['contact_email'];
+        $billing_type = $myresult['billing_type'];
+        $creditcard_number = $myresult['creditcard_number'];
+        $creditcard_expire = $myresult['creditcard_expire'];
+        $billing_status = $myresult['billing_status'];
+        $next_billing_date = $myresult['next_billing_date'];
+        $from_date = $myresult['from_date'];
+        $to_date = $myresult['to_date'];
+        $payment_due_date = $myresult['payment_due_date'];
+        $rerun_date = $myresult['rerun_date'];
+        $pastdue_exempt = $myresult['pastdue_exempt'];
+        $po_number = $myresult['po_number'];
+        $encrypted_creditcard_number = $myresult['encrypted_creditcard_number'];
+        $automatic_receipt = $myresult['automatic_receipt'];	
 
-	// save billing information
-	$query = "INSERT into billing
-			SET name = ?,
-				company = ?,
-				street = ?,
-				city = ?,
-				state = ?,
-				country = ?,
-				zip = ?,
-				phone = ?,
-				fax = ?,
-				contact_email = ?,
-				account_number = ?,
-				billing_type = ?,
-				creditcard_number = ?,
-				creditcard_expire = ?,
-				next_billing_date = ?,
-				from_date = ?,
-				to_date = ?,
-				payment_due_date = ?,
-				pastdue_exempt = ?,
-				po_number = ?,
-				encrypted_creditcard_number = ?,
-				automatic_receipt = ?,
-				organization_id = ?";
-	$result = $this->db->query($query, array($name,
-						 $company,
-						 $street,
-						 $city,
-						 $state,
-						 $country,
-						 $zip,
-						 $phone,
-						 $fax,
-						 $contact_email,
-						 $my_account_number,
-						 $billing_type,
-						 $creditcard_number,
-						 $creditcard_expire,
-						 $next_billing_date,
-						 $from_date,
-						 $to_date,
-						 $payment_due_date,
-						 $pastdue_exempt,
-						 $po_number,
-						 $encrypted_creditcard_number,
-						 $automatic_receipt,
-						 $organization_id))
-	    or die ("create_record billing insert failed");
-	$myinsertid = $this->db->insert_id();
+        // save billing information
+        $query = "INSERT into billing
+            SET name = ?,
+            company = ?,
+            street = ?,
+            city = ?,
+            state = ?,
+            country = ?,
+            zip = ?,
+            phone = ?,
+            fax = ?,
+            contact_email = ?,
+            account_number = ?,
+            billing_type = ?,
+            creditcard_number = ?,
+            creditcard_expire = ?,
+            next_billing_date = ?,
+            from_date = ?,
+            to_date = ?,
+            payment_due_date = ?,
+            pastdue_exempt = ?,
+            po_number = ?,
+            encrypted_creditcard_number = ?,
+            automatic_receipt = ?,
+            organization_id = ?";
+        $result = $this->db->query($query, array($name,
+            $company,
+            $street,
+            $city,
+            $state,
+            $country,
+            $zip,
+            $phone,
+            $fax,
+            $contact_email,
+            $my_account_number,
+            $billing_type,
+            $creditcard_number,
+            $creditcard_expire,
+            $next_billing_date,
+            $from_date,
+            $to_date,
+            $payment_due_date,
+            $pastdue_exempt,
+            $po_number,
+            $encrypted_creditcard_number,
+            $automatic_receipt,
+            $organization_id))
+            or die ("create_record billing insert failed");
+        $myinsertid = $this->db->insert_id();
 
-	return $myinsertid;
+        return $myinsertid;
     }
 
     /*
@@ -106,13 +106,13 @@ class Billing_Model extends CI_Model
      */
     public function default_billing_id($account_number)
     {
-	$query = "SELECT default_billing_id FROM customer ".
-	    "WHERE account_number = ?";
-	$result = $this->db->query($query, array($account_number))
-	    or die ("default_billing_id queryfailed");
-	$myresult = $result->row();	
+        $query = "SELECT default_billing_id FROM customer ".
+            "WHERE account_number = ?";
+        $result = $this->db->query($query, array($account_number))
+            or die ("default_billing_id queryfailed");
+        $myresult = $result->row();	
 
-	return $myresult->default_billing_id;
+        return $myresult->default_billing_id;
     }
 
 
@@ -123,16 +123,16 @@ class Billing_Model extends CI_Model
      */
     public function alternates($account_number, $billing_id)
     {
-	// print a list of alternate billing id's if any
-	$query = "SELECT b.id b_id, g.org_name g_org_name, t.name t_name ".
-	    "FROM billing b ".	
-	    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-	    "LEFT JOIN general g ON b.organization_id = g.id ".
-	    "WHERE b.id != ? AND b.account_number = ?";
-	$result = $this->db->query($query, array($billing_id, $account_number)) 
-	    or die ("alternates queryfailed");
+        // print a list of alternate billing id's if any
+        $query = "SELECT b.id b_id, g.org_name g_org_name, t.name t_name ".
+            "FROM billing b ".	
+            "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+            "LEFT JOIN general g ON b.organization_id = g.id ".
+            "WHERE b.id != ? AND b.account_number = ?";
+        $result = $this->db->query($query, array($billing_id, $account_number)) 
+            or die ("alternates queryfailed");
 
-	return $result->result_array();
+        return $result->result_array();
 
     }
 
@@ -144,13 +144,13 @@ class Billing_Model extends CI_Model
      */
     public function org_alternates($account_number, $org_id)
     {
-	$query = "SELECT b.id,bt.name,g.org_name FROM billing b ".
-	    "LEFT JOIN general g ON g.id = b.organization_id ".
-	    "LEFT JOIN billing_types bt ON b.billing_type = bt.id  ".
-	    "WHERE b.account_number = ? AND g.id = ?";
+        $query = "SELECT b.id,bt.name,g.org_name FROM billing b ".
+            "LEFT JOIN general g ON g.id = b.organization_id ".
+            "LEFT JOIN billing_types bt ON b.billing_type = bt.id  ".
+            "WHERE b.account_number = ? AND g.id = ?";
 
-	$result = $this->db->query($query, array($account_number, $org_id)) or die ("query failed");
-	return $result;
+        $result = $this->db->query($query, array($account_number, $org_id)) or die ("query failed");
+        return $result;
     }
 
 
@@ -161,8 +161,8 @@ class Billing_Model extends CI_Model
      */
     public function save_record($billing_id, $billing_data)
     {
-	$this->db->where('id', $billing_id);
-	$this->db->update('billing', $billing_data);
+        $this->db->where('id', $billing_id);
+        $this->db->update('billing', $billing_data);
     }
 
 
@@ -173,74 +173,74 @@ class Billing_Model extends CI_Model
      */
     public function record($billing_id)
     {
-	$query = "SELECT b.id b_id, b.name b_name, b.company b_company, b.street ".
-	    "b_street, b.city b_city, b.state b_state, b.zip b_zip, b.phone ".
-	    "b_phone, b.fax b_fax, b.country b_country, b.contact_email b_email, ".
-	    "b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp, ".
-	    "b.billing_status b_status, b.billing_type b_type, ".
-	    "b.next_billing_date b_next_billing_date, b.pastdue_exempt b_pastdue_exempt, ".
-	    "b.prev_billing_date b_prev_billing_date, b.from_date b_from_date, ".
-	    "b.to_date b_to_date, b.payment_due_date b_payment_due_date, ".
-	    "b.rerun_date b_rerun_date, b.po_number b_po_number, b.notes b_notes, ".
-	    "b.automatic_receipt b_automatic_receipt, ".
-	    "b.organization_id b_organization_id,  t.id t_id, t.name t_name ".
-	    "FROM billing b ".
-	    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-	    "WHERE b.id = ?";
+        $query = "SELECT b.id b_id, b.name b_name, b.company b_company, b.street ".
+            "b_street, b.city b_city, b.state b_state, b.zip b_zip, b.phone ".
+            "b_phone, b.fax b_fax, b.country b_country, b.contact_email b_email, ".
+            "b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp, ".
+            "b.billing_status b_status, b.billing_type b_type, ".
+            "b.next_billing_date b_next_billing_date, b.pastdue_exempt b_pastdue_exempt, ".
+            "b.prev_billing_date b_prev_billing_date, b.from_date b_from_date, ".
+            "b.to_date b_to_date, b.payment_due_date b_payment_due_date, ".
+            "b.rerun_date b_rerun_date, b.po_number b_po_number, b.notes b_notes, ".
+            "b.automatic_receipt b_automatic_receipt, ".
+            "b.organization_id b_organization_id,  t.id t_id, t.name t_name ".
+            "FROM billing b ".
+            "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+            "WHERE b.id = ?";
 
-	$result = $this->db->query($query, array($billing_id)) or die ("record queryfailed");
-	$myresult = $result->row_array();
+        $result = $this->db->query($query, array($billing_id)) or die ("record queryfailed");
+        $myresult = $result->row_array();
 
-	$data['billing_id'] = $myresult['b_id'];
-	$data['name'] = $myresult['b_name'];
-	$data['company'] = $myresult['b_company'];
-	$data['street'] = $myresult['b_street'];
-	$data['city'] = $myresult['b_city'];
-	$data['state'] = $myresult['b_state'];
-	$data['zip'] = $myresult['b_zip'];
-	$data['country'] = $myresult['b_country'];
-	$data['phone'] = $myresult['b_phone'];
-	$data['fax'] = $myresult['b_fax'];
-	$data['contact_email'] = $myresult['b_email'];
-	$data['billing_type'] = $myresult['b_type'];
-	$data['billing_type_name'] = $myresult['t_name'];
-	$data['creditcard_number'] = $myresult['b_ccnum'];
-	$data['creditcard_expire'] = $myresult['b_ccexp'];
-	$data['billing_status'] = $myresult['b_status'];
-	$data['next_billing_date'] = $myresult['b_next_billing_date'];
-	$data['prev_billing_date'] = $myresult['b_prev_billing_date'];
-	$data['from_date'] = $myresult['b_from_date'];
-	$data['to_date'] = $myresult['b_to_date'];
-	$data['payment_due_date'] = $myresult['b_payment_due_date'];
-	$data['rerun_date'] = $myresult['b_rerun_date'];
-	$data['notes'] = $myresult['b_notes'];
-	$data['po_number'] = $myresult['b_po_number'];
-	$data['pastdue_exempt'] = $myresult['b_pastdue_exempt'];
-	$data['automatic_receipt'] = $myresult['b_automatic_receipt'];		
-	$data['organization_id'] = $myresult['b_organization_id'];
+        $data['billing_id'] = $myresult['b_id'];
+        $data['name'] = $myresult['b_name'];
+        $data['company'] = $myresult['b_company'];
+        $data['street'] = $myresult['b_street'];
+        $data['city'] = $myresult['b_city'];
+        $data['state'] = $myresult['b_state'];
+        $data['zip'] = $myresult['b_zip'];
+        $data['country'] = $myresult['b_country'];
+        $data['phone'] = $myresult['b_phone'];
+        $data['fax'] = $myresult['b_fax'];
+        $data['contact_email'] = $myresult['b_email'];
+        $data['billing_type'] = $myresult['b_type'];
+        $data['billing_type_name'] = $myresult['t_name'];
+        $data['creditcard_number'] = $myresult['b_ccnum'];
+        $data['creditcard_expire'] = $myresult['b_ccexp'];
+        $data['billing_status'] = $myresult['b_status'];
+        $data['next_billing_date'] = $myresult['b_next_billing_date'];
+        $data['prev_billing_date'] = $myresult['b_prev_billing_date'];
+        $data['from_date'] = $myresult['b_from_date'];
+        $data['to_date'] = $myresult['b_to_date'];
+        $data['payment_due_date'] = $myresult['b_payment_due_date'];
+        $data['rerun_date'] = $myresult['b_rerun_date'];
+        $data['notes'] = $myresult['b_notes'];
+        $data['po_number'] = $myresult['b_po_number'];
+        $data['pastdue_exempt'] = $myresult['b_pastdue_exempt'];
+        $data['automatic_receipt'] = $myresult['b_automatic_receipt'];		
+        $data['organization_id'] = $myresult['b_organization_id'];
 
-	// if the card number is not blank, wipe out the middle of the card number
-	if ($data['creditcard_number'] <> '') {
-	    $length = strlen($data['creditcard_number']);
-	    $firstdigit = substr($data['creditcard_number'], 0,1);
-	    $lastfour = substr($data['creditcard_number'], -4);
-	    $data['creditcard_number'] = "$firstdigit" . "***********" . "$lastfour";
-	}
+        // if the card number is not blank, wipe out the middle of the card number
+        if ($data['creditcard_number'] <> '') {
+            $length = strlen($data['creditcard_number']);
+            $firstdigit = substr($data['creditcard_number'], 0,1);
+            $lastfour = substr($data['creditcard_number'], -4);
+            $data['creditcard_number'] = "$firstdigit" . "***********" . "$lastfour";
+        }
 
-	// get the billing status for this record
-	$data['mystatus'] = $this->billingstatus($billing_id);		
+        // get the billing status for this record
+        $data['mystatus'] = $this->billingstatus($billing_id);		
 
-	// get the organization info
-	$query = "SELECT org_name FROM general WHERE id = ".$data['organization_id']." LIMIT 1";
-	$orgresult = $this->db->query($query) or die ("queryfailed");
-	$myorgresult = $orgresult->row();
-	$data['organization_name'] = $myorgresult->org_name;
+        // get the organization info
+        $query = "SELECT org_name FROM general WHERE id = ".$data['organization_id']." LIMIT 1";
+        $orgresult = $this->db->query($query) or die ("queryfailed");
+        $myorgresult = $orgresult->row();
+        $data['organization_name'] = $myorgresult->org_name;
 
-	return $data;
+        return $data;
 
     }
-	
-	
+
+
     /*
      * ------------------------------------------------------------------------
      *  return information from the billing record suitable for portal viewers
@@ -249,116 +249,116 @@ class Billing_Model extends CI_Model
      */
     public function portal_record($billing_id)
     {
-	$query = "SELECT b.id b_id, b.name b_name, b.company b_company, b.street ".
-	    "b_street, b.city b_city, b.state b_state, b.zip b_zip, b.phone ".
-	    "b_phone, b.fax b_fax, b.country b_country, b.contact_email b_email, ".
-	    "b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp, ".
-	    "b.billing_status b_status, b.billing_type b_type, ".
-	    "b.next_billing_date b_next_billing_date, b.pastdue_exempt b_pastdue_exempt, ".
-	    "b.prev_billing_date b_prev_billing_date, b.from_date b_from_date, ".
-	    "b.to_date b_to_date, b.payment_due_date b_payment_due_date, ".
-	    "b.rerun_date b_rerun_date, b.po_number b_po_number, b.notes b_notes, ".
-	    "b.automatic_receipt b_automatic_receipt, ".
-	    "b.organization_id b_organization_id,  t.id t_id, t.name t_name ".
-	    "FROM billing b ".
-	    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-	    "WHERE b.id = ?";
+        $query = "SELECT b.id b_id, b.name b_name, b.company b_company, b.street ".
+            "b_street, b.city b_city, b.state b_state, b.zip b_zip, b.phone ".
+            "b_phone, b.fax b_fax, b.country b_country, b.contact_email b_email, ".
+            "b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp, ".
+            "b.billing_status b_status, b.billing_type b_type, ".
+            "b.next_billing_date b_next_billing_date, b.pastdue_exempt b_pastdue_exempt, ".
+            "b.prev_billing_date b_prev_billing_date, b.from_date b_from_date, ".
+            "b.to_date b_to_date, b.payment_due_date b_payment_due_date, ".
+            "b.rerun_date b_rerun_date, b.po_number b_po_number, b.notes b_notes, ".
+            "b.automatic_receipt b_automatic_receipt, ".
+            "b.organization_id b_organization_id,  t.id t_id, t.name t_name ".
+            "FROM billing b ".
+            "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+            "WHERE b.id = ?";
 
-	$result = $this->db->query($query, array($billing_id)) or die ("record queryfailed");
-	$myresult = $result->row_array();
+        $result = $this->db->query($query, array($billing_id)) or die ("record queryfailed");
+        $myresult = $result->row_array();
 
-	$data['billing_id'] = $myresult['b_id'];
-	$data['name'] = $myresult['b_name'];
-	$data['company'] = $myresult['b_company'];
-	$data['street'] = $myresult['b_street'];
-	$data['city'] = $myresult['b_city'];
-	$data['state'] = $myresult['b_state'];
-	$data['zip'] = $myresult['b_zip'];
-	$data['country'] = $myresult['b_country'];
-	$data['phone'] = $myresult['b_phone'];
-	$data['fax'] = $myresult['b_fax'];
-	$data['contact_email'] = $myresult['b_email'];
-	$data['creditcard_number'] = $myresult['b_ccnum'];
-	$data['creditcard_expire'] = $myresult['b_ccexp'];
-	$data['billing_status'] = $myresult['b_status'];
-	$data['organization_id'] = $myresult['b_organization_id'];
+        $data['billing_id'] = $myresult['b_id'];
+        $data['name'] = $myresult['b_name'];
+        $data['company'] = $myresult['b_company'];
+        $data['street'] = $myresult['b_street'];
+        $data['city'] = $myresult['b_city'];
+        $data['state'] = $myresult['b_state'];
+        $data['zip'] = $myresult['b_zip'];
+        $data['country'] = $myresult['b_country'];
+        $data['phone'] = $myresult['b_phone'];
+        $data['fax'] = $myresult['b_fax'];
+        $data['contact_email'] = $myresult['b_email'];
+        $data['creditcard_number'] = $myresult['b_ccnum'];
+        $data['creditcard_expire'] = $myresult['b_ccexp'];
+        $data['billing_status'] = $myresult['b_status'];
+        $data['organization_id'] = $myresult['b_organization_id'];
 
-	// if the card number is not blank, wipe out the middle of the card number
-	if ($data['creditcard_number'] <> '') {
-	    $length = strlen($data['creditcard_number']);
-	    $firstdigit = substr($data['creditcard_number'], 0,1);
-	    $lastfour = substr($data['creditcard_number'], -4);
-	    $data['creditcard_number'] = "$firstdigit" . "***********" . "$lastfour";
-	}
+        // if the card number is not blank, wipe out the middle of the card number
+        if ($data['creditcard_number'] <> '') {
+            $length = strlen($data['creditcard_number']);
+            $firstdigit = substr($data['creditcard_number'], 0,1);
+            $lastfour = substr($data['creditcard_number'], -4);
+            $data['creditcard_number'] = "$firstdigit" . "***********" . "$lastfour";
+        }
 
-	// get the billing status for this record
-	$data['mystatus'] = $this->billingstatus($billing_id);		
+        // get the billing status for this record
+        $data['mystatus'] = $this->billingstatus($billing_id);		
 
-	// get the organization info
-	$query = "SELECT org_name FROM general WHERE id = ".$data['organization_id']." LIMIT 1";
-	$orgresult = $this->db->query($query) or die ("queryfailed");
-	$myorgresult = $orgresult->row();
-	$data['organization_name'] = $myorgresult->org_name;
+        // get the organization info
+        $query = "SELECT org_name FROM general WHERE id = ".$data['organization_id']." LIMIT 1";
+        $orgresult = $this->db->query($query) or die ("queryfailed");
+        $myorgresult = $orgresult->row();
+        $data['organization_name'] = $myorgresult->org_name;
 
-	return $data;
+        return $data;
 
     }	
 
 
     public function record_list($account_number)
     {
-	// show the billing record info
-	// print a list of alternate billing id's if any
-	$query = "SELECT b.id b_id, g.org_name g_org_name, t.name t_name, t.method t_method ".
-	    "FROM billing b ".
-	    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-	    "LEFT JOIN general g ON b.organization_id = g.id ".
-	    "WHERE b.account_number = ?";
-	$record_result = $this->db->query($query, array($account_number)) or die ("record_list query failed");
+        // show the billing record info
+        // print a list of alternate billing id's if any
+        $query = "SELECT b.id b_id, g.org_name g_org_name, t.name t_name, t.method t_method ".
+            "FROM billing b ".
+            "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+            "LEFT JOIN general g ON b.organization_id = g.id ".
+            "WHERE b.account_number = ?";
+        $record_result = $this->db->query($query, array($account_number)) or die ("record_list query failed");
 
-	// check if billing id has active services and what it's status is
-	$i = 0; 
-	// make a multi dimensional array of these results for each record assigned to this user
-	foreach($record_result->result() as $myrecord)
-	{
-	    $billing_id = $myrecord->b_id;
-	    $query = "SELECT billing_id FROM user_services ".
-		"WHERE removed = 'n' AND billing_id = ? LIMIT 1";
-	    $usresult = $this->db->query($query, array($billing_id)) or die ("user_service queryfailed");
-	    if ($usresult->num_rows() > 0) 
-	    {
-		$myusresult = $usresult->row_array();
-		$not_removed_id = $myusresult['billing_id'];		
-	    }
-	    else
-	    {
-		$not_removed_id = 0;
-	    }
-	    $mystatus = $this->billingstatus($billing_id);
+        // check if billing id has active services and what it's status is
+        $i = 0; 
+        // make a multi dimensional array of these results for each record assigned to this user
+        foreach($record_result->result() as $myrecord)
+        {
+            $billing_id = $myrecord->b_id;
+            $query = "SELECT billing_id FROM user_services ".
+                "WHERE removed = 'n' AND billing_id = ? LIMIT 1";
+            $usresult = $this->db->query($query, array($billing_id)) or die ("user_service queryfailed");
+            if ($usresult->num_rows() > 0) 
+            {
+                $myusresult = $usresult->row_array();
+                $not_removed_id = $myusresult['billing_id'];		
+            }
+            else
+            {
+                $not_removed_id = 0;
+            }
+            $mystatus = $this->billingstatus($billing_id);
 
-	    $newtaxes = sprintf("%.2f",$this->total_taxitems($billing_id));
-	    $newcharges = sprintf("%.2f",$this->total_serviceitems($billing_id)+$newtaxes);
-	    $pastcharges = sprintf("%.2f",$this->total_pastdueitems($billing_id));
-	    $newtotal = sprintf("%.2f",$newcharges + $pastcharges);
+            $newtaxes = sprintf("%.2f",$this->total_taxitems($billing_id));
+            $newcharges = sprintf("%.2f",$this->total_serviceitems($billing_id)+$newtaxes);
+            $pastcharges = sprintf("%.2f",$this->total_pastdueitems($billing_id));
+            $newtotal = sprintf("%.2f",$newcharges + $pastcharges);
 
-	    $result[$i] = array(
-		'b_id' => $myrecord->b_id,
-		'g_org_name' => $myrecord->g_org_name,
-		't_name' => $myrecord->t_name,
-		't_method' => $myrecord->t_method,
-		'not_removed_id' => $not_removed_id,
-		'mystatus' => $mystatus,
-		'newtaxes' => $newtaxes,
-		'newcharges' => $newcharges,
-		'pastcharges' => $pastcharges,
-		'newtotal' => $newtotal
-		);
+            $result[$i] = array(
+                'b_id' => $myrecord->b_id,
+                'g_org_name' => $myrecord->g_org_name,
+                't_name' => $myrecord->t_name,
+                't_method' => $myrecord->t_method,
+                'not_removed_id' => $not_removed_id,
+                'mystatus' => $mystatus,
+                'newtaxes' => $newtaxes,
+                'newcharges' => $newcharges,
+                'pastcharges' => $pastcharges,
+                'newtotal' => $newtotal
+            );
 
-	    $i++;
-	}
+            $i++;
+        }
 
 
-	return $result;
+        return $result;
     }
 
 
@@ -370,83 +370,83 @@ class Billing_Model extends CI_Model
      */
     function get_nextbillingdate()
     {
-	// get the current date and time in the SQL query format
-	$mydate = date("Y-m-d");
-	$mytime = date("H:i:s");
+        // get the current date and time in the SQL query format
+        $mydate = date("Y-m-d");
+        $mytime = date("H:i:s");
 
-	// check if it's after the dayrollover time and get tomorrow's date if it is
-	$query = "SELECT billingdate_rollover_time from settings WHERE id = 1";
-	$result = $this->db->query($query) or die ("Billingdate rollover Query Failed");
-	$myresult = $result->row_array();
-	$rollover_time = $myresult['billingdate_rollover_time'];
-	if ($mytime > $rollover_time) 
-	{
-	    $mydate = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, date("Y")));
-	}
+        // check if it's after the dayrollover time and get tomorrow's date if it is
+        $query = "SELECT billingdate_rollover_time from settings WHERE id = 1";
+        $result = $this->db->query($query) or die ("Billingdate rollover Query Failed");
+        $myresult = $result->row_array();
+        $rollover_time = $myresult['billingdate_rollover_time'];
+        if ($mytime > $rollover_time) 
+        {
+            $mydate = date("Y-m-d", mktime(0, 0, 0, date("m")  , date("d")+1, date("Y")));
+        }
 
-	// check if the date is in the holiday table, move up one day until not matched
-	$holiday = true;
-	while ($holiday == true)
-	{
-	    $query = "SELECT holiday_date from holiday WHERE holiday_date = ?";
-	    $result = $this->db->query($query, array($mydate)) or die ("Holiday date Query Failed");
-	    $myresult = $result->row_array();
-	    if ($result->num_rows() > 0)
-	    {	
-		$myholiday = $myresult['holiday_date'];
-	    }
-	    else
-	    {
-		$myholiday = NULL;
-	    }
+        // check if the date is in the holiday table, move up one day until not matched
+        $holiday = true;
+        while ($holiday == true)
+        {
+            $query = "SELECT holiday_date from holiday WHERE holiday_date = ?";
+            $result = $this->db->query($query, array($mydate)) or die ("Holiday date Query Failed");
+            $myresult = $result->row_array();
+            if ($result->num_rows() > 0)
+            {	
+                $myholiday = $myresult['holiday_date'];
+            }
+            else
+            {
+                $myholiday = NULL;
+            }
 
-	    // check for billing weekend days
-	    // check the database for what days are marked as billing weekends
-	    $query = "SELECT billingweekend_sunday, billingweekend_monday, ".
-		"billingweekend_tuesday, billingweekend_wednesday, ".
-		"billingweekend_thursday, billingweekend_friday, ".
-		"billingweekend_saturday FROM settings WHERE id = 1";
-	    $result = $this->db->query($query) or die ("Weekend Query Failed");
-	    $myresult = $result->row_array();
-	    $sunday = $myresult['billingweekend_sunday'];
-	    $monday = $myresult['billingweekend_monday'];
-	    $tuesday = $myresult['billingweekend_tuesday'];
-	    $wednesday = $myresult['billingweekend_wednesday'];
-	    $thursday = $myresult['billingweekend_thursday'];
-	    $friday = $myresult['billingweekend_friday'];
-	    $saturday = $myresult['billingweekend_saturday'];                                
+            // check for billing weekend days
+            // check the database for what days are marked as billing weekends
+            $query = "SELECT billingweekend_sunday, billingweekend_monday, ".
+                "billingweekend_tuesday, billingweekend_wednesday, ".
+                "billingweekend_thursday, billingweekend_friday, ".
+                "billingweekend_saturday FROM settings WHERE id = 1";
+            $result = $this->db->query($query) or die ("Weekend Query Failed");
+            $myresult = $result->row_array();
+            $sunday = $myresult['billingweekend_sunday'];
+            $monday = $myresult['billingweekend_monday'];
+            $tuesday = $myresult['billingweekend_tuesday'];
+            $wednesday = $myresult['billingweekend_wednesday'];
+            $thursday = $myresult['billingweekend_thursday'];
+            $friday = $myresult['billingweekend_friday'];
+            $saturday = $myresult['billingweekend_saturday'];                                
 
-	    // check the date we have agains those billing weekends
-	    $datepieces = explode('-', $mydate); 
-	    $myyear = $datepieces[0];
-	    $mymonth = $datepieces[1];
-	    $myday = $datepieces[2];
+            // check the date we have agains those billing weekends
+            $datepieces = explode('-', $mydate); 
+            $myyear = $datepieces[0];
+            $mymonth = $datepieces[1];
+            $myday = $datepieces[2];
 
-	    $day_of_week = date("w", mktime(0, 0, 0, $mymonth, $myday, $myyear));
+            $day_of_week = date("w", mktime(0, 0, 0, $mymonth, $myday, $myyear));
 
-	    // if the weekday is a billing weekend, 
-	    // then make it a holiday so it gets moved forward
-	    if ($sunday == 'y' && $day_of_week == 0) { $myholiday = $mydate; }
-	    if ($monday == 'y' && $day_of_week == 1) { $myholiday = $mydate; }
-	    if ($tuesday == 'y' && $day_of_week == 2) { $myholiday = $mydate; }
-	    if ($wednesday == 'y' && $day_of_week == 3) { $myholiday = $mydate; }
-	    if ($thursday == 'y' && $day_of_week == 4) { $myholiday = $mydate; }
-	    if ($friday == 'y' && $day_of_week == 5) { $myholiday = $mydate; }
-	    if ($saturday == 'y' && $day_of_week == 6) { $myholiday = $mydate; }
+            // if the weekday is a billing weekend, 
+            // then make it a holiday so it gets moved forward
+            if ($sunday == 'y' && $day_of_week == 0) { $myholiday = $mydate; }
+            if ($monday == 'y' && $day_of_week == 1) { $myholiday = $mydate; }
+                if ($tuesday == 'y' && $day_of_week == 2) { $myholiday = $mydate; }
+                    if ($wednesday == 'y' && $day_of_week == 3) { $myholiday = $mydate; }
+                        if ($thursday == 'y' && $day_of_week == 4) { $myholiday = $mydate; }
+                            if ($friday == 'y' && $day_of_week == 5) { $myholiday = $mydate; }
+                                if ($saturday == 'y' && $day_of_week == 6) { $myholiday = $mydate; }
 
-	    if($myholiday == $mydate) 
-	    {
-		// holiday is still true move up one day and test that one
-		$mydate = date("Y-m-d", mktime(0, 0, 0, $mymonth , $myday+1, $myyear));
-	    } 
-	    else 
-	    {
-		$holiday = false;
-	    }
+                                    if($myholiday == $mydate) 
+                                    {
+                                        // holiday is still true move up one day and test that one
+                                        $mydate = date("Y-m-d", mktime(0, 0, 0, $mymonth , $myday+1, $myyear));
+                                    } 
+                                    else 
+                                    {
+                                        $holiday = false;
+                                    }
 
-	    //echo "holiday $mydate<br>";
-	}
-	return $mydate;
+            //echo "holiday $mydate<br>";
+        }
+        return $mydate;
     }
 
     /*
@@ -457,177 +457,177 @@ class Billing_Model extends CI_Model
     public function billingstatus($billing_id)
     {
 
-	$status = "";
-	$todaydate = date("Ymd");
+        $status = "";
+        $todaydate = date("Ymd");
 
-	// get the two latest payment_history status values
-	$query="SELECT * FROM payment_history 
-			WHERE billing_id = ? ORDER BY id DESC LIMIT 2";
-	$result = $this->db->query($query, array($billing_id)) or die ("billingstatus queryfailed");
+        // get the two latest payment_history status values
+        $query="SELECT * FROM payment_history 
+            WHERE billing_id = ? ORDER BY id DESC LIMIT 2";
+        $result = $this->db->query($query, array($billing_id)) or die ("billingstatus queryfailed");
 
-	//"New", - new account with no billing details	
-	$rowcount = $result->num_rows();
-	if ($rowcount < 1) {$status = lang('new'); }
+        //"New", - new account with no billing details	
+        $rowcount = $result->num_rows();
+        if ($rowcount < 1) {$status = lang('new'); }
 
-	// get the first and second payment_history results
-	$i = 0;
-	if (!isset($myresult->status)) { $myresult->status = ""; }
-	if (!isset($firststatus)) { $firststatus = ""; }
-	if (!isset($secondstatus)) { $secondstatus = ""; }
+        // get the first and second payment_history results
+        $i = 0;
+        if (!isset($myresult->status)) { $myresult->status = ""; }
+        if (!isset($firststatus)) { $firststatus = ""; }
+            if (!isset($secondstatus)) { $secondstatus = ""; }
 
-	foreach($result->result() as $myresult)
-	{
-	    if ($i == 0) 
-	    {
-		// the most recent payment_history status
-		$firststatus = $myresult->status;
-	    }
+                foreach($result->result() as $myresult)
+                {
+                    if ($i == 0) 
+                    {
+                        // the most recent payment_history status
+                        $firststatus = $myresult->status;
+                    }
 
-	    if ($i == 1) 
-	    {
-		// the second most recent payment_history status
-		$secondstatus = $myresult->status;
-	    }
+                    if ($i == 1) 
+                    {
+                        // the second most recent payment_history status
+                        $secondstatus = $myresult->status;
+                    }
 
-	    // skip credit status
-	    if (($firststatus != 'credit') AND ($secondstatus != 'credit'))
-	    {
-		$i++;
-	    }
-	}
+                    // skip credit status
+                    if (($firststatus != 'credit') AND ($secondstatus != 'credit'))
+                    {
+                        $i++;
+                    }
+                }
 
-	// Get the billing method
-	$query = "SELECT b.next_billing_date, b.billing_type, b.to_date, b.id, 
-			t.id, t.method FROM billing b 
-			LEFT JOIN billing_types t ON t.id = b.billing_type 
-			WHERE b.id = ?";
-	$result = $this->db->query($query, array($billing_id)) or die("billingstatus method query failed");;
-	$myresult = $result->row();
-	if (!isset($myresult->method)) { $myresult->method = ""; }	
-	if (!isset($myresult->to_date)) { $myresult->to_date = ""; }	
-	if (!isset($myresult->next_billing_date)) { $myresult->next_billing_date = ""; }	
-	$method = $myresult->method;
-	$todate = $myresult->to_date;
-	$next_billing_date = $myresult->next_billing_date;
-
-
-	//"Not Renewed", - a past due prepaid account
-	// if method = prepay and today is greater than the billing to_date
-	$todate = str_replace( "-", "", $todate );
-	if (($method == "prepay") and ($todaydate > $todate)) {
-	    $status = lang('notrenewed');
-	}
-
-	//"Authorized", - an authorized credit card or invoice account
-	// if last payment_history = authorized
-	if ($firststatus == "authorized") {
-	    $status = lang('authorized');
-	}
-
-	//"Declined", - a declined credit card account
-	// if last payment_history = declined
-	if ($firststatus == "declined") 
-	{
-	    $status = lang('declined');
-	    if ($rowcount == 1) 
-	    {
-		// Initial Decline
-		$status = lang('initialdecline');
-	    }
-	    if ($secondstatus == "declined") 
-	    {
-		// Declined 2X
-		$status = lang('declined2x');
-	    }
-	}
+                // Get the billing method
+                $query = "SELECT b.next_billing_date, b.billing_type, b.to_date, b.id, 
+                    t.id, t.method FROM billing b 
+                    LEFT JOIN billing_types t ON t.id = b.billing_type 
+                    WHERE b.id = ?";
+                $result = $this->db->query($query, array($billing_id)) or die("billingstatus method query failed");;
+                $myresult = $result->row();
+                if (!isset($myresult->method)) { $myresult->method = ""; }	
+                if (!isset($myresult->to_date)) { $myresult->to_date = ""; }	
+                    if (!isset($myresult->next_billing_date)) { $myresult->next_billing_date = ""; }	
+                        $method = $myresult->method;
+                $todate = $myresult->to_date;
+                $next_billing_date = $myresult->next_billing_date;
 
 
-	//"Pending", - not being billed, pending an account change
-	// if last payment_history = pending
-	if (empty($next_billing_date) OR $next_billing_date == '0000-00-00') 
-	{
-	    $status = lang('pending');
-	}
+                //"Not Renewed", - a past due prepaid account
+                // if method = prepay and today is greater than the billing to_date
+                $todate = str_replace( "-", "", $todate );
+                if (($method == "prepay") and ($todaydate > $todate)) {
+                    $status = lang('notrenewed');
+                }
 
-	//"Turned Off", - turned off by us
-	// if last payment_history is turned off
-	// The middle past due days
-	if ($firststatus == "turnedoff") 
-	{
-	    $status = lang('turnedoff');
-	}
+                //"Authorized", - an authorized credit card or invoice account
+                // if last payment_history = authorized
+                if ($firststatus == "authorized") {
+                    $status = lang('authorized');
+                }
 
-	//"Notice Sent", - sent notice about to be shutoff
-	// for carrier dependent services
-	if ($firststatus == "noticesent") 
-	{
-	    $status = lang('noticesent');
-	}
+                //"Declined", - a declined credit card account
+                // if last payment_history = declined
+                if ($firststatus == "declined") 
+                {
+                    $status = lang('declined');
+                    if ($rowcount == 1) 
+                    {
+                        // Initial Decline
+                        $status = lang('initialdecline');
+                    }
+                    if ($secondstatus == "declined") 
+                    {
+                        // Declined 2X
+                        $status = lang('declined2x');
+                    }
+                }
 
-	//"Waiting", - waiting for payment, stops pastdue process
-	// for carrier dependent services
-	if ($firststatus == "waiting") 
-	{
-	    $status = lang('waiting');
-	} 
 
-	// Past Due  - status set by the activator when run daily
-	//"Turned Off", - turned off by us
-	// if last payment_history is turned off
-	// The middle past due days
-	if ($firststatus == "pastdue") 
-	{
-	    $status = lang('pastdue');
-	}
+                //"Pending", - not being billed, pending an account change
+                // if last payment_history = pending
+                if (empty($next_billing_date) OR $next_billing_date == '0000-00-00') 
+                {
+                    $status = lang('pending');
+                }
 
-	// get pastdue_exempt status
-	$query = "SELECT pastdue_exempt FROM billing WHERE id = ?";
-	$result = $this->db->query($query, array($billing_id))
-	    or die("billingstatus pastdue_exempt queryfailed");;
-	$myresult = $result->row();
-	$pastdue_exempt = $myresult->pastdue_exempt;
-	if ($pastdue_exempt == 'y') { $status = lang('pastdueexempt'); }
-	if ($pastdue_exempt == 'bad_debt') { $status = lang('bad_debt'); }
+                //"Turned Off", - turned off by us
+                // if last payment_history is turned off
+                // The middle past due days
+                if ($firststatus == "turnedoff") 
+                {
+                    $status = lang('turnedoff');
+                }
 
-	//"Free", - an account with the free billing type
-	// overrides other billing types
-	if ($method == "free") 
-	{
-	    $status = lang('free');
-	}
+                //"Notice Sent", - sent notice about to be shutoff
+                // for carrier dependent services
+                if ($firststatus == "noticesent") 
+                {
+                    $status = lang('noticesent');
+                }
 
-	//"Canceled" - canceled, has a cancel date
-	// if they have a cancel date
-	$query = "SELECT cancel_date FROM customer
-			WHERE default_billing_id = ? LIMIT 1";
-	$result = $this->db->query($query, array($billing_id)) or die("billingstatus cancel_date queryfailed");;
-	$myresult = $result->row();
-	if (!isset($myresult->cancel_date))
-	{
-	    $cancel_date = NULL;
-	}
-	else
-	{
-	    $cancel_date = $myresult->cancel_date;
-	}
+                //"Waiting", - waiting for payment, stops pastdue process
+                // for carrier dependent services
+                if ($firststatus == "waiting") 
+                {
+                    $status = lang('waiting');
+                } 
 
-	if ($cancel_date) 
-	{
-	    if ($firststatus == "cancelwfee") 
-	    {
-		$status = lang('cancelwithfee');
-	    } 
-	    elseif ($firststatus == "collections") 
-	    {
-		$status = lang('collections');
-	    } 
-	    else 
-	    {
-		$status = lang('canceled');
-	    }
-	}
+                // Past Due  - status set by the activator when run daily
+                //"Turned Off", - turned off by us
+                // if last payment_history is turned off
+                // The middle past due days
+                if ($firststatus == "pastdue") 
+                {
+                    $status = lang('pastdue');
+                }
 
-	return $status;	
+                // get pastdue_exempt status
+                $query = "SELECT pastdue_exempt FROM billing WHERE id = ?";
+                $result = $this->db->query($query, array($billing_id))
+                    or die("billingstatus pastdue_exempt queryfailed");;
+                $myresult = $result->row();
+                $pastdue_exempt = $myresult->pastdue_exempt;
+                if ($pastdue_exempt == 'y') { $status = lang('pastdueexempt'); }
+                if ($pastdue_exempt == 'bad_debt') { $status = lang('bad_debt'); }
+
+                    //"Free", - an account with the free billing type
+                    // overrides other billing types
+                    if ($method == "free") 
+                    {
+                        $status = lang('free');
+                    }
+
+                    //"Canceled" - canceled, has a cancel date
+                    // if they have a cancel date
+                    $query = "SELECT cancel_date FROM customer
+                        WHERE default_billing_id = ? LIMIT 1";
+                    $result = $this->db->query($query, array($billing_id)) or die("billingstatus cancel_date queryfailed");;
+                    $myresult = $result->row();
+                    if (!isset($myresult->cancel_date))
+                    {
+                        $cancel_date = NULL;
+                    }
+                    else
+                    {
+                        $cancel_date = $myresult->cancel_date;
+                    }
+
+                    if ($cancel_date) 
+                    {
+                        if ($firststatus == "cancelwfee") 
+                        {
+                            $status = lang('cancelwithfee');
+                        } 
+                        elseif ($firststatus == "collections") 
+                        {
+                            $status = lang('collections');
+                        } 
+                        else 
+                        {
+                            $status = lang('canceled');
+                        }
+                    }
+
+                    return $status;	
 
     } // end billingstatus
 
@@ -639,105 +639,105 @@ class Billing_Model extends CI_Model
      */
     function total_taxitems($bybillingid)
     {
-	// query for taxed services that are billed by a specific billing id
-	$query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
-	    "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
-	    "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
-	    "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
-	    "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
-	    "tr.percentage_or_fixed tr_percentage_or_fixed, ". 
-	    "us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
-	    "us.removed us_removed, us.account_number us_account_number, ".
-	    "us.usage_multiple us_usage_multiple, ".
-	    "te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
-	    "b.id b_id, b.billing_type b_billing_type, ". 
-	    "t.id t_id, t.frequency t_freq, t.method t_method ".
-	    "FROM taxed_services ts ".
-	    "LEFT JOIN user_services us ".
-	    "ON us.master_service_id = ts.master_services_id ".
-	    "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
-	    "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
-	    "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
-	    "AND te.tax_rate_id = tr.id ".
-	    "LEFT JOIN billing b ON us.billing_id = b.id ".
-	    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-	    "WHERE b.id = ? AND us.removed <> 'y'";
+        // query for taxed services that are billed by a specific billing id
+        $query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+            "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+            "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+            "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+            "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+            "tr.percentage_or_fixed tr_percentage_or_fixed, ". 
+            "us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
+            "us.removed us_removed, us.account_number us_account_number, ".
+            "us.usage_multiple us_usage_multiple, ".
+            "te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
+            "b.id b_id, b.billing_type b_billing_type, ". 
+            "t.id t_id, t.frequency t_freq, t.method t_method ".
+            "FROM taxed_services ts ".
+            "LEFT JOIN user_services us ".
+            "ON us.master_service_id = ts.master_services_id ".
+            "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+            "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+            "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+            "AND te.tax_rate_id = tr.id ".
+            "LEFT JOIN billing b ON us.billing_id = b.id ".
+            "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+            "WHERE b.id = ? AND us.removed <> 'y'";
 
-	$taxresult = $this->db->query($query, array($bybillingid)) or die ("total_taxitems Query Failed");
+        $taxresult = $this->db->query($query, array($bybillingid)) or die ("total_taxitems Query Failed");
 
-	// initialize to add up the total amount of taxes
-	$total_taxes = 0;
+        // initialize to add up the total amount of taxes
+        $total_taxes = 0;
 
-	foreach ($taxresult->result() as $mytaxresult)
-	{
-	    $billing_id = $mytaxresult->b_id;
-	    $taxed_services_id = $mytaxresult->ts_id;
-	    $user_services_id = $mytaxresult->us_id;
-	    $service_freq = $mytaxresult->ms_freq;
-	    $billing_freq = $mytaxresult->t_freq;
-	    $if_field = $mytaxresult->tr_if_field;
-	    $if_value = $mytaxresult->tr_if_value;
-	    $percentage_or_fixed = $mytaxresult->tr_percentage_or_fixed;
-	    $my_account_number = $mytaxresult->us_account_number;
-	    $usage_multiple = $mytaxresult->us_usage_multiple;
-	    $pricerate = $mytaxresult->ms_pricerate;
-	    $taxrate = $mytaxresult->tr_rate;
-	    $tax_rate_id = $mytaxresult->tr_id;
-	    $tax_exempt_rate_id = $mytaxresult->te_tax_rate_id;
+        foreach ($taxresult->result() as $mytaxresult)
+        {
+            $billing_id = $mytaxresult->b_id;
+            $taxed_services_id = $mytaxresult->ts_id;
+            $user_services_id = $mytaxresult->us_id;
+            $service_freq = $mytaxresult->ms_freq;
+            $billing_freq = $mytaxresult->t_freq;
+            $if_field = $mytaxresult->tr_if_field;
+            $if_value = $mytaxresult->tr_if_value;
+            $percentage_or_fixed = $mytaxresult->tr_percentage_or_fixed;
+            $my_account_number = $mytaxresult->us_account_number;
+            $usage_multiple = $mytaxresult->us_usage_multiple;
+            $pricerate = $mytaxresult->ms_pricerate;
+            $taxrate = $mytaxresult->tr_rate;
+            $tax_rate_id = $mytaxresult->tr_id;
+            $tax_exempt_rate_id = $mytaxresult->te_tax_rate_id;
 
-	    // check that they are not exempt
-	    if ($tax_exempt_rate_id <> $tax_rate_id)
-	    {
-		// check the if_field before adding to see if
-		// the tax applies to this customer
-		if ($if_field <> '')
-		{
-		    $ifquery = "SELECT $if_field FROM customer ".
-			"WHERE account_number = ?";
-		    $ifresult = $this->db->query($ifquery, array($my_account_number))
-			or die ("total_taxitems if_field Query Failed");
-		    $myifresult = $ifresult->row_array();
-		    $checkvalue = $myifresult[$if_field];
-		}
-		else
-		{
-		    $checkvalue = TRUE;
-		    $if_value = TRUE;
-		}
+            // check that they are not exempt
+            if ($tax_exempt_rate_id <> $tax_rate_id)
+            {
+                // check the if_field before adding to see if
+                // the tax applies to this customer
+                if ($if_field <> '')
+                {
+                    $ifquery = "SELECT $if_field FROM customer ".
+                        "WHERE account_number = ?";
+                    $ifresult = $this->db->query($ifquery, array($my_account_number))
+                        or die ("total_taxitems if_field Query Failed");
+                    $myifresult = $ifresult->row_array();
+                    $checkvalue = $myifresult[$if_field];
+                }
+                else
+                {
+                    $checkvalue = TRUE;
+                    $if_value = TRUE;
+                }
 
-		// check for any case, so lower them here
-		$checkvalue = strtolower($checkvalue);
-		$if_value = strtolower($if_value);
+                // check for any case, so lower them here
+                $checkvalue = strtolower($checkvalue);
+                $if_value = strtolower($if_value);
 
-		if (($checkvalue == $if_value) AND ($billing_freq > 0)) {
-		    if ($percentage_or_fixed == 'percentage') {
-			if ($service_freq > 0) {
-			    $servicecost = sprintf("%.2f",$taxrate * $pricerate);
-			    $tax_amount = sprintf("%.2f",$servicecost * $billing_freq * $service_freq * $usage_multiple);
-			} else {
-			    $servicecost = $pricerate * $usage_multiple;
-			    $tax_amount = $taxrate * $servicecost;
-			}
-		    } else {
-			// fixed fee amount, does not depend on price or usage
-			$tax_amount = $taxrate * $billing_freq;
-		    }
+                if (($checkvalue == $if_value) AND ($billing_freq > 0)) {
+                    if ($percentage_or_fixed == 'percentage') {
+                        if ($service_freq > 0) {
+                            $servicecost = sprintf("%.2f",$taxrate * $pricerate);
+                            $tax_amount = sprintf("%.2f",$servicecost * $billing_freq * $service_freq * $usage_multiple);
+                        } else {
+                            $servicecost = $pricerate * $usage_multiple;
+                            $tax_amount = $taxrate * $servicecost;
+                        }
+                    } else {
+                        // fixed fee amount, does not depend on price or usage
+                        $tax_amount = $taxrate * $billing_freq;
+                    }
 
 
-		    // round the tax to two decimal places
-		    $tax_amount = sprintf("%.2f", $tax_amount);
+                    // round the tax to two decimal places
+                    $tax_amount = sprintf("%.2f", $tax_amount);
 
-		    // add to total taxes
-		    $total_taxes = $total_taxes + $tax_amount;
+                    // add to total taxes
+                    $total_taxes = $total_taxes + $tax_amount;
 
-		} //endif if_field/billing_freq
+                } //endif if_field/billing_freq
 
-	    } // endif exempt
+            } // endif exempt
 
-	}
+        }
 
-	// send back total new taxes for that customer billingid
-	return $total_taxes;
+        // send back total new taxes for that customer billingid
+        return $total_taxes;
 
     }
 
@@ -749,55 +749,55 @@ class Billing_Model extends CI_Model
      */
     function total_serviceitems($bybillingid)
     {
-	$query = "SELECT u.id u_id, u.account_number u_ac, ".
-	    "u.master_service_id u_msid, u.billing_id u_bid, ".
-	    "u.removed u_rem, u.usage_multiple u_usage, ".
-	    "b.next_billing_date b_next_billing_date, b.id b_id, ".
-	    "b.billing_type b_type, ".
-	    "t.id t_id, t.frequency t_freq, t.method t_method, ".
-	    "m.id m_id, m.pricerate m_pricerate, m.frequency m_freq ".
-	    "FROM user_services u ".
-	    "LEFT JOIN master_services m ON u.master_service_id = m.id ".
-	    "LEFT JOIN billing b ON u.billing_id = b.id ".
-	    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-	    "WHERE b.id = ? ".
-	    "AND u.removed <> 'y'";
+        $query = "SELECT u.id u_id, u.account_number u_ac, ".
+            "u.master_service_id u_msid, u.billing_id u_bid, ".
+            "u.removed u_rem, u.usage_multiple u_usage, ".
+            "b.next_billing_date b_next_billing_date, b.id b_id, ".
+            "b.billing_type b_type, ".
+            "t.id t_id, t.frequency t_freq, t.method t_method, ".
+            "m.id m_id, m.pricerate m_pricerate, m.frequency m_freq ".
+            "FROM user_services u ".
+            "LEFT JOIN master_services m ON u.master_service_id = m.id ".
+            "LEFT JOIN billing b ON u.billing_id = b.id ".
+            "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+            "WHERE b.id = ? ".
+            "AND u.removed <> 'y'";
 
-	$result = $this->db->query($query, array($bybillingid)) or die ("total_serviceitems Query Failed");
+        $result = $this->db->query($query, array($bybillingid)) or die ("total_serviceitems Query Failed");
 
-	// initialize the service totals
-	$total_service = 0;
+        // initialize the service totals
+        $total_service = 0;
 
-	foreach ($result->result() as $myresult)
-	{
-	    $billing_id = $myresult->u_bid;
-	    $user_services_id = $myresult->u_id;
-	    $pricerate = $myresult->m_pricerate;
-	    $usage_multiple = $myresult->u_usage;
-	    $service_freq = $myresult->m_freq;
-	    $billing_freq = $myresult->t_freq;
+        foreach ($result->result() as $myresult)
+        {
+            $billing_id = $myresult->u_bid;
+            $user_services_id = $myresult->u_id;
+            $pricerate = $myresult->m_pricerate;
+            $usage_multiple = $myresult->u_usage;
+            $service_freq = $myresult->m_freq;
+            $billing_freq = $myresult->t_freq;
 
-	    if ($billing_freq > 0) {
-		if ($service_freq > 0) {
-		    $billed_amount = ($billing_freq/$service_freq)
-			*($pricerate*$usage_multiple);
-		} else {
-		    // one time services
-		    $billed_amount = ($pricerate*$usage_multiple);
-		} // end if
+            if ($billing_freq > 0) {
+                if ($service_freq > 0) {
+                    $billed_amount = ($billing_freq/$service_freq)
+                        *($pricerate*$usage_multiple);
+                } else {
+                    // one time services
+                    $billed_amount = ($pricerate*$usage_multiple);
+                } // end if
 
-		// round the tax to two decimal places
-		$billed_amount = sprintf("%.2f", $billed_amount);
+                // round the tax to two decimal places
+                $billed_amount = sprintf("%.2f", $billed_amount);
 
-		// add to the total service cost
-		$total_service = $total_service + $billed_amount;
+                // add to the total service cost
+                $total_service = $total_service + $billed_amount;
 
-	    } // end if billing_freq
+            } // end if billing_freq
 
-	} // end while
+        } // end while
 
-	// return the total amount of service charges for the billingid
-	return $total_service;
+        // return the total amount of service charges for the billingid
+        return $total_service;
 
     }
 
@@ -809,36 +809,36 @@ class Billing_Model extends CI_Model
      */
     function total_pastdueitems($mybilling_id)
     {
-	$query = "SELECT d.billing_id d_billing_id, ".
-	    "d.paid_amount d_paid_amount, d.billed_amount d_billed_amount ".
-	    "FROM billing_details d ".
-	    "LEFT JOIN user_services u ON d.user_services_id = u.id ".
-	    "LEFT JOIN master_services m ON u.master_service_id = m.id ".
-	    "LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
-	    "LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
-	    "WHERE d.billing_id = ? ".
-	    "AND d.paid_amount != d.billed_amount"; 	
+        $query = "SELECT d.billing_id d_billing_id, ".
+            "d.paid_amount d_paid_amount, d.billed_amount d_billed_amount ".
+            "FROM billing_details d ".
+            "LEFT JOIN user_services u ON d.user_services_id = u.id ".
+            "LEFT JOIN master_services m ON u.master_service_id = m.id ".
+            "LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
+            "LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
+            "WHERE d.billing_id = ? ".
+            "AND d.paid_amount != d.billed_amount"; 	
 
-	$invoiceresult = $this->db->query($query, array($mybilling_id)) or die ("total_pastdueitems Query Failed");
+        $invoiceresult = $this->db->query($query, array($mybilling_id)) or die ("total_pastdueitems Query Failed");
 
-	// initialize past amounts
-	$pastdue = 0;
+        // initialize past amounts
+        $pastdue = 0;
 
-	foreach($invoiceresult->result() as $myinvresult)
-	{
-	    $billed_amount = $myinvresult->d_billed_amount;
-	    $paid_amount = $myinvresult->d_paid_amount;
+        foreach($invoiceresult->result() as $myinvresult)
+        {
+            $billed_amount = $myinvresult->d_billed_amount;
+            $paid_amount = $myinvresult->d_paid_amount;
 
-	    // get the difference between billed and paid amount
-	    $billed_amount = $billed_amount - $paid_amount;
+            // get the difference between billed and paid amount
+            $billed_amount = $billed_amount - $paid_amount;
 
-	    // add to past due charges
-	    $pastdue = sprintf("%.2f",$pastdue + $billed_amount);
+            // add to past due charges
+            $pastdue = sprintf("%.2f",$pastdue + $billed_amount);
 
-	} // end while
+        } // end while
 
-	// return the pastdue total to them
-	return $pastdue;
+        // return the pastdue total to them
+        return $pastdue;
 
     } // end total_pastdueitems
 
@@ -850,35 +850,35 @@ class Billing_Model extends CI_Model
      */
     public function frequency_and_organization($billing_id)
     {
-	$query = "SELECT * FROM billing b ".
-	    "LEFT JOIN billing_types t ON b.billing_type = t.id ".
-	    "LEFT JOIN general g ON g.id = b.organization_id ".
-	    "WHERE b.id = ?";
-	$freqoutput = $this->db->query($query, array($billing_id)) or die ("frequency_and_organization queryfailed");
+        $query = "SELECT * FROM billing b ".
+            "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+            "LEFT JOIN general g ON g.id = b.organization_id ".
+            "WHERE b.id = ?";
+        $freqoutput = $this->db->query($query, array($billing_id)) or die ("frequency_and_organization queryfailed");
 
-	return $freqoutput->row();
+        return $freqoutput->row();
 
     }
 
 
     function billing_and_organization($billingid)
     {
-	$query = "SELECT * FROM billing b ".
-	    "LEFT JOIN general g ON g.id = b.organization_id ".
-	    "WHERE b.id = ?";
-	$result = $this->db->query($query, array($billingid)) or die ("billing_and_organization Query Failed");
-	return $result->row_array();
+        $query = "SELECT * FROM billing b ".
+            "LEFT JOIN general g ON g.id = b.organization_id ".
+            "WHERE b.id = ?";
+        $result = $this->db->query($query, array($billingid)) or die ("billing_and_organization Query Failed");
+        return $result->row_array();
     }
 
 
     public function get_organization_id($account_number)
     {
-	$query = "SELECT organization_id FROM billing ".
-	    "WHERE account_number = ? LIMIT 1";
-	$orgresult = $this->db->query($query, array($account_number)) or die ("$l_queryfailed");
-	$myorgresult = $orgresult->row_array();
+        $query = "SELECT organization_id FROM billing ".
+            "WHERE account_number = ? LIMIT 1";
+        $orgresult = $this->db->query($query, array($account_number)) or die ("$l_queryfailed");
+        $myorgresult = $orgresult->row_array();
 
-	return $myorgresult['organization_id'];
+        return $myorgresult['organization_id'];
 
     }
 
@@ -890,21 +890,21 @@ class Billing_Model extends CI_Model
      * ---------------------------------------------------------------------
      */
     function automatic_to_date ($from_date, $billing_type, $billing_id) {
-	// figure out the billing frequency
-	if (empty($from_date) OR $from_date == '0000-00-00') {
-	    $query = "UPDATE billing SET to_date = NULL WHERE id = ?";
-	    $updateresult = $this->db->query($query, array($billing_id)) or die ("automatic_to_date query failed");
-	} else {
-	    $query = "SELECT * FROM billing_types WHERE id = ?";
-	    $result = $this->db->query($query, array($billing_type)) or die ("automatic_to_date type id query failed");
-	    $myresult = $result->row_array();
-	    $frequency = $myresult['frequency'];
-	    // add the number of frequency months to the from_date 
-	    // to get what the to_date should be set to
-	    $query = "UPDATE billing SET to_date = DATE_ADD(?, INTERVAL ? MONTH) WHERE id = ?";
-	    $updateresult = $this->db->query($query, array($from_date, $frequency, $billing_id))
-		or die ("automatic_to_date update query failed");	
-	}
+        // figure out the billing frequency
+        if (empty($from_date) OR $from_date == '0000-00-00') {
+            $query = "UPDATE billing SET to_date = NULL WHERE id = ?";
+            $updateresult = $this->db->query($query, array($billing_id)) or die ("automatic_to_date query failed");
+        } else {
+            $query = "SELECT * FROM billing_types WHERE id = ?";
+            $result = $this->db->query($query, array($billing_type)) or die ("automatic_to_date type id query failed");
+            $myresult = $result->row_array();
+            $frequency = $myresult['frequency'];
+            // add the number of frequency months to the from_date 
+            // to get what the to_date should be set to
+            $query = "UPDATE billing SET to_date = DATE_ADD(?, INTERVAL ? MONTH) WHERE id = ?";
+            $updateresult = $this->db->query($query, array($from_date, $frequency, $billing_id))
+                or die ("automatic_to_date update query failed");	
+        }
     }
 
 
@@ -915,17 +915,17 @@ class Billing_Model extends CI_Model
      */
     function rerunitems ($billing_id)
     {
-	$query = "SELECT bd.id bd_id, bd.user_services_id, bd.billed_amount, ".
-	    "bd.original_invoice_number, ".
-	    "bd.creation_date, bd.paid_amount, us.id us_id, ms.service_description ".
-	    "FROM billing_details bd ".
-	    "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
-	    "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
-	    "WHERE bd.billing_id = ? ".
-	    "AND bd.billed_amount > bd.paid_amount";
-	$result = $this->db->query($query, array($billing_id)) or die ("Detail Query Failed"); 
+        $query = "SELECT bd.id bd_id, bd.user_services_id, bd.billed_amount, ".
+            "bd.original_invoice_number, ".
+            "bd.creation_date, bd.paid_amount, us.id us_id, ms.service_description ".
+            "FROM billing_details bd ".
+            "LEFT JOIN user_services us ON us.id = bd.user_services_id ".
+            "LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+            "WHERE bd.billing_id = ? ".
+            "AND bd.billed_amount > bd.paid_amount";
+        $result = $this->db->query($query, array($billing_id)) or die ("Detail Query Failed"); 
 
-	return $result->result_array();
+        return $result->result_array();
     }
 
 
@@ -937,18 +937,18 @@ class Billing_Model extends CI_Model
     function clearrerundate($billing_id)
     {
 
-	$query = "UPDATE billing SET rerun_date = NULL WHERE id = ?";
-	$updatedetail = $this->db->query($query, array($billing_id))
-	    or die ("clearrerundate Update Failed");
+        $query = "UPDATE billing SET rerun_date = NULL WHERE id = ?";
+        $updatedetail = $this->db->query($query, array($billing_id))
+            or die ("clearrerundate Update Failed");
     }
 
 
     function clearrerunflag($detail_id)
     {
-	$query = "UPDATE billing_details SET ".
-	    "rerun = 'n' WHERE id = ?";
-	$updatedetail = $this->db->query($query, array($detail_id))
-	    or die ("clearrerunflag Update Failed");
+        $query = "UPDATE billing_details SET ".
+            "rerun = 'n' WHERE id = ?";
+        $updatedetail = $this->db->query($query, array($detail_id))
+            or die ("clearrerunflag Update Failed");
     }
 
 
@@ -959,41 +959,41 @@ class Billing_Model extends CI_Model
      */
     function list_invoices($billingid,$showall)
     {
-	if ($showall) 
-	{
-	    $query = "SELECT h.id h_id, h.billing_date h_billing_date, h.from_date ". 
-		"h_from_date, h.to_date h_to_date, h.payment_due_date h_due_date, ".  
-		"h.new_charges h_new_charges, h.total_due h_total_due, ".
-		"h.billing_type h_billing_type, ".
-		"b.name b_name, b.company b_company, d.invoice_number, ".
-		"SUM(d.paid_amount) as normal_paid_amount, ".
-		"SUM(d.billed_amount) as normal_billed_amount ".
-		"FROM billing_history h ".
-		"LEFT JOIN billing b ON h.billing_id = b.id ".
-		"LEFT JOIN billing_details d ON h.id = d.invoice_number ".
-		"WHERE h.billing_id  = ? GROUP BY h.id ".
-		"ORDER BY h.id DESC";
-	} 
-	else 
-	{
-	    $query = "SELECT h.id h_id, h.billing_date h_billing_date, h.from_date ".
-		"h_from_date, h.to_date h_to_date, h.payment_due_date h_due_date, ".
-		"h.new_charges h_new_charges, h.total_due h_total_due, ".
-		"h.billing_type h_billing_type, ".
-		"b.name b_name, b.company b_company, d.invoice_number, ".
-		"SUM(d.paid_amount) as normal_paid_amount, ".
-		"SUM(d.billed_amount) as normal_billed_amount ".
-		"FROM billing_history h ".
-		"LEFT JOIN billing b ON h.billing_id = b.id ".
-		"LEFT JOIN billing_details d ON h.id = d.invoice_number ".
-		"WHERE h.billing_id  = ? GROUP BY h.id ".
-		"ORDER BY h.id DESC LIMIT 6";     
-	}
+        if ($showall) 
+        {
+            $query = "SELECT h.id h_id, h.billing_date h_billing_date, h.from_date ". 
+                "h_from_date, h.to_date h_to_date, h.payment_due_date h_due_date, ".  
+                "h.new_charges h_new_charges, h.total_due h_total_due, ".
+                "h.billing_type h_billing_type, ".
+                "b.name b_name, b.company b_company, d.invoice_number, ".
+                "SUM(d.paid_amount) as normal_paid_amount, ".
+                "SUM(d.billed_amount) as normal_billed_amount ".
+                "FROM billing_history h ".
+                "LEFT JOIN billing b ON h.billing_id = b.id ".
+                "LEFT JOIN billing_details d ON h.id = d.invoice_number ".
+                "WHERE h.billing_id  = ? GROUP BY h.id ".
+                "ORDER BY h.id DESC";
+        } 
+        else 
+        {
+            $query = "SELECT h.id h_id, h.billing_date h_billing_date, h.from_date ".
+                "h_from_date, h.to_date h_to_date, h.payment_due_date h_due_date, ".
+                "h.new_charges h_new_charges, h.total_due h_total_due, ".
+                "h.billing_type h_billing_type, ".
+                "b.name b_name, b.company b_company, d.invoice_number, ".
+                "SUM(d.paid_amount) as normal_paid_amount, ".
+                "SUM(d.billed_amount) as normal_billed_amount ".
+                "FROM billing_history h ".
+                "LEFT JOIN billing b ON h.billing_id = b.id ".
+                "LEFT JOIN billing_details d ON h.id = d.invoice_number ".
+                "WHERE h.billing_id  = ? GROUP BY h.id ".
+                "ORDER BY h.id DESC LIMIT 6";     
+        }
 
-	$result = $this->db->query($query, array($billingid))
-	    or die ("list_invoices query failed");
+        $result = $this->db->query($query, array($billingid))
+            or die ("list_invoices query failed");
 
-	return $result->result_array();
+        return $result->result_array();
     }
 
 
@@ -1004,87 +1004,87 @@ class Billing_Model extends CI_Model
      */
     function billing_details($billingid)
     {
-	$query = "SELECT d.id d_id, d.billing_id d_billing_id, 
-			d.creation_date d_creation_date, d.user_services_id d_user_services_id, 	
-			d.taxed_services_id d_taxed_services_id, 
-			d.invoice_number d_invoice_number, d.billed_amount d_billed_amount, 
-			d.paid_amount d_paid_amount, d.refund_amount d_refund_amount, 
-			d.refunded d_refunded, d.refund_date d_refund_date,  
-			m.service_description m_description, 
-			r.description r_description, 
-			b.billing_type b_billing_type, bt.method bt_method 
-				FROM billing_details d
-				LEFT JOIN billing b ON b.id = d.billing_id 	
-				LEFT JOIN user_services u ON u.id = d.user_services_id 
-				LEFT JOIN master_services m ON m.id = u.master_service_id
-				LEFT JOIN taxed_services t ON t.id = d.taxed_services_id
-				LEFT JOIN tax_rates r ON t.tax_rate_id = r.id
-				LEFT JOIN billing_types bt ON b.billing_type = bt.id  
-				WHERE d.billing_id = ? ORDER BY d.id DESC";
+        $query = "SELECT d.id d_id, d.billing_id d_billing_id, 
+            d.creation_date d_creation_date, d.user_services_id d_user_services_id, 	
+            d.taxed_services_id d_taxed_services_id, 
+            d.invoice_number d_invoice_number, d.billed_amount d_billed_amount, 
+            d.paid_amount d_paid_amount, d.refund_amount d_refund_amount, 
+            d.refunded d_refunded, d.refund_date d_refund_date,  
+            m.service_description m_description, 
+            r.description r_description, 
+            b.billing_type b_billing_type, bt.method bt_method 
+            FROM billing_details d
+            LEFT JOIN billing b ON b.id = d.billing_id 	
+            LEFT JOIN user_services u ON u.id = d.user_services_id 
+            LEFT JOIN master_services m ON m.id = u.master_service_id
+            LEFT JOIN taxed_services t ON t.id = d.taxed_services_id
+            LEFT JOIN tax_rates r ON t.tax_rate_id = r.id
+            LEFT JOIN billing_types bt ON b.billing_type = bt.id  
+            WHERE d.billing_id = ? ORDER BY d.id DESC";
 
-	$result = $this->db->query($query, array($billingid))
-	    or die ("billing_details queryfailed");
+        $result = $this->db->query($query, array($billingid))
+            or die ("billing_details queryfailed");
 
-	return $result->result_array();
+        return $result->result_array();
 
     }
 
 
     function billing_detail_item($detailid)
     {
-	$query = "SELECT d.id d_id, d.billing_id d_billing_id, 
-			d.creation_date d_creation_date, d.user_services_id d_user_services_id, 	
-			d.taxed_services_id d_taxed_services_id, 
-			d.invoice_number d_invoice_number, d.billed_amount d_billed_amount, 
-			d.paid_amount d_paid_amount, d.refund_amount d_refund_amount, 
-			d.refunded d_refunded, b.creditcard_number,   
-			m.service_description m_description, 
-			r.description r_description
-				FROM billing_details d
-				LEFT JOIN billing b ON b.id = d.billing_id 	
-				LEFT JOIN user_services u ON u.id = d.user_services_id 
-				LEFT JOIN master_services m ON m.id = u.master_service_id
-				LEFT JOIN taxed_services t ON t.id = d.taxed_services_id
-				LEFT JOIN tax_rates r ON t.tax_rate_id = r.id
-				WHERE d.id = ?";
+        $query = "SELECT d.id d_id, d.billing_id d_billing_id, 
+            d.creation_date d_creation_date, d.user_services_id d_user_services_id, 	
+            d.taxed_services_id d_taxed_services_id, 
+            d.invoice_number d_invoice_number, d.billed_amount d_billed_amount, 
+            d.paid_amount d_paid_amount, d.refund_amount d_refund_amount, 
+            d.refunded d_refunded, b.creditcard_number,   
+            m.service_description m_description, 
+            r.description r_description
+            FROM billing_details d
+            LEFT JOIN billing b ON b.id = d.billing_id 	
+            LEFT JOIN user_services u ON u.id = d.user_services_id 
+            LEFT JOIN master_services m ON m.id = u.master_service_id
+            LEFT JOIN taxed_services t ON t.id = d.taxed_services_id
+            LEFT JOIN tax_rates r ON t.tax_rate_id = r.id
+            WHERE d.id = ?";
 
-	$result = $this->db->query($query, array($detailid))
-	    or die ("billing_detail_item queryfailed");
+        $result = $this->db->query($query, array($detailid))
+            or die ("billing_detail_item queryfailed");
 
-	return $result->row_array();
+        return $result->row_array();
 
     }
 
 
     function turnedoff_status($billing_id)
     {
-	$query = "INSERT INTO payment_history 
-			(creation_date, billing_id, status) 
-			VALUES (CURRENT_DATE, ?, 'turnedoff')";
-	$paymentresult = $this->db->query($query, array($billing_id))
-	    or die ("turnedoff_status query failed");
+        $query = "INSERT INTO payment_history 
+            (creation_date, billing_id, status) 
+            VALUES (CURRENT_DATE, ?, 'turnedoff')";
+        $paymentresult = $this->db->query($query, array($billing_id))
+            or die ("turnedoff_status query failed");
 
     }
 
 
     function waiting_status($billing_id)
     {
-	$query = "INSERT INTO payment_history 
-			(creation_date, billing_id, status) 
-			VALUES (CURRENT_DATE, ?, 'waiting')";
-	$paymentresult = $this->db->query($query, array($billing_id))
-	    or die ("waiting_status query failed");
+        $query = "INSERT INTO payment_history 
+            (creation_date, billing_id, status) 
+            VALUES (CURRENT_DATE, ?, 'waiting')";
+        $paymentresult = $this->db->query($query, array($billing_id))
+            or die ("waiting_status query failed");
 
     }
 
 
     function authorized_status($billing_id)
     {
-	$query = "INSERT INTO payment_history 
-			(creation_date, billing_id, status) 
-			VALUES (CURRENT_DATE, ?, 'authorized')";
-	$paymentresult = $this->db->query($query, array($billing_id))
-	    or die ("authorized_status query failed");
+        $query = "INSERT INTO payment_history 
+            (creation_date, billing_id, status) 
+            VALUES (CURRENT_DATE, ?, 'authorized')";
+        $paymentresult = $this->db->query($query, array($billing_id))
+            or die ("authorized_status query failed");
 
     }
 
@@ -1097,47 +1097,47 @@ class Billing_Model extends CI_Model
      */
     function check_canceled($account_number)
     {
-	$query = "SELECT cancel_date FROM customer ".
-	    "WHERE account_number = ?";
-	$result = $this->db->query($query, array($account_number))
-	    or die ("check_canceled query failed");
-	$myresult = $result->row_array();
+        $query = "SELECT cancel_date FROM customer ".
+            "WHERE account_number = ?";
+        $result = $this->db->query($query, array($account_number))
+            or die ("check_canceled query failed");
+        $myresult = $result->row_array();
 
-	return $myresult['cancel_date'];
+        return $myresult['cancel_date'];
     }
 
 
     function cancelwfee_status($billing_id)
     {
-	$query = "INSERT INTO payment_history 
-			(creation_date, billing_id, status) 
-			VALUES (CURRENT_DATE, ?, 'cancelwfee')";
-	$paymentresult = $this->db->query($query, array($billing_id))
-	    or die ("cancelwfee_status query failed");
+        $query = "INSERT INTO payment_history 
+            (creation_date, billing_id, status) 
+            VALUES (CURRENT_DATE, ?, 'cancelwfee')";
+        $paymentresult = $this->db->query($query, array($billing_id))
+            or die ("cancelwfee_status query failed");
 
     }
 
 
     function collections_status($billing_id)
     {
-	$query = "INSERT INTO payment_history 
-			(creation_date, billing_id, status) 
-			VALUES (CURRENT_DATE, ?, 'collections')";
-	$paymentresult = $this->db->query($query, array($billing_id))
-	    or die ("collections_status query failed");
+        $query = "INSERT INTO payment_history 
+            (creation_date, billing_id, status) 
+            VALUES (CURRENT_DATE, ?, 'collections')";
+        $paymentresult = $this->db->query($query, array($billing_id))
+            or die ("collections_status query failed");
     }
 
 
     function get_billing_method($billing_id)
     {
-	// figure out the billing method so that this can make invoices for any method
+        // figure out the billing method so that this can make invoices for any method
 
-	$query = "SELECT t.method FROM billing b LEFT JOIN billing_types t ".
-	    "ON t.id = b.billing_type WHERE b.id = ?";
-	$result = $this->db->query($query, array($billing_id)) or die ("get_billing_method Query Failed");
-	$myresult = $result->row_array();	
+        $query = "SELECT t.method FROM billing b LEFT JOIN billing_types t ".
+            "ON t.id = b.billing_type WHERE b.id = ?";
+        $result = $this->db->query($query, array($billing_id)) or die ("get_billing_method Query Failed");
+        $myresult = $result->row_array();	
 
-	return $myresult['method'];
+        return $myresult['method'];
     }
 
 
@@ -1149,18 +1149,18 @@ class Billing_Model extends CI_Model
      */
     function get_billing_method_attributes($billing_id)
     {
-	$query = "SELECT b.id b_id, b.billing_type b_billing_type, 
-			b.next_billing_date b_next_billing_date, 
-			b.from_date b_from_date, b.to_date b_to_date,
-			b.contact_email b_contact_email, 
-			t.frequency t_frequency,
-			t.id t_id, t.method t_method FROM billing b 
-				LEFT JOIN billing_types t ON b.billing_type = t.id
-				WHERE b.id = ?";
-	$typeresult = $this->db->query($query, array($billing_id))
-	    or die ("get_billing_method_attributes query failed");
+        $query = "SELECT b.id b_id, b.billing_type b_billing_type, 
+            b.next_billing_date b_next_billing_date, 
+            b.from_date b_from_date, b.to_date b_to_date,
+            b.contact_email b_contact_email, 
+            t.frequency t_frequency,
+            t.id t_id, t.method t_method FROM billing b 
+            LEFT JOIN billing_types t ON b.billing_type = t.id
+            WHERE b.id = ?";
+        $typeresult = $this->db->query($query, array($billing_id))
+            or die ("get_billing_method_attributes query failed");
 
-	return $typeresult->row_array();
+        return $typeresult->row_array();
     }
 
 
@@ -1171,12 +1171,12 @@ class Billing_Model extends CI_Model
      */
     function get_nextbatchnumber() 
     {	
-	// insert empty into the batch to generate next value
-	$query = "INSERT INTO batch () VALUES ()";
-	$batchquery = $this->db->query($query) or die ("get_nextbatchnumber Query Failed");
-	// get the value just inserted
-	$batchid = $this->db->insert_id();
-	return $batchid;
+        // insert empty into the batch to generate next value
+        $query = "INSERT INTO batch () VALUES ()";
+        $batchquery = $this->db->query($query) or die ("get_nextbatchnumber Query Failed");
+        // get the value just inserted
+        $batchid = $this->db->insert_id();
+        return $batchid;
     }
 
 
@@ -1190,154 +1190,154 @@ class Billing_Model extends CI_Model
      * -------------------------------------------------------------------------
      */
     function add_taxdetails($billingdate, $bybillingid, $billingmethod, 
-			    $batchid, $organization_id) 
+        $batchid, $organization_id) 
     {
-	// query for taxed services that are billed on the specified date
-	// or a specific billing id
-	if ($bybillingid == NULL) {
-	    $query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
-		"ts.tax_rate_id ts_rateid, ms.id ms_id, ".
-		"ms.service_description ms_description, ms.pricerate ms_pricerate, ".
-		"ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
-		"tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
-		"tr.percentage_or_fixed tr_percentage_or_fixed, ".
-		"us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
-		"us.removed us_removed, us.account_number us_account_number, ". 
-		"us.usage_multiple us_usage_multiple,  ".
-		"te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
-		"b.id b_id, b.billing_type b_billing_type, ".
-		"t.id t_id, t.frequency t_freq, t.method t_method ".
-		"FROM taxed_services ts ".
-		"LEFT JOIN user_services us ON ".
-		"us.master_service_id = ts.master_services_id ".
-		"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
-		"LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
-		"LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
-		"AND te.tax_rate_id = tr.id ".
-		"LEFT JOIN billing b ON us.billing_id = b.id ".
-		"LEFT JOIN billing_types t ON b.billing_type = t.id ".
-		"WHERE b.next_billing_date = ? ".
-		"AND b.organization_id = ? ".
-		"AND t.method = ? AND us.removed <> 'y'";
+        // query for taxed services that are billed on the specified date
+        // or a specific billing id
+        if ($bybillingid == NULL) {
+            $query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+                "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+                "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+                "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+                "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+                "tr.percentage_or_fixed tr_percentage_or_fixed, ".
+                "us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
+                "us.removed us_removed, us.account_number us_account_number, ". 
+                "us.usage_multiple us_usage_multiple,  ".
+                "te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
+                "b.id b_id, b.billing_type b_billing_type, ".
+                "t.id t_id, t.frequency t_freq, t.method t_method ".
+                "FROM taxed_services ts ".
+                "LEFT JOIN user_services us ON ".
+                "us.master_service_id = ts.master_services_id ".
+                "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+                "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+                "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+                "AND te.tax_rate_id = tr.id ".
+                "LEFT JOIN billing b ON us.billing_id = b.id ".
+                "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+                "WHERE b.next_billing_date = ? ".
+                "AND b.organization_id = ? ".
+                "AND t.method = ? AND us.removed <> 'y'";
 
-	    $taxresult = $this->db->query($query, array($billingdate, $organization_id, $billingmethod))
-		or die ("add_taxdetails 1 Query Failed");
+            $taxresult = $this->db->query($query, array($billingdate, $organization_id, $billingmethod))
+                or die ("add_taxdetails 1 Query Failed");
 
-	} else {
-	    $query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
-		"ts.tax_rate_id ts_rateid, ms.id ms_id, ".
-		"ms.service_description ms_description, ms.pricerate ms_pricerate, ".
-		"ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
-		"tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
-		"tr.percentage_or_fixed tr_percentage_or_fixed, ". 
-		"us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
-		"us.removed us_removed, us.account_number us_account_number, ".
-		"us.usage_multiple us_usage_multiple, ".
-		"te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
-		"b.id b_id, b.billing_type b_billing_type, ". 
-		"t.id t_id, t.frequency t_freq, t.method t_method ".
-		"FROM taxed_services ts ".
-		"LEFT JOIN user_services us ".
-		"ON us.master_service_id = ts.master_services_id ".
-		"LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
-		"LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
-		"LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
-		"AND te.tax_rate_id = tr.id ".
-		"LEFT JOIN billing b ON us.billing_id = b.id ".
-		"LEFT JOIN billing_types t ON b.billing_type = t.id ".
-		"WHERE b.id = ? AND t.method = ? ".
-		"AND us.removed <> 'y'";
+        } else {
+            $query = "SELECT ts.id ts_id, ts.master_services_id ts_serviceid, ".
+                "ts.tax_rate_id ts_rateid, ms.id ms_id, ".
+                "ms.service_description ms_description, ms.pricerate ms_pricerate, ".
+                "ms.frequency ms_freq, tr.id tr_id, tr.description tr_description, ".
+                "tr.rate tr_rate, tr.if_field tr_if_field, tr.if_value tr_if_value, ".
+                "tr.percentage_or_fixed tr_percentage_or_fixed, ". 
+                "us.master_service_id us_msid, us.billing_id us_bid, us.id us_id, ".
+                "us.removed us_removed, us.account_number us_account_number, ".
+                "us.usage_multiple us_usage_multiple, ".
+                "te.account_number te_account_number, te.tax_rate_id te_tax_rate_id, ".
+                "b.id b_id, b.billing_type b_billing_type, ". 
+                "t.id t_id, t.frequency t_freq, t.method t_method ".
+                "FROM taxed_services ts ".
+                "LEFT JOIN user_services us ".
+                "ON us.master_service_id = ts.master_services_id ".
+                "LEFT JOIN master_services ms ON ms.id = ts.master_services_id ".
+                "LEFT JOIN tax_rates tr ON tr.id = ts.tax_rate_id ".
+                "LEFT JOIN tax_exempt te ON te.account_number = us.account_number ".
+                "AND te.tax_rate_id = tr.id ".
+                "LEFT JOIN billing b ON us.billing_id = b.id ".
+                "LEFT JOIN billing_types t ON b.billing_type = t.id ".
+                "WHERE b.id = ? AND t.method = ? ".
+                "AND us.removed <> 'y'";
 
-	    $taxresult = $this->db->query($query, array($bybillingid, $billingmethod))
-		or die ("add_taxdetails 2 Query Failed");
+            $taxresult = $this->db->query($query, array($bybillingid, $billingmethod))
+                or die ("add_taxdetails 2 Query Failed");
 
-	}	
+        }	
 
 
-	// count the number of taxes
-	$i = 0;
+        // count the number of taxes
+        $i = 0;
 
-	foreach ($taxresult->result_array() as $mytaxresult) 
-	{
-	    $billing_id = $mytaxresult['b_id'];
-	    $taxed_services_id = $mytaxresult['ts_id'];
-	    $user_services_id = $mytaxresult['us_id'];
-	    $service_freq = $mytaxresult['ms_freq'];
-	    $billing_freq = $mytaxresult['t_freq'];	
-	    $if_field = $mytaxresult['tr_if_field'];
-	    $if_value = $mytaxresult['tr_if_value'];
-	    $percentage_or_fixed = $mytaxresult['tr_percentage_or_fixed'];
-	    $my_account_number = $mytaxresult['us_account_number'];
-	    $usage_multiple = $mytaxresult['us_usage_multiple'];
-	    $pricerate = $mytaxresult['ms_pricerate'];
-	    $taxrate = $mytaxresult['tr_rate'];
-	    $tax_rate_id = $mytaxresult['tr_id'];
-	    $tax_exempt_rate_id = $mytaxresult['te_tax_rate_id'];
+        foreach ($taxresult->result_array() as $mytaxresult) 
+        {
+            $billing_id = $mytaxresult['b_id'];
+            $taxed_services_id = $mytaxresult['ts_id'];
+            $user_services_id = $mytaxresult['us_id'];
+            $service_freq = $mytaxresult['ms_freq'];
+            $billing_freq = $mytaxresult['t_freq'];	
+            $if_field = $mytaxresult['tr_if_field'];
+            $if_value = $mytaxresult['tr_if_value'];
+            $percentage_or_fixed = $mytaxresult['tr_percentage_or_fixed'];
+            $my_account_number = $mytaxresult['us_account_number'];
+            $usage_multiple = $mytaxresult['us_usage_multiple'];
+            $pricerate = $mytaxresult['ms_pricerate'];
+            $taxrate = $mytaxresult['tr_rate'];
+            $tax_rate_id = $mytaxresult['tr_id'];
+            $tax_exempt_rate_id = $mytaxresult['te_tax_rate_id'];
 
-	    // check that they are not exempt
-	    if ($tax_exempt_rate_id <> $tax_rate_id) 
-	    {
-		// check the if_field before adding to see if 
-		// the tax applies to this customer
-		if ($if_field <> '') 
-		{
-		    $ifquery = "SELECT $if_field FROM customer ".
-			"WHERE account_number = ?";
-		    $ifresult = $this->db->query($ifquery, array($my_account_number))
-			or die ("add_taxdetails ifquery Query Failed");	
-		    $myifresult = $ifresult->row_array();
-		    $checkvalue = $myifresult[$if_field];
-		} else {
-		    $checkvalue = TRUE;
-		    $if_value = TRUE;
-		}
+            // check that they are not exempt
+            if ($tax_exempt_rate_id <> $tax_rate_id) 
+            {
+                // check the if_field before adding to see if 
+                // the tax applies to this customer
+                if ($if_field <> '') 
+                {
+                    $ifquery = "SELECT $if_field FROM customer ".
+                        "WHERE account_number = ?";
+                    $ifresult = $this->db->query($ifquery, array($my_account_number))
+                        or die ("add_taxdetails ifquery Query Failed");	
+                    $myifresult = $ifresult->row_array();
+                    $checkvalue = $myifresult[$if_field];
+                } else {
+                    $checkvalue = TRUE;
+                    $if_value = TRUE;
+                }
 
-		// check for any case, so lower them here
-		$checkvalue = strtolower($checkvalue);
-		$if_value = strtolower($if_value);
+                // check for any case, so lower them here
+                $checkvalue = strtolower($checkvalue);
+                $if_value = strtolower($if_value);
 
-		if (($checkvalue == $if_value) AND ($billing_freq > 0)) 
-		{
-		    if ($percentage_or_fixed == 'percentage') 
-		    {
-			if ($service_freq > 0) 
-			{
-			    $servicecost = sprintf("%.2f",$taxrate * $pricerate);
-			    $tax_amount = sprintf("%.2f",$servicecost * $billing_freq * $service_freq * $usage_multiple); 
-			} 
-			else 
-			{
-			    $servicecost = $pricerate * $usage_multiple;
-			    $tax_amount = $taxrate * $servicecost;
-			}
-		    } 
-		    else 
-		    {
-			// fixed fee amount does not depend on price or usage
-			$tax_amount = $taxrate * $billing_freq;
-		    }
+                if (($checkvalue == $if_value) AND ($billing_freq > 0)) 
+                {
+                    if ($percentage_or_fixed == 'percentage') 
+                    {
+                        if ($service_freq > 0) 
+                        {
+                            $servicecost = sprintf("%.2f",$taxrate * $pricerate);
+                            $tax_amount = sprintf("%.2f",$servicecost * $billing_freq * $service_freq * $usage_multiple); 
+                        } 
+                        else 
+                        {
+                            $servicecost = $pricerate * $usage_multiple;
+                            $tax_amount = $taxrate * $servicecost;
+                        }
+                    } 
+                    else 
+                    {
+                        // fixed fee amount does not depend on price or usage
+                        $tax_amount = $taxrate * $billing_freq;
+                    }
 
-		    // round the tax to two decimal places
-		    $tax_amount = sprintf("%.2f", $tax_amount);
+                    // round the tax to two decimal places
+                    $tax_amount = sprintf("%.2f", $tax_amount);
 
-		    //
-		    // Insert tax result into billing_details
-		    //
-		    $query = "INSERT INTO billing_details (billing_id, creation_date, ".
-			"user_services_id, taxed_services_id, billed_amount, batch) ".
-			"VALUES (?, CURRENT_DATE, ?, ?, ?, ?)";
-		    $invoiceresult = $this->db->query($query, array($billing_id,
-								    $user_services_id,
-								    $taxed_services_id,
-								    $tax_amount,
-								    $batchid))
-			or die ("add_taxdetails INSERT Query Failed");
-		    $i++;
-		} //endif if_field/billing_freq
-	    } // endif exempt
-	}
+                    //
+                    // Insert tax result into billing_details
+                    //
+                    $query = "INSERT INTO billing_details (billing_id, creation_date, ".
+                        "user_services_id, taxed_services_id, billed_amount, batch) ".
+                        "VALUES (?, CURRENT_DATE, ?, ?, ?, ?)";
+                    $invoiceresult = $this->db->query($query, array($billing_id,
+                        $user_services_id,
+                        $taxed_services_id,
+                        $tax_amount,
+                        $batchid))
+                        or die ("add_taxdetails INSERT Query Failed");
+                    $i++;
+                } //endif if_field/billing_freq
+            } // endif exempt
+        }
 
-	return $i; // send back number of taxes found
+        return $i; // send back number of taxes found
     }
 
 
@@ -1347,88 +1347,88 @@ class Billing_Model extends CI_Model
      * -------------------------------------------------------------------------
      */
     function add_servicedetails($billingdate, $bybillingid, $billingmethod, 
-				$batchid, $organization_id) 
+        $batchid, $organization_id) 
     {
-	// join the user_services, billing, billing_types, and master_services 
-	// together to find what to put into billing_details
-	if ($bybillingid == NULL) {
-	    $query = "SELECT u.id u_id, u.account_number u_ac, 
-				u.master_service_id u_msid, u.billing_id u_bid, 
-			u.removed u_rem, u.usage_multiple u_usage, 
-			b.next_billing_date b_next_billing_date, b.id b_id, 
-			b.billing_type b_type, 
-			t.id t_id, t.frequency t_freq, t.method t_method, 
-			m.id m_id, m.pricerate m_pricerate, m.frequency m_freq 
-				FROM user_services u
-				LEFT JOIN master_services m ON u.master_service_id = m.id
-				LEFT JOIN billing b ON u.billing_id = b.id
-				LEFT JOIN billing_types t ON b.billing_type = t.id
-				WHERE b.next_billing_date = ? 
-				AND b.organization_id = ? 
-				AND t.method = ? AND u.removed <> 'y'";
+        // join the user_services, billing, billing_types, and master_services 
+        // together to find what to put into billing_details
+        if ($bybillingid == NULL) {
+            $query = "SELECT u.id u_id, u.account_number u_ac, 
+                u.master_service_id u_msid, u.billing_id u_bid, 
+                u.removed u_rem, u.usage_multiple u_usage, 
+                b.next_billing_date b_next_billing_date, b.id b_id, 
+                b.billing_type b_type, 
+                t.id t_id, t.frequency t_freq, t.method t_method, 
+                m.id m_id, m.pricerate m_pricerate, m.frequency m_freq 
+                FROM user_services u
+                LEFT JOIN master_services m ON u.master_service_id = m.id
+                LEFT JOIN billing b ON u.billing_id = b.id
+                LEFT JOIN billing_types t ON b.billing_type = t.id
+                WHERE b.next_billing_date = ? 
+                AND b.organization_id = ? 
+                AND t.method = ? AND u.removed <> 'y'";
 
-	    $result = $this->db->query($query, array($billingdate, $organization_id, $billingmethod))
-		or die ("add_servicedetails 1 Query Failed");
+            $result = $this->db->query($query, array($billingdate, $organization_id, $billingmethod))
+                or die ("add_servicedetails 1 Query Failed");
 
-	} else {
-	    $query = "SELECT u.id u_id, u.account_number u_ac, 
-				u.master_service_id u_msid, u.billing_id u_bid, 
-				u.removed u_rem, u.usage_multiple u_usage, 
-				b.next_billing_date b_next_billing_date, b.id b_id, 
-				b.billing_type b_type, 
-				t.id t_id, t.frequency t_freq, t.method t_method, 
-				m.id m_id, m.pricerate m_pricerate, m.frequency m_freq 
-					FROM user_services u
-					LEFT JOIN master_services m ON u.master_service_id = m.id
-					LEFT JOIN billing b ON u.billing_id = b.id
-					LEFT JOIN billing_types t ON b.billing_type = t.id
-					WHERE b.id = ? AND t.method = ? AND u.removed <> 'y'";
+        } else {
+            $query = "SELECT u.id u_id, u.account_number u_ac, 
+                u.master_service_id u_msid, u.billing_id u_bid, 
+                u.removed u_rem, u.usage_multiple u_usage, 
+                b.next_billing_date b_next_billing_date, b.id b_id, 
+                b.billing_type b_type, 
+                t.id t_id, t.frequency t_freq, t.method t_method, 
+                m.id m_id, m.pricerate m_pricerate, m.frequency m_freq 
+                FROM user_services u
+                LEFT JOIN master_services m ON u.master_service_id = m.id
+                LEFT JOIN billing b ON u.billing_id = b.id
+                LEFT JOIN billing_types t ON b.billing_type = t.id
+                WHERE b.id = ? AND t.method = ? AND u.removed <> 'y'";
 
-	    $result = $this->db->query($query, array($bybillingid, $billingmethod))
-		or die ("add_servicedetails 2 Query Failed");
+            $result = $this->db->query($query, array($bybillingid, $billingmethod))
+                or die ("add_servicedetails 2 Query Failed");
 
-	}
+        }
 
 
-	$i = 0; // count the billing services
-	foreach ($result->result_array() as $myresult)
-	{
-	    $billing_id = $myresult['u_bid'];
-	    $user_services_id = $myresult['u_id'];
-	    $pricerate = $myresult['m_pricerate'];
-	    $usage_multiple = $myresult['u_usage'];
-	    $service_freq = $myresult['m_freq'];
-	    $billing_freq = $myresult['t_freq'];
+        $i = 0; // count the billing services
+        foreach ($result->result_array() as $myresult)
+        {
+            $billing_id = $myresult['u_bid'];
+            $user_services_id = $myresult['u_id'];
+            $pricerate = $myresult['m_pricerate'];
+            $usage_multiple = $myresult['u_usage'];
+            $service_freq = $myresult['m_freq'];
+            $billing_freq = $myresult['t_freq'];
 
-	    if ($billing_freq > 0) 
-	    {
-		if ($service_freq > 0)
-		{
-		    $billed_amount = ($billing_freq/$service_freq)
-			*($pricerate*$usage_multiple);
-		}
-		else
-		{
-		    // Remove one time services
-		    $billed_amount = ($pricerate*$usage_multiple);
-		    $today = date("Y-m-d");
-		    $this->service_model->delete_service($user_services_id, 'onetime', $today);
-		} // end if
-	    }
+            if ($billing_freq > 0) 
+            {
+                if ($service_freq > 0)
+                {
+                    $billed_amount = ($billing_freq/$service_freq)
+                        *($pricerate*$usage_multiple);
+                }
+                else
+                {
+                    // Remove one time services
+                    $billed_amount = ($pricerate*$usage_multiple);
+                    $today = date("Y-m-d");
+                    $this->service_model->delete_service($user_services_id, 'onetime', $today);
+                } // end if
+            }
 
-	    // insert this into the billing_details
-	    $query = "INSERT INTO billing_details (billing_id, 
-				creation_date, user_services_id, billed_amount, batch) 
-				VALUES (?, CURRENT_DATE, ?, ?, ?)";
-	    $invoiceresult = $this->db->query($query, array($billing_id, $user_services_id, $billed_amount, $batchid))
-		or die ("add_servicedetails insert billing details Query Failed");
+            // insert this into the billing_details
+            $query = "INSERT INTO billing_details (billing_id, 
+                creation_date, user_services_id, billed_amount, batch) 
+                VALUES (?, CURRENT_DATE, ?, ?, ?)";
+            $invoiceresult = $this->db->query($query, array($billing_id, $user_services_id, $billed_amount, $batchid))
+                or die ("add_servicedetails insert billing details Query Failed");
 
-	    $i ++;
-	} // end while
+            $i ++;
+        } // end while
 
-	//echo "$i services for found!<br>";
-	return $i; 
-	// return the number of services found
+        //echo "$i services for found!<br>";
+        return $i; 
+        // return the number of services found
     }
 
 
@@ -1439,356 +1439,356 @@ class Billing_Model extends CI_Model
      */
     function update_rerundetails($billingdate, $batchid, $organization_id)
     {
-	// select the billing id's that have matching rerun dates
-	$query = "SELECT id, rerun_date FROM billing ".
-	    "WHERE rerun_date = ? ".
-	    "AND organization_id = ?";
-	$result = $this->db->query($query, array($billingdate, $organization_id))
-	    or die ("update_rerundetails Query Failed"); 
+        // select the billing id's that have matching rerun dates
+        $query = "SELECT id, rerun_date FROM billing ".
+            "WHERE rerun_date = ? ".
+            "AND organization_id = ?";
+        $result = $this->db->query($query, array($billingdate, $organization_id))
+            or die ("update_rerundetails Query Failed"); 
 
-	$i = 0;
+        $i = 0;
 
-	foreach ($result->result_array() AS $myresult) 
-	{
-	    $billing_id = $myresult['id'];
-	    $rerun_date = $myresult['rerun_date'];
+        foreach ($result->result_array() AS $myresult) 
+        {
+            $billing_id = $myresult['id'];
+            $rerun_date = $myresult['rerun_date'];
 
-	    // set the item to be rerun that is unpaid and has the rerun flag set
-	    // set the recent_invoice_number to NULL so it is replaced when creating billing_history
-	    $query = "UPDATE billing_details SET ".         
-		"batch = ?, ".        
-		"recent_invoice_number = NULL, ".
-		"rerun_date = ? ".
-		"WHERE billing_id = ? ".
-		"AND billed_amount > paid_amount ".
-		"AND rerun = 'y'";
+            // set the item to be rerun that is unpaid and has the rerun flag set
+            // set the recent_invoice_number to NULL so it is replaced when creating billing_history
+            $query = "UPDATE billing_details SET ".         
+                "batch = ?, ".        
+                "recent_invoice_number = NULL, ".
+                "rerun_date = ? ".
+                "WHERE billing_id = ? ".
+                "AND billed_amount > paid_amount ".
+                "AND rerun = 'y'";
 
-	    $updateresult = $this->db->query($query, array($batchid, $rerun_date, $billing_id))
-		or die ("update_rerundetails billing_details Query Failed");
+            $updateresult = $this->db->query($query, array($batchid, $rerun_date, $billing_id))
+                or die ("update_rerundetails billing_details Query Failed");
 
-	    $i++;	
-	}		
+            $i++;	
+        }		
 
-	//echo "$i accounts rerun<p>";
-	return $i; // return the number of reruns updated
+        //echo "$i accounts rerun<p>";
+        return $i; // return the number of reruns updated
     }
 
 
     function create_billinghistory($batchid, $billingmethod, $user)
     {
-	// go through a list of billing_id's that are to be billed in today's batch
-	$query = "SELECT DISTINCT billing_id FROM billing_details ".
-	    "WHERE batch = ?";
-	$distinctresult = $this->db->query($query, array($batchid))
-	    or die ("create_billinghistory select distinct billing id failed");
+        // go through a list of billing_id's that are to be billed in today's batch
+        $query = "SELECT DISTINCT billing_id FROM billing_details ".
+            "WHERE batch = ?";
+        $distinctresult = $this->db->query($query, array($batchid))
+            or die ("create_billinghistory select distinct billing id failed");
 
-	// set billingdate as today for checking rerun dates and stuff
-	$billingdate = date("Y-m-d");
+        // set billingdate as today for checking rerun dates and stuff
+        $billingdate = date("Y-m-d");
 
-	// make a new billing_history record for each billing id group 
-	// use the billing_history_id as the invoice number
-	foreach ($distinctresult->result_array() as $myresult) 
-	{
-	    $mybilling_id = $myresult['billing_id'];
-	    $query = "INSERT INTO billing_history ".
-		"(billing_date, created_by, record_type, billing_type, ".
-		"billing_id) ".
-		"VALUES (CURRENT_DATE, ?,'bill', ?, ?)";
-	    $historyresult = $this->db->query($query, array($user, $billingmethod, $mybilling_id))
-		or die ("create_billinghistory insert billing_histoyr Failed");	
+        // make a new billing_history record for each billing id group 
+        // use the billing_history_id as the invoice number
+        foreach ($distinctresult->result_array() as $myresult) 
+        {
+            $mybilling_id = $myresult['billing_id'];
+            $query = "INSERT INTO billing_history ".
+                "(billing_date, created_by, record_type, billing_type, ".
+                "billing_id) ".
+                "VALUES (CURRENT_DATE, ?,'bill', ?, ?)";
+            $historyresult = $this->db->query($query, array($user, $billingmethod, $mybilling_id))
+                or die ("create_billinghistory insert billing_histoyr Failed");	
 
-	    // set the invoice number for billing_details that have 
-	    // the corresponding billing_id 
-	    // and haven't been assigned an invoice number yet
-	    $myinsertid = $this->db->insert_id();
-	    $invoice_number=$myinsertid;
-	    $query = "UPDATE billing_details ".
-		"SET invoice_number = ? ".
-		"WHERE billing_id = ? ".
-		"AND invoice_number IS NULL";
-	    $invnumresult = $this->db->query($query, array($invoice_number, $mybilling_id))
-		or die ("create_billinghistory update billling_details Failed");
+            // set the invoice number for billing_details that have 
+            // the corresponding billing_id 
+            // and haven't been assigned an invoice number yet
+            $myinsertid = $this->db->insert_id();
+            $invoice_number=$myinsertid;
+            $query = "UPDATE billing_details ".
+                "SET invoice_number = ? ".
+                "WHERE billing_id = ? ".
+                "AND invoice_number IS NULL";
+            $invnumresult = $this->db->query($query, array($invoice_number, $mybilling_id))
+                or die ("create_billinghistory update billling_details Failed");
 
-	    // set the original_invoice_number here for billing_details with a
-	    // null original_invoice_number (eg: a brand new one)
-	    // NOTE: recent changes 1/27/2011 make the original_invoice_number obsolete
-	    // but it is still printed and required for old items to look the same
-	    $query = "UPDATE billing_details SET ".
-		"original_invoice_number = ? ".
-		"WHERE invoice_number = ? ".
-		"AND original_invoice_number IS NULL";
-	    $originalinvoice = $this->db->query($query, array($invoice_number, $invoice_number))
-		or die ("create_billinghistory update original_invoice_number Failed");
+            // set the original_invoice_number here for billing_details with a
+            // null original_invoice_number (eg: a brand new one)
+            // NOTE: recent changes 1/27/2011 make the original_invoice_number obsolete
+            // but it is still printed and required for old items to look the same
+            $query = "UPDATE billing_details SET ".
+                "original_invoice_number = ? ".
+                "WHERE invoice_number = ? ".
+                "AND original_invoice_number IS NULL";
+            $originalinvoice = $this->db->query($query, array($invoice_number, $invoice_number))
+                or die ("create_billinghistory update original_invoice_number Failed");
 
-	    // set the recent_invoice_number here for billing_details with a
-	    // null recent_invoice_number, items included as new charges or pastdue on that most recent invoice
-	    // used for credit card imports to assign payments to hightest recent_invoice number
-	    $query = "UPDATE billing_details ".
-		"SET recent_invoice_number = ? ".
-		"WHERE billing_id = ? ".
-		"AND batch = ? ". 
-		"AND recent_invoice_number IS NULL";
-	    $recentinvoice = $this->db->query($query, array($invoice_number, $mybilling_id, $batchid))
-		or die ("create_billinghistory update recent_invoice_number Failed");
-
-
-	    // Apply Credits
-	    // check if they have any credits and apply as payments
-	    $creditsapplied = $this->apply_credits($mybilling_id, $invoice_number);            
-
-	    // get the data for the service charges still pending 
-	    // and what services they have
-	    $query = "SELECT d.billing_id d_billing_id, ".
-		"d.creation_date d_creation_date, ".
-		"d.user_services_id d_user_services_id, ".
-		"d.invoice_number d_invoice_number, ".
-		"d.paid_amount d_paid_amount, d.billed_amount d_billed_amount, ".
-		"d.taxed_services_id d_taxed_services_id, ".
-		"b.rerun_date b_rerun_date, ".
-		"u.id u_id, u.account_number u_account_number, ".
-		"m.id m_id, m.service_description m_description, ".
-		"m.options_table m_options_table, ".
-		"ts.id ts_id, ts.master_services_id ".
-		"ts_master_services_id, ts.tax_rate_id ts_tax_rate_id, ".
-		"tr.id tr_id, tr.description tr_description ".
-		"FROM billing_details d ".
-		"LEFT JOIN billing b ON d.billing_id = b.id ".
-		"LEFT JOIN user_services u ON d.user_services_id = u.id ".
-		"LEFT JOIN master_services m ON u.master_service_id = m.id ".
-		"LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
-		"LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
-		"WHERE d.billing_id = ? ".
-		"AND ".
-		"((d.paid_amount != d.billed_amount AND b.rerun_date IS NULL) ".
-		"OR (d.rerun = 'y' AND d.rerun_date = b.rerun_date)) ".
-		"ORDER BY d.taxed_services_id";
-
-	    $invoiceresult = $this->db->query($query, array($mybilling_id))
-		or die ("create_billinghistory select billing_details failed"); 
-	    // used to show the invoice
-
-	    // get the data for the billing dates from the billing table
-	    $query = "SELECT * FROM billing WHERE id = ?";
-	    $billingresult = $this->db->query($query, array($mybilling_id))
-		or die ("create_billinghistory select billing Failed");
-
-	    $myresult = $billingresult->row_array();
-	    $billing_name = $myresult['name'];
-	    $billing_company = $myresult['company'];
-	    $billing_street = $myresult['street'];
-	    $billing_zip = $myresult['zip'];
-	    $billing_acctnum = $myresult['account_number'];
-	    $billing_ccnum = $myresult['creditcard_number'];
-	    $billing_ccexp = $myresult['creditcard_expire'];
-	    $billing_fromdate = $myresult['from_date'];
-	    $billing_todate = $myresult['to_date'];
-	    $billing_payment_due_date = $myresult['payment_due_date'];
-	    $billing_rerun_date = $myresult['rerun_date'];
-	    $billing_notes = $myresult['notes'];	
-	    $invoicetotal = 0;
-
-	    // if this is a rerun, then set the payment_due_date to today for history
-	    if ($billing_rerun_date == $billingdate) 
-	    {
-		$billing_payment_due_date = $billing_rerun_date;
-		$billing_fromdate = $billing_rerun_date;
-		$billing_todate = $billing_rerun_date;
-	    }
-
-	    //
-	    // calculate amounts for history
-	    //
-
-	    // initialize past amounts
-	    $pastdue = 0;
-	    $new_charges = 0;
-	    $tax_due = 0;
-
-	    foreach($invoiceresult->result_array() as $myinvresult) 
-	    {
-		$user_services_id = $myinvresult['d_user_services_id'];	
-		$currinvoicenumber = $myinvresult['d_invoice_number'];
-		$billing_id = $myinvresult['d_billing_id'];
-		$creation_date = $myinvresult['d_creation_date'];
-		$service = $myinvresult['m_description'];
-		$taxdescription = $myinvresult['tr_description'];
-		$billed_amount = $myinvresult['d_billed_amount'];
-		$paid_amount = $myinvresult['d_paid_amount'];
-
-		// get the difference between billed and paid amount
-		$billed_amount = $billed_amount - $paid_amount;
-
-		if ($currinvoicenumber == $invoice_number) 
-		{
-		    // new charges
-		    $billed_amount = sprintf("%.2f",$billed_amount);
-		    $new_charges = $new_charges + $billed_amount;
-		    // new taxes
-		    if ($taxdescription <> NULL) 
-		    {
-			$tax_due = $tax_due + $billed_amount;
-		    }
-		} 
-		else 
-		{
-		    // past due charges
-		    $pastdue = $pastdue + $billed_amount;
-		} // end if
-
-		// add to the running total
-		//$invoicetotal = $billed_amount + $invoicetotal;
-
-	    } // end while
-
-	    //calculate the invoicetotal after credits applied
-	    $new_charges = sprintf("%.2f",$new_charges);
-	    $pastdue = sprintf("%.2f",$pastdue);
-	    $tax_due = sprintf("%.2f",$tax_due);
-
-	    // calculate total due
-	    // if new_charges is negative don't reduce pastdue with it
-	    if ($new_charges < 0) 
-	    {
-		$total_due = sprintf("%.2f",$pastdue);
-	    } 
-	    else 
-	    {
-		$total_due = sprintf("%.2f",$pastdue+$new_charges);
-	    }
-
-	    // check the pastdue status to see what note to include
-	    $status = $this->billingstatus($mybilling_id);
-
-	    // get the invoice notes from general
-	    $query = "SELECT g.default_invoicenote, g.pastdue_invoicenote, ".
-		"g.turnedoff_invoicenote, g.collections_invoicenote ".
-		"FROM billing b ".
-		"LEFT JOIN general g ON g.id = b.organization_id ".
-		"WHERE b.id = ?";
-	    $generalresult = $this->db->query($query, array($mybilling_id))
-		or die ("create_billinghistory seelct invoice notes failed");
-
-	    $mygenresult = $generalresult->row_array();
-	    $default_invoicenote = $mygenresult['default_invoicenote'];
-	    $pastdue_invoicenote = $mygenresult['pastdue_invoicenote'];
-	    $turnedoff_invoicenote = $mygenresult['turnedoff_invoicenote'];
-	    $collections_invoicenote = $mygenresult['collections_invoicenote'];
+            // set the recent_invoice_number here for billing_details with a
+            // null recent_invoice_number, items included as new charges or pastdue on that most recent invoice
+            // used for credit card imports to assign payments to hightest recent_invoice number
+            $query = "UPDATE billing_details ".
+                "SET recent_invoice_number = ? ".
+                "WHERE billing_id = ? ".
+                "AND batch = ? ". 
+                "AND recent_invoice_number IS NULL";
+            $recentinvoice = $this->db->query($query, array($invoice_number, $mybilling_id, $batchid))
+                or die ("create_billinghistory update recent_invoice_number Failed");
 
 
-	    // if the individual customer's billing notes are blank
-	    // then use the automatic invoice notes from general config
-	    if (empty($billing_notes)) 
-	    {
-		if ($status == lang('pastdue')) 
-		{
-		    $billing_notes = $pastdue_invoicenote;
-		} 
-		elseif ($status == lang('turnedoff')) 
-		{
-		    $billing_notes = $turnedoff_invoicenote;
-		} 
-		elseif ($status == lang('collections')) 
-		{
-		    $billing_notes = $collections_invoicenote;
-		} 
-		else 
-		{
-		    $billing_notes = $default_invoicenote;
-		}  
-	    }
+            // Apply Credits
+            // check if they have any credits and apply as payments
+            $creditsapplied = $this->apply_credits($mybilling_id, $invoice_number);            
 
-	    // update the billing history record	
-	    $query = "UPDATE billing_history SET ".
-		"from_date = ?, ".
-		"to_date = ?, ".
-		"payment_due_date = ?, ".
-		"new_charges = ?, ".
-		"past_due = ?, ".
-		"credit_applied = ?, ".
-		"late_fee = '0', ".
-		"tax_due = ?, ".
-		"total_due = ?, ".
-		"notes = ? ".
-		"WHERE id = ?";
-	    $historyresult = $this->db->query($query, array($billing_fromdate,
-							    $billing_todate,
-							    $billing_payment_due_date,
-							    $new_charges,
-							    $pastdue,
-							    $creditsapplied,
-							    $tax_due,
-							    $total_due,
-							    $billing_notes,
-							    $invoice_number))
-		or die("create_billinghistory update billing_history failed");
+            // get the data for the service charges still pending 
+            // and what services they have
+            $query = "SELECT d.billing_id d_billing_id, ".
+                "d.creation_date d_creation_date, ".
+                "d.user_services_id d_user_services_id, ".
+                "d.invoice_number d_invoice_number, ".
+                "d.paid_amount d_paid_amount, d.billed_amount d_billed_amount, ".
+                "d.taxed_services_id d_taxed_services_id, ".
+                "b.rerun_date b_rerun_date, ".
+                "u.id u_id, u.account_number u_account_number, ".
+                "m.id m_id, m.service_description m_description, ".
+                "m.options_table m_options_table, ".
+                "ts.id ts_id, ts.master_services_id ".
+                "ts_master_services_id, ts.tax_rate_id ts_tax_rate_id, ".
+                "tr.id tr_id, tr.description tr_description ".
+                "FROM billing_details d ".
+                "LEFT JOIN billing b ON d.billing_id = b.id ".
+                "LEFT JOIN user_services u ON d.user_services_id = u.id ".
+                "LEFT JOIN master_services m ON u.master_service_id = m.id ".
+                "LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id ".
+                "LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id ".
+                "WHERE d.billing_id = ? ".
+                "AND ".
+                "((d.paid_amount != d.billed_amount AND b.rerun_date IS NULL) ".
+                "OR (d.rerun = 'y' AND d.rerun_date = b.rerun_date)) ".
+                "ORDER BY d.taxed_services_id";
 
-	    if ($billing_rerun_date <> $billingdate) 
-	    {      
-		//// update the Next Billing Date to whatever 
-		// the billing type dictates +1 +2 +6 etc.			
-		// get the current billing type
-		$query = "SELECT b.billing_type b_billing_type, ".
-		    "b.next_billing_date b_next_billing_date, ".
-		    "b.from_date b_from_date, b.to_date b_to_date, ".
-		    "t.id t_id, t.frequency t_frequency, ".
-		    "t.method t_method ".
-		    "FROM billing b ".
-		    "LEFT JOIN billing_types t ".
-		    "ON b.billing_type = t.id ".
-		    "WHERE b.id = ?";		
-		$billingqueryresult = $this->db->query($query, array($mybilling_id))
-		    or die ("create_billinghistory select billing type Failed");
+            $invoiceresult = $this->db->query($query, array($mybilling_id))
+                or die ("create_billinghistory select billing_details failed"); 
+            // used to show the invoice
 
-		$billingresult = $billingqueryresult->row_array();
-		$method = $billingresult['t_method'];
+            // get the data for the billing dates from the billing table
+            $query = "SELECT * FROM billing WHERE id = ?";
+            $billingresult = $this->db->query($query, array($mybilling_id))
+                or die ("create_billinghistory select billing Failed");
 
-		// update the next billing dates for anything not a prepay
-		if ($method <> 'prepaycc' & $method <> 'prepay') 
-		{
-		    $mybillingdate = $billingresult['b_next_billing_date'];
-		    $myfromdate = $billingresult['b_from_date'];
-		    $mytodate = $billingresult['b_to_date'];
-		    $mybillingfreq = $billingresult['t_frequency'];
+            $myresult = $billingresult->row_array();
+            $billing_name = $myresult['name'];
+            $billing_company = $myresult['company'];
+            $billing_street = $myresult['street'];
+            $billing_zip = $myresult['zip'];
+            $billing_acctnum = $myresult['account_number'];
+            $billing_ccnum = $myresult['creditcard_number'];
+            $billing_ccexp = $myresult['creditcard_expire'];
+            $billing_fromdate = $myresult['from_date'];
+            $billing_todate = $myresult['to_date'];
+            $billing_payment_due_date = $myresult['payment_due_date'];
+            $billing_rerun_date = $myresult['rerun_date'];
+            $billing_notes = $myresult['notes'];	
+            $invoicetotal = 0;
 
-		    // double frequency to add to the to_date
-		    $doublefreq = $mybillingfreq * 2;
+            // if this is a rerun, then set the payment_due_date to today for history
+            if ($billing_rerun_date == $billingdate) 
+            {
+                $billing_payment_due_date = $billing_rerun_date;
+                $billing_fromdate = $billing_rerun_date;
+                $billing_todate = $billing_rerun_date;
+            }
 
-		    // insert the new next_billing_date, from_date, 
-		    // to_date, and payment_due_date to next from_date
-		    $query = "UPDATE billing ".
-			"SET next_billing_date =  DATE_ADD(?, ".
-			"INTERVAL ? MONTH), ".
-			"from_date = DATE_ADD(?, ". 
-			"INTERVAL ? MONTH), ".
-			"to_date = DATE_ADD(?, ". 
-			"INTERVAL ? MONTH), ".
-			"payment_due_date = DATE_ADD(?, ".	
-			"INTERVAL ? MONTH) ".
-			"WHERE id = ?";		
-		    $updateresult = $this->db->query($query, array($mybillingdate,
-								   $mybillingfreq,
-								   $myfromdate,
-								   $mybillingfreq,
-								   $myfromdate,
-								   $doublefreq,
-								   $myfromdate,
-								   $mybillingfreq,
-								   $mybilling_id))
-			or die ("create_billinghistory update billing dates Failed");
+            //
+            // calculate amounts for history
+            //
 
-		} // endif prepaycc
+            // initialize past amounts
+            $pastdue = 0;
+            $new_charges = 0;
+            $tax_due = 0;
 
-	    } // endif billing rerun
+            foreach($invoiceresult->result_array() as $myinvresult) 
+            {
+                $user_services_id = $myinvresult['d_user_services_id'];	
+                $currinvoicenumber = $myinvresult['d_invoice_number'];
+                $billing_id = $myinvresult['d_billing_id'];
+                $creation_date = $myinvresult['d_creation_date'];
+                $service = $myinvresult['m_description'];
+                $taxdescription = $myinvresult['tr_description'];
+                $billed_amount = $myinvresult['d_billed_amount'];
+                $paid_amount = $myinvresult['d_paid_amount'];
 
-	    // set the rerun date back to NULL now that we are done with it
-	    if ($billing_rerun_date) 
-	    {
-            $query = "UPDATE billing SET rerun_date = NULL WHERE id = ?";
-            $billing_rerun_null_result = $this->db->query($query, array($mybilling_id))
-		    or die("create_billinghistory set rerun null failed");
-	    }
+                // get the difference between billed and paid amount
+                $billed_amount = $billed_amount - $paid_amount;
 
-	} // end while
+                if ($currinvoicenumber == $invoice_number) 
+                {
+                    // new charges
+                    $billed_amount = sprintf("%.2f",$billed_amount);
+                    $new_charges = $new_charges + $billed_amount;
+                    // new taxes
+                    if ($taxdescription <> NULL) 
+                    {
+                        $tax_due = $tax_due + $billed_amount;
+                    }
+                } 
+                else 
+                {
+                    // past due charges
+                    $pastdue = $pastdue + $billed_amount;
+                } // end if
+
+                // add to the running total
+                //$invoicetotal = $billed_amount + $invoicetotal;
+
+            } // end while
+
+            //calculate the invoicetotal after credits applied
+            $new_charges = sprintf("%.2f",$new_charges);
+            $pastdue = sprintf("%.2f",$pastdue);
+            $tax_due = sprintf("%.2f",$tax_due);
+
+            // calculate total due
+            // if new_charges is negative don't reduce pastdue with it
+            if ($new_charges < 0) 
+            {
+                $total_due = sprintf("%.2f",$pastdue);
+            } 
+            else 
+            {
+                $total_due = sprintf("%.2f",$pastdue+$new_charges);
+            }
+
+            // check the pastdue status to see what note to include
+            $status = $this->billingstatus($mybilling_id);
+
+            // get the invoice notes from general
+            $query = "SELECT g.default_invoicenote, g.pastdue_invoicenote, ".
+                "g.turnedoff_invoicenote, g.collections_invoicenote ".
+                "FROM billing b ".
+                "LEFT JOIN general g ON g.id = b.organization_id ".
+                "WHERE b.id = ?";
+            $generalresult = $this->db->query($query, array($mybilling_id))
+                or die ("create_billinghistory seelct invoice notes failed");
+
+            $mygenresult = $generalresult->row_array();
+            $default_invoicenote = $mygenresult['default_invoicenote'];
+            $pastdue_invoicenote = $mygenresult['pastdue_invoicenote'];
+            $turnedoff_invoicenote = $mygenresult['turnedoff_invoicenote'];
+            $collections_invoicenote = $mygenresult['collections_invoicenote'];
+
+
+            // if the individual customer's billing notes are blank
+            // then use the automatic invoice notes from general config
+            if (empty($billing_notes)) 
+            {
+                if ($status == lang('pastdue')) 
+                {
+                    $billing_notes = $pastdue_invoicenote;
+                } 
+                elseif ($status == lang('turnedoff')) 
+                {
+                    $billing_notes = $turnedoff_invoicenote;
+                } 
+                elseif ($status == lang('collections')) 
+                {
+                    $billing_notes = $collections_invoicenote;
+                } 
+                else 
+                {
+                    $billing_notes = $default_invoicenote;
+                }  
+            }
+
+            // update the billing history record	
+            $query = "UPDATE billing_history SET ".
+                "from_date = ?, ".
+                "to_date = ?, ".
+                "payment_due_date = ?, ".
+                "new_charges = ?, ".
+                "past_due = ?, ".
+                "credit_applied = ?, ".
+                "late_fee = '0', ".
+                "tax_due = ?, ".
+                "total_due = ?, ".
+                "notes = ? ".
+                "WHERE id = ?";
+            $historyresult = $this->db->query($query, array($billing_fromdate,
+                $billing_todate,
+                $billing_payment_due_date,
+                $new_charges,
+                $pastdue,
+                $creditsapplied,
+                $tax_due,
+                $total_due,
+                $billing_notes,
+                $invoice_number))
+                or die("create_billinghistory update billing_history failed");
+
+            if ($billing_rerun_date <> $billingdate) 
+            {      
+                //// update the Next Billing Date to whatever 
+                // the billing type dictates +1 +2 +6 etc.			
+                // get the current billing type
+                $query = "SELECT b.billing_type b_billing_type, ".
+                    "b.next_billing_date b_next_billing_date, ".
+                    "b.from_date b_from_date, b.to_date b_to_date, ".
+                    "t.id t_id, t.frequency t_frequency, ".
+                    "t.method t_method ".
+                    "FROM billing b ".
+                    "LEFT JOIN billing_types t ".
+                    "ON b.billing_type = t.id ".
+                    "WHERE b.id = ?";		
+                $billingqueryresult = $this->db->query($query, array($mybilling_id))
+                    or die ("create_billinghistory select billing type Failed");
+
+                $billingresult = $billingqueryresult->row_array();
+                $method = $billingresult['t_method'];
+
+                // update the next billing dates for anything not a prepay
+                if ($method <> 'prepaycc' & $method <> 'prepay') 
+                {
+                    $mybillingdate = $billingresult['b_next_billing_date'];
+                    $myfromdate = $billingresult['b_from_date'];
+                    $mytodate = $billingresult['b_to_date'];
+                    $mybillingfreq = $billingresult['t_frequency'];
+
+                    // double frequency to add to the to_date
+                    $doublefreq = $mybillingfreq * 2;
+
+                    // insert the new next_billing_date, from_date, 
+                    // to_date, and payment_due_date to next from_date
+                    $query = "UPDATE billing ".
+                        "SET next_billing_date =  DATE_ADD(?, ".
+                        "INTERVAL ? MONTH), ".
+                        "from_date = DATE_ADD(?, ". 
+                        "INTERVAL ? MONTH), ".
+                        "to_date = DATE_ADD(?, ". 
+                        "INTERVAL ? MONTH), ".
+                        "payment_due_date = DATE_ADD(?, ".	
+                        "INTERVAL ? MONTH) ".
+                        "WHERE id = ?";		
+                    $updateresult = $this->db->query($query, array($mybillingdate,
+                        $mybillingfreq,
+                        $myfromdate,
+                        $mybillingfreq,
+                        $myfromdate,
+                        $doublefreq,
+                        $myfromdate,
+                        $mybillingfreq,
+                        $mybilling_id))
+                        or die ("create_billinghistory update billing dates Failed");
+
+                } // endif prepaycc
+
+            } // endif billing rerun
+
+            // set the rerun date back to NULL now that we are done with it
+            if ($billing_rerun_date) 
+            {
+                $query = "UPDATE billing SET rerun_date = NULL WHERE id = ?";
+                $billing_rerun_null_result = $this->db->query($query, array($mybilling_id))
+                    or die("create_billinghistory set rerun null failed");
+            }
+
+        } // end while
 
     } // end create_billinghistory function
 
@@ -2318,10 +2318,10 @@ class Billing_Model extends CI_Model
 
         // get the organization info to print on the bill
         $query = "SELECT g.org_name,g.org_street,g.org_city,g.org_state,
-                        g.org_zip,g.phone_billing,g.email_billing,g.invoice_footer  
-                                FROM billing b
-                                LEFT JOIN general g ON g.id = b.organization_id 
-                                WHERE b.id = ?";
+            g.org_zip,g.phone_billing,g.email_billing,g.invoice_footer  
+            FROM billing b
+            LEFT JOIN general g ON g.id = b.organization_id 
+            WHERE b.id = ?";
         $generalresult = $this->db->query($query, array($mybilling_id))
             or die ("output extended select organization failed");
         $mygenresult = $generalresult->row_array();
@@ -2411,23 +2411,23 @@ class Billing_Model extends CI_Model
 
         // Select the new charge details for a specific invoice number
         $query = "SELECT d.user_services_id d_user_services_id, 
-                        d.invoice_number d_invoice_number, 
-                        d.billed_amount d_billed_amount, 
-                        d.billing_id d_billing_id, 
-                        d.taxed_services_id d_taxed_services_id, 
-                        u.id u_id, u.master_service_id u_master_service_id, 
-                        u.usage_multiple u_usage_multiple, 
-                        m.options_table m_options_table, 
-                        m.id m_id, m.service_description m_service_description, m.pricerate,  
-                        ts.id ts_id, ts.master_services_id ts_master_services_id, 
-                        ts.tax_rate_id ts_tax_rate_id, tr.id tr_id, 
-                        tr.description tr_description
-                                FROM billing_details d
-                                LEFT JOIN user_services u ON d.user_services_id = u.id
-                                LEFT JOIN master_services m ON u.master_service_id = m.id
-                                LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id 
-                                LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
-                                WHERE d.invoice_number = ? ORDER BY u.id DESC, tr.id ASC";
+            d.invoice_number d_invoice_number, 
+            d.billed_amount d_billed_amount, 
+            d.billing_id d_billing_id, 
+            d.taxed_services_id d_taxed_services_id, 
+            u.id u_id, u.master_service_id u_master_service_id, 
+            u.usage_multiple u_usage_multiple, 
+            m.options_table m_options_table, 
+            m.id m_id, m.service_description m_service_description, m.pricerate,  
+            ts.id ts_id, ts.master_services_id ts_master_services_id, 
+            ts.tax_rate_id ts_tax_rate_id, tr.id tr_id, 
+            tr.description tr_description
+            FROM billing_details d
+            LEFT JOIN user_services u ON d.user_services_id = u.id
+            LEFT JOIN master_services m ON u.master_service_id = m.id
+            LEFT JOIN taxed_services ts ON d.taxed_services_id = ts.id 
+            LEFT JOIN tax_rates tr ON ts.tax_rate_id = tr.id 
+            WHERE d.invoice_number = ? ORDER BY u.id DESC, tr.id ASC";
 
         $result = $this->db->query($query, array($invoiceid))
             or die ("select new charge query failed");
@@ -2762,7 +2762,7 @@ class Billing_Model extends CI_Model
 
 
     function insert_card_payment_history($type, $transaction_code, $billing_id, 
-                                         $cardnumber, $cardexp, $response_code, $amount, $avs_response)
+        $cardnumber, $cardexp, $response_code, $amount, $avs_response)
     {
         $query = "INSERT INTO payment_history ".
             "(creation_date, transaction_code, billing_id, ".
@@ -2771,13 +2771,13 @@ class Billing_Model extends CI_Model
             "VALUES(CURRENT_DATE, ?, ?, ?, ?, ?, ?, ?,'creditcard', ?)";
 
         $result = $this->db->query($query, array($transaction_code,
-                                                 $billing_id,
-                                                 $cardnumber,
-                                                 $cardexp,
-                                                 $response_code,
-                                                 $amount,
-                                                 $type,
-                                                 $avs_response)) 
+            $billing_id,
+            $cardnumber,
+            $cardexp,
+            $response_code,
+            $amount,
+            $type,
+            $avs_response)) 
             or die ("insert_card_payment_history failed");
 
         return $this->db->insert_id();
@@ -2785,7 +2785,7 @@ class Billing_Model extends CI_Model
 
 
     function update_billing_dates($mybillingdate, $mybillingfreq,
-                                  $myfromdate, $billing_id)
+        $myfromdate, $billing_id)
     {
         // to get the to_date, double the frequency
         $doublefreq = $mybillingfreq * 2;
@@ -2798,10 +2798,10 @@ class Billing_Model extends CI_Model
             "payment_due_date = DATE_ADD(?, INTERVAL ? MONTH) ".
             "WHERE id = ?";
         $updateresult = $this->db->query($query, array($mybillingdate, $mybillingfreq,
-                                                       $myfromdate, $mybillingfreq,
-                                                       $myfromdate, $doublefreq,
-                                                       $myfromdate, $mybillingfreq,
-                                                       $billing_id))
+            $myfromdate, $mybillingfreq,
+            $myfromdate, $doublefreq,
+            $myfromdate, $mybillingfreq,
+            $billing_id))
             or die ("update_billing_dates failed");
     }
 
@@ -2844,8 +2844,8 @@ class Billing_Model extends CI_Model
                     "payment_history_id = ? ".      
                     "WHERE id = ?";
                 $greaterthanresult = $this->db->query($query, array($fillamount,
-                                                                    $payment_history_id,
-                                                                    $id)) 
+                    $payment_history_id,
+                    $id)) 
                     or die ("pay_billing_details greater than queryfailed");
             } 
             else 
@@ -2860,8 +2860,8 @@ class Billing_Model extends CI_Model
                     "payment_history_id = ? ".      
                     "WHERE id = ?";
                 $lessthanresult = $this->db->query($query, array($fillamount,
-                                                                 $payment_history_id,
-                                                                 $id)) 
+                    $payment_history_id,
+                    $id)) 
                     or die ("pay_billing_details less than queryfailed");
             } //end if amount
 
@@ -2884,8 +2884,8 @@ class Billing_Model extends CI_Model
     {
         if ($invoice_number == '') { $invoice_number = 0; }
 
-        // set the payment to the amount entered
-        $payment = $amount;
+            // set the payment to the amount entered
+            $payment = $amount;
 
 
         // enter payments by invoice number                             
@@ -2940,10 +2940,10 @@ class Billing_Model extends CI_Model
                 "billing_amount, status, payment_type, invoice_number, check_number) ".
                 "VALUES (CURRENT_DATE, ?, ?, 'authorized', ?, ?, ?)";
             $paymentresult = $this->db->query($query, array($billing_id,
-                                                            $payment,
-                                                            $payment_type,
-                                                            $invoice_number,
-                                                            $check_number))
+                $payment,
+                $payment_type,
+                $invoice_number,
+                $check_number))
                 or die ("insert history query failed");
 
             // get the payment history id that will be inserted into the billing_details
@@ -2972,8 +2972,8 @@ class Billing_Model extends CI_Model
                         "payment_history_id = ? ".          
                         "WHERE id = ?";
                     $greaterthanresult = $this->db->query($query, array($fillamount,
-                                                                        $payment_history_id,
-                                                                        $id))
+                        $payment_history_id,
+                        $id))
                         or die ("greater than detail update query failed");
                 } 
                 else 
@@ -2989,8 +2989,8 @@ class Billing_Model extends CI_Model
                         "payment_history_id = ? ".              
                         "WHERE id = ?";
                     $lessthenresult = $this->db->query($query, array($fillamount,
-                                                                     $payment_history_id,
-                                                                     $id))
+                        $payment_history_id,
+                        $id))
                         or die ("less than detail update query failed");
                 } // end if amount >= owed
 
@@ -3041,7 +3041,7 @@ class Billing_Model extends CI_Model
                 $mybillingfreq = $billingresult['t_frequency'];
 
                 $this->update_billing_dates($mybillingdate, $mybillingfreq,
-                                            $myfromdate, $billing_id);
+                    $myfromdate, $billing_id);
             }
 
 
@@ -3093,11 +3093,11 @@ class Billing_Model extends CI_Model
     {
         // query the batch for the invoices to do
         $query = "SELECT DISTINCT d.recent_invoice_number FROM billing_details d 
-                        WHERE batch = ?";
-                
+            WHERE batch = ?";
+
         $result = $this->db->query($query, array($batchid))
             or die ("select recent_invoice_numbers failed");
-                
+
         return $result->result_array();
     }
 
@@ -3110,21 +3110,21 @@ class Billing_Model extends CI_Model
     function get_invoice_data($invoice_number)
     {
         $query = "SELECT h.id h_id, h.billing_date h_billing_date, 
-                        h.created_by h_created_by, h.billing_id h_billing_id, 
-                        h.from_date h_from_date, h.to_date h_to_date, 
-                        h.payment_due_date h_payment_due_date, 
-                        h.new_charges h_new_charges, h.past_due h_past_due, 
-                        h.late_fee h_late_fee, h.tax_due h_tax_due, 
-                        h.total_due h_total_due, h.notes h_notes, h.credit_applied h_credit_applied, 
-                        b.id b_id, b.name b_name, b.company b_company, 
-                        b.street b_street, b.city b_city, b.state b_state, 
-                        b.country b_country, b.zip b_zip, 
-                        b.contact_email b_contact_email, b.account_number b_acctnum, 
-                        b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp,
-                        b.encrypted_creditcard_number b_enc_ccnum, b.po_number b_po_number  
-                                FROM billing_history h 
-                                LEFT JOIN billing b ON h.billing_id = b.id  
-                                WHERE h.id = ?";
+            h.created_by h_created_by, h.billing_id h_billing_id, 
+            h.from_date h_from_date, h.to_date h_to_date, 
+            h.payment_due_date h_payment_due_date, 
+            h.new_charges h_new_charges, h.past_due h_past_due, 
+            h.late_fee h_late_fee, h.tax_due h_tax_due, 
+            h.total_due h_total_due, h.notes h_notes, h.credit_applied h_credit_applied, 
+            b.id b_id, b.name b_name, b.company b_company, 
+            b.street b_street, b.city b_city, b.state b_state, 
+            b.country b_country, b.zip b_zip, 
+            b.contact_email b_contact_email, b.account_number b_acctnum, 
+            b.creditcard_number b_ccnum, b.creditcard_expire b_ccexp,
+            b.encrypted_creditcard_number b_enc_ccnum, b.po_number b_po_number  
+            FROM billing_history h 
+            LEFT JOIN billing b ON h.billing_id = b.id  
+            WHERE h.id = ?";
         $invoiceresult = $this->db->query($query, array($invoice_number))
             or die ("query recent invoice data failed");
 
@@ -3140,23 +3140,23 @@ class Billing_Model extends CI_Model
     function portal_get_invoice_data($invoice_number, $account_number)
     {
         $query = "SELECT h.id h_id, h.billing_date h_billing_date, 
-                        h.created_by h_created_by, h.billing_id h_billing_id, 
-                        h.from_date h_from_date, h.to_date h_to_date, 
-                        h.payment_due_date h_payment_due_date, 
-                        h.new_charges h_new_charges, h.past_due h_past_due, 
-                        h.late_fee h_late_fee, h.tax_due h_tax_due, 
-                        h.total_due h_total_due, h.notes h_notes, 
+            h.created_by h_created_by, h.billing_id h_billing_id, 
+            h.from_date h_from_date, h.to_date h_to_date, 
+            h.payment_due_date h_payment_due_date, 
+            h.new_charges h_new_charges, h.past_due h_past_due, 
+            h.late_fee h_late_fee, h.tax_due h_tax_due, 
+            h.total_due h_total_due, h.notes h_notes, 
             h.credit_applied h_credit_applied, 
-                        b.id b_id, b.name b_name, b.company b_company, 
-                        b.street b_street, b.city b_city, b.state b_state, 
-                        b.country b_country, b.zip b_zip, 
-                        b.contact_email b_contact_email, 
-                        b.po_number b_po_number  
-                        FROM billing_history h 
-                        LEFT JOIN billing b ON h.billing_id = b.id  
-                        WHERE h.id = ? and b.account_number = ?";
+            b.id b_id, b.name b_name, b.company b_company, 
+            b.street b_street, b.city b_city, b.state b_state, 
+            b.country b_country, b.zip b_zip, 
+            b.contact_email b_contact_email, 
+            b.po_number b_po_number  
+            FROM billing_history h 
+            LEFT JOIN billing b ON h.billing_id = b.id  
+            WHERE h.id = ? and b.account_number = ?";
         $invoiceresult = $this->db->query($query, 
-                                          array($invoice_number, $account_number))
+            array($invoice_number, $account_number))
             or die ("query portal invoice data failed");
 
         return $invoiceresult->row_array();
@@ -3194,7 +3194,7 @@ class Billing_Model extends CI_Model
 
         $result = $this->db->query($query, array($invoice_number, $account_number)) 
             or die ("portal invoice charge details queryfailed");
-                
+
         return $result->result_array();
     }
 
@@ -3225,7 +3225,7 @@ class Billing_Model extends CI_Model
         foreach ($result AS $myresult) 
         {
             $invoice_number = $myresult['recent_invoice_number'];
-                        
+
             // get the recent invoice data to process now
             $myinvresult = $this->get_invoice_data($invoice_number);
 
@@ -3383,23 +3383,23 @@ class Billing_Model extends CI_Model
 
         // query from billing_details the refunds to do
         $query = "SELECT ROUND(SUM(bd.refund_amount),2) AS RefundTotal, 
-                        b.id b_id, b.name b_name, b.company b_company, 
-                        b.street b_street, b.city b_city, 
-                        b.state b_state, b.zip b_zip, 
-                        b.account_number b_acctnum, 
-                        b.creditcard_number b_ccnum, b.encrypted_creditcard_number b_enc_num, 
-                        b.creditcard_expire b_ccexp, 
-                        b.from_date b_from_date, 
-                        b.to_date b_to_date, 
-                        b.payment_due_date b_payment_due_date,  
-                        bd.invoice_number bd_invoice_number, 
-                        bd.batch bd_batch   
-                                FROM billing_details bd
-                                LEFT JOIN billing b ON bd.billing_id = b.id 
-                                LEFT JOIN billing_types bt ON bt.id = b.billing_type 
-                                WHERE bd.refunded <> 'y' AND bd.refund_amount > 0 
-                                AND bt.method = 'creditcard' 
-                                AND b.organization_id = ? GROUP BY b.id";
+            b.id b_id, b.name b_name, b.company b_company, 
+            b.street b_street, b.city b_city, 
+            b.state b_state, b.zip b_zip, 
+            b.account_number b_acctnum, 
+            b.creditcard_number b_ccnum, b.encrypted_creditcard_number b_enc_num, 
+            b.creditcard_expire b_ccexp, 
+            b.from_date b_from_date, 
+            b.to_date b_to_date, 
+            b.payment_due_date b_payment_due_date,  
+            bd.invoice_number bd_invoice_number, 
+            bd.batch bd_batch   
+            FROM billing_details bd
+            LEFT JOIN billing b ON bd.billing_id = b.id 
+            LEFT JOIN billing_types bt ON bt.id = b.billing_type 
+            WHERE bd.refunded <> 'y' AND bd.refund_amount > 0 
+            AND bt.method = 'creditcard' 
+            AND b.organization_id = ? GROUP BY b.id";
         $result = $this->db->query($query, array($organization_id))
             or die ("export_card_refunds billing_details failed");
 
@@ -3469,9 +3469,9 @@ class Billing_Model extends CI_Model
 
             // mark the refunds as refunded
             $query ="UPDATE billing_details 
-                                SET refunded = 'y' 
-                                WHERE refunded <> 'y' AND refund_amount > 0 
-                                AND billing_id = ?";            
+                SET refunded = 'y' 
+                WHERE refunded <> 'y' AND refund_amount > 0 
+                AND billing_id = ?";            
             $detailresult = $this->db->query($query, array($mybilling_id))
                 or die ("update refund details query failed");  
 
@@ -3551,9 +3551,9 @@ class Billing_Model extends CI_Model
             "creditcard_expire = ? ".
             "WHERE id = ? LIMIT 1";
         $billingupdate = $this->db->query($query, array($encrypted,
-                                                        $creditcard_number, 
-                                                        $creditcard_expire,
-                                                        $billing_id))
+            $creditcard_number, 
+            $creditcard_expire,
+            $billing_id))
             or die ("input_ascii_armor failed");
     }
 
@@ -3566,14 +3566,14 @@ class Billing_Model extends CI_Model
     function billinghistory($account_number)
     {
         $query = "SELECT h.id h_id, h.billing_id h_bid, h.billing_date h_bdate, 
-                        h.billing_type h_btype, h.from_date h_from, h.to_date h_to, h.total_due 
-                        h_total, h.new_charges h_new_charges,
-                        h.payment_due_date h_payment_due_date,
-                        c.account_number c_acctnum, b.account_number b_acctnum, b.id b_id 
-                                FROM billing_history h 
-                                LEFT JOIN billing b ON h.billing_id = b.id  
-                                LEFT JOIN customer c ON b.account_number = c.account_number
-                                WHERE b.account_number = ? ORDER BY h.id DESC LIMIT 24";
+            h.billing_type h_btype, h.from_date h_from, h.to_date h_to, h.total_due 
+            h_total, h.new_charges h_new_charges,
+            h.payment_due_date h_payment_due_date,
+            c.account_number c_acctnum, b.account_number b_acctnum, b.id b_id 
+            FROM billing_history h 
+            LEFT JOIN billing b ON h.billing_id = b.id  
+            LEFT JOIN customer c ON b.account_number = c.account_number
+            WHERE b.account_number = ? ORDER BY h.id DESC LIMIT 24";
 
         $result = $this->db->query($query, array($account_number)) 
             or die ("billinghistory query failed");
@@ -3590,14 +3590,14 @@ class Billing_Model extends CI_Model
     function allbillinghistory($account_number)
     {
         $query = "SELECT h.id h_id, h.billing_id h_bid, h.billing_date h_bdate, 
-                        h.billing_type h_btype, h.from_date h_from, h.to_date h_to, h.total_due 
-                        h_total, h.new_charges h_new_charges,
-                        h.payment_due_date h_payment_due_date,
-                        c.account_number c_acctnum, b.account_number b_acctnum, b.id b_id 
-                                FROM billing_history h 
-                                LEFT JOIN billing b ON h.billing_id = b.id  
-                                LEFT JOIN customer c ON b.account_number = c.account_number
-                                WHERE b.account_number = ? ORDER BY h.id DESC";
+            h.billing_type h_btype, h.from_date h_from, h.to_date h_to, h.total_due 
+            h_total, h.new_charges h_new_charges,
+            h.payment_due_date h_payment_due_date,
+            c.account_number c_acctnum, b.account_number b_acctnum, b.id b_id 
+            FROM billing_history h 
+            LEFT JOIN billing b ON h.billing_id = b.id  
+            LEFT JOIN customer c ON b.account_number = c.account_number
+            WHERE b.account_number = ? ORDER BY h.id DESC";
 
         $result = $this->db->query($query, array($account_number)) 
             or die ("allbillinghistory query failed");
@@ -3924,9 +3924,9 @@ class Billing_Model extends CI_Model
             "(account_number, tax_rate_id, customer_tax_id, expdate) ". 
             "VALUES (?, ?, ?, ?)";
         $result = $this->db->query($query, array($account_number,
-                                                 $tax_rate_id,
-                                                 $customer_tax_id,
-                                                 $expdate))
+            $tax_rate_id,
+            $customer_tax_id,
+            $expdate))
             or die ("save_tax_exempt queryfailed");
     }
 
@@ -3991,22 +3991,22 @@ class Billing_Model extends CI_Model
     {
         // query from billing_details ALL the refunds that are pending
         $query = "SELECT ROUND(SUM(bd.refund_amount),2) AS RefundTotal, 
-                        b.id b_id, b.name b_name, b.company b_company, 
-                        b.street b_street, b.city b_city, 
-                        b.state b_state, b.zip b_zip, 
-                        b.account_number b_acctnum, 
-                        b.from_date b_from_date, 
-                        b.to_date b_to_date, 
-                        b.payment_due_date b_payment_due_date,  
-                        bd.invoice_number bd_invoice_number, 
-                        bd.batch bd_batch, g.org_name   
-                                FROM billing_details bd
-                                LEFT JOIN billing b ON bd.billing_id = b.id 
-                                LEFT JOIN billing_types bt ON bt.id = b.billing_type 
-                                LEFT JOIN general g ON g.id = b.organization_id 
-                                WHERE bd.refunded <> 'y' AND bd.refund_amount > 0 
-                                AND bt.method = 'creditcard' 
-                                GROUP BY b.id";
+            b.id b_id, b.name b_name, b.company b_company, 
+            b.street b_street, b.city b_city, 
+            b.state b_state, b.zip b_zip, 
+            b.account_number b_acctnum, 
+            b.from_date b_from_date, 
+            b.to_date b_to_date, 
+            b.payment_due_date b_payment_due_date,  
+            bd.invoice_number bd_invoice_number, 
+            bd.batch bd_batch, g.org_name   
+            FROM billing_details bd
+            LEFT JOIN billing b ON bd.billing_id = b.id 
+            LEFT JOIN billing_types bt ON bt.id = b.billing_type 
+            LEFT JOIN general g ON g.id = b.organization_id 
+            WHERE bd.refunded <> 'y' AND bd.refund_amount > 0 
+            AND bt.method = 'creditcard' 
+            GROUP BY b.id";
         $result = $this->db->query($query) or die ("pendingrefunds query failed");
         return $result->result_array();
     }
