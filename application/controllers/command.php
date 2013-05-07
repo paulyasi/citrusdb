@@ -1155,15 +1155,14 @@ class Command extends CI_Controller
      * command to update the database to the next release
      * php index.php command update
      * TODO change this to output to command line instead of html like 2.0 did
-     * TODO make a model to hold these update queries
+     * TODO use the schema_model to hold these update queries
      */
     public function update() 
     {
-        $query = "SELECT * FROM general";
-        $DB->SetFetchMode(ADODB_FETCH_ASSOC);
-        $result = $DB->Execute($query) or die ("query failed");
-        $myresult = $result->fields;
-        $databaseversion = $myresult['version'];
+        $this->load->model('schema_model');
+
+        $databaseversion = $this->schema_model->databaseversion();
+        
         if ($databaseversion == "")
         {
             // if databaseversion is empty then query the settings table
@@ -1182,7 +1181,7 @@ class Command extends CI_Controller
 
             This script will update it to version: <b>3.0 Development</b></h3>";
 
-        if ($databaseversion == "3.0") {
+        if ($databaseversion == "3.0-BETA1") {
             echo "<p><b>Nothing to update</b>";
         } else {
             echo "

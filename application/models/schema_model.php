@@ -3,7 +3,7 @@
 /*
  * ----------------------------------------------------------------------------
  *  perform tasks that require lookups in the database schema like
- *  data types and field names
+ *  data types and field names and database upgrades
  * ----------------------------------------------------------------------------
  */
 
@@ -55,6 +55,16 @@ class Schema_model extends CI_Model
 			echo "<option value='$val'>$val</option>\n\t"; 
 		}//----end foreach 
 		echo "\r</select>"; 
-	}
+    }
+
+    
+    public function databaseversion()
+    {
+        // TODO prior to version 1.2.3 the version was in the general table?
+        $query = "SELECT version FROM settings";
+		$orgresult = $this->db->query($query) or die ("databaseversion query failed");
+		$myresult = $result->row_array();
+        return $myresult['version']; 
+    }
 
 }
