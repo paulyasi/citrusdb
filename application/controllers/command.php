@@ -1165,7 +1165,7 @@ class Command extends CI_Controller
         if ($databaseversion == "")
         {
             // this will only support updating from version 1.2.3 or newer
-            echo "Database version not found, may be too old to update";
+            echo "Database version not found, may be too old to update\nThis update only works for version 1.2.3 or newer\n";
             exit;
         }
 
@@ -1181,7 +1181,7 @@ class Command extends CI_Controller
             // add the modify_notify field to master_services
             $query = "ALTER TABLE `master_services` ADD `modify_notify` ".
                 "VARCHAR( 32 ) NULL AFTER `activate_notify` ;";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add the canceled and cancelwfee and pastdue and notice status to payment_history status
@@ -1190,7 +1190,7 @@ class Command extends CI_Controller
                 "'collections', 'turnedoff', 'credit', 'canceled', 'cancelwfee',".
                 "'pastdue', 'noticesent','waiting') ".
                 "CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add a login failures table to track failure and eventually
@@ -1198,14 +1198,14 @@ class Command extends CI_Controller
             $query = "CREATE TABLE `login_failures` (".
                 "`ip` VARCHAR( 64 ) NOT NULL ,".
                 "`logintime` DATETIME NOT NULL ) TYPE = MYISAM ";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add carrier_dependent field to indicate they get canceled with fee
             // if they owe money and are on a different past due days track
             $query = "ALTER TABLE `master_services` ADD `carrier_dependent` ".
                 "ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // rename the pastdue_days fields to regular_ fields
@@ -1217,7 +1217,7 @@ class Command extends CI_Controller
                 "NOT NULL DEFAULT '0',".
                 "CHANGE `pastdue_days3` `regular_canceled` INT( 11 ) ".
                 "NOT NULL DEFAULT '0' ";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
 
@@ -1227,22 +1227,22 @@ class Command extends CI_Controller
                 "ADD `dependent_shutoff_notice` INT NOT NULL DEFAULT '0',".
                 "ADD `dependent_turnoff` INT NOT NULL DEFAULT '0',".
                 "ADD `dependent_canceled` INT NOT NULL DEFAULT '0';";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add linkurl and linkname to the customer_history for file linking and other links
             $query = "ALTER TABLE `customer_history` ".
                 "ADD `linkurl` VARCHAR( 255 ) NULL , ".
                 "ADD `linkname` VARCHAR( 64 ) NULL ";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `settings` ADD `dependent_cancel_url` VARCHAR( 255 ) NULL ;";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";	  
 
             $query = "ALTER TABLE `settings` ADD `default_billing_group` VARCHAR( 32 ) NOT NULL DEFAULT 'billing'";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";	  
 
             // add nsf type for non-sufficient fund indicator
@@ -1250,12 +1250,12 @@ class Command extends CI_Controller
                 "CHANGE `payment_type` `payment_type` ".
                 "SET( 'creditcard', 'check', 'cash', 'eft', 'nsf' ) ".
                 "CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL  ";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";	  
 
             // set the version, using the new settings field
             $query = "UPDATE `settings` SET `version` = '1.3' WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $databaseversion = "1.3";
@@ -1267,49 +1267,49 @@ class Command extends CI_Controller
             // add percentage_or_fixed multiply indicator field to tax_rates
             $query = "ALTER TABLE `tax_rates` ADD `percentage_or_fixed` ".
                 "ENUM( 'percentage', 'fixed' ) NOT NULL DEFAULT 'percentage';";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add user_services_id to the customer_history table
             $query = "ALTER TABLE `customer_history` ADD `user_services_id` ".
                 "INT NULL ;";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add rerun flag to billing details
             $query = "ALTER TABLE `billing_details` ".
                 "ADD `rerun` ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add a rerun_date field to the billing_details
             $query = "ALTER TABLE `billing_details` ADD `rerun_date` DATE NULL;";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add payment_applied date to billing details
             $query = "ALTER TABLE `billing_details` ".
                 "ADD `payment_applied` DATE NULL ;";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";	  
 
             // set current rerun dates to null, NULL is now important
             // if you have upcoming reruns, must reset them after
             $query = "UPDATE billing SET rerun_date = NULL";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add an original_invoice_number field to keep that number around
             // even when making reruns on new invoices
             $query =" ALTER TABLE `billing_details` ".
                 "ADD `original_invoice_number` INT NULL";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";	  
 
             // set the version, using the new settings field
             $query = "UPDATE `settings` SET `version` = '1.3.1' ".
                 "WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
         }
 
@@ -1318,48 +1318,48 @@ class Command extends CI_Controller
 
             $query = "ALTER TABLE `user_services` ".
                 "ADD INDEX `master_service_id_index` ( `master_service_id` )";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `user_services` ".
                 "ADD INDEX `billing_id_index` ( `billing_id` )";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `billing` ".
                 "ADD INDEX `billing_type_index` ( `billing_type` )";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `tax_exempt` ".
                 "ADD INDEX `account_number_index` ( `account_number` )";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `billing_details` ".
                 "ADD INDEX `billing_id_index` ( `billing_id` )";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query ="ALTER TABLE `payment_history` ".
                 "ADD INDEX `billing_id_index` ( `billing_id` )";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // set the version, using the new settings field
             $query = "UPDATE `settings` SET `version` = '1.3.2' ".
                 "WHERE `id` =1 LIMIT 1";		
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add notes field to customer table
             $query = "ALTER TABLE `customer` ADD `notes` TEXT NULL";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // add support_notify field to master_services table
             $query = "ALTER TABLE `master_services` ADD `support_notify` VARCHAR( 32 ) NULL ;";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // change most of the float fields to decimal type
@@ -1367,13 +1367,13 @@ class Command extends CI_Controller
             $query = "ALTER TABLE `user_services` ".
                 "CHANGE `usage_multiple` `usage_multiple` ".
                 "DECIMAL( 9, 2 ) NOT NULL DEFAULT '1'";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `payment_history` ".
                 "CHANGE `billing_amount` `billing_amount` ".
                 "DECIMAL( 9, 2 ) NULL DEFAULT NULL";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `billing_history` ".
@@ -1387,7 +1387,7 @@ class Command extends CI_Controller
                 "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
                 "CHANGE `total_due` `total_due` ".
                 "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0'";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query="ALTER TABLE `billing_details` ".
@@ -1397,7 +1397,7 @@ class Command extends CI_Controller
                 "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0', ".
                 "CHANGE `refund_amount` `refund_amount` ".
                 "DECIMAL( 9, 2 ) NOT NULL DEFAULT '0'";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query = " ALTER TABLE `general` CHANGE ".
@@ -1409,15 +1409,15 @@ class Command extends CI_Controller
                 "NULL DEFAULT NULL , ".
                 "CHANGE `email_custsvc` `email_custsvc` VARCHAR( 128 ) ".
                 "CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL ";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             $query = "INSERT INTO `payment_mode` VALUES (NULL, 'discount')";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";	  
 
             $query = " ALTER TABLE `payment_history` CHANGE `payment_type` `payment_type` SET( 'creditcard', 'check', 'cash', 'eft', 'nsf', 'discount' ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL  ";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
         }
@@ -1428,23 +1428,23 @@ class Command extends CI_Controller
             // for the truncated card numbers we show to regular users
             $query = " ALTER TABLE `billing` CHANGE `creditcard_number` ".
                 "`creditcard_number` VARCHAR( 16 ) NULL DEFAULT NULL  ";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // add the TEXT field that will hold the ascii armored encrypted card number
             $query = "ALTER TABLE `billing` ADD `encrypted_creditcard_number` TEXT NULL";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // add the export prefix field that holds a prefix for the organization being exported
             $query = "ALTER TABLE `general` ADD `exportprefix` VARCHAR( 64 ) NULL ;";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // add payment_history_id to link individual payments to items
             $query = "ALTER TABLE `billing_details` ADD `payment_history_id` ".
                 "INT NULL ;";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // create the new activity_log table
@@ -1462,19 +1462,19 @@ class Command extends CI_Controller
                 "`result` enum('success','failure') NOT NULL".
                 ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";	  
 
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";	  	  
 
             // add automatic_receipt marker to know who wants automatic receipts
             $query = "ALTER TABLE `billing` ADD `automatic_receipt` ".
                 "ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // add closed_by and closed_date fields to customer_history table
             $query = "ALTER TABLE `customer_history` ADD `closed_by` ".
                 "VARCHAR( 64 ) NULL ,ADD `closed_date` DATETIME NULL ;";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // sub_history table to hold new entries associated with the same customer history entry
@@ -1486,13 +1486,13 @@ class Command extends CI_Controller
                 "`description` text NOT NULL,".
                 "PRIMARY KEY  (`id`)".
                 ") ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;";
-            $result = $DB->Execute($query) or die ("$query query failed");
+            $result = $this->db->query($query) or die ("$query query failed");
             echo "$query\n";
 
             // set the version number in the database to 2.0
             $query = "UPDATE `settings` SET `version` = '2.0' ".
                 "WHERE `id` =1 LIMIT 1";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
 
@@ -1502,30 +1502,30 @@ class Command extends CI_Controller
             // set the version number in the database to 2.0
             $query = "UPDATE `settings` SET `version` = '2.0.1' ".
                 "WHERE `id` =1 LIMIT 1";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
         }
 
         if ($databaseversion == "2.0.1") {
             // add screenname field for xmpp to user table
             $query = "ALTER TABLE `user` ADD `screenname` VARCHAR( 254 ) NULL";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // add notify variables too
             $query = "ALTER TABLE `user` ADD `email_notify` ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n', ADD `screenname_notify` ENUM( 'y', 'n' ) NOT NULL DEFAULT 'n';";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // add credit_applied field to billing_history	  
             $query = "ALTER TABLE `billing_history` ADD `credit_applied` DECIMAL( 9, 2 ) NOT NULL DEFAULT '0.00'";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // set the version number in the database to 2.0.2
             $query = "UPDATE `settings` SET `version` = '2.0.2' ".
                 "WHERE `id` =1 LIMIT 1";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
         }
 
@@ -1538,7 +1538,7 @@ class Command extends CI_Controller
                 "`weight` FLOAT NULL, ".
                 "`category` VARCHAR( 128) NOT NULL ".
                 ") ENGINE = MYISAM  ";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // add field_asset_items table
@@ -1555,18 +1555,18 @@ class Command extends CI_Controller
                 "`return_date` DATE NULL , ".
                 "`return_notes` VARCHAR( 254 ) NULL ".
                 ") ENGINE = MYISAM ";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // add default shipping group field
             $query = "ALTER TABLE `settings` ADD `default_shipping_group` VARCHAR( 32 ) NOT NULL DEFAULT 'shipping';";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // set the version number in the database to 2.1
             $query = "UPDATE `settings` SET `version` = '2.1' ".
                 "WHERE `id` =1 LIMIT 1";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";	  
 
         }
@@ -1575,7 +1575,7 @@ class Command extends CI_Controller
             $query = "CREATE TABLE `vendor_names` (".
                 "`name` VARCHAR( 64 ) NOT NULL ".
                 ") ENGINE = MYISAM ";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             $query = "CREATE TABLE `vendor_history` ( ".
@@ -1596,23 +1596,23 @@ class Command extends CI_Controller
                 "`billed_amount` DECIMAL( 9, 2 ) NULL ,".
                 "PRIMARY KEY ( `id` )".
                 ") ENGINE = MYISAM ";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // index the notify column of customer_history for speed up
             $query = " ALTER TABLE `customer_history` ADD INDEX ( `notify` )  ";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // allow the next_billing_date to be set NULL
             $query = " ALTER TABLE `billing` CHANGE `next_billing_date` `next_billing_date` DATE NULL  ";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // set the version number in the database to 2.1.1
             $query = "UPDATE `settings` SET `version` = '2.1.1' ".
                 "WHERE `id` =1 LIMIT 1";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
         }
@@ -1621,7 +1621,7 @@ class Command extends CI_Controller
             // set the version number in the database to 2.2
             $query = "UPDATE `settings` SET `version` = '2.2' ".
                 "WHERE `id` =1 LIMIT 1";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";	  
         }
 
@@ -1630,54 +1630,54 @@ class Command extends CI_Controller
             // that keeps the regular invoice number the same and just makes a new invoice
             // with a pastdue amount, keeping items on old invoice itself
             $query = "ALTER TABLE  `billing_details` ADD  `recent_invoice_number` INT NULL DEFAULT NULL";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // add indexes
             $query = "ALTER TABLE `billing_history` ADD INDEX  `billing_id_index` ( `billing_id` )";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `billing_details` ADD INDEX  `invoice_number_index` ( `invoice_number` )";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `customer_history` ADD INDEX  `account_number_index` (  `account_number` )";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             $query = "ALTER TABLE `billing` ADD INDEX  `account_number_index` (  `account_number` )";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // set the version number in the database to 2.3
             $query = "UPDATE `settings` SET `version` = '2.3' ".
                 "WHERE `id` =1 LIMIT 1";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";	  
         }
 
         if ($databaseversion == "2.3") {
             // make sure the user table unique
             $query = "ALTER TABLE  `user` ADD UNIQUE (`username`)";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";	  	  
 
             // increase size of password field to hold new bcrypt length passwords
             $query = "ALTER TABLE  `user` CHANGE  `password`  `password` VARCHAR( 60 ) NOT NULL DEFAULT  ''";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // increase size of account_manager_password field to hold bcrypt length passwords
             $query = "ALTER TABLE  `customer` CHANGE  `account_manager_password`  ".
                 "`account_manager_password` VARCHAR( 60 ) NULL DEFAULT NULL";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";
 
             // set the version number in the database to 2.4
             $query = "UPDATE `settings` SET `version` = '2.4' ".
                 "WHERE `id` =1 LIMIT 1";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";	  
         }
 
@@ -1709,13 +1709,13 @@ class Command extends CI_Controller
             // change ccexportvarorder to TEXT field
             $query = "ALTER TABLE `general` 
                 CHANGE `ccexportvarorder` `ccexportvarorder` text NOT NULL";
-            $result = $DB->Execute($query) or die ("query failed");
+            $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
             // set the version number in the database to 3.0
             $query = "UPDATE `settings` SET `version` = '3.0' ".
                 "WHERE `id` =1 LIMIT 1";
-            $result = $DB->Execute($query) or die ("$query failed");
+            $result = $this->db->query($query) or die ("$query failed");
             echo "$query\n";	  
         }
 
