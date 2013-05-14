@@ -1154,7 +1154,6 @@ class Command extends CI_Controller
     /*
      * command to update the database to the next release
      * php index.php command update
-     * TODO use the schema_model to hold these update queries
      */
     public function update() 
     {
