@@ -1169,11 +1169,11 @@ class Command extends CI_Controller
             exit;
         }
 
-        if ($databaseversion == "3.0-BETA1") {
+        if ($databaseversion == "3.0") {
             echo "Nothing to update";
             exit;
         } else {
-            echo "Your database version: $databaseversion\nThis script will update it to version: 3.0-BETA1\n";
+            echo "Your database version: $databaseversion\nThis script will update it to version: 3.0\n";
         }
         
         if ($databaseversion == "1.2.3") {
@@ -1681,7 +1681,7 @@ class Command extends CI_Controller
             echo "$query\n";	  
         }
 
-        if ($databaseversion == "2.4") {
+        if ($databaseversion == "2.4" OR $databaseversion == "2.4.1" OR $databaseversion == "2.4.2") {
 
             // make new session table for codeigniter
             $query = "CREATE TABLE IF NOT EXISTS  `ci_sessions` (
