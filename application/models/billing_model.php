@@ -471,7 +471,6 @@ class Billing_Model extends CI_Model
 
         // get the first and second payment_history results
         $i = 0;
-        if (!isset($myresult->status)) { $myresult->status = ""; }
         if (!isset($firststatus)) { $firststatus = ""; }
             if (!isset($secondstatus)) { $secondstatus = ""; }
 
