@@ -968,7 +968,6 @@ CREATE TABLE IF NOT EXISTS `user_services` (
 --
 
 INSERT INTO `user_services` (`id`, `account_number`, `master_service_id`, `billing_id`, `start_datetime`, `end_datetime`, `removal_date`, `salesperson`, `usage_multiple`, `removed`) VALUES
-(1, 1, 3, 1, '2005-09-28 09:09:11', '2006-02-08 14:02:04', '2006-02-08', 'admin', 0.00, 'y'),
 (40, 1, 3, 1, '2006-02-08 14:02:33', NULL, NULL, 'admin', 1.00, 'n');
 
 -- --------------------------------------------------------
