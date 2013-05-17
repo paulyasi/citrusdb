@@ -140,7 +140,7 @@ foreach($history->result() as $myresult)
 
 // print the show all link
 echo "<tr bgcolor=\"#dddddd\"><td style=\"padding: 5px; \"colspan=6><a href=\"".
-"$this->url_prefix/index.php/customer/allhistory/$this->account_number\">";
+"$this->url_prefix/index.php/customer/history/all\">";
 echo lang('showall');
 echo "...</a></td>";
 

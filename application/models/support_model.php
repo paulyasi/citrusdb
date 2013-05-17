@@ -18,7 +18,7 @@ class Support_Model extends CI_Model
 
 	/*
 	 * ---------------------------------------------------------------------------
-	 * query the customer_history for the specific account_number
+	 * query the customer_history for the recent 25 notes for specific account_number
 	 * ---------------------------------------------------------------------------
 	 */
 	function customer_history($account_number)
@@ -37,6 +37,27 @@ class Support_Model extends CI_Model
 	}
 
 	
+	/*
+	 * ---------------------------------------------------------------------------
+	 * query the customer_history for all notes for a specific account_number
+	 * ---------------------------------------------------------------------------
+	 */
+	function all_customer_history($account_number)
+	{
+		$query = "SELECT  ch.id, ch.creation_date, ".
+			"ch.created_by, ch.notify, ch.status, ch.description, ch.linkname, ".
+			"ch.linkname, ch.linkurl, ch.user_services_id, us.master_service_id, ".
+			"ms.service_description FROM customer_history ch ".
+			"LEFT JOIN user_services us ON us.id = ch.user_services_id ".
+			"LEFT JOIN master_services ms ON ms.id = us.master_service_id ".
+			"WHERE ch.account_number = ? ORDER BY ch.id DESC";
+		$result = $this->db->query($query, array($account_number))
+			or die ("customer_history queryfailed");
+		
+		return $result;
+    }
+
+
 	/*
 	 * ------------------------------------------------------------------------
 	 *  get customer history notes for just this service

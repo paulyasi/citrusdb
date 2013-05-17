@@ -464,13 +464,19 @@ class Customer extends App_Controller
 		redirect('/customer');
 	}
 
-	public function history()
+	public function history($all = NULL)
 	{
-		// load the ticket model
-		$this->load->model('support_model');
+        $this->load->model('support_model');
 
-		// get the customer_history
-		$data['history'] = $this->support_model->customer_history($this->account_number);
+        if($all)
+        {
+		    $data['history'] = $this->support_model->all_customer_history($this->account_number);
+        }
+        else
+        {
+            $data['history'] = $this->support_model->customer_history($this->account_number);
+        }
+
 		$this->load->view('customer/history_view', $data);
 	}
 
