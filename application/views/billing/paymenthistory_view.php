@@ -1,5 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
-
+<html>
+<head>
+<LINK href="<?php echo $this->url_prefix?>/citrus.css" type=text/css rel=STYLESHEET>
+<LINK href="<?php echo $this->url_prefix?>/fullscreen.css" type=text/css rel=STYLESHEET>
+<META HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
+</head>
+<body bgcolor="#eeeedd" marginheight=0 marginwidth=1 leftmargin=1 rightmargin=0>
 <table cellspacing=0 cellpadding=2 border=0>
 <td bgcolor="#eedddd" width=40><b><?php echo lang('id')?></b></td>
 <td bgcolor="#eedddd" width=40><b><?php echo lang('invoice')?></b></td>

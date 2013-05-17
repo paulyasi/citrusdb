@@ -16,6 +16,8 @@
 		window.open(page, "Tools", "height=400,width=600,location=0,scrollbars=1,menubar=1,toolbar=0,resizeable=1,left=100,top=100");
 	}
 </script>
+<LINK href="<?php echo $this->url_prefix?>/citrus.css" type=text/css rel=STYLESHEET>
+<LINK href="<?php echo $this->url_prefix?>/fullscreen.css" type=text/css rel=STYLESHEET>
 </head>
 <body bgcolor="#ffffff">		
 <h3><?php echo lang('invoicemaintenance')?></h3>
