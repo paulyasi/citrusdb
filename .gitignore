@@ -151,3 +151,4 @@ gitpush.sh
 
 # Codeigniter Logs
 application/logs/
+/nbproject/private/

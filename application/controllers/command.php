@@ -23,22 +23,6 @@ class Command extends CI_Controller
 		$this->ssl_url_prefix = $this->config->item('ssl_base_url');
     }
 
-
-    /*
-     * -----------------------------------------------------------------------
-     * php index.php command setup
-     * run this to setup a new database automatically
-     * it will use the setup model to make a new database as specified in your
-     * config information
-     * -----------------------------------------------------------------------
-     */
-    public function setup()
-    {
-        $this->load->model('setup_model');
-        $this->setup_model->setup_database();
-    }
-
-
 	/*
 	 * -----------------------------------------------------------------------
 	 * decrypt the credit cards in the citrus database using
