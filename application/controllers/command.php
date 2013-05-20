@@ -22,6 +22,7 @@ class Command extends CI_Controller
 		$this->url_prefix = $this->config->item('base_url');
 		$this->ssl_url_prefix = $this->config->item('ssl_base_url');
     }
+    
 
 	/*
 	 * -----------------------------------------------------------------------
