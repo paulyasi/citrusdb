@@ -151,4 +151,10 @@ gitpush.sh
 
 # Codeigniter Logs
 application/logs/
+<<<<<<< HEAD
 /nbproject/private/
+=======
+
+# ignore .vagrant folder
+.vagrant
+>>>>>>> add vagrant scripts and default config to work out of the box

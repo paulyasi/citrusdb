@@ -14,8 +14,8 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/~pyasi/citrusdb';
-$config['ssl_base_url'] = 'http://localhost/~pyasi/citrusdb';
+$config['base_url']	= 'http://localhost:4567';
+$config['ssl_base_url'] = 'http://localhost:4567';
 
 /*
 |-------------------------------------------------------------------------
