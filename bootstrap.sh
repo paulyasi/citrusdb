@@ -6,6 +6,9 @@ apt-get install -q -y apache2 php5 libapache2-mod-php5 php5-cli php-pear mysql-s
 rm -rf /var/www
 ln -fs /vagrant /var/www
 
+# add phpmyadmin to apache config
+echo "Include /etc/phpmyadmin/apache.conf" >> /etc/apache2/apache2.conf
+
 # create a root user for testing
 mysqladmin -u root password root
 
