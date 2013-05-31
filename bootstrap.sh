@@ -2,7 +2,7 @@
 
 apt-get update
 export DEBIAN_FRONTEND=noninteractive
-apt-get install -q -y apache2 php5 libapache2-mod-php5 php5-cli php-pear mysql-server php5-mysql phpmyadmin
+apt-get install -q -y apache2 php5 libapache2-mod-php5 php5-cli php-pear mysql-server php5-mysql phpmyadmin git
 rm -rf /var/www
 ln -fs /vagrant /var/www
 
@@ -17,7 +17,7 @@ mysqladmin -u root -proot drop --force citrus
 mysqladmin -u root -proot create citrus
 
 # change this to load 242 file for testing the update command
-mysql -u root -proot citrus < /var/www/citrus242.sql
+mysql -u root -proot citrus < /var/www/citrus.sql
 
 #pear config-set auto_discover 1
 #pear install pear.phpunit.de/PHPUnit
