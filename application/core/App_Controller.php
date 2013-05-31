@@ -6,7 +6,7 @@ class App_Controller extends CI_Controller
     function __construct()
     {
         // set the software version number
-        $this->softwareversion = "3.0d1";
+        $this->softwareversion = "3.0";
 
         parent::__construct();
 
