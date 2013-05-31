@@ -61,7 +61,7 @@ class Schema_model extends CI_Model
     public function databaseversion()
     {
         $query = "SELECT version FROM settings";
-        $orgresult = $this->db->query($query) or die ("databaseversion query failed");
+        $result = $this->db->query($query) or die ("databaseversion query failed");
         $myresult = $result->row_array();
         
         return $myresult['version']; 
@@ -598,14 +598,18 @@ class Schema_model extends CI_Model
             $query = "CREATE TABLE IF NOT EXISTS  `ci_sessions` (
                 session_id varchar(40) DEFAULT '0' NOT NULL,
                 ip_address varchar(45) DEFAULT '0' NOT NULL,
-                user_agent varchar(50) NOT NULL,
+                user_agent varchar(120) NOT NULL,
                 last_activity int(10) unsigned DEFAULT 0 NOT NULL,
                 user_data text DEFAULT '' NOT NULL,
                 PRIMARY KEY (session_id)
             );";
+            $result = $this->db->query($query) or die ("query failed");
+            echo "$query\n";
 
-            // drop old session table used by adodb
-            $query = "DROP TABLE session2";
+            // drop old sessions2 table used by adodb
+            $query = "DROP TABLE sessions2";
+            $result = $this->db->query($query) or die ("query failed");
+            echo "$query\n";
 
             // add new api_keys table
             $query = "CREATE TABLE `api_keys` (".
@@ -616,6 +620,8 @@ class Schema_model extends CI_Model
                 "`date_created` int(11) NOT NULL,".
                 "PRIMARY KEY (`id`)".
                 ") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+            $result = $this->db->query($query) or die ("query failed");
+            echo "$query\n";
 
             // change ccexportvarorder to TEXT field
             $query = "ALTER TABLE `general` 
