@@ -20,12 +20,6 @@ class Test_Settings extends CI_TestCase
         $this->assertEquals('http://localhost/cancel', $url);        
     }
 
-    function test_get_path_to_ccfile()
-    {
-        $path = $this->CI->settings_model->get_path_to_ccfile();
-        $this->assertEquals('/home/pyasi/Code/io', $path);
-    }
-
     function test_get_default_group()
     {
         $group = $this->CI->settings_model->get_default_group();
