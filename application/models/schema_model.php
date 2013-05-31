@@ -63,6 +63,8 @@ class Schema_model extends CI_Model
         $query = "SELECT version FROM settings";
         $result = $this->db->query($query) or die ("databaseversion query failed");
         $myresult = $result->row_array();
+
+        //test comment
         
         return $myresult['version']; 
     }
