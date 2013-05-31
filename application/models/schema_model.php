@@ -61,7 +61,11 @@ class Schema_model extends CI_Model
     public function databaseversion()
     {
         $query = "SELECT version FROM settings";
+<<<<<<< HEAD
         $result = $this->db->query($query) or die ("databaseversion query failed");
+=======
+        $orgresult = $this->db->query($query) or die ("databaseversion query failed");
+>>>>>>> d6db3ec329232a8379c7b27daaf6392fb9ddc040
         $myresult = $result->row_array();
         
         return $myresult['version']; 
@@ -598,11 +602,16 @@ class Schema_model extends CI_Model
             $query = "CREATE TABLE IF NOT EXISTS  `ci_sessions` (
                 session_id varchar(40) DEFAULT '0' NOT NULL,
                 ip_address varchar(45) DEFAULT '0' NOT NULL,
+<<<<<<< HEAD
                 user_agent varchar(120) NOT NULL,
+=======
+                user_agent varchar(50) NOT NULL,
+>>>>>>> d6db3ec329232a8379c7b27daaf6392fb9ddc040
                 last_activity int(10) unsigned DEFAULT 0 NOT NULL,
                 user_data text DEFAULT '' NOT NULL,
                 PRIMARY KEY (session_id)
             );";
+<<<<<<< HEAD
             $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
 
@@ -610,6 +619,11 @@ class Schema_model extends CI_Model
             $query = "DROP TABLE sessions2";
             $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
+=======
+
+            // drop old session table used by adodb
+            $query = "DROP TABLE session2";
+>>>>>>> d6db3ec329232a8379c7b27daaf6392fb9ddc040
 
             // add new api_keys table
             $query = "CREATE TABLE `api_keys` (".
@@ -620,8 +634,11 @@ class Schema_model extends CI_Model
                 "`date_created` int(11) NOT NULL,".
                 "PRIMARY KEY (`id`)".
                 ") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+<<<<<<< HEAD
             $result = $this->db->query($query) or die ("query failed");
             echo "$query\n";
+=======
+>>>>>>> d6db3ec329232a8379c7b27daaf6392fb9ddc040
 
             // change ccexportvarorder to TEXT field
             $query = "ALTER TABLE `general` 
