@@ -61,11 +61,7 @@ class Schema_model extends CI_Model
     public function databaseversion()
     {
         $query = "SELECT version FROM settings";
-<<<<<<< HEAD
         $result = $this->db->query($query) or die ("databaseversion query failed");
-=======
-        $orgresult = $this->db->query($query) or die ("databaseversion query failed");
->>>>>>> d6db3ec329232a8379c7b27daaf6392fb9ddc040
         $myresult = $result->row_array();
         
         return $myresult['version']; 
