@@ -20,3 +20,13 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# ignore files when exporting to an archive for release
+.vagrant export-ignore
+io export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+.project export-ignore
+bootstrap.sh export-ignore
+Vagrantfile export-ignore
+application/tests export-ignore
