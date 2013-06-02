@@ -24,10 +24,11 @@ foreach ($result as $myresult)
 	$groupname = $myresult['groupname'];          
 	print "<option>$groupname</option>\n";
 }
-
+?>
 // print a seperator
-print "</optgroup><optgroup label=\"$l_users\">\n"; 
-
+</optgroup>
+<optgroup label="<?php echo lang('users');?>">\n";
+<?php
 $result = $this->user_model->list_users();
 
 foreach ($result as $myresult)
