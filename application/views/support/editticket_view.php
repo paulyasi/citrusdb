@@ -40,9 +40,6 @@ if ($ticket['serviceid'] > 0)
 
 <?php
 // print the list of groups and users to choose from
-// print a seperator
-print "<optgroup label=\"".lang('groups')."\">\n"; 
-
 foreach ($groupslist as $myresult)
 {
 	$groupname = $myresult['groupname'];          
