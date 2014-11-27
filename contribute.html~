@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">about</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="categorylinks">
+			<a href="http://bugs.citrusdb.org/bug_report_page.php">Report a Bug</a>
+			<p>
+			<a href="coding.html">Coding Standards</a>
+			<p>
+			<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paul%40citrusdb%2eorg&item_name=CitrusDB%2eorg&no_shipping=0&no_note=1&tax=0&currency_code=USD">Donations</a>
+		</div>
+		<div id="categorycontent">
+			<h3>Contribute</h3>
+			<blockquote>
+				<h4>Report Bugs</h4>
+				You can look through the list of bugs in the <a href="http://bugs.citrusdb.org/view_all_bug_page.php">Bug Tracking</a> page.  If you have found a new bug, please <a href="http://bugs.citrusdb.org/bug_report_page.php">report it</a>.  It would be helpful to sign up for a new account in the bug tracker first so you can be notified of changes to the status of your bug.
+				<h4>Help other Users</h4>
+				Sign up for the <a href="https://lists.sourceforge.net/lists/listinfo/citrusdb-users">citrusdb-users</a> mailing list and help answer questions of other users.
+				<h4>Documentation</h4>
+				Contribute more and better documentation.  You can email updates to paul at citrusdb.org.
+				<h4>Source Code</h4>
+				Please read the <a href="coding.html">coding standards</a> and join the <a href="mailinglists.html">development mailing list</a> to post your ideas to get started.
+				<h4>Translations</h4>
+				You can help by updating the translations included with the release or contribute new translation files.  The us-english file is always the most up-to-date.  Please use that to begin any new translations.  Email them to: paul at citrusdb.org.
+			<h4>Let the world know about CitrusDB</h4>
+			Write about this project or link to us on your website or blog.  Comment on or rate this project at <a href="http://freshmeat.net/projects/citrusdb/">freshmeat.net</a>.   Vote for or review this project at <a href="http://www.hotscripts.com/Detailed/37688.html">Hotscripts.com</a>. 
+			<h4>Donations</h4>	
+			Donate money to this project via <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paul%40citrusdb%2eorg&item_name=CitrusDB%2eorg&no_shipping=0&no_note=1&tax=0&currency_code=USD">paypal</a>.  Donations will be used for the promotion of CitrusDB and put towards new machines and internet infrastructure. 
+			<p>
+			</blockquote>
+			<div id="categoryfooter">
+			<hr>
+			This website is Copyright &#169; 2006 Paul Yasi.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+
+</body>
+</html>

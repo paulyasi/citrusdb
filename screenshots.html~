@@ -1,0 +1,82 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">about</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="categorylinks">
+			<a href="about.html">Features</a>
+			<p>
+			<a href="requirements.html">Requirements</a>
+			<p>
+			<a href="screenshots.html">Screenshots</a>
+		</div>
+		<div id="categorycontent">
+			<h3>About : Screenshots</h3>
+			<center>
+			<table cellpadding=10>
+			<td>
+				<a href="images/screenshots/customer.png"><img src="images/screenshots/customer_small.png"></a><br>
+				Customer View
+			</td><td>
+			<a href="images/screenshots/search.png"><img src="images/screenshots/search_small.png"></a><br> Search
+
+			</td>
+			<tr>
+				
+			<td>
+				<a href="images/screenshots/addservice.png"><img src="images/screenshots/addservice_small.png"></a><br>
+				Add Service View
+			</td><td>
+			<a href="images/screenshots/editservice.png"><img src="images/screenshots/editservice_small.png"></a><br> Edit Service
+
+			</td>
+			<tr>
+
+<td>
+				<a href="images/screenshots/billing.png"><img src="images/screenshots/billing_small.png"></a><br>
+				Billing View
+			</td><td>
+			<a href="images/screenshots/support.png"><img src="images/screenshots/support_small.png"></a><br> Support
+
+			</td>
+			<tr>
+
+<td>
+				<a href="images/screenshots/servicetools.png"><img src="images/screenshots/servicetools_small.png"></a><br>
+				Service Type Admin Tool
+			</td><td>
+			<a href="images/screenshots/billingtypetool.png"><img src="images/screenshots/billingtypetool_small.png"></a><br> Billing Type Admin Tool
+
+			</td>
+			</table>
+			</center>
+			<div id="categoryfooter">
+			<hr>
+			This website is Copyright &#169; 2006 Paul Yasi.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+
+</body>
+</html>

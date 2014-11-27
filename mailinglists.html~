@@ -1,0 +1,60 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">about</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="categorylinks">
+			<a href="faq.html">FAQ</a>
+			<p>
+			<a href="help.html">Documentation</a>
+			<p>
+			<a href="http://bugs.citrusdb.org/view_all_bug_page.php">Bug Tracking</a>
+			<p>
+			<a href="mailinglists.html">Mailing Lists</a>
+		</div>
+		<div id="categorycontent">
+			<h3>Support : Mailing Lists</h3>
+			<blockquote>
+				<h4>Announcements</h4>
+				This announcements list is for announcements of new versions of citrus, security, and critical updates. It is not a discussion list. You can join the list by going here: <a href="https://lists.sourceforge.net/lists/listinfo/citrusdb-announce
+					">https://lists.sourceforge.net/lists/listinfo/citrusdb-announce</a>
+
+<h4>Users</h4>
+This is a discussion list for users of CitrusDB. Ask questions or get help with usage, installation, setup. You can join the list by going here: <a href="https://lists.sourceforge.net/lists/listinfo/citrusdb-users
+
+">https://lists.sourceforge.net/lists/listinfo/citrusdb-users</a>
+
+<h4>Developers</h4>
+This is a discussion list for developers of CitrusDB. Discuss new features and ideas, source code, patches, and bug fixes. You can join the list by going here: <a href="https://lists.sourceforge.net/lists/listinfo/citrusdb-devel">https://lists.sourceforge.net/lists/listinfo/citrusdb-devel</a>
+			
+			</blockquote>
+			<div id="categoryfooter">
+			<hr>
+			This website is Copyright &#169; 2006 Paul Yasi.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+
+</body>
+</html>

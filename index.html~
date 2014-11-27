@@ -1,0 +1,114 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">about</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="mission">
+			<h1>Welcome to CitrusDB.org</h1>
+			Our mission is to provide an open source 
+			customer database and billing software solution that 
+			can be used in many different service industries, 
+			including internet service, consulting, webhosting, 
+			telecommunications, and voip. 
+			<p>	
+			CitrusDB is a web based customer database and billing 
+			software solution that uses PHP and a database 
+			backend (MySQL)   
+			to keep track of customer information, CRM, services, 
+			products, billing invoices and credit cards, and 
+			customer service information.  It is licensed under 
+			the GPL version 2 open source license.	
+		</div>
+		<div id="screenshot">
+			<img src="images/screenshot.jpg">
+			<br>
+			<center>
+				<a style="color: darkgreen; font-weight: bold;" href="download/citrus-0.9.2.tar.gz">Get the Latest Release<br><b style="font-size: 10pt;">Version 0.9.2 (996k)</b></a>
+			</center>
+		</div>
+	</div>
+</div>
+
+<div id="mainheader">
+	<div id="maincontent">
+		<div id="news">
+			<h3>Overview</h3>
+			<h4>Customer Records</h4>
+			<blockquote>
+				General information and history
+			       	about each customer is 
+				linked to their records.  New customers can be imported from an online form or entered by a database operator.
+			</blockquote>
+			<h4>Service Records</h4>
+			<blockquote>
+				Unlimited services can be assigned to one customer.  Services can have as many custom fields as needed to store all the information and attributes for that service.  Each service can have unique different billing criteria.
+			</blockquote>	
+			<h4>Billing Features</h4>
+			<blockquote>
+				Stores general billing information and necessary information about the customer's billing cycle.  Can bill on any billing cycle needed, one-time, monthly, bi-monthly, quarterly, 6 months, yearly, etc.  Billing is able to provide batch credit card exports, printed invoices, or emailed invoices.
+			</blockquote>
+			<h4>Support Notes</h4>
+			<blockquote>
+				Each customer has support notes related to them shown with their customer record.  Notes can be send to individual database users or to specific groups of users.  Every service activation or de-activation generated automatic notes to create a record of what occured.
+			</blockquote>	
+			<h4>Online Account Manager</h4>
+			<blockquote>
+				The online account manager allows customers to view their account services and recent balance and payments.  It also allows them to submit support notes to their account via the online form.
+			</blockquote>
+		</div>
+		
+		<div id="quicklinks">
+		<h3>Quick Links</h3>
+			<li><a href="http://freshmeat.net/projects/citrusdb/">Freshmeat</a>
+			<br>
+			<li><a href="http://sourceforge.net/projects/citrusdb/">Sourceforge</a>
+			<br>
+			<li><a href="http://www.hotscripts.com/Detailed/37688.html">HotScripts</a>
+			<br>
+			<li><a href="http://www.phpmyadmin.net/">phpMyAdmin</a>
+			<br>
+			<li><a href="http://www.coffeebuzz.com">Coffeebuzz</a>
+			<p>
+			<hr noshade size=1>
+			<center>
+			<p>
+			<a href="http://www.php.net">
+			<img border=0 src="images/php.gif"></a>	
+			<p>
+			<a href="http://adodb.sourceforge.net/">
+			<img border=0 src="images/adodb.gif"></a>
+			<p>
+			<a href="http://sourceforge.net">
+			<img src="http://sourceforge.net/sflogo.php?group_id=53478&amp;type=2" width="125" height="37"
+			border="0" alt="SourceForge.net Logo"></a>
+			<p>
+		</center>
+		</div>	
+
+		<div id="footer">
+			<hr>
+			This website is Copyright &#169; 2006 Paul Yasi.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+		</div>
+	</div>
+
+</div>
+
+</body>
+</html>

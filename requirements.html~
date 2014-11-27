@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">about</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="categorylinks">
+			<a href="about.html">Features</a>
+			<p>
+			<a href="requirements.html">Requirements</a>
+			<p>
+			<a href="screenshots.html">Screenshots</a>
+		</div>
+		<div id="categorycontent">
+			<h3>About : Requirements</h3>
+			<ul>
+				
+			<li>PHP 4.0.5 or greater
+			<ul>
+				<li>register_globals turned off in your php.ini
+			</ul>
+			
+			<li>A database supported by <a href="http://adodb.sourceforge.net/">ADOdb</a>
+			<ul>
+				<li>Works with MySQL 3.23 or greater
+				<li>May work with other ADOdb supported databases, but has not been tested with them:
+					<ul>
+						<li>PostgreSQL
+						<li>ODBC
+						<li>Oracle
+						<li>Microsoft SQL
+					</ul>
+			</ul>	
+
+			<li>Web browser requirements
+				<ul>
+					<li>Any modern web browser
+					<li>Javascript enabled
+					<li>Cookies enabled
+					<li>Do not save the password at the login screen
+				</ul>
+			<li>Security Requirements. The internal application is used to store private customer information and should be installed in a way that minimizes the risk to that information.  Below are a few suggestions.
+				<ul>
+					<li>A private LAN protected by a firewall
+					<li>Or, An SSL protected web server with access limited to trusted IP addresses.
+					<li>Or, A Virtual Private Network or Intranet
+				</ul>											
+			</ul>
+
+
+			<div id="categoryfooter">
+			<hr>
+			This website is Copyright &#169; 2006 Paul Yasi.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+
+</body>
+</html>

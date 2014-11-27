@@ -1,0 +1,134 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<link rel=\"shortcut icon\" type=\"image/ico\" href=\"favicon.ico\" />
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body bgcolor=white>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">features</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="categorylinks">
+			<a href="faq.html">FAQ</a>
+			<p>
+			<a href="documentation.html">Documentation</a>
+			<p>
+			<a href="http://bugs.launchpad.net/citrusdb">Bug Tracking</a>
+			<p>
+			<a href="mailinglists.html">Mailing Lists</a>
+<br><br><br><br><br><br>
+			<p align=center>
+<script type="text/javascript"><!--
+google_ad_client = "pub-0446241784375764";
+google_ad_width = 120;
+google_ad_height = 600;
+google_ad_format = "120x600_as";
+google_ad_type = "text_image";
+//2007-06-21: citrusdb_pages
+google_ad_channel = "0828436602";
+google_color_border = "336699";
+google_color_bg = "FFFFFF";
+google_color_link = "0000FF";
+google_color_text = "000000";
+google_color_url = "008000";
+//-->
+</script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+		</div>
+		<div id="categorycontent">
+			<h3>Support : FAQ</h3>
+			<blockquote>
+<b>I cannot login at the login screen, it just returns to the same screen.</b><br>
+Make sure your browser is not trying to save the login password.  Login will not work if the browser is saving the password for you.
+<p>
+				<b>Why is this blank or not showing up?</b><br>
+Your $path_to_citrus variable in the config.inc.php is probably incorrect. It should be set to the filesystem path to the citrusdb www folder. This is usually something like /usr/local/apache/htdocs/citrusdb or /home/username/public_html/citrusdb
+<p>
+To determine what the path is on unix you can log into the server and run the pwd command when you are in the citrusdb folder. It will tell you the path to use.
+<p>
+<b>How do billing frequencies work?</b><br>
+Billing frequencies are numbers of months that the account is billed for at one time. Each billing type has a billing frequency associated with it. So that an Invoice Monthly billing type has a frequency of 1, an Invoice Quarterly frequency has a frequency of 3 etc.
+<p>
+Each service also has a billing frequency, say you want to offer a service for 4.95 per month, then you make a new service with a price of 4.95 and a frequency of 1. If the customer has a billing type with a frequency of 3, it would multiply that monthly cost times 3 and get the resulting cost for that quarterly invoice, 14.85. If the customer billing type is monthly then it will just have 1x1 and give you 4.95 as the cost for that billing type.
+<p>
+You may get an error if you add a service with a frequency greater than their billing type. Say you have a service that is called something like Yearly Photo Hosting with a frequency of 12. You can't add that service to an account with a billing type that is billed monthly (a frequency of 1). You would have to create either an alternate billing type to connect to that account for this one service or change the account's billing type to one that works with that frequency, say Invoice Yearly.
+<p>
+There is also one special type of billing frequency of 0 which is for one time charges.
+<p>
+<b>How do I create the database/sql part?</b><br>
+You can use the command line functions such as<br>
+# mysqladmin create citrus<br>
+# mysql citrus < /path/to/citrusdb/citrus.sql<br>
+<p>
+or you can use a web based utility like phpMyAdmin.
+<ul>
+<li>Log into phpmyadmin
+    <li>Enter "citrus" in the create new database field and click Create
+    <li>Click on the SQL tab
+    <li>Click browse in the Location of the textfile field and choose the citrus.sql file from your hard drive.
+    <li>Click GO, this will then populate the database with the tables 
+</ul>
+<p>
+<b>Are there any translations into other languages</b><br>
+There are currently french, dutch, and german language translations in the 0.9.2 release and a turkish and spanish translation in the CVS version that will be included in the next release. 
+If you want to make a translation, please translate the us-english.inc.php file in 
+the include/local folder, since that is the most up-to-date. You can email the translated php file to paul at citrusdb.org.
+			
+			</blockquote>
+			<div id="categoryfooter">
+<center>
+<script type="text/javascript"><!--
+google_ad_client = "pub-0446241784375764";
+google_ad_width = 468;
+google_ad_height = 60;
+google_ad_format = "468x60_as";
+google_ad_type = "text_image";
+//2007-06-21: citrusdb_pages
+google_ad_channel = "0828436602";
+google_color_border = "336699";
+google_color_bg = "FFFFFF";
+google_color_link = "0000FF";
+google_color_text = "000000";
+google_color_url = "008000";
+//-->
+</script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</center>
+
+			<hr>
+			This website is Copyright &#169; 2006 <a href="http://www.paulyasi.com">Paul Yasi</a>.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write("\<script src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'>\<\/script>" );
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-3241458-1");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+</body>
+</html>

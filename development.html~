@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">about</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="categorylinks">
+			<a href="http://bugs.citrusdb.org/view_all_bug_page.php">Bug Tracking</a>
+			<p>
+			<a href="roadmap.html">Roadmap</a>
+			<p>
+			<a href="coding.html">Coding Standards</a>
+			<p>
+			<a href="mailinglists.html">Mailing Lists</a>
+		</div>
+		<div id="categorycontent">
+			<h3>Development</h3>
+			<blockquote>
+				CitrusDB is developed under the <a href="http://www.gnu.org/licenses/gpl.html">GPL version 2</a> license.  This project was started by Paul Yasi (paul at citrusdb.org), originally to fulfill his own customer database needs.  It is developed by a small group of coders from around the world.
+				<p>
+				Do you want to contribute source code?  Please read the <a href="coding.html">coding standards</a> and join the <a href="https://lists.sourceforge.net/lists/listinfo/citrusdb-devel">development mailing list</a> to post your ideas to get started.
+			<p>
+			Translations are also needed, you can help by updating the translations included with the release or contribute new translation files.  Please email them to: paul at citrusdb.org.
+			<p>
+			Documentation can also be improved.  All comments and contributions to the documentation can be sent to paul at citrusdb.org.
+			<p>
+			Bug reports and fixes are welcome.  You can look through the list of bugs in the <a href="http://bugs.citrusdb.org/view_all_bug_page.php">Bug Tracking</a> page.  If you have found a new bug, please <a href="http://bugs.citrusdb.org/bug_report_page.php">report it</a>.  It would be helpful to sign up for a new account in the bug tracker first so you can be notified of changes to the status of your bug.
+			</blockquote>
+			<div id="categoryfooter">
+			<hr>
+			This website is Copyright &#169; 2006 Paul Yasi.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+
+</body>
+</html>

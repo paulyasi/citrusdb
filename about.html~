@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">about</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="categorylinks">
+			<a href="about.html">Features</a>
+			<p>
+			<a href="requirements.html">Requirements</a>
+			<p>
+			<a href="screenshots.html">Screenshots</a>
+		</div>
+		<div id="categorycontent">
+			<h3>About : Features</h3>
+			<ul>
+				
+			<li>Customer Service
+			<ul>
+				<li>Track modifications to service records
+				<li>Security and password access to database on a per user level
+				<li>Stores general info, mailing address, billing address, and billing info about each customer
+				<li>Import new customers from online order data
+
+			</ul>
+			
+			<li>Service Management
+			<ul>
+				<li>Assign unlimited services or products to a customer record
+				<li>Add custom fields for services/product information
+				<li>Search by specified fields
+				<li>Easy to add and modify services
+				<li>Ability to invoke remote http commands when adding a service to a customer
+			</ul>	
+			
+			<li>Billing System
+			<ul>
+				<li>Custom billing cycles for each product
+				<li>Printed invoices
+				<li>Email invoices
+				<li>Prepayment reminders
+				<li>Credit Card Batches (import/export)
+
+			</ul>
+			
+			<li>Support Tickets
+			<ul>
+				<li>Invividual database user notification
+				<li>Group notification
+				<li>Online requests integrated with account records	
+			</ul>
+			
+			<li>Customization
+			<ul>
+				<li>Modular functions to allow new pieces to work along side base functions
+				<li>Works in multiple languages
+			</ul>
+																
+			</ul>
+
+			<div id="categoryfooter">
+			<hr>
+			This website is Copyright &#169; 2006 Paul Yasi.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">about</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="categorylinks">
+			<a href="http://bugs.citrusdb.org/view_all_bug_page.php">Bug Tracking</a>
+			<p>
+			<a href="roadmap.html">Roadmap</a>
+			<p>
+			<a href="coding.html">Coding Standards</a>
+			<p>
+			<a href="mailinglists.html">Mailing Lists</a>
+		</div>
+		<div id="categorycontent">
+			<h3>Development : Coding Standards</h3>
+			<blockquote>
+			<ul>
+				<li>Uses the PHP language
+				<ul>
+					<li>Uses the ADOdb database abstraction layer for database queries
+					<li>Compatible with most PHP 4 default installations
+					<li>Uses English variable names  and comments
+					<li>Uses language variables to allow translation of text.  Language variables begin with "l_".  You may add new language variables to the us-english.inc.php and other translation files if necessary.
+					<li>Variable names are generally lower case and use underscores for multiple words.
+				</ul>
+				<li>If you are modifying an existing file please submit your changes as a patch or diff instead of the whole modified file.
+				<li>Contributed code must be able to be GPL'd
+				<li>Contributed code created by developers without commit access should be emailed to the <a href="https://lists.sourceforge.net/lists/listinfo/citrusdb-devel">developer mailing list</a> for review and possible inclusion.
+			</ul>
+			</blockquote>
+			<div id="categoryfooter">
+			<hr>
+			This website is Copyright &#169; 2006 Paul Yasi.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>CitrusDB - The Open Source Customer Database and Billing Software</title>
+<LINK href="site.css" type=text/css rel=STYLESHEET>
+</head>
+<body>
+<div id="topheader">
+	<div id="topcontent">
+	<img src="images/citrus-logo.png">
+		<div id="toplinks">
+		<a href="index.html">home</a> | 
+		<a href="about.html">about</a> | 
+		<a href="download">download</a> | 
+		<a href="support.html">support</a> | 
+		<a href="development.html">development</a> | 
+		<a href="contribute.html">contribute</a> 
+		</div>
+	</div>
+</div>
+
+<div id="midheader">
+	<div id="midcontent">
+		<div id="categorylinks">
+			<a href="faq.html">FAQ</a>
+			<p>
+			<a href="help.html">Documentation</a>
+			<p>
+			<a href="http://bugs.citrusdb.org/view_all_bug_page.php">Bug Tracking</a>
+			<p>
+			<a href="mailinglists.html">Mailing Lists</a>
+		</div>
+		<div id="categorycontent">
+			<h3>Support : FAQ</h3>
+			<blockquote>
+				<b>Why is this blank or not showing up?</b><br>
+Your $path_to_citrus variable in the config.inc.php is probably incorrect. It should be set to the filesystem path to the citrusdb www folder. This is usually something like /usr/local/apache/htdocs/citrusdb or /home/username/public_html/citrusdb
+<p>
+To determine what the path is on unix you can log into the server and run the pwd command when you are in the citrusdb folder. It will tell you the path to use.
+<p>
+<b>How do billing frequencies work?</b><br>
+Billing frequencies are numbers of months that the account is billed for at one time. Each billing type has a billing frequency associated with it. So that an Invoice Monthly billing type has a frequency of 1, an Invoice Quarterly frequency has a frequency of 3 etc.
+<p>
+Each service also has a billing frequency, say you want to offer a service for 4.95 per month, then you make a new service with a price of 4.95 and a frequency of 1. If the customer has a billing type with a frequency of 3, it would multiply that monthly cost times 3 and get the resulting cost for that quarterly invoice, 14.85. If the customer billing type is monthly then it will just have 1x1 and give you 4.95 as the cost for that billing type.
+<p>
+You may get an error if you add a service with a frequency greater than their billing type. Say you have a service that is called something like Yearly Photo Hosting with a frequency of 12. You can't add that service to an account with a billing type that is billed monthly (a frequency of 1). You would have to create either an alternate billing type to connect to that account for this one service or change the account's billing type to one that works with that frequency, say Invoice Yearly.
+<p>
+There is also one special type of billing frequency of 0 which is for one time charges.
+<p>
+<b>How do I create the database/sql part?</b><br>
+You can use the command line functions such as<br>
+# mysqladmin create citrus<br>
+# mysql citrus < /path/to/citrusdb/citrus.sql<br>
+<p>
+or you can use a web based utility like phpMyAdmin.
+<ul>
+<li>Log into phpmyadmin
+    <li>Enter "citrus" in the create new database field and click Create
+    <li>Click on the SQL tab
+    <li>Click browse in the Location of the textfile field and choose the citrus.sql file from your hard drive.
+    <li>Click GO, this will then populate the database with the tables 
+</ul>
+<p>
+<b>Are there any translations into other languages</b><br>
+There are currently eu-french and nl-dutch language translations in the CVS version that will be included in the next release. There is only an english translation in the current 0.8 release, however if you want to make a translation of the us-english.inc.php file in the include/local folder you are welcome to contribute that translation. You can email me the translated php file paul at citrusdb dot org.
+			
+			</blockquote>
+			<div id="categoryfooter">
+			<hr>
+			This website is Copyright &#169; 2006 Paul Yasi.  All rights reserved. &nbsp;&nbsp; <a href="http://jigsaw.w3.org/css-validator/check/referer">Validate CSS</a>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+
+
+</body>
+</html>
